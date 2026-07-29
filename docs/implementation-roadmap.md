@@ -2,7 +2,8 @@
 
 ## 1. 로드맵 원칙
 
-이 로드맵은 1인 블로그 MVP를 빠르게 완성하기 위한 실행 순서다. 목표는 `GitHub repository를 콘텐츠 원본으로 쓰는 안정적인 MDX 블로그 + CMS`를 먼저 완성하는 것이다.
+이 로드맵은 1인 블로그 MVP를 빠르게 완성하기 위한 실행 순서다. 목표는
+`GitHub repository를 콘텐츠 원본으로 쓰는 안정적인 MDX 블로그 + CMS`를 먼저 완성하는 것이다.
 
 MVP에서 하지 않는다:
 
@@ -320,7 +321,8 @@ MVP에서 금지:
 목표:
 
 - GitHub OAuth 기반 단일 관리자 인증을 구현한다.
-- 로그인한 GitHub user의 `login`과 immutable `id`가 `site.json` 설정과 모두 일치해야 CMS mutation을 허용한다.
+- 로그인한 GitHub user의 `login`과 immutable `id`가 `site.json` 설정과 모두 일치해야 CMS mutation을
+  허용한다.
 - CMS shell UI는 shadcn/ui 기본 색상만 사용한다.
 
 작업:
@@ -653,7 +655,9 @@ Warning:
 9. robots route 구현:
    - `/robots.txt`
 10. OG image route 구현:
-   - `/og/[slug]`
+
+- `/og/[slug]`
+
 11. TOC 표시.
 12. reading time 표시.
 
@@ -713,9 +717,10 @@ type BlogEvent =
 12. search 이벤트 발행.
 13. share 이벤트 발행.
 14. CMS 외부 링크 생성:
-   - 공개 글 열기.
-   - GA4 페이지 성과 보기.
-   - Search Console에서 검색 성과 보기.
+
+- 공개 글 열기.
+- GA4 페이지 성과 보기.
+- Search Console에서 검색 성과 보기.
 
 완료 기준:
 

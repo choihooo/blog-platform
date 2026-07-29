@@ -7,7 +7,9 @@ node_modules/
 .next/
 out/
 dist/
+build/
 coverage/
+*.log
 
 .turbo/
 .vercel/

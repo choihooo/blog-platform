@@ -1,0 +1,1 @@
+export const editorPackage = "editor";

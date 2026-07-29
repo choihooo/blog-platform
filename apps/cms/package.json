@@ -1,0 +1,18 @@
+{
+  "name": "@blog-platform/cms",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --port 3001",
+    "format:check": "prettier . --check",
+    "lint": "eslint app next.config.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^16.2.12",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}

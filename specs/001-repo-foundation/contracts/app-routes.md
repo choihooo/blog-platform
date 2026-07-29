@@ -16,8 +16,7 @@
 
 - 초기 public blog page를 보여준다.
 - draft, archived, preview, publishing, analytics-dashboard, CMS behavior를 노출하지 않는다.
-- GitHub credential, content file, authentication setup, deployment configuration을 요구하지
-  않는다.
+- GitHub credential, content file, authentication setup, deployment configuration을 요구하지 않는다.
 
 ## CMS App
 
@@ -38,5 +37,5 @@
 
 - 각 app은 local inspection을 위해 독립적으로 시작할 수 있다.
 - browser에 표시되는 app은 public blog와 private CMS 경계를 명확히 드러낸다.
-- 두 app shell은 foundation validation에 충분하며 이후 content, auth, editor, publishing
-  feature가 완료되었음을 암시하지 않는다.
+- 두 app shell은 foundation validation에 충분하며 이후 content, auth, editor, publishing feature가
+  완료되었음을 암시하지 않는다.

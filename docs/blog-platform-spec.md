@@ -2,9 +2,12 @@
 
 ## 1. 목적
 
-공개 블로그, 비공개 CMS, 그리고 글쓰기/발행/SEO/분석/Markdown/MDX/AI/디자인 시스템을 담당하는 공유 패키지로 구성된 모노레포 기반 블로그 플랫폼을 만든다.
+공개 블로그, 비공개 CMS, 그리고 글쓰기/발행/SEO/분석/Markdown/MDX/AI/디자인 시스템을 담당하는 공유
+패키지로 구성된 모노레포 기반 블로그 플랫폼을 만든다.
 
-이 플랫폼은 1인 블로그 운영자가 기술 블로그 글을 작성, 최적화, 미리보기, 발행까지 한 흐름에서 처리할 수 있게 한다. 글마다 SEO 메타데이터, 목차, OG 이미지, RSS, Sitemap, JSON-LD를 수동으로 연결하지 않는 것이 핵심이다.
+이 플랫폼은 1인 블로그 운영자가 기술 블로그 글을 작성, 최적화, 미리보기, 발행까지 한 흐름에서 처리할
+수 있게 한다. 글마다 SEO 메타데이터, 목차, OG 이미지, RSS, Sitemap, JSON-LD를 수동으로 연결하지 않는
+것이 핵심이다.
 
 ## 2. 사용자
 
@@ -27,7 +30,8 @@ MVP는 단일 운영자만 지원한다. 작성, 수정, 발행, 설정 관리�
 - GA4/GTM 이벤트를 발행하고, CMS에서 GA4/Search Console 외부 콘솔로 바로 이동할 수 있게 한다.
 - AI를 통한 글 개요, 제목, 요약, 메타 설명, 내부 링크 추천은 MVP 이후에 제공한다.
 - GA4/Search Console API 기반 통합 지표 대시보드는 MVP 이후에 제공한다.
-- Markdown, SEO, analytics, AI, design 로직을 공유 패키지로 분리해 `blog`와 `cms`에서 중복 구현하지 않는다.
+- Markdown, SEO, analytics, AI, design 로직을 공유 패키지로 분리해 `blog`와 `cms`에서 중복 구현하지
+  않는다.
 
 ## 4. 비목표
 
@@ -95,7 +99,8 @@ packages/
 ### Editor
 
 - 에디터: Tiptap
-- 주요 라이브러리: `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-link`, `@tiptap/extension-image`, `prosemirror-markdown`
+- 주요 라이브러리: `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-link`,
+  `@tiptap/extension-image`, `prosemirror-markdown`
 - 저장 변환: Tiptap JSON ↔ MDX
 - MVP 제한: MDX로 안정적으로 round-trip 가능한 노드만 허용
 - raw MDX source mode: Post-MVP에서 CodeMirror 기반으로 검토
@@ -112,7 +117,8 @@ packages/
 
 - 방식: rule-based checker
 - 점수: SEO Score 0-100
-- 산출물: slug, metadata, canonical, Open Graph, OG image, JSON-LD, schema.org, RSS, Sitemap, robots.txt, TOC, reading time
+- 산출물: slug, metadata, canonical, Open Graph, OG image, JSON-LD, schema.org, RSS, Sitemap,
+  robots.txt, TOC, reading time
 - Post-MVP: AI 키워드 분석, 경쟁 글 분석, Search Console 기반 개선 제안
 
 ### Design UI
@@ -123,12 +129,14 @@ packages/
 - Icon: lucide-react
 - 위치: `packages/design-system`
 - 원칙: shadcn/ui 컴포넌트를 복사/소유하고, 블로그/CMS 공통 토큰과 컴포넌트만 패키지화한다.
-- 색상: shadcn/ui 기본 색상만 사용한다. MVP에서는 별도 브랜드 팔레트나 커스텀 컬러 시스템을 만들지 않는다.
+- 색상: shadcn/ui 기본 색상만 사용한다. MVP에서는 별도 브랜드 팔레트나 커스텀 컬러 시스템을 만들지
+  않는다.
 
 ### Analytics
 
 - MVP: GA4/GTM 이벤트 발행 + 외부 콘솔 링크
-- 이벤트: `article_view`, `scroll_50`, `scroll_90`, `code_copy`, `toc_click`, `internal_link_click`, `external_link_click`, `search`, `share`
+- 이벤트: `article_view`, `scroll_50`, `scroll_90`, `code_copy`, `toc_click`, `internal_link_click`,
+  `external_link_click`, `search`, `share`
 - CMS: 게시글별 공개 글, GA4, Search Console 외부 링크 제공
 - Post-MVP: GA4 Data API + Search Console API 통합 대시보드
 - 분석 DB/cache: MVP에서는 사용하지 않음
@@ -241,7 +249,9 @@ Post-MVP 라우트:
 
 ### packages/editor
 
-`apps/cms`에서 사용하는 Markdown + MDX 에디터 패키지다. 에디터 엔진을 직접 만들지 않고 Tiptap 기반 라이브러리를 감싼다. 저장 원본은 계속 `content/posts/*.mdx`이므로 Tiptap 문서 모델과 MDX 사이의 변환 규칙을 명확히 제한한다.
+`apps/cms`에서 사용하는 Markdown + MDX 에디터 패키지다. 에디터 엔진을 직접 만들지 않고 Tiptap 기반
+라이브러리를 감싼다. 저장 원본은 계속 `content/posts/*.mdx`이므로 Tiptap 문서 모델과 MDX 사이의 변환
+규칙을 명확히 제한한다.
 
 사용 라이브러리:
 
@@ -260,7 +270,8 @@ Post-MVP 라우트:
 - Tiptap 기반 WYSIWYG 편집 UI를 제공한다.
 - Tiptap JSON 문서를 MDX 문자열로 직렬화하고, 기존 MDX 문자열을 Tiptap 문서로 파싱한다.
 - MVP에서는 MDX로 안정적으로 round-trip 가능한 노드만 허용한다.
-- MVP 허용 노드: paragraph, heading, bullet list, ordered list, blockquote, horizontal rule, link, image, inline code, code block, bold, italic.
+- MVP 허용 노드: paragraph, heading, bullet list, ordered list, blockquote, horizontal rule, link,
+  image, inline code, code block, bold, italic.
 - image node는 `src`, `alt`, `title`, `caption`, `uploadState`를 관리한다.
 - MVP에서는 임의 MDX JSX, import/export, custom interactive component 편집을 허용하지 않는다.
 - 실시간 미리보기 연동.
@@ -270,11 +281,13 @@ Post-MVP 라우트:
 - AI command menu 연동.
 - dirty state와 local autosave 이벤트 제공.
 
-MVP 에디터는 Tiptap 기반으로 시작한다. raw MDX 편집이 필요하면 Post-MVP에서 CodeMirror 기반 source mode를 추가 검토한다.
+MVP 에디터는 Tiptap 기반으로 시작한다. raw MDX 편집이 필요하면 Post-MVP에서 CodeMirror 기반 source
+mode를 추가 검토한다.
 
 ### packages/markdown
 
-Markdown/MDX 처리 패키지다. Markdown/MDX parser와 compiler를 직접 만들지 않고 unified/MDX 생태계 라이브러리를 조합한다.
+Markdown/MDX 처리 패키지다. Markdown/MDX parser와 compiler를 직접 만들지 않고 unified/MDX 생태계
+라이브러리를 조합한다.
 
 사용 라이브러리:
 
@@ -300,7 +313,8 @@ Markdown/MDX 처리 패키지다. Markdown/MDX parser와 compiler를 직접 만�
 - 읽는 시간을 계산한다.
 - 코드 블록 syntax highlighting을 처리한다.
 - 렌더링되는 MDX 컴포넌트를 안전하게 제한한다.
-- MVP에서는 remote MDX runtime evaluation, arbitrary import/export, inline `<script>`, event handler, unsafe HTML을 허용하지 않는다.
+- MVP에서는 remote MDX runtime evaluation, arbitrary import/export, inline `<script>`, event
+  handler, unsafe HTML을 허용하지 않는다.
 - MDX 렌더링은 사전에 등록된 component allowlist와 sanitizer 정책을 통과해야 한다.
 - 블로그 실서비스와 CMS 미리보기에서 공통으로 쓰는 MDX 컴포넌트를 제공한다.
 
@@ -342,7 +356,8 @@ SEO 자동화와 검증을 담당하는 패키지다.
 
 ### packages/analytics
 
-분석 이벤트 발행과 외부 분석 콘솔 링크 생성을 담당하는 패키지다. MVP에서는 GA4/Search Console API를 직접 조회하거나 지표를 저장하지 않는다.
+분석 이벤트 발행과 외부 분석 콘솔 링크 생성을 담당하는 패키지다. MVP에서는 GA4/Search Console API를
+직접 조회하거나 지표를 저장하지 않는다.
 
 책임:
 
@@ -398,7 +413,10 @@ AI 글쓰기 보조 패키지다.
 
 ## 9. GitHub 기반 데이터 모델
 
-PostgreSQL 같은 별도 데이터베이스를 두지 않는다. GitHub repository를 콘텐츠 원천 저장소로 사용한다. 공개 블로그는 배포/빌드 결과에 포함된 로컬 `content/` 파일을 읽어 렌더링하고, CMS만 GitHub API를 통해 파일을 생성/수정/삭제한다. GitHub는 canonical content store이지 공개 런타임 데이터베이스가 아니다.
+PostgreSQL 같은 별도 데이터베이스를 두지 않는다. GitHub repository를 콘텐츠 원천 저장소로 사용한다.
+공개 블로그는 배포/빌드 결과에 포함된 로컬 `content/` 파일을 읽어 렌더링하고, CMS만 GitHub API를
+통해 파일을 생성/수정/삭제한다. GitHub는 canonical content store이지 공개 런타임 데이터베이스가
+아니다.
 
 권장 콘텐츠 구조:
 
@@ -429,19 +447,26 @@ public/
 - 파일명은 slug + content hash 기반으로 만든다.
 - 원본 대용량 이미지는 보관하지 않는다.
 - 같은 이름 overwrite는 금지하고 hash suffix를 사용한다.
-- repository의 `public/media`가 500MB를 넘거나 이미지가 1,000개를 넘으면 R2/S3 같은 object storage 전환을 검토한다.
+- repository의 `public/media`가 500MB를 넘거나 이미지가 1,000개를 넘으면 R2/S3 같은 object storage
+  전환을 검토한다.
 
 사진/이미지 처리 규칙:
 
-- cover image는 `public/media/covers/<slug>-<hash>.webp`에 저장하고 frontmatter의 `coverImage`에 경로를 기록한다.
-- 본문 이미지는 `public/media/posts/<slug>/<hash>.webp`에 저장하고 MDX 본문 안에 Markdown image syntax로 직렬화한다.
+- cover image는 `public/media/covers/<slug>-<hash>.webp`에 저장하고 frontmatter의 `coverImage`에
+  경로를 기록한다.
+- 본문 이미지는 `public/media/posts/<slug>/<hash>.webp`에 저장하고 MDX 본문 안에 Markdown image
+  syntax로 직렬화한다.
 - Tiptap image node는 `src`, `alt`, `title`, `caption` 속성을 가진다.
 - MDX 저장 시 기본 직렬화는 `![alt](src "title")`를 사용한다.
-- `caption`이 있으면 MVP에서는 이미지 바로 아래 paragraph로 저장한다. Post-MVP에서 figure/figcaption MDX component를 검토한다.
+- `caption`이 있으면 MVP에서는 이미지 바로 아래 paragraph로 저장한다. Post-MVP에서 figure/figcaption
+  MDX component를 검토한다.
 - alt 텍스트는 본문 이미지는 권장, cover image는 SEO warning 대상이다.
-- 이미지를 업로드하면 CMS가 GitHub에 media commit을 만들고, 본문에는 commit된 public path만 삽입한다.
-- 이미지 업로드 실패 시 Tiptap 문서에는 임시 blob URL을 저장하지 않는다. local draft backup에는 업로드 대기 상태만 보존한다.
-- 이미지를 삭제해도 MVP에서는 repository 파일을 자동 삭제하지 않는다. 본문 참조만 제거하고, 미사용 파일 정리는 Post-MVP로 미룬다.
+- 이미지를 업로드하면 CMS가 GitHub에 media commit을 만들고, 본문에는 commit된 public path만
+  삽입한다.
+- 이미지 업로드 실패 시 Tiptap 문서에는 임시 blob URL을 저장하지 않는다. local draft backup에는
+  업로드 대기 상태만 보존한다.
+- 이미지를 삭제해도 MVP에서는 repository 파일을 자동 삭제하지 않는다. 본문 참조만 제거하고, 미사용
+  파일 정리는 Post-MVP로 미룬다.
 
 글 파일은 MDX + frontmatter 형식을 사용한다.
 
@@ -483,7 +508,8 @@ Draft 필수 field:
 - `createdAt`
 - `updatedAt`
 
-Draft는 slug 없이 임시 id로 저장할 수 있다. 운영자가 Save 또는 Publish를 실행할 때 slug가 없으면 title 기반으로 생성하고, 저장 전에 중복을 검사한다.
+Draft는 slug 없이 임시 id로 저장할 수 있다. 운영자가 Save 또는 Publish를 실행할 때 slug가 없으면
+title 기반으로 생성하고, 저장 전에 중복을 검사한다.
 
 Published 필수 field:
 
@@ -536,7 +562,8 @@ CMS가 담당하는 것:
 - slug 중복 검사.
 - 에디터 자동저장은 브라우저 local draft backup에만 저장한다.
 - 운영자가 Save 버튼을 누르면 main branch에 저장 commit을 만든다.
-- 운영자가 Publish 버튼을 누르면 `status: published`와 `publishedAt`을 반영하는 발행 commit을 만든다.
+- 운영자가 Publish 버튼을 누르면 `status: published`와 `publishedAt`을 반영하는 발행 commit을
+  만든다.
 - 공개 여부는 MDX frontmatter의 `status` 값으로만 판단한다.
 - 발행은 파일 이동이 아니라 `status: published`와 `publishedAt` 변경이다.
 - preview token 생성.
@@ -554,7 +581,8 @@ Post-MVP 데이터:
 - GA4/Search Console 지표는 repository에 저장하지 않는다.
 - 통합 대시보드를 만들 때도 별도 DB 없이 API 직접 조회로 시작한다.
 - 속도나 quota 문제가 생기면 서버 메모리 캐시 또는 배포 플랫폼 artifact 같은 임시 캐시만 검토한다.
-- AI action 로그는 repository에 commit하지 않는다. 배포 플랫폼 서버 로그 또는 provider usage dashboard를 우선 사용한다.
+- AI action 로그는 repository에 commit하지 않는다. 배포 플랫폼 서버 로그 또는 provider usage
+  dashboard를 우선 사용한다.
 - AI 로그를 남기더라도 prompt 원문, 본문 전문, Search Console query 원문은 저장하지 않는다.
 
 `content/site.json`은 사이트 전역 설정을 담는다.
@@ -592,7 +620,8 @@ Post-MVP 데이터:
 - GitHub commit은 명시적 Save, Publish, Unpublish, Archive, Media Upload에서만 만든다.
 - GitHub 저장 요청은 마지막으로 읽은 file SHA를 함께 보낸다.
 - GitHub의 최신 SHA와 요청 SHA가 다르면 overwrite하지 않고 conflict로 처리한다.
-- conflict 발생 시 CMS는 현재 편집본을 local draft backup에 보존하고, GitHub 최신본과 내 편집본을 비교하는 충돌 해결 UI를 보여준다.
+- conflict 발생 시 CMS는 현재 편집본을 local draft backup에 보존하고, GitHub 최신본과 내 편집본을
+  비교하는 충돌 해결 UI를 보여준다.
 - `status: draft`는 저장되어 있지만 공개되지 않는 글이다.
 - `status: published`만 공개 블로그, RSS, Sitemap, JSON-LD, OG metadata에 포함된다.
 - `status: archived`는 보관된 글이며 공개 목록에서 제외한다.
@@ -612,11 +641,13 @@ published -> draft
 
 1. 운영자가 draft를 생성한다.
 2. CMS가 타이핑 중 변경사항을 브라우저 local draft backup에 자동 저장한다.
-3. 운영자가 Save 버튼을 누르면 CMS가 콘텐츠와 메타데이터를 GitHub repository의 main branch에 commit한다.
+3. 운영자가 Save 버튼을 누르면 CMS가 콘텐츠와 메타데이터를 GitHub repository의 main branch에
+   commit한다.
 4. Markdown 패키지가 preview, TOC, 읽는 시간, heading slug를 생성한다.
 5. SEO 엔진이 에디터 안에서 검사를 실행한다.
 6. CMS가 preview URL을 보여준다.
-7. 운영자가 Publish 버튼을 누르면 CMS가 `status: published`와 `publishedAt`을 반영해 발행 commit을 만든다.
+7. 운영자가 Publish 버튼을 누르면 CMS가 `status: published`와 `publishedAt`을 반영해 발행 commit을
+   만든다.
 8. Blog 앱이 영향을 받는 라우트를 revalidate한다.
 9. Sitemap, RSS, JSON-LD, OG metadata가 발행된 글을 반영한다.
 10. AI 보조와 Search Console 분석은 MVP 이후 기능으로 남긴다.
@@ -629,7 +660,8 @@ Publish 자동화:
 - `slug`는 frontmatter에 없으면 title 기반으로 생성하고, 저장 전에 중복을 검사한다.
 - `toc`, heading slug, reading time은 `packages/markdown`가 MDX 본문 기준으로 생성한다.
 - metadata, canonical, Open Graph, schema.org, JSON-LD는 `packages/seo-engine`가 생성한다.
-- RSS item, Sitemap entry, robots.txt policy는 `packages/seo-engine`가 생성하고 `apps/blog` 라우트에서 제공한다.
+- RSS item, Sitemap entry, robots.txt policy는 `packages/seo-engine`가 생성하고 `apps/blog`
+  라우트에서 제공한다.
 - OG image는 `apps/blog`의 `/og/[slug]` route에서 생성한다.
 - 모든 자동 산출물은 `status: published`인 글만 기준으로 생성한다.
 
@@ -638,7 +670,8 @@ Publish 자동화:
 - `published` 상태의 글만 공개 목록, RSS, Sitemap, 태그/카테고리 페이지에 나타난다.
 - `draft` 글은 인증된 CMS 또는 서명된 preview token으로만 볼 수 있다.
 - slug는 `content/posts/*.mdx` 전체에서 유일해야 한다.
-- `draft`와 `archived`는 `/posts/[slug]`, 홈, 태그, 카테고리, RSS, Sitemap, JSON-LD, 내부 링크 추천 index 어디에도 포함되지 않는다.
+- `draft`와 `archived`는 `/posts/[slug]`, 홈, 태그, 카테고리, RSS, Sitemap, JSON-LD, 내부 링크 추천
+  index 어디에도 포함되지 않는다.
 - 발행된 글은 `title`, `slug`, MDX 본문, `author`, `publishedAt`을 반드시 가져야 한다.
 - GitHub API conflict가 발생하면 CMS는 최신 파일을 다시 읽고 사용자에게 충돌 해결 UI를 보여준다.
 - `status: published`로 전환할 때 `publishedAt`이 비어 있으면 CMS가 현재 시각으로 자동 설정한다.
@@ -661,7 +694,8 @@ Local draft backup 규칙:
 - key는 `post:${slug}` 또는 신규 글의 임시 id를 사용한다.
 - 타이핑 중 변경사항은 local draft backup에 저장한다.
 - GitHub commit 성공 후 해당 local draft backup을 삭제한다.
-- GitHub 저장 실패, rate limit, 네트워크 오류, SHA conflict가 발생하면 local draft backup을 유지한다.
+- GitHub 저장 실패, rate limit, 네트워크 오류, SHA conflict가 발생하면 local draft backup을
+  유지한다.
 - CMS는 복구 가능한 local draft가 있을 때 복구 배너를 보여준다.
 - local draft backup TTL은 30일이다.
 
@@ -669,9 +703,12 @@ Revalidation 규칙:
 
 - Save draft는 공개 페이지를 revalidate하지 않는다.
 - Publish, Unpublish, Archive는 공개 콘텐츠 revalidate를 실행한다.
-- 대상은 `/`, `/posts/[slug]`, 관련 `/categories/[slug]`, 관련 `/tags/[slug]`, `/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`다.
-- Next.js 구현에서는 `posts`, `post:${slug}`, `category:${category}`, `tag:${tag}` 같은 tag 기반 revalidation을 사용한다.
-- GitHub commit은 성공했지만 revalidate가 실패한 경우 CMS는 commit 성공과 revalidate 실패를 분리해서 표시하고 재시도 버튼을 제공한다.
+- 대상은 `/`, `/posts/[slug]`, 관련 `/categories/[slug]`, 관련 `/tags/[slug]`, `/rss.xml`,
+  `/sitemap.xml`, `/robots.txt`, `/og/[slug]`다.
+- Next.js 구현에서는 `posts`, `post:${slug}`, `category:${category}`, `tag:${tag}` 같은 tag 기반
+  revalidation을 사용한다.
+- GitHub commit은 성공했지만 revalidate가 실패한 경우 CMS는 commit 성공과 revalidate 실패를 분리해서
+  표시하고 재시도 버튼을 제공한다.
 
 ## 11. SEO 요구사항
 
@@ -687,7 +724,8 @@ CMS는 SEO 패널을 제공해야 한다.
 - 생성된 metadata preview.
 - JSON-LD preview.
 
-MVP SEO 엔진은 rule-based checker로 제한한다. AI 기반 키워드 분석, 경쟁 글 분석, Search Console 기반 개선 제안, 내부 링크 자동 추천은 Post-MVP로 미룬다.
+MVP SEO 엔진은 rule-based checker로 제한한다. AI 기반 키워드 분석, 경쟁 글 분석, Search Console 기반
+개선 제안, 내부 링크 자동 추천은 Post-MVP로 미룬다.
 
 MVP 점수 가중치:
 
@@ -762,7 +800,8 @@ OG 이미지 생성은 다음 데이터를 지원해야 한다.
 
 ## 13. AI 보조 요구사항
 
-AI 보조 기능은 Post-MVP 기능이다. MVP에서는 기본값을 off로 두고, CMS 설정에서 기능 flag를 켜고 끌 수 있는 구조만 만든다. 꺼져 있을 때는 AI 버튼, inline suggestion, 자동 추천 요청을 노출하지 않는다.
+AI 보조 기능은 Post-MVP 기능이다. MVP에서는 기본값을 off로 두고, CMS 설정에서 기능 flag를 켜고 끌 수
+있는 구조만 만든다. 꺼져 있을 때는 AI 버튼, inline suggestion, 자동 추천 요청을 노출하지 않는다.
 
 Post-MVP에서 제공할 AI action:
 
@@ -788,7 +827,8 @@ AI 제약:
 
 ## 14. 내부 링크 추천
 
-기본 내부 링크 추천은 Post-MVP 기능이다. MVP에서는 `published` 글만 링크 추천 index에 들어갈 수 있다는 필터 규칙만 확정한다.
+기본 내부 링크 추천은 Post-MVP 기능이다. MVP에서는 `published` 글만 링크 추천 index에 들어갈 수
+있다는 필터 규칙만 확정한다.
 
 Post-MVP 추천 입력:
 
@@ -821,7 +861,8 @@ Post-MVP 점수화:
 
 ## 15. Analytics
 
-MVP에서는 자체 분석 대시보드, DB 캐시, GA4/Search Console API 연동을 만들지 않는다. 공개 블로그는 GA4/GTM 이벤트를 발행하고, CMS는 게시글별 외부 분석 콘솔 링크를 제공한다.
+MVP에서는 자체 분석 대시보드, DB 캐시, GA4/Search Console API 연동을 만들지 않는다. 공개 블로그는
+GA4/GTM 이벤트를 발행하고, CMS는 게시글별 외부 분석 콘솔 링크를 제공한다.
 
 MVP에서 제공:
 
@@ -849,7 +890,8 @@ Post-MVP 통합 대시보드:
 - Search Console API로 노출, 클릭, CTR, 평균 순위, 검색어를 가져온다.
 - 게시글별 통합 지표를 보여준다.
 - 개선 제안을 생성한다.
-- 별도 DB 없이 시작한다. 필요하면 Post-MVP에서 짧은 서버 메모리 캐시나 파일 artifact 같은 임시 캐시만 검토한다.
+- 별도 DB 없이 시작한다. 필요하면 Post-MVP에서 짧은 서버 메모리 캐시나 파일 artifact 같은 임시
+  캐시만 검토한다.
 
 ## 16. API Surface
 
@@ -878,10 +920,12 @@ GET    /api/analytics/ga4
 GET    /api/analytics/search-console
 ```
 
-공개 블로그 라우트는 공개 mutation API보다 정적 렌더링과 직접 데이터 접근을 우선한다.
-CMS mutation은 내부적으로 GitHub Contents API, Git Data API, 또는 GraphQL API를 사용해 파일과 commit을 생성한다.
+공개 블로그 라우트는 공개 mutation API보다 정적 렌더링과 직접 데이터 접근을 우선한다. CMS mutation은
+내부적으로 GitHub Contents API, Git Data API, 또는 GraphQL API를 사용해 파일과 commit을 생성한다.
 
-MVP는 GitHub Contents API를 기본으로 사용한다. `post + media`를 하나의 원자적 commit으로 묶어야 하는 요구가 생기면 Git Data API로 전환한다. 모든 update 요청은 file SHA 기반 optimistic locking을 사용한다.
+MVP는 GitHub Contents API를 기본으로 사용한다. `post + media`를 하나의 원자적 commit으로 묶어야 하는
+요구가 생기면 Git Data API로 전환한다. 모든 update 요청은 file SHA 기반 optimistic locking을
+사용한다.
 
 ## 17. 보안
 
@@ -892,12 +936,14 @@ MVP는 GitHub Contents API를 기본으로 사용한다. `post + media`를 하�
 - GitHub token, AI secret, Search Console secret은 서버 측에만 둔다.
 - 업로드 파일은 타입과 크기를 검증한다.
 - MDX 렌더링은 신뢰할 수 없는 사용자의 임의 runtime code 실행을 허용하지 않는다.
-- CMS mutation은 `content/site.json`의 `adminGithubLogin`, `adminGithubUserId`와 로그인한 GitHub OAuth 사용자 정보가 모두 일치할 때만 실행할 수 있다.
+- CMS mutation은 `content/site.json`의 `adminGithubLogin`, `adminGithubUserId`와 로그인한 GitHub
+  OAuth 사용자 정보가 모두 일치할 때만 실행할 수 있다.
 - GitHub username은 변경 가능하므로 `adminGithubUserId` 검증을 필수로 한다.
 - GitHub write 권한은 GitHub App installation token을 기본으로 사용한다.
 - GitHub App 권한은 `contents: read/write`, `metadata: read`로 제한한다.
 - fine-grained PAT는 로컬 개발 fallback으로만 허용한다.
-- Search Console OAuth token은 repository 파일에 저장하지 않는다. Post-MVP에서 암호화 저장소 또는 신뢰할 수 있는 auth provider에 위임한다.
+- Search Console OAuth token은 repository 파일에 저장하지 않는다. Post-MVP에서 암호화 저장소 또는
+  신뢰할 수 있는 auth provider에 위임한다.
 - secret은 클라이언트 번들에 포함되면 안 된다.
 
 Preview token 정책:
@@ -907,7 +953,8 @@ Preview token 정책:
 - 기본 TTL은 30분이다.
 - 저장 또는 발행으로 `contentSha`가 바뀌면 기존 preview token은 무효화된다.
 - preview 응답은 `Cache-Control: private, no-store`를 사용한다.
-- preview token은 draft 글 미리보기에만 사용하고, 공개 페이지 필터를 우회해 목록/RSS/Sitemap에 draft를 포함하면 안 된다.
+- preview token은 draft 글 미리보기에만 사용하고, 공개 페이지 필터를 우회해 목록/RSS/Sitemap에
+  draft를 포함하면 안 된다.
 
 필수 환경변수:
 
@@ -1020,7 +1067,8 @@ MVP에서 미룰 수 있음:
 종료 기준:
 
 - 모든 발행 글에 metadata, TOC, JSON-LD, RSS 포함, Sitemap 포함, OG image가 적용된다.
-- 공개 블로그가 `article_view`, `scroll_50`, `scroll_90`, `code_copy`, `toc_click`, 링크 클릭, 검색, 공유 이벤트를 GA4/GTM으로 전송한다.
+- 공개 블로그가 `article_view`, `scroll_50`, `scroll_90`, `code_copy`, `toc_click`, 링크 클릭, 검색,
+  공유 이벤트를 GA4/GTM으로 전송한다.
 - CMS에서 게시글별 외부 분석 콘솔로 이동할 수 있다.
 
 ### Milestone 4: AI Assistance
@@ -1047,7 +1095,8 @@ MVP 이후 단계다.
 
 종료 기준:
 
-- 운영자가 GA4 사용자 행동 지표와 Search Console 검색 성과를 한 화면에서 보고 업데이트할 글을 찾을 수 있다.
+- 운영자가 GA4 사용자 행동 지표와 Search Console 검색 성과를 한 화면에서 보고 업데이트할 글을 찾을
+  수 있다.
 
 ## 21. 테스트 요구사항
 
@@ -1128,7 +1177,8 @@ Manual QA:
 
 - 운영 모델: 1인 블로그.
 - CMS 사용자: 단일 관리자 1명.
-- 인증: GitHub OAuth. 로그인한 GitHub username과 immutable user id가 `content/site.json`의 `adminGithubLogin`, `adminGithubUserId`와 모두 일치해야 한다.
+- 인증: GitHub OAuth. 로그인한 GitHub username과 immutable user id가 `content/site.json`의
+  `adminGithubLogin`, `adminGithubUserId`와 모두 일치해야 한다.
 - 콘텐츠 저장: GitHub repository의 main branch에 직접 commit.
 - 공개 여부: MDX frontmatter의 `status`로만 판단.
 - 발행 상태: `draft`, `published`, `archived`만 사용한다.
@@ -1136,8 +1186,10 @@ Manual QA:
 - 예약 발행: MVP에서 제외한다.
 - GA4/Search Console API 기반 통합 대시보드: MVP 이후로 미룬다.
 - AI 추천: 기본 off. CMS 설정에서 on/off 가능해야 한다.
-- MDX custom interactive component: MVP에서는 허용하지 않고, 사전에 등록된 안전한 컴포넌트만 렌더링한다.
-- GitHub API rate limit 또는 저장 실패: CMS는 편집 중인 내용을 브라우저 local draft backup에 보존한다.
+- MDX custom interactive component: MVP에서는 허용하지 않고, 사전에 등록된 안전한 컴포넌트만
+  렌더링한다.
+- GitHub API rate limit 또는 저장 실패: CMS는 편집 중인 내용을 브라우저 local draft backup에
+  보존한다.
 
 ## 24. 추천 첫 백로그 티켓
 

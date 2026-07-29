@@ -52,15 +52,15 @@ Expected outcome: 각 command가 관련 app과 package를 포함하고 foundatio
 
 `apps/blog`에 대해 문서화된 development command를 실행한다.
 
-Expected outcome: public blog initial page가 local `/`에서 접근 가능하며 content file이나
-GitHub credential을 요구하지 않는다.
+Expected outcome: public blog initial page가 local `/`에서 접근 가능하며 content file이나 GitHub
+credential을 요구하지 않는다.
 
 ## 5. CMS 시작
 
 `apps/cms`에 대해 문서화된 development command를 실행한다.
 
-Expected outcome: CMS initial page가 local `/`에서 접근 가능하며 Phase 0 validation에
-authentication setup 또는 GitHub credential을 요구하지 않는다.
+Expected outcome: CMS initial page가 local `/`에서 접근 가능하며 Phase 0 validation에 authentication
+setup 또는 GitHub credential을 요구하지 않는다.
 
 ## 6. MVP Scope 확인
 
@@ -73,5 +73,4 @@ foundation이 다음 항목을 도입하지 않았는지 확인한다.
 - integrated analytics dashboard
 - public comment, account, payment, newsletter, localization
 
-Expected outcome: Phase 0은 foundation-only feature로 남고 task implementation을 시작할 준비가
-된다.
+Expected outcome: Phase 0은 foundation-only feature로 남고 task implementation을 시작할 준비가 된다.
