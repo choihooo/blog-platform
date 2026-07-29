@@ -77,3 +77,10 @@ Expected outcome:
 - `packages/markdown` 변경이 workspace의 다른 package와 app build를 깨뜨리지 않는다.
 - 공개 블로그와 CMS가 아직 직접 렌더링을 연결하지 않았더라도 shared package contract는 build 가능한
   상태다.
+
+## 구현 메모
+
+- MDX runtime evaluation API는 노출하지 않는다.
+- `analyzeMdx`는 syntax 확인, safety validation, heading/TOC, reading time, code block metadata를
+  반환한다.
+- 지원하지 않는 code block language는 `text`로 fallback한다.

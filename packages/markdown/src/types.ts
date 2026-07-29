@@ -4,6 +4,7 @@ export interface ValidationIssue {
   code: string;
   message: string;
   path: string[];
+  severity?: "error" | "warning";
 }
 
 export interface ValidationResult<T> {
@@ -106,4 +107,52 @@ export interface ContentCollectionInput {
   categoriesJson: string;
   tagsJson: string;
   siteJson: string;
+}
+
+export interface MdxDocumentInput {
+  path: string;
+  source: string;
+}
+
+export interface ParsedMdxDocument {
+  path: string;
+  frontmatter: Record<string, unknown>;
+  body: string;
+}
+
+export interface Heading {
+  depth: number;
+  text: string;
+  slug: string;
+}
+
+export interface TocItem {
+  depth: number;
+  text: string;
+  slug: string;
+}
+
+export interface ReadingTimeResult {
+  minutes: number;
+  words: number;
+  label: string;
+}
+
+export interface CodeBlock {
+  language: string;
+  fallback: boolean;
+}
+
+export interface MdxAnalysis extends ParsedMdxDocument {
+  headings: Heading[];
+  toc: TocItem[];
+  readingTime: ReadingTimeResult;
+  codeBlocks: CodeBlock[];
+  warnings: ValidationIssue[];
+}
+
+export interface MdxAnalysisOptions {
+  tocMinDepth?: number;
+  tocMaxDepth?: number;
+  allowedComponents?: string[];
 }
