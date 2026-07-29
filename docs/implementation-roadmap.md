@@ -149,6 +149,13 @@ docs/
 - `publishedAt` 없는 published.
 - 빈 본문의 published.
 
+구현 상태:
+
+- `content/` 파일 구조와 샘플 published 글을 추가했다.
+- `packages/markdown`가 상태별 post validation, collection validation, published-only filtering,
+  slug 후보 생성, slug 중복 검사를 제공한다.
+- package validation은 `pnpm --filter @blog-platform/markdown typecheck`, `lint`, `test`로 확인한다.
+
 ## 5. Phase 2: Markdown/MDX Engine
 
 목표:

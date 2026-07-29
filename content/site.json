@@ -1,0 +1,19 @@
+{
+  "siteName": "Ho's Blog",
+  "siteUrl": "https://example.com",
+  "defaultAuthor": "ho",
+  "adminGithubLogin": "replace-me",
+  "adminGithubUserId": "0",
+  "github": {
+    "owner": "replace-me",
+    "repo": "blog",
+    "branch": "main"
+  },
+  "analytics": {
+    "provider": "ga4"
+  },
+  "features": {
+    "aiAssistant": false,
+    "internalLinkSuggestions": false
+  }
+}

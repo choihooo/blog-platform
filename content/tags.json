@@ -1,0 +1,10 @@
+[
+  {
+    "slug": "blog",
+    "label": "Blog"
+  },
+  {
+    "slug": "mdx",
+    "label": "MDX"
+  }
+]

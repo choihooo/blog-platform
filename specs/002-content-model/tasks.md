@@ -21,13 +21,13 @@
 
 **Purpose**: Content model 구현에 필요한 package dependency와 test runner를 준비한다.
 
-- [ ] T001 Add `zod`, `gray-matter`, `github-slugger`, `vitest`, and test script configuration in
+- [x] T001 Add `zod`, `gray-matter`, `github-slugger`, `vitest`, and test script configuration in
       `packages/markdown/package.json`
-- [ ] T002 Add root `test` pipeline support for workspace packages in `package.json` and
+- [x] T002 Add root `test` pipeline support for workspace packages in `package.json` and
       `turbo.json`
-- [ ] T003 [P] Create Vitest configuration for the markdown package in
+- [x] T003 [P] Create Vitest configuration for the markdown package in
       `packages/markdown/vitest.config.ts`
-- [ ] T004 [P] Update content model implementation notes in `packages/markdown/README.md`
+- [x] T004 [P] Update content model implementation notes in `packages/markdown/README.md`
 
 ---
 
@@ -37,15 +37,15 @@
 
 **CRITICAL**: 이 phase가 끝나기 전에는 사용자 스토리 구현을 시작하지 않는다.
 
-- [ ] T005 Define shared content model types and validation issue helpers in
+- [x] T005 Define shared content model types and validation issue helpers in
       `packages/markdown/src/index.ts`
-- [ ] T006 [P] Add reusable test fixture builders for post, author, category, tag, and site config
+- [x] T006 [P] Add reusable test fixture builders for post, author, category, tag, and site config
       inputs in `packages/markdown/src/content-fixtures.test.ts`
-- [ ] T007 Implement frontmatter parsing utilities for post and author files in
+- [x] T007 Implement frontmatter parsing utilities for post and author files in
       `packages/markdown/src/index.ts`
-- [ ] T008 Implement JSON parsing utilities for category, tag, and site config files in
+- [x] T008 Implement JSON parsing utilities for category, tag, and site config files in
       `packages/markdown/src/index.ts`
-- [ ] T009 Export all public types and functions required by `contracts/markdown-package.md` from
+- [x] T009 Export all public types and functions required by `contracts/markdown-package.md` from
       `packages/markdown/src/index.ts`
 
 **Checkpoint**: Shared package surface is ready for story-specific tests and implementation.
@@ -61,21 +61,21 @@
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add fixture structure validation tests for required content files in
+- [x] T010 [P] [US1] Add fixture structure validation tests for required content files in
       `packages/markdown/src/content-structure.test.ts`
-- [ ] T011 [P] [US1] Add successful sample collection validation test in
+- [x] T011 [P] [US1] Add successful sample collection validation test in
       `packages/markdown/src/content-collection.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create sample published post file at `content/posts/hello-world.mdx`
-- [ ] T013 [P] [US1] Create single-operator author profile at `content/authors/ho.md`
-- [ ] T014 [P] [US1] Create category registry at `content/categories.json`
-- [ ] T015 [P] [US1] Create tag registry at `content/tags.json`
-- [ ] T016 [P] [US1] Create site configuration at `content/site.json`
-- [ ] T017 [US1] Implement author, category, tag, and site config schema validation in
+- [x] T012 [P] [US1] Create sample published post file at `content/posts/hello-world.mdx`
+- [x] T013 [P] [US1] Create single-operator author profile at `content/authors/ho.md`
+- [x] T014 [P] [US1] Create category registry at `content/categories.json`
+- [x] T015 [P] [US1] Create tag registry at `content/tags.json`
+- [x] T016 [P] [US1] Create site configuration at `content/site.json`
+- [x] T017 [US1] Implement author, category, tag, and site config schema validation in
       `packages/markdown/src/index.ts`
-- [ ] T018 [US1] Implement `validateContentCollection` happy-path assembly for all content file
+- [x] T018 [US1] Implement `validateContentCollection` happy-path assembly for all content file
       types in `packages/markdown/src/index.ts`
 
 **Checkpoint**: User Story 1 is independently functional when the sample `content/` collection
@@ -93,25 +93,25 @@ code로 판정되는지 확인한다.
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Add post status schema tests for valid `draft`, `published`, and `archived`
+- [x] T019 [P] [US2] Add post status schema tests for valid `draft`, `published`, and `archived`
       cases in `packages/markdown/src/post-validation.test.ts`
-- [ ] T020 [P] [US2] Add negative tests for invalid status and missing published fields in
+- [x] T020 [P] [US2] Add negative tests for invalid status and missing published fields in
       `packages/markdown/src/post-validation.test.ts`
-- [ ] T021 [P] [US2] Add published-only filtering tests in
+- [x] T021 [P] [US2] Add published-only filtering tests in
       `packages/markdown/src/published-posts.test.ts`
-- [ ] T022 [P] [US2] Add reference integrity tests for unknown author, category, tag, and
+- [x] T022 [P] [US2] Add reference integrity tests for unknown author, category, tag, and
       defaultAuthor in `packages/markdown/src/content-references.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T023 [US2] Implement discriminated post schemas for `draft`, `published`, and `archived` in
+- [x] T023 [US2] Implement discriminated post schemas for `draft`, `published`, and `archived` in
       `packages/markdown/src/index.ts`
-- [ ] T024 [US2] Implement required error codes for invalid status, missing title, missing author,
+- [x] T024 [US2] Implement required error codes for invalid status, missing title, missing author,
       missing publishedAt, invalid publishedAt, and empty body in `packages/markdown/src/index.ts`
-- [ ] T025 [US2] Implement author, category, tag, and defaultAuthor reference checks in
+- [x] T025 [US2] Implement author, category, tag, and defaultAuthor reference checks in
       `packages/markdown/src/index.ts`
-- [ ] T026 [US2] Implement `getPublishedPosts` filtering in `packages/markdown/src/index.ts`
-- [ ] T027 [US2] Integrate status validation and reference validation into
+- [x] T026 [US2] Implement `getPublishedPosts` filtering in `packages/markdown/src/index.ts`
+- [x] T027 [US2] Integrate status validation and reference validation into
       `validateContentCollection` in `packages/markdown/src/index.ts`
 
 **Checkpoint**: User Story 2 is independently functional when state validation, reference checks,
@@ -128,22 +128,22 @@ and published-only filtering pass.
 
 ### Tests for User Story 3
 
-- [ ] T028 [P] [US3] Add slug candidate generation tests in
+- [x] T028 [P] [US3] Add slug candidate generation tests in
       `packages/markdown/src/slug-policy.test.ts`
-- [ ] T029 [P] [US3] Add unusable title and duplicate slug failure tests in
+- [x] T029 [P] [US3] Add unusable title and duplicate slug failure tests in
       `packages/markdown/src/slug-policy.test.ts`
-- [ ] T030 [P] [US3] Add collection-level duplicate published slug tests in
+- [x] T030 [P] [US3] Add collection-level duplicate published slug tests in
       `packages/markdown/src/content-collection.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T031 [US3] Implement `createSlugCandidate` with readable URL segment output in
+- [x] T031 [US3] Implement `createSlugCandidate` with readable URL segment output in
       `packages/markdown/src/index.ts`
-- [ ] T032 [US3] Implement `post.slug.unusable-title` validation for empty slug candidate results in
+- [x] T032 [US3] Implement `post.slug.unusable-title` validation for empty slug candidate results in
       `packages/markdown/src/index.ts`
-- [ ] T033 [US3] Implement `validateUniqueSlug` with `currentPath` exclusion support in
+- [x] T033 [US3] Implement `validateUniqueSlug` with `currentPath` exclusion support in
       `packages/markdown/src/index.ts`
-- [ ] T034 [US3] Integrate duplicate slug detection into `validateContentCollection` in
+- [x] T034 [US3] Integrate duplicate slug detection into `validateContentCollection` in
       `packages/markdown/src/index.ts`
 
 **Checkpoint**: User Story 3 is independently functional when slug generation and duplicate
@@ -155,19 +155,19 @@ detection pass.
 
 **Purpose**: 문서, 검증 command, 전체 workspace 품질을 정리한다.
 
-- [ ] T035 [P] Update `packages/markdown/README.md` with public API usage and content validation
+- [x] T035 [P] Update `packages/markdown/README.md` with public API usage and content validation
       examples
-- [ ] T036 [P] Add implementation completion notes for Phase 1 Content Model in
+- [x] T036 [P] Add implementation completion notes for Phase 1 Content Model in
       `docs/implementation-roadmap.md`
-- [ ] T037 Run `pnpm --filter @blog-platform/markdown typecheck` and fix any issues in
+- [x] T037 Run `pnpm --filter @blog-platform/markdown typecheck` and fix any issues in
       `packages/markdown/src/index.ts`
-- [ ] T038 Run `pnpm --filter @blog-platform/markdown lint` and fix any issues in
+- [x] T038 Run `pnpm --filter @blog-platform/markdown lint` and fix any issues in
       `packages/markdown/src/index.ts`
-- [ ] T039 Run `pnpm --filter @blog-platform/markdown test` and fix any issues in
+- [x] T039 Run `pnpm --filter @blog-platform/markdown test` and fix any issues in
       `packages/markdown/src/*.test.ts`
-- [ ] T040 Run `pnpm build` and fix any workspace integration issues in `package.json`,
+- [x] T040 Run `pnpm build` and fix any workspace integration issues in `package.json`,
       `turbo.json`, or `packages/markdown/package.json`
-- [ ] T041 Verify quickstart scenarios and update `specs/002-content-model/quickstart.md` if the
+- [x] T041 Verify quickstart scenarios and update `specs/002-content-model/quickstart.md` if the
       runnable commands changed
 
 ---
