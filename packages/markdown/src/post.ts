@@ -21,7 +21,7 @@ function isValidDate(value: string): boolean {
   return !Number.isNaN(Date.parse(value));
 }
 
-/** Parses one author profile file and keeps the Markdown body separate from frontmatter. */
+/** 작성자 프로필 파일 하나를 parsing하고 Markdown 본문을 frontmatter와 분리한다. */
 export function parseAuthorFile(input: FileInput): ValidationResult<Author> {
   const parsed = matter(input.source);
   const result = authorFrontmatterSchema.safeParse(parsed.data);
@@ -34,8 +34,8 @@ export function parseAuthorFile(input: FileInput): ValidationResult<Author> {
 }
 
 /**
- * Parses one MDX post file and applies only single-file rules.
- * Cross-file checks such as author existence and duplicate slugs happen in collection validation.
+ * MDX post 파일 하나를 parsing하고 단일 파일 규칙만 적용한다.
+ * 작성자 존재 여부나 slug 중복 같은 cross-file 검증은 collection validation에서 처리한다.
  */
 export function parsePostFile(input: FileInput): ValidationResult<Post> {
   const parsed = matter(input.source);
@@ -69,7 +69,7 @@ export function parsePostFile(input: FileInput): ValidationResult<Post> {
     tags: data.tags,
   };
 
-  // Draft and archived files may be incomplete; only published posts are public-input strict.
+  // draft와 archived는 불완전할 수 있으므로 public 입력인 published에만 엄격한 규칙을 적용한다.
   if (data.status !== "published") {
     return ok({ ...base, status: data.status } as DraftPost | ArchivedPost);
   }

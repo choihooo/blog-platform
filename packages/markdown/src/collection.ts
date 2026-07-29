@@ -76,7 +76,7 @@ function referenceIssues(collection: ContentCollection): ValidationIssue[] {
     );
   }
 
-  // Cross-file checks belong here: individual files cannot know registered authors/taxonomy.
+  // 개별 파일은 등록된 작성자/분류 목록을 모르므로 cross-file 검증은 collection 단계에서 처리한다.
   for (const post of collection.posts) {
     if (post.author && !authorIds.has(post.author)) {
       issues.push(
@@ -102,8 +102,8 @@ function referenceIssues(collection: ContentCollection): ValidationIssue[] {
 }
 
 /**
- * Validates the full repository content set.
- * This is where references are checked because individual files cannot know the registry.
+ * repository 전체 콘텐츠 묶음을 검증한다.
+ * 파일 하나만으로는 registry를 알 수 없으므로 참조 검증은 여기서 수행한다.
  */
 export function validateContentCollection(
   input: ContentCollectionInput,
@@ -159,7 +159,7 @@ export function validateContentCollection(
   return issues.length > 0 ? fail(issues) : ok(collection);
 }
 
-/** Returns the only post state allowed to feed public pages and generated outputs. */
+/** 공개 페이지와 생성 산출물의 입력으로 허용되는 post만 반환한다. */
 export function getPublishedPosts(collection: ContentCollection): PublishedPost[] {
   return collection.posts.filter((post): post is PublishedPost => post.status === "published");
 }
