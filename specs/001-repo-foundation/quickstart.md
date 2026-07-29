@@ -2,13 +2,14 @@
 
 ## Prerequisites
 
-- Use the repository root.
-- Install the package manager expected by the workspace.
-- No GitHub credentials, database, object storage, analytics credentials, AI credentials, or content files are required for this phase.
+- repository root에서 실행한다.
+- workspace가 요구하는 package manager를 설치한다.
+- 이 phase에는 GitHub credential, database, object storage, analytics credential, AI credential,
+  content file이 필요하지 않다.
 
-## 1. Inspect Workspace Boundaries
+## 1. Workspace Boundary 확인
 
-Confirm the foundation contains:
+foundation이 다음 경계를 포함하는지 확인한다.
 
 ```text
 apps/blog
@@ -22,21 +23,21 @@ packages/ai
 docs
 ```
 
-Expected outcome: all required app, package, and documentation boundaries are present.
+Expected outcome: 모든 필수 app, package, documentation boundary가 존재한다.
 
-## 2. Install Dependencies
+## 2. Dependency 설치
 
-Run:
+실행:
 
 ```sh
 pnpm install
 ```
 
-Expected outcome: dependencies install from the repository root without requiring external product credentials.
+Expected outcome: external product credential 없이 repository root에서 dependency가 설치된다.
 
-## 3. Run Root Validation
+## 3. Root Validation 실행
 
-Run:
+실행:
 
 ```sh
 pnpm build
@@ -45,29 +46,32 @@ pnpm lint
 pnpm format:check
 ```
 
-Expected outcome: each command includes the relevant apps and packages and completes successfully for the foundation.
+Expected outcome: 각 command가 관련 app과 package를 포함하고 foundation 기준에서 성공한다.
 
-## 4. Start the Public Blog
+## 4. Public Blog 시작
 
-Run the documented development command for `apps/blog`.
+`apps/blog`에 대해 문서화된 development command를 실행한다.
 
-Expected outcome: the public blog initial page is reachable locally at `/` and does not require content files or GitHub credentials.
+Expected outcome: public blog initial page가 local `/`에서 접근 가능하며 content file이나
+GitHub credential을 요구하지 않는다.
 
-## 5. Start the CMS
+## 5. CMS 시작
 
-Run the documented development command for `apps/cms`.
+`apps/cms`에 대해 문서화된 development command를 실행한다.
 
-Expected outcome: the CMS initial page is reachable locally at `/` and does not require authentication setup or GitHub credentials for Phase 0 validation.
+Expected outcome: CMS initial page가 local `/`에서 접근 가능하며 Phase 0 validation에
+authentication setup 또는 GitHub credential을 요구하지 않는다.
 
-## 6. Verify MVP Scope
+## 6. MVP Scope 확인
 
-Confirm the foundation does not introduce:
+foundation이 다음 항목을 도입하지 않았는지 확인한다.
 
-- Database or object storage
-- Multi-user permissions
-- Scheduled publishing
+- database 또는 object storage
+- multi-user permission
+- scheduled publishing
 - AI content generation
-- Integrated analytics dashboard
-- Public comments, accounts, payments, newsletters, or localization
+- integrated analytics dashboard
+- public comment, account, payment, newsletter, localization
 
-Expected outcome: Phase 0 remains a foundation-only feature and is ready for task generation.
+Expected outcome: Phase 0은 foundation-only feature로 남고 task implementation을 시작할 준비가
+된다.

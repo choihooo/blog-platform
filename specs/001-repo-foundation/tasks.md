@@ -1,144 +1,154 @@
 # Tasks: Repo Foundation
 
-**Input**: Design documents from `/specs/001-repo-foundation/`
+**Input**: `/specs/001-repo-foundation/`의 design document
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/, quickstart.md
 
-**Tests**: No separate test-first workflow was requested. Validation is captured through root commands and local app startup tasks from quickstart.md.
+**Tests**: 별도 test-first workflow는 요청되지 않았다. validation은 quickstart.md의 root command와
+local app startup task로 수행한다.
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Organization**: 각 task는 사용자 스토리별로 묶어 독립 구현과 검증이 가능하게 한다.
 
-## Format: `[ID] [P?] [Story] Description`
+## Format: `[ID] [P?] [Story] 설명`
 
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (US1, US2, US3)
-- Include exact file paths in descriptions
+- **[P]**: 다른 파일을 다루며 미완료 task에 의존하지 않아 병렬 실행 가능
+- **[Story]**: task가 매핑되는 사용자 스토리(US1, US2, US3)
+- 설명에는 정확한 file path를 포함한다.
 
-## Phase 1: Setup (Shared Infrastructure)
+## Phase 1: Setup (공유 Infrastructure)
 
-**Purpose**: Initialize root workspace files and shared tooling needed by every story.
+**목적**: 모든 story가 사용하는 root workspace file과 shared tooling을 초기화한다.
 
-- [ ] T001 Create root workspace package metadata and scripts in `package.json`
-- [ ] T002 Create pnpm workspace package globs for apps and packages in `pnpm-workspace.yaml`
-- [ ] T003 Create Turborepo pipeline for build, typecheck, lint, format, and dev tasks in `turbo.json`
-- [ ] T004 [P] Create shared TypeScript base configuration in `tsconfig.base.json`
-- [ ] T005 [P] Create repository formatting configuration in `.prettierrc`
-- [ ] T006 [P] Create repository lint ignore patterns in `.eslintignore`
-- [ ] T007 [P] Create formatting ignore patterns in `.prettierignore`
+- [ ] T001 root workspace package metadata와 script를 `package.json`에 작성한다
+- [ ] T002 app과 package를 포함하는 pnpm workspace glob을 `pnpm-workspace.yaml`에 작성한다
+- [ ] T003 build, typecheck, lint, format, dev task를 위한 Turborepo pipeline을 `turbo.json`에 작성한다
+- [ ] T004 [P] shared TypeScript base configuration을 `tsconfig.base.json`에 작성한다
+- [ ] T005 [P] repository formatting configuration을 `.prettierrc`에 작성한다
+- [ ] T006 [P] repository lint ignore pattern을 `.eslintignore`에 작성한다
+- [ ] T007 [P] formatting ignore pattern을 `.prettierignore`에 작성한다
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Create the app/package directory skeletons and shared package metadata that all user stories depend on.
+**목적**: 모든 사용자 스토리가 의존하는 app/package directory skeleton과 shared package metadata를
+만든다.
 
-**CRITICAL**: No user story work can begin until this phase is complete.
+**CRITICAL**: 이 phase가 끝나기 전에는 사용자 스토리 작업을 시작하지 않는다.
 
-- [ ] T008 Create application directories `apps/blog` and `apps/cms`
-- [ ] T009 Create shared package directories `packages/editor`, `packages/markdown`, `packages/seo-engine`, `packages/design-system`, `packages/analytics`, and `packages/ai`
-- [ ] T010 [P] Create package metadata for editor package in `packages/editor/package.json`
-- [ ] T011 [P] Create package metadata for markdown package in `packages/markdown/package.json`
-- [ ] T012 [P] Create package metadata for seo-engine package in `packages/seo-engine/package.json`
-- [ ] T013 [P] Create package metadata for design-system package in `packages/design-system/package.json`
-- [ ] T014 [P] Create package metadata for analytics package in `packages/analytics/package.json`
-- [ ] T015 [P] Create package metadata for ai package in `packages/ai/package.json`
-- [ ] T016 [P] Create placeholder export for editor package in `packages/editor/src/index.ts`
-- [ ] T017 [P] Create placeholder export for markdown package in `packages/markdown/src/index.ts`
-- [ ] T018 [P] Create placeholder export for seo-engine package in `packages/seo-engine/src/index.ts`
-- [ ] T019 [P] Create placeholder export for design-system package in `packages/design-system/src/index.ts`
-- [ ] T020 [P] Create placeholder export for analytics package in `packages/analytics/src/index.ts`
-- [ ] T021 [P] Create placeholder export for ai package in `packages/ai/src/index.ts`
-- [ ] T022 Configure shared package TypeScript settings in `packages/editor/tsconfig.json`
-- [ ] T023 Configure shared package TypeScript settings in `packages/markdown/tsconfig.json`
-- [ ] T024 Configure shared package TypeScript settings in `packages/seo-engine/tsconfig.json`
-- [ ] T025 Configure shared package TypeScript settings in `packages/design-system/tsconfig.json`
-- [ ] T026 Configure shared package TypeScript settings in `packages/analytics/tsconfig.json`
-- [ ] T027 Configure shared package TypeScript settings in `packages/ai/tsconfig.json`
+- [ ] T008 application directory `apps/blog`와 `apps/cms`를 생성한다
+- [ ] T009 shared package directory `packages/editor`, `packages/markdown`, `packages/seo-engine`, `packages/design-system`, `packages/analytics`, `packages/ai`를 생성한다
+- [ ] T010 [P] editor package metadata를 `packages/editor/package.json`에 작성한다
+- [ ] T011 [P] markdown package metadata를 `packages/markdown/package.json`에 작성한다
+- [ ] T012 [P] seo-engine package metadata를 `packages/seo-engine/package.json`에 작성한다
+- [ ] T013 [P] design-system package metadata를 `packages/design-system/package.json`에 작성한다
+- [ ] T014 [P] analytics package metadata를 `packages/analytics/package.json`에 작성한다
+- [ ] T015 [P] ai package metadata를 `packages/ai/package.json`에 작성한다
+- [ ] T016 [P] editor package placeholder export를 `packages/editor/src/index.ts`에 작성한다
+- [ ] T017 [P] markdown package placeholder export를 `packages/markdown/src/index.ts`에 작성한다
+- [ ] T018 [P] seo-engine package placeholder export를 `packages/seo-engine/src/index.ts`에 작성한다
+- [ ] T019 [P] design-system package placeholder export를 `packages/design-system/src/index.ts`에 작성한다
+- [ ] T020 [P] analytics package placeholder export를 `packages/analytics/src/index.ts`에 작성한다
+- [ ] T021 [P] ai package placeholder export를 `packages/ai/src/index.ts`에 작성한다
+- [ ] T022 shared package TypeScript setting을 `packages/editor/tsconfig.json`에 작성한다
+- [ ] T023 shared package TypeScript setting을 `packages/markdown/tsconfig.json`에 작성한다
+- [ ] T024 shared package TypeScript setting을 `packages/seo-engine/tsconfig.json`에 작성한다
+- [ ] T025 shared package TypeScript setting을 `packages/design-system/tsconfig.json`에 작성한다
+- [ ] T026 shared package TypeScript setting을 `packages/analytics/tsconfig.json`에 작성한다
+- [ ] T027 shared package TypeScript setting을 `packages/ai/tsconfig.json`에 작성한다
 
-**Checkpoint**: Foundation directories, package metadata, and shared package exports are ready.
-
----
-
-## Phase 3: User Story 1 - Initialize Blog Platform Workspace (Priority: P1) MVP
-
-**Goal**: Provide a complete workspace foundation for the public blog, private CMS, shared packages, and documentation.
-
-**Independent Test**: Inspect the repository structure and run the root validation workflow from the repository root.
-
-### Implementation for User Story 1
-
-- [ ] T028 [US1] Add root install, build, typecheck, lint, format:check, and dev command scripts in `package.json`
-- [ ] T029 [US1] Add workspace package names and dependency references for both apps and shared packages in `package.json`
-- [ ] T030 [US1] Configure build task dependencies and outputs for all workspaces in `turbo.json`
-- [ ] T031 [US1] Configure type checking to include application and package workspaces in `turbo.json`
-- [ ] T032 [US1] Configure linting and formatting checks to include application and package workspaces in `turbo.json`
-- [ ] T033 [US1] Verify existing documentation remains in `docs/blog-platform-spec.md`
-- [ ] T034 [US1] Verify existing roadmap remains in `docs/implementation-roadmap.md`
-- [ ] T035 [US1] Document root workspace validation expectations in `README.md`
-
-**Checkpoint**: User Story 1 is complete when the required boundaries are discoverable and root validation commands are documented.
+**Checkpoint**: foundation directory, package metadata, shared package export가 준비된다.
 
 ---
 
-## Phase 4: User Story 2 - Run Both Initial Applications Locally (Priority: P2)
+## Phase 3: 사용자 스토리 1 - 블로그 플랫폼 workspace 초기화 (Priority: P1) MVP
 
-**Goal**: Make the public blog and private CMS applications locally runnable as separate initial experiences.
+**Goal**: 공개 블로그, 비공개 CMS, 공유 package, 문서를 포함한 완전한 workspace foundation을
+제공한다.
 
-**Independent Test**: Start each app locally and confirm each app exposes its own initial page without depending on unfinished content, CMS, or publishing features.
+**Independent Test**: repository 구조를 확인하고 repository root에서 root validation workflow를
+실행한다.
 
-### Implementation for User Story 2
+### 사용자 스토리 1 구현
 
-- [ ] T036 [P] [US2] Create blog app package metadata and scripts in `apps/blog/package.json`
-- [ ] T037 [P] [US2] Create CMS app package metadata and scripts in `apps/cms/package.json`
-- [ ] T038 [P] [US2] Create blog app TypeScript configuration in `apps/blog/tsconfig.json`
-- [ ] T039 [P] [US2] Create CMS app TypeScript configuration in `apps/cms/tsconfig.json`
-- [ ] T040 [P] [US2] Create blog app framework configuration in `apps/blog/next.config.mjs`
-- [ ] T041 [P] [US2] Create CMS app framework configuration in `apps/cms/next.config.mjs`
-- [ ] T042 [P] [US2] Create blog app root layout in `apps/blog/app/layout.tsx`
-- [ ] T043 [P] [US2] Create CMS app root layout in `apps/cms/app/layout.tsx`
-- [ ] T044 [P] [US2] Create initial public blog page in `apps/blog/app/page.tsx`
-- [ ] T045 [P] [US2] Create initial CMS page in `apps/cms/app/page.tsx`
-- [ ] T046 [US2] Add app-specific local development command documentation in `README.md`
+- [ ] T028 [US1] root install, build, typecheck, lint, format:check, dev command script를 `package.json`에 작성한다
+- [ ] T029 [US1] 두 app과 shared package의 workspace package name 및 dependency reference를 `package.json`에 작성한다
+- [ ] T030 [US1] 모든 workspace의 build task dependency와 output을 `turbo.json`에 작성한다
+- [ ] T031 [US1] application과 package workspace를 포함하는 type checking 설정을 `turbo.json`에 작성한다
+- [ ] T032 [US1] application과 package workspace를 포함하는 linting 및 formatting check 설정을 `turbo.json`에 작성한다
+- [ ] T033 [US1] 기존 documentation이 `docs/blog-platform-spec.md`에 남아 있는지 확인한다
+- [ ] T034 [US1] 기존 roadmap이 `docs/implementation-roadmap.md`에 남아 있는지 확인한다
+- [ ] T035 [US1] root workspace validation expectation을 `README.md`에 문서화한다
 
-**Checkpoint**: User Story 2 is complete when both app shells can be started and reached locally.
+**Checkpoint**: 필수 boundary를 발견할 수 있고 root validation command가 문서화되면 US1이
+완료된다.
 
 ---
 
-## Phase 5: User Story 3 - Prepare Shared Package Ownership (Priority: P3)
+## Phase 4: 사용자 스토리 2 - 초기 app 두 개를 로컬에서 실행 (Priority: P2)
 
-**Goal**: Ensure each shared package has clear ownership and can participate in root validation without duplicating future domain logic in apps.
+**Goal**: 공개 블로그와 비공개 CMS application을 서로 분리된 initial experience로 locally
+runnable하게 만든다.
 
-**Independent Test**: Confirm each shared package has a discoverable package boundary and participates in the root validation workflow.
+**Independent Test**: 각 app을 로컬에서 시작하고 unfinished content, CMS, publishing feature에
+의존하지 않는 초기 page가 노출되는지 확인한다.
 
-### Implementation for User Story 3
+### 사용자 스토리 2 구현
 
-- [ ] T047 [P] [US3] Document editor package ownership in `packages/editor/README.md`
-- [ ] T048 [P] [US3] Document markdown package ownership in `packages/markdown/README.md`
-- [ ] T049 [P] [US3] Document seo-engine package ownership in `packages/seo-engine/README.md`
-- [ ] T050 [P] [US3] Document design-system package ownership in `packages/design-system/README.md`
-- [ ] T051 [P] [US3] Document analytics package ownership in `packages/analytics/README.md`
-- [ ] T052 [P] [US3] Document ai package ownership in `packages/ai/README.md`
-- [ ] T053 [US3] Add shared package ownership summary to `README.md`
-- [ ] T054 [US3] Confirm shared package scripts participate in root validation through `package.json`
+- [ ] T036 [P] [US2] blog app package metadata와 script를 `apps/blog/package.json`에 작성한다
+- [ ] T037 [P] [US2] CMS app package metadata와 script를 `apps/cms/package.json`에 작성한다
+- [ ] T038 [P] [US2] blog app TypeScript configuration을 `apps/blog/tsconfig.json`에 작성한다
+- [ ] T039 [P] [US2] CMS app TypeScript configuration을 `apps/cms/tsconfig.json`에 작성한다
+- [ ] T040 [P] [US2] blog app framework configuration을 `apps/blog/next.config.mjs`에 작성한다
+- [ ] T041 [P] [US2] CMS app framework configuration을 `apps/cms/next.config.mjs`에 작성한다
+- [ ] T042 [P] [US2] blog app root layout을 `apps/blog/app/layout.tsx`에 작성한다
+- [ ] T043 [P] [US2] CMS app root layout을 `apps/cms/app/layout.tsx`에 작성한다
+- [ ] T044 [P] [US2] initial public blog page를 `apps/blog/app/page.tsx`에 작성한다
+- [ ] T045 [P] [US2] initial CMS page를 `apps/cms/app/page.tsx`에 작성한다
+- [ ] T046 [US2] app-specific local development command를 `README.md`에 문서화한다
 
-**Checkpoint**: User Story 3 is complete when all shared packages are discoverable, documented, and included in validation.
+**Checkpoint**: 두 app shell을 시작하고 로컬에서 접근할 수 있으면 US2가 완료된다.
+
+---
+
+## Phase 5: 사용자 스토리 3 - 공유 package 소유권 준비 (Priority: P3)
+
+**Goal**: 각 shared package가 명확한 ownership을 가지고 root validation에 참여하게 하며, 향후
+domain logic이 app 사이에서 중복되지 않게 한다.
+
+**Independent Test**: 각 shared package가 발견 가능한 package boundary를 가지고 root validation
+workflow에 참여하는지 확인한다.
+
+### 사용자 스토리 3 구현
+
+- [ ] T047 [P] [US3] editor package ownership을 `packages/editor/README.md`에 문서화한다
+- [ ] T048 [P] [US3] markdown package ownership을 `packages/markdown/README.md`에 문서화한다
+- [ ] T049 [P] [US3] seo-engine package ownership을 `packages/seo-engine/README.md`에 문서화한다
+- [ ] T050 [P] [US3] design-system package ownership을 `packages/design-system/README.md`에 문서화한다
+- [ ] T051 [P] [US3] analytics package ownership을 `packages/analytics/README.md`에 문서화한다
+- [ ] T052 [P] [US3] ai package ownership을 `packages/ai/README.md`에 문서화한다
+- [ ] T053 [US3] shared package ownership summary를 `README.md`에 추가한다
+- [ ] T054 [US3] shared package script가 root validation에 참여하는지 `package.json` 기준으로 확인한다
+
+**Checkpoint**: 모든 shared package가 discoverable하고 documented되어 있으며 validation에 포함되면
+US3이 완료된다.
 
 ---
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-**Purpose**: Validate the completed foundation and remove accidental MVP scope drift.
+**목적**: 완료된 foundation을 검증하고 MVP scope drift가 없는지 확인한다.
 
-- [ ] T055 [P] Run workspace boundary inspection from `specs/001-repo-foundation/quickstart.md`
-- [ ] T056 Run dependency installation validation with `pnpm install`
-- [ ] T057 Run root build validation with `pnpm build`
-- [ ] T058 Run root type validation with `pnpm typecheck`
-- [ ] T059 Run root lint validation with `pnpm lint`
-- [ ] T060 Run root format validation with `pnpm format:check`
-- [ ] T061 [P] Verify the public blog route contract from `specs/001-repo-foundation/contracts/app-routes.md`
-- [ ] T062 [P] Verify the CMS route contract from `specs/001-repo-foundation/contracts/app-routes.md`
-- [ ] T063 Verify no prohibited MVP features were introduced against `.specify/memory/constitution.md`
-- [ ] T064 Update implementation notes and validation results in `README.md`
+- [ ] T055 [P] workspace boundary inspection을 `specs/001-repo-foundation/quickstart.md` 기준으로 실행한다
+- [ ] T056 dependency installation validation을 `pnpm install`로 실행한다
+- [ ] T057 root build validation을 `pnpm build`로 실행한다
+- [ ] T058 root type validation을 `pnpm typecheck`로 실행한다
+- [ ] T059 root lint validation을 `pnpm lint`로 실행한다
+- [ ] T060 root format validation을 `pnpm format:check`로 실행한다
+- [ ] T061 [P] public blog route contract를 `specs/001-repo-foundation/contracts/app-routes.md` 기준으로 검증한다
+- [ ] T062 [P] CMS route contract를 `specs/001-repo-foundation/contracts/app-routes.md` 기준으로 검증한다
+- [ ] T063 금지된 MVP feature가 도입되지 않았는지 `.specify/memory/constitution.md` 기준으로 확인한다
+- [ ] T064 implementation note와 validation result를 `README.md`에 업데이트한다
 
 ---
 
@@ -146,51 +156,55 @@
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: No dependencies; can start immediately.
-- **Foundational (Phase 2)**: Depends on Phase 1 completion; blocks all user story phases.
-- **User Story 1 (Phase 3)**: Depends on Phase 2 completion.
-- **User Story 2 (Phase 4)**: Depends on Phase 2 completion; can run in parallel with User Story 1 after foundation exists.
-- **User Story 3 (Phase 5)**: Depends on Phase 2 completion; can run in parallel with User Story 1 or 2 after foundation exists.
-- **Polish (Phase 6)**: Depends on completion of the desired user stories.
+- **Setup (Phase 1)**: dependency 없음. 즉시 시작할 수 있다.
+- **Foundational (Phase 2)**: Phase 1 완료에 의존하며 모든 사용자 스토리를 block한다.
+- **User Story 1 (Phase 3)**: Phase 2 완료에 의존한다.
+- **User Story 2 (Phase 4)**: Phase 2 완료에 의존하며, foundation 이후 US1과 병렬 진행할 수
+  있다.
+- **User Story 3 (Phase 5)**: Phase 2 완료에 의존하며, foundation 이후 US1 또는 US2와 병렬
+  진행할 수 있다.
+- **Polish (Phase 6)**: 원하는 사용자 스토리 완료에 의존한다.
 
 ### User Story Dependencies
 
-- **User Story 1 (P1)**: No dependency on other user stories after foundational setup.
-- **User Story 2 (P2)**: No dependency on User Story 1 after foundational setup, but final README documentation should be reconciled if both are implemented together.
-- **User Story 3 (P3)**: No dependency on User Story 1 or 2 after foundational setup, but final README documentation should be reconciled if stories are implemented together.
+- **User Story 1 (P1)**: foundational setup 이후 다른 사용자 스토리에 의존하지 않는다.
+- **User Story 2 (P2)**: foundational setup 이후 US1에 의존하지 않는다. 함께 구현하는 경우
+  final README documentation은 reconcile해야 한다.
+- **User Story 3 (P3)**: foundational setup 이후 US1 또는 US2에 의존하지 않는다. 함께 구현하는
+  경우 final README documentation은 reconcile해야 한다.
 
 ### Parallel Opportunities
 
-- T004-T007 can run in parallel after T001-T003 are understood.
-- T010-T021 can run in parallel after T009 creates package directories.
-- T036-T045 can run in parallel by app-specific file because blog and CMS files are independent.
-- T047-T052 can run in parallel because each package README is independent.
-- T061 and T062 can run in parallel because blog and CMS route validation are independent.
+- T004-T007은 T001-T003을 이해한 뒤 병렬 실행 가능하다.
+- T010-T021은 T009가 package directory를 만든 뒤 병렬 실행 가능하다.
+- T036-T045는 blog와 CMS file이 독립적이므로 app별로 병렬 실행 가능하다.
+- T047-T052는 각 package README가 독립적이므로 병렬 실행 가능하다.
+- T061과 T062는 blog와 CMS route validation이 독립적이므로 병렬 실행 가능하다.
 
 ---
 
-## Parallel Example: User Story 2
+## Parallel Example: 사용자 스토리 2
 
 ```text
-Task: "Create blog app package metadata and scripts in apps/blog/package.json"
-Task: "Create CMS app package metadata and scripts in apps/cms/package.json"
-Task: "Create blog app root layout in apps/blog/app/layout.tsx"
-Task: "Create CMS app root layout in apps/cms/app/layout.tsx"
-Task: "Create initial public blog page in apps/blog/app/page.tsx"
-Task: "Create initial CMS page in apps/cms/app/page.tsx"
+Task: "blog app package metadata와 script를 apps/blog/package.json에 작성한다"
+Task: "CMS app package metadata와 script를 apps/cms/package.json에 작성한다"
+Task: "blog app root layout을 apps/blog/app/layout.tsx에 작성한다"
+Task: "CMS app root layout을 apps/cms/app/layout.tsx에 작성한다"
+Task: "initial public blog page를 apps/blog/app/page.tsx에 작성한다"
+Task: "initial CMS page를 apps/cms/app/page.tsx에 작성한다"
 ```
 
 ---
 
-## Parallel Example: User Story 3
+## Parallel Example: 사용자 스토리 3
 
 ```text
-Task: "Document editor package ownership in packages/editor/README.md"
-Task: "Document markdown package ownership in packages/markdown/README.md"
-Task: "Document seo-engine package ownership in packages/seo-engine/README.md"
-Task: "Document design-system package ownership in packages/design-system/README.md"
-Task: "Document analytics package ownership in packages/analytics/README.md"
-Task: "Document ai package ownership in packages/ai/README.md"
+Task: "editor package ownership을 packages/editor/README.md에 문서화한다"
+Task: "markdown package ownership을 packages/markdown/README.md에 문서화한다"
+Task: "seo-engine package ownership을 packages/seo-engine/README.md에 문서화한다"
+Task: "design-system package ownership을 packages/design-system/README.md에 문서화한다"
+Task: "analytics package ownership을 packages/analytics/README.md에 문서화한다"
+Task: "ai package ownership을 packages/ai/README.md에 문서화한다"
 ```
 
 ---
@@ -199,29 +213,32 @@ Task: "Document ai package ownership in packages/ai/README.md"
 
 ### MVP First (User Story 1 Only)
 
-1. Complete Phase 1 setup.
-2. Complete Phase 2 foundational directories and package metadata.
-3. Complete Phase 3 User Story 1.
-4. Stop and validate repository boundaries and root command documentation.
+1. Phase 1 setup을 완료한다.
+2. Phase 2 foundational directory와 package metadata를 완료한다.
+3. Phase 3 User Story 1을 완료한다.
+4. 멈추고 repository boundary 및 root command documentation을 검증한다.
 
 ### Incremental Delivery
 
-1. Complete Setup and Foundational phases.
-2. Deliver User Story 1 to establish workspace boundaries.
-3. Deliver User Story 2 to prove local app shells run independently.
-4. Deliver User Story 3 to document shared package ownership and validation participation.
-5. Run Phase 6 quickstart and constitution checks.
+1. Setup과 Foundational phase를 완료한다.
+2. User Story 1을 delivery해 workspace boundary를 확립한다.
+3. User Story 2를 delivery해 local app shell이 독립 실행됨을 증명한다.
+4. User Story 3을 delivery해 shared package ownership과 validation participation을 문서화한다.
+5. Phase 6 quickstart와 constitution check를 실행한다.
 
 ### Parallel Team Strategy
 
-After Phase 2:
+Phase 2 이후:
 
-- Developer A: User Story 1 root workspace validation and documentation.
-- Developer B: User Story 2 blog and CMS app shells.
-- Developer C: User Story 3 shared package ownership README files.
+- Developer A: User Story 1 root workspace validation과 documentation.
+- Developer B: User Story 2 blog 및 CMS app shell.
+- Developer C: User Story 3 shared package ownership README.
 
 ## Notes
 
-- Every task uses the required checkbox, task ID, optional `[P]`, story label where required, and explicit file path format.
-- Tasks avoid database, object storage, auth, publishing, AI generation, analytics dashboard, comments, accounts, payments, newsletters, and localization.
-- Tests are not generated as separate tasks because the feature specification did not request a TDD workflow; validation is handled through quickstart and root command tasks.
+- 모든 task는 checkbox, task ID, optional `[P]`, 필요한 story label, explicit file path format을
+  따른다.
+- task는 database, object storage, auth, publishing, AI generation, analytics dashboard, comments,
+  accounts, payments, newsletters, localization을 피한다.
+- feature specification이 TDD workflow를 요청하지 않았으므로 별도 test task는 만들지 않았다.
+  validation은 quickstart와 root command task로 처리한다.
