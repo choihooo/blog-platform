@@ -111,8 +111,8 @@ Confirm during implementation review:
 2026-07-30 구현 기준:
 
 - `packages/editor`는 supported editor document와 MDX round-trip helper를 제공한다.
-- CMS editor 화면은 native textarea 기반 MVP로 구현되었고, Tiptap 기반 rich toolbar execution은 후속
-  refinement로 남긴다.
+- CMS editor 화면은 Tiptap contenteditable surface 기반 MVP로 구현되었고, toolbar command는 Tiptap
+  command chain을 실행한다.
 - 저장은 기존 protected content operation과 local content adapter를 통해 create draft/save draft를
   수행한다.
 - Local draft backup helper는 30일 TTL과 restore candidate 판단을 제공한다.

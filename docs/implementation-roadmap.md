@@ -474,8 +474,8 @@ MVP 허용 노드:
 - `packages/editor`가 editor document model, supported format, validation, MDX load/serialize,
   round-trip, preview analysis를 제공한다.
 - CMS Posts 화면은 repository post list, `/posts/new`, `/posts/[slug]` editor route를 제공한다.
-- Editor UI는 MVP 범위에서 native textarea, toolbar affordance, frontmatter panel, preview panel,
-  save status, recovery banner를 제공한다.
+- Editor UI는 MVP 범위에서 Tiptap contenteditable surface, toolbar commands, frontmatter panel,
+  preview panel, save status, recovery banner를 제공한다.
 - 저장은 기존 content adapter와 mutation guard를 통해 create draft/save draft를 수행하고 stale SHA와
   auth failure를 보존 가능한 실패 상태로 mapping한다.
 - local draft backup helper는 30일 TTL, restore candidate 판단, save cleanup을 제공한다.

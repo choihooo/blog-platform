@@ -9,6 +9,6 @@ MVP supported format:
   reference, code block
 - Marks: bold, italic, link, inline code
 
-Tiptap 의존성은 editor phase dependency로 준비되어 있지만 현재 구현은 repository-compatible MDX
-저장을 먼저 보장하기 위해 native document model과 serializer를 사용한다. 미지원 import/export, JSX,
-unsafe HTML, event handler, runtime expression은 편집 가능 상태로 자동 변환하지 않는다.
+CMS UI는 Tiptap contenteditable surface를 사용하고, 저장 경계는 repository-compatible MDX를 보장하기
+위해 이 package의 native document model과 serializer를 통과한다. 미지원 import/export, JSX, unsafe
+HTML, event handler, runtime expression은 편집 가능 상태로 자동 변환하지 않는다.

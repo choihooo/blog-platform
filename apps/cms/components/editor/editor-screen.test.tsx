@@ -16,7 +16,7 @@ describe("EditorScreen", () => {
     doc.body = [{ type: "heading", depth: 2, text: "Intro" }];
     render(createElement(EditorScreen, { initialDocument: doc }));
     expect(screen.getByRole("heading", { name: "Editor" })).toBeTruthy();
-    expect(screen.getByRole("textbox", { name: "Post body" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Post body" }).tagName).not.toBe("TEXTAREA");
     expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
     expect(screen.getByLabelText("Title")).toBeTruthy();
     expect(screen.getAllByText(/headings/).length).toBeGreaterThan(0);

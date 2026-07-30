@@ -1,7 +1,11 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import type { EditorDocument, EditorNode } from "@blog-platform/editor";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
+import StarterKit from "@tiptap/starter-kit";
+import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
+import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
 
 import { saveEditorDraftAction } from "../../app/actions/editor-actions";
 import { clearBackup, writeBackup } from "../../lib/editor/draft-backup";
@@ -11,36 +15,180 @@ import { PreviewPanel } from "./preview-panel";
 import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 
-function nodesToText(nodes: EditorNode[]) {
-  return nodes
-    .map((node) => {
-      if (node.type === "horizontalRule") return "---";
-      if (node.type === "image") return `![${node.alt ?? ""}](${node.src})`;
-      return "text" in node ? node.text : "";
-    })
-    .join("\n\n");
+function textContent(node: JSONContent): string {
+  return (node.content ?? []).map((child) => child.text ?? textContent(child)).join("");
+}
+
+function marksFromTiptap(node: JSONContent): EditorMark[] | undefined {
+  const marks: EditorMark[] = [];
+  for (const mark of node.marks ?? []) {
+    if (mark.type === "bold") marks.push("bold");
+    if (mark.type === "italic") marks.push("italic");
+    if (mark.type === "code") marks.push("inlineCode");
+  }
+  return marks.length > 0 ? marks : undefined;
+}
+
+function firstLink(node: JSONContent): string | undefined {
+  const link = node.marks?.find((mark) => mark.type === "link");
+  return typeof link?.attrs?.href === "string" ? link.attrs.href : undefined;
+}
+
+function paragraphNode(type: Extract<EditorNode, { text: string }>["type"], node: JSONContent) {
+  const firstText = node.content?.find((child) => child.type === "text");
+  return {
+    type,
+    text: textContent(node),
+    marks: firstText ? marksFromTiptap(firstText) : undefined,
+    href: firstText ? firstLink(firstText) : undefined,
+  };
+}
+
+function tiptapToNodes(content: JSONContent): EditorNode[] {
+  const nodes: EditorNode[] = [];
+  for (const node of content.content ?? []) {
+    if (node.type === "heading") {
+      nodes.push({ ...paragraphNode("heading", node), depth: Number(node.attrs?.level ?? 2) });
+    } else if (node.type === "paragraph") {
+      const text = textContent(node);
+      if (text) nodes.push(paragraphNode("paragraph", node));
+    } else if (node.type === "blockquote") {
+      nodes.push({ type: "blockquote", text: textContent(node) });
+    } else if (node.type === "horizontalRule") {
+      nodes.push({ type: "horizontalRule" });
+    } else if (node.type === "codeBlock") {
+      nodes.push({
+        type: "codeBlock",
+        text: textContent(node),
+        language: typeof node.attrs?.language === "string" ? node.attrs.language : undefined,
+      });
+    } else if (node.type === "image" && typeof node.attrs?.src === "string") {
+      nodes.push({
+        type: "image",
+        src: node.attrs.src,
+        alt: typeof node.attrs.alt === "string" ? node.attrs.alt : undefined,
+        title: typeof node.attrs.title === "string" ? node.attrs.title : undefined,
+      });
+    } else if (node.type === "bulletList" || node.type === "orderedList") {
+      for (const item of node.content ?? []) {
+        nodes.push({
+          type: node.type,
+          text: textContent(item),
+        });
+      }
+    }
+  }
+  return nodes;
+}
+
+function textMarks(node: Extract<EditorNode, { text: string }>) {
+  const marks: JSONContent["marks"] = [];
+  for (const mark of node.marks ?? []) {
+    if (mark === "bold") marks.push({ type: "bold" });
+    if (mark === "italic") marks.push({ type: "italic" });
+    if (mark === "inlineCode") marks.push({ type: "code" });
+  }
+  if (node.href) marks.push({ type: "link", attrs: { href: node.href } });
+  return marks.length > 0 ? marks : undefined;
+}
+
+function textChild(node: Extract<EditorNode, { text: string }>): JSONContent {
+  return { type: "text", text: node.text, marks: textMarks(node) };
+}
+
+function nodesToTiptap(nodes: EditorNode[]): JSONContent {
+  return {
+    type: "doc",
+    content:
+      nodes.length > 0
+        ? nodes.map((node): JSONContent => {
+            if (node.type === "horizontalRule") return { type: "horizontalRule" };
+            if (node.type === "image") {
+              return {
+                type: "image",
+                attrs: { src: node.src, alt: node.alt ?? "", title: node.title ?? null },
+              };
+            }
+            if (node.type === "heading") {
+              return {
+                type: "heading",
+                attrs: { level: node.depth ?? 2 },
+                content: node.text ? [textChild(node)] : undefined,
+              };
+            }
+            if (node.type === "bulletList" || node.type === "orderedList") {
+              return {
+                type: node.type,
+                content: [
+                  {
+                    type: "listItem",
+                    content: [{ type: "paragraph", content: node.text ? [textChild(node)] : [] }],
+                  },
+                ],
+              };
+            }
+            if (node.type === "blockquote") {
+              return {
+                type: "blockquote",
+                content: [{ type: "paragraph", content: node.text ? [textChild(node)] : [] }],
+              };
+            }
+            if (node.type === "codeBlock") {
+              return {
+                type: "codeBlock",
+                attrs: { language: node.language ?? null },
+                content: node.text ? [{ type: "text", text: node.text }] : undefined,
+              };
+            }
+            return { type: "paragraph", content: node.text ? [textChild(node)] : [] };
+          })
+        : [{ type: "paragraph" }],
+  };
 }
 
 export function EditorScreen({ initialDocument }: { initialDocument: EditorDocument }) {
   const [document, setDocument] = useState(initialDocument);
-  const [body, setBody] = useState(nodesToText(initialDocument.body));
+  const documentRef = useRef(initialDocument);
+  const [body, setBody] = useState(initialDocument.body);
   const [status, setStatus] = useState<SaveStatus>(
     initialDocument.frontmatter.title ? "clean" : "validation",
   );
   const [message, setMessage] = useState<string>();
   const [isPending, startTransition] = useTransition();
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link.configure({ openOnClick: false }),
+      Image.configure({ allowBase64: false }),
+    ],
+    content: nodesToTiptap(initialDocument.body),
+    immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        "aria-label": "Post body",
+        class:
+          "min-h-[420px] px-4 py-3 text-sm leading-6 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        role: "textbox",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      markDirty(documentRef.current, tiptapToNodes(editor.getJSON()));
+    },
+  });
 
-  const previewDocument = useMemo(
-    () => ({ ...document, body: body ? [{ type: "paragraph" as const, text: body }] : [] }),
-    [body, document],
-  );
+  useEffect(() => {
+    documentRef.current = document;
+  }, [document]);
 
-  function markDirty(next: EditorDocument, nextBody = body) {
+  const previewDocument = useMemo(() => ({ ...document, body }), [body, document]);
+
+  function markDirty(next: EditorDocument, nextBody: EditorNode[] = body) {
     const dirty = {
       ...next,
-      body: nextBody ? [{ type: "paragraph" as const, text: nextBody }] : [],
+      body: nextBody,
       dirty: true,
     };
+    documentRef.current = dirty;
     setDocument(dirty);
     setStatus(dirty.frontmatter.title.trim() ? "dirty" : "validation");
     if (typeof window !== "undefined" && typeof window.localStorage?.setItem === "function") {
@@ -51,7 +199,7 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
   function save() {
     const submitted = {
       ...document,
-      body: body ? [{ type: "paragraph" as const, text: body }] : [],
+      body: editor ? tiptapToNodes(editor.getJSON()) : body,
     };
     setStatus("pending");
     startTransition(() => {
@@ -64,6 +212,7 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
             dirty: false,
             lastSavedAt: new Date().toISOString(),
           };
+          documentRef.current = saved;
           setDocument(saved);
           setStatus("saved");
           setMessage(undefined);
@@ -89,18 +238,14 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
         <h2 className="text-lg font-semibold">Editor</h2>
         <SaveStatusBadge status={isPending ? "pending" : status} />
       </div>
-      <EditorToolbar onSave={save} saveDisabled={!document.frontmatter.title.trim() || isPending} />
+      <EditorToolbar
+        editor={editor}
+        onSave={save}
+        saveDisabled={!document.frontmatter.title.trim() || isPending}
+      />
       <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
         <main className="min-w-0">
-          <textarea
-            aria-label="Post body"
-            className="min-h-[420px] w-full resize-y bg-background p-4 font-mono text-sm leading-6 outline-none"
-            value={body}
-            onChange={(event) => {
-              setBody(event.currentTarget.value);
-              markDirty(document, event.currentTarget.value);
-            }}
-          />
+          <EditorContent editor={editor} />
           <PreviewPanel document={previewDocument} />
         </main>
         <FrontmatterPanel
