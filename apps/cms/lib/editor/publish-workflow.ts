@@ -69,7 +69,10 @@ export type PublicationResult =
       document?: EditorDocument;
     };
 
-type PublishAdapter = Pick<ContentAdapter, "createFile" | "updateFile" | "listFiles" | "readFile"> & {
+type PublishAdapter = Pick<
+  ContentAdapter,
+  "createFile" | "updateFile" | "listFiles" | "readFile"
+> & {
   deleteFile?: ContentAdapter["deleteFile"];
 };
 

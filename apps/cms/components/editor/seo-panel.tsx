@@ -42,7 +42,10 @@ export function SeoPanel({ report, links }: Props) {
           <h4 className="text-xs font-semibold tracking-wide text-foreground">Analytics Links</h4>
           <div className="space-y-1.5 text-sm">
             {links?.publicPostUrl ? (
-              <a href={links.publicPostUrl} className="block text-blue-600 underline-offset-4 hover:underline">
+              <a
+                href={links.publicPostUrl}
+                className="block text-blue-600 underline-offset-4 hover:underline"
+              >
                 Open public post
               </a>
             ) : null}

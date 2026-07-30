@@ -34,9 +34,7 @@ export function CmsHomePageView({
           ].map((item) => (
             <div className="bg-card px-5 py-6" key={item.label}>
               <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
-              <p className="mt-3 font-mono text-4xl font-semibold tabular-nums">
-                {item.value}
-              </p>
+              <p className="mt-3 font-mono text-4xl font-semibold tabular-nums">{item.value}</p>
               <p className="mt-2 text-xs text-muted-foreground">{item.detail}</p>
             </div>
           ))}
@@ -49,7 +47,10 @@ export function CmsHomePageView({
                 <p className="text-xs font-medium text-muted-foreground">Recently opened</p>
                 <h3 className="mt-1 text-xl font-semibold">최근 글</h3>
               </div>
-              <a className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline" href="/posts">
+              <a
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                href="/posts"
+              >
                 전체 보기
               </a>
             </div>

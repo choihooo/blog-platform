@@ -134,13 +134,15 @@ export async function saveEditorDraft(
       content: serialized.source,
       intent: "create-draft",
     });
-    if (!createResult.success) return failureResult(nextDocument, createResult.error, serialized.source);
+    if (!createResult.success)
+      return failureResult(nextDocument, createResult.error, serialized.source);
     const deleteResult = await adapter.deleteFile({
       path: document.path,
       expectedSha: document.sourceSha,
       intent: "delete-file",
     });
-    if (!deleteResult.success) return failureResult(nextDocument, deleteResult.error, serialized.source);
+    if (!deleteResult.success)
+      return failureResult(nextDocument, deleteResult.error, serialized.source);
     return {
       ok: true,
       path: createResult.data.path,
