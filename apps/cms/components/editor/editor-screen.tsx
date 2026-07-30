@@ -167,6 +167,13 @@ function slugCandidate(document: EditorDocument): string {
   return document.frontmatter.slug || titleSlug || document.id;
 }
 
+function savedMetadata(document: EditorDocument) {
+  const slug = slugCandidate(document);
+  const updatedAt = document.frontmatter.updatedAt ?? document.lastSavedAt;
+  if (!updatedAt) return `/${slug}`;
+  return `/${slug} · ${new Date(updatedAt).toLocaleString()}`;
+}
+
 export function EditorScreen({
   initialDocument,
   siteAnalytics,
@@ -244,12 +251,18 @@ export function EditorScreen({
     startTransition(() => {
       void saveEditorDraftAction(submitted).then((result) => {
         if (result.ok) {
+          const updatedAt = result.updatedAt ?? new Date().toISOString();
           const saved = {
             ...submitted,
             path: result.path,
             sourceSha: result.sha,
+            frontmatter: {
+              ...submitted.frontmatter,
+              slug: result.slug ?? slugCandidate(submitted),
+              updatedAt,
+            },
             dirty: false,
-            lastSavedAt: new Date().toISOString(),
+            lastSavedAt: updatedAt,
           };
           documentRef.current = saved;
           setDocument(saved);
@@ -398,7 +411,12 @@ export function EditorScreen({
       />
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <h2 className="text-lg font-semibold">Editor</h2>
-        <SaveStatusBadge status={isPending ? "pending" : status} />
+        <div className="flex min-w-0 items-center gap-3">
+          <p className="hidden max-w-[42vw] truncate text-xs text-muted-foreground sm:block">
+            {savedMetadata(document)}
+          </p>
+          <SaveStatusBadge status={isPending ? "pending" : status} />
+        </div>
       </div>
       <EditorToolbar
         editor={editor}

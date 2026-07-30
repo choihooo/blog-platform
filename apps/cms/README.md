@@ -23,6 +23,11 @@
 
 - `PREVIEW_TOKEN_SECRET`: CMS가 draft preview URL을 발급할 때 사용하는 HMAC secret이다. Blog app에도
   같은 값이 설정되어야 한다.
+- `BLOG_DEPLOY_HOOK_URL` 또는 `VERCEL_DEPLOY_HOOK_URL`: publish/unpublish/archive 이후 공개 블로그
+  Vercel 배포를 다시 트리거한다. 파일 기반 content 운영에서는 이 방식을 권장한다.
+- `BLOG_REVALIDATE_URL`, `BLOG_REVALIDATE_SECRET`: 공개 블로그의 `/api/revalidate`를 직접 호출해
+  대상 path를 revalidate한다. 이미 배포된 파일을 다시 검증하는 용도이며, 새 repository commit을
+  배포에 포함하려면 deploy hook 또는 Git 연동 자동 배포가 필요하다.
 - `GITHUB_APP_ID`, `GITHUB_INSTALLATION_ID`, `GITHUB_APP_PRIVATE_KEY`: GitHub App installation token
   발급에 필요한 값이다. 누락, invalid private key, unauthorized, rate limit 응답은 repository
   failure로 정규화된다.

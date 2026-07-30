@@ -31,7 +31,15 @@ type SaveErrorCode =
   | "unknown";
 
 export type SaveEditorDraftResult =
-  | { ok: true; path: string; sha: string; commitId?: string; backupCleared: true }
+  | {
+      ok: true;
+      path: string;
+      sha: string;
+      commitId?: string;
+      backupCleared: true;
+      slug?: string;
+      updatedAt?: string;
+    }
   | {
       ok: false;
       code: SaveErrorCode;
@@ -143,12 +151,15 @@ export async function saveEditorDraft(
     });
     if (!deleteResult.success)
       return failureResult(nextDocument, deleteResult.error, serialized.source);
+    const updatedAt = new Date().toISOString();
     return {
       ok: true,
       path: createResult.data.path,
       sha: createResult.data.sha ?? "",
       commitId: createResult.data.commitId,
       backupCleared: true,
+      slug: slugFromPath(createResult.data.path),
+      updatedAt,
     };
   }
 
@@ -166,11 +177,14 @@ export async function saveEditorDraft(
       });
 
   if (!result.success) return failureResult(nextDocument, result.error, serialized.source);
+  const updatedAt = new Date().toISOString();
   return {
     ok: true,
     path: result.data.path,
     sha: result.data.sha ?? document.sourceSha ?? "",
     commitId: result.data.commitId,
     backupCleared: true,
+    slug: slugFromPath(result.data.path),
+    updatedAt,
   };
 }

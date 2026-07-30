@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 
 import type { EditorDocument } from "@blog-platform/editor";
 import { editorDocumentToMdx } from "@blog-platform/editor";
+import { revalidatePath } from "next/cache";
 
 import { createRuntimeContentAdapter } from "../../lib/content-adapter/index";
 import {
@@ -18,6 +19,7 @@ import {
   mediaPath,
   prepareMediaFile,
   publicPath,
+  createConfiguredPublicRefresh,
   refreshPublicTargets,
   runPublicationOperation,
   repositoryToUploadCode,
@@ -42,6 +44,17 @@ function responseSecrets() {
 
 function redact(message: string | undefined) {
   return secretFreeMessage(message, responseSecrets());
+}
+
+function editorPathFromContentPath(path?: string) {
+  if (!path?.startsWith("content/posts/")) return;
+  return `/posts/${path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "")}`;
+}
+
+function refreshCmsEditorPaths(path?: string) {
+  revalidatePath("/posts");
+  const editorPath = editorPathFromContentPath(path);
+  if (editorPath) revalidatePath(editorPath);
 }
 
 export async function saveEditorDraftAction(document: EditorDocument) {
@@ -97,6 +110,7 @@ export async function saveEditorDraftAction(document: EditorDocument) {
   };
 
   const result = await saveEditorDraft(document, guardedAdapter);
+  if (result.ok) refreshCmsEditorPaths(result.path);
   return result;
 }
 
@@ -123,7 +137,15 @@ async function publicationAction(
   }
 
   const adapter = await createRuntimeContentAdapter(root);
-  return runPublicationOperation({ operation, document, adapter, now });
+  const result = await runPublicationOperation({
+    operation,
+    document,
+    adapter,
+    now,
+    refresh: createConfiguredPublicRefresh(),
+  });
+  if (result.ok) refreshCmsEditorPaths(result.path);
+  return result;
 }
 
 export async function publishPostAction(input: { document: EditorDocument; nowIso?: string }) {
@@ -159,7 +181,10 @@ export async function retryPublicRefreshAction(input: { retryToken: PublicRefres
       message: redact(decision.reason),
     };
   }
-  const publicRefresh = await refreshPublicTargets(input.retryToken.targets);
+  const publicRefresh = await refreshPublicTargets(
+    input.retryToken.targets,
+    createConfiguredPublicRefresh(),
+  );
   return publicRefresh.ok
     ? { ok: true as const, operation: "retry-public-refresh" as const, publicRefresh }
     : {

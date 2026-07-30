@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "blog-platform",
+  "compatibility_date": "2026-07-31",
+  "account_id": "4cf494c21da0e5276ddd5eabeb310aaa",
+  "d1_databases": [
+    {
+      "binding": "D1_DATABASE",
+      "database_name": "blog-platform",
+      "database_id": "48a97611-3d61-4ceb-9841-d3f91f360446"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "blog-assets"
+    }
+  ]
+}

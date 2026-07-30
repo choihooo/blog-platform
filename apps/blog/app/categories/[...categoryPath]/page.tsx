@@ -4,26 +4,39 @@ import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
 import {
-  getCategory,
-  getContentCollection,
-  getPostsByCategory,
+  getCategoryByPath,
+  getPostsByCategoryPath,
   getSiteConfig,
-} from "../../../lib/content";
+  listCategories,
+} from "../../../lib/content-source";
 
 type CategoryPageProps = {
   params: Promise<{
-    slug: string;
+    categoryPath: string[];
   }>;
 };
 
 export async function generateStaticParams() {
-  const collection = await getContentCollection();
-  return collection.categories.map((category) => ({ slug: category.slug }));
+  const categories = await listCategories({ depth: 1 });
+  const depth2 = await listCategories({ depth: 2 });
+
+  return [...categories, ...depth2].map((category) => ({
+    categoryPath: category.slug.split("/"),
+  }));
+}
+
+function toCanonicalPath(parts: string[]) {
+  return parts
+    .map((part) => part.trim().toLowerCase())
+    .filter(Boolean)
+    .join("/")
+    .replace(/^\/+|\/+$/g, "");
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const [category, site] = await Promise.all([getCategory(slug), getSiteConfig()]);
+  const { categoryPath } = await params;
+  const path = toCanonicalPath(categoryPath);
+  const [category, site] = await Promise.all([getCategoryByPath(path), getSiteConfig()]);
   return category
     ? {
         title: category.label,
@@ -34,8 +47,14 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { slug } = await params;
-  const [category, posts] = await Promise.all([getCategory(slug), getPostsByCategory(slug)]);
+  const { categoryPath } = await params;
+  const path = toCanonicalPath(categoryPath);
+  if (!path) notFound();
+
+  const [category, posts] = await Promise.all([
+    getCategoryByPath(path),
+    getPostsByCategoryPath(path, { publishedOnly: true }),
+  ]);
   if (!category) notFound();
 
   return (

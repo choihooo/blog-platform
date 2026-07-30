@@ -1,6 +1,11 @@
 import { mediaHash } from "./media-path";
 
 export const MAX_MEDIA_BYTES = 2 * 1024 * 1024;
+export const MEDIA_REPLACEMENT_POLICY = {
+  preservePreviousMedia: true,
+  cleanupAfterDualStorageDays: 7,
+  note: "Cover/body replacement writes the new media path first and keeps previous media available through the rollback window.",
+} as const;
 const ALLOWED_EXTENSIONS = new Set(["webp", "png", "jpg", "jpeg"]);
 
 export type PreparedMediaFile =

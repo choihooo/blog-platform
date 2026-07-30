@@ -8,7 +8,7 @@ import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine"
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
-import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/content";
+import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/content-source";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 
@@ -83,6 +83,13 @@ export default async function PostPage({ params }: PostPageProps) {
             </h1>
             {post.excerpt ? (
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
+            ) : null}
+            {post.coverImage ? (
+              <img
+                alt=""
+                className="aspect-[16/9] w-full max-w-3xl object-cover"
+                src={post.coverImage}
+              />
             ) : null}
             <div className="flex flex-wrap gap-2">
               {post.categoryEntry ? (

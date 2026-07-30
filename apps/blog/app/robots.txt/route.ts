@@ -1,6 +1,6 @@
 import { generateRobotsPolicy, serializeRobots } from "@blog-platform/seo-engine";
 
-import { getSiteConfig } from "../../lib/content";
+import { getSiteConfig } from "../../lib/content-source";
 import { siteForSeo } from "../../lib/seo";
 
 export async function GET() {

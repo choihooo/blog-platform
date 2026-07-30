@@ -1,6 +1,6 @@
 import { createOgImagePayload } from "@blog-platform/seo-engine";
 
-import { getPostBySlug, getSiteConfig } from "../../../lib/content";
+import { getPostBySlug, getSiteConfig } from "../../../lib/content-source";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 
 function escapeXml(value: string) {
@@ -25,9 +25,11 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   const payload = createOgImagePayload(postToSeoSubject(post, siteForSeo(site)));
   const category = payload.category ? escapeXml(payload.category) : "";
   const lines = titleLines(payload.title);
+  const cover = payload.coverImage ? escapeXml(payload.coverImage) : "";
   return new Response(
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <rect width="1200" height="630" fill="#111827"/>
+  ${cover ? `<image href="${cover}" x="760" y="0" width="440" height="630" preserveAspectRatio="xMidYMid slice" opacity="0.42"/>` : ""}
   <text x="80" y="120" fill="#93c5fd" font-size="32" font-family="Arial, sans-serif">${category}</text>
   <text x="80" y="250" fill="#f9fafb" font-size="64" font-family="Arial, sans-serif">
 ${lines.map((line, index) => `    <tspan x="80" dy="${index === 0 ? 0 : 78}">${escapeXml(line)}</tspan>`).join("\n")}

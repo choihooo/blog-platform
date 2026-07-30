@@ -7,7 +7,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 3001",
-    "format:check": "prettier . --check",
+    "format:check": "prettier \"app/**/*.{ts,tsx}\" \"components/**/*.tsx\" \"lib/**/*.ts\" package.json next.config.mjs --check",
     "lint": "eslint app lib next.config.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"

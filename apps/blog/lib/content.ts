@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -22,7 +23,78 @@ export type PublicPost = PublishedPost & {
   body: string;
 };
 
-const contentRoot = path.resolve(process.cwd(), "../../content");
+export type DualRunComparablePost = {
+  slug: string;
+  status: PublicPost["status"];
+  title: string;
+  category: string | null;
+  tags: string[];
+  publishedAt: string;
+  updatedAt: string;
+  excerpt: string;
+  coverImage: string;
+  bodyFingerprint: string;
+  tocCount: number;
+  tagCount: number;
+};
+
+export function normalizeDualRunTagList(tags: string[] | undefined) {
+  return [
+    ...new Set((tags ?? []).map((tag) => String(tag).trim().toLowerCase()).filter(Boolean)),
+  ].sort();
+}
+
+export function toDualRunComparable(post: PublicPost): DualRunComparablePost {
+  const normalizedBody = post.body ?? "";
+  const normalizedCoverImage = post.coverImage ?? "";
+  return {
+    slug: post.slug,
+    status: post.status,
+    title: post.title,
+    category: post.category ?? null,
+    tags: normalizeDualRunTagList(post.tags),
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt ?? "",
+    excerpt: post.excerpt ?? "",
+    coverImage: normalizedCoverImage,
+    bodyFingerprint: normalizedBody.replace(/\r\n/g, "\n").replace(/\s+$/g, ""),
+    tocCount: post.toc.length,
+    tagCount: post.tags?.length ?? 0,
+  };
+}
+
+export function isDualRunMatch(left: PublicPost, right: PublicPost) {
+  return JSON.stringify(toDualRunComparable(left)) === JSON.stringify(toDualRunComparable(right));
+}
+
+function resolveContentRoot() {
+  const candidates = [
+    process.env.CONTENT_ROOT,
+    path.join(process.cwd(), "content"),
+    path.resolve(process.cwd(), "../../content"),
+    path.resolve(process.cwd(), "../content"),
+  ].filter((candidate): candidate is string => Boolean(candidate));
+
+  return (
+    candidates.find((candidate) => existsSync(path.join(candidate, "posts"))) ??
+    path.resolve(process.cwd(), "content")
+  );
+}
+
+const contentRoot = resolveContentRoot();
+const CATEGORY_PATH_RE = /^([a-z0-9-]+)(?:\/([a-z0-9-]+))?$/;
+
+function normalizeSlug(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function normalizeCategoryPath(value: string): string | undefined {
+  const trimmed = value.trim().replace(/^\/+|\/+$/g, "");
+  if (!trimmed || !CATEGORY_PATH_RE.test(trimmed)) return;
+  const parts = trimmed.split("/");
+  if (parts.length > 2) return;
+  return parts.map(normalizeSlug).join("/");
+}
 
 async function readContentFiles(directory: string) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -85,6 +157,12 @@ function toPublicPost(post: PublishedPost, collection: ContentCollection): Publi
   };
 }
 
+function filterCategoryPostsByPath(posts: PublicPost[], categoryPath?: string): PublicPost[] {
+  const normalized = categoryPath ? normalizeCategoryPath(categoryPath) : undefined;
+  if (!normalized) return categoryPath ? [] : posts;
+  return posts.filter((post) => post.category === normalized);
+}
+
 export async function getPublishedPosts(): Promise<PublicPost[]> {
   const collection = await getContentCollection();
   return selectPublishedPosts(collection)
@@ -94,27 +172,36 @@ export async function getPublishedPosts(): Promise<PublicPost[]> {
 
 export async function getPostBySlug(slug: string): Promise<PublicPost | undefined> {
   const posts = await getPublishedPosts();
-  return posts.find((post) => post.slug === slug);
+  const normalized = normalizeSlug(slug);
+  return posts.find((post) => post.slug === normalized);
 }
 
 export async function getPostsByCategory(slug: string): Promise<PublicPost[]> {
   const posts = await getPublishedPosts();
-  return posts.filter((post) => post.category === slug);
+  return filterCategoryPostsByPath(posts, slug).sort((a, b) =>
+    b.publishedAt.localeCompare(a.publishedAt),
+  );
 }
 
 export async function getPostsByTag(slug: string): Promise<PublicPost[]> {
   const posts = await getPublishedPosts();
-  return posts.filter((post) => post.tags?.includes(slug));
+  const normalized = normalizeSlug(slug);
+  return posts
+    .filter((post) => post.tags?.includes(normalized))
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 export async function getCategory(slug: string): Promise<Category | undefined> {
   const collection = await getContentCollection();
-  return collection.categories.find((category) => category.slug === slug);
+  const normalized = normalizeCategoryPath(slug);
+  if (!normalized) return;
+  return collection.categories.find((category) => category.slug === normalized);
 }
 
 export async function getTag(slug: string): Promise<Tag | undefined> {
   const collection = await getContentCollection();
-  return collection.tags.find((tag) => tag.slug === slug);
+  const normalized = normalizeSlug(slug);
+  return collection.tags.find((tag) => tag.slug === normalized);
 }
 
 export async function getSiteConfig() {

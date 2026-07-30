@@ -45,6 +45,7 @@ export type PublicationResult =
       commitId?: string;
       slug?: string;
       publishedAt?: string;
+      updatedAt?: string;
       repository: { ok: true; summary: string };
       publicRefresh: PublicRefreshResult;
       backupCleared: true;
@@ -66,6 +67,7 @@ export type PublicationResult =
       repository?: { ok: true; summary: string };
       publicRefresh?: PublicRefreshResult;
       retryToken?: PublicRefreshRetryToken;
+      updatedAt?: string;
       document?: EditorDocument;
     };
 
@@ -257,10 +259,9 @@ export async function runPublicationOperation(input: {
   if (!prepared.ok) return prepared.result;
 
   const path = pathForDocument(prepared.document);
-  const shouldRename =
-    prepared.document.path !== undefined &&
-    prepared.document.path !== path &&
-    Boolean(prepared.document.sourceSha);
+  const previousPath = prepared.document.path;
+  const previousSha = prepared.document.sourceSha;
+  const shouldRename = previousPath !== undefined && previousPath !== path && Boolean(previousSha);
   const intent =
     input.operation === "publish"
       ? "prepare-publish"
@@ -279,8 +280,6 @@ export async function runPublicationOperation(input: {
             },
           };
         }
-        const previousPath = prepared.document.path;
-        const previousSha = prepared.document.sourceSha;
         if (!previousPath || !previousSha) {
           return {
             success: false as const,
@@ -356,6 +355,8 @@ export async function runPublicationOperation(input: {
       commitId: repositoryResult.data.commitId,
       slug: savedDocument.frontmatter.slug,
       publishedAt: savedDocument.frontmatter.publishedAt,
+      updatedAt:
+        savedDocument.frontmatter.updatedAt ?? savedDocument.lastSavedAt ?? now.toISOString(),
       repository: { ok: true, summary: repositoryResult.data.summary },
       publicRefresh,
       retryToken: createPublicRefreshRetryToken({
@@ -377,6 +378,8 @@ export async function runPublicationOperation(input: {
     commitId: repositoryResult.data.commitId,
     slug: savedDocument.frontmatter.slug,
     publishedAt: savedDocument.frontmatter.publishedAt,
+    updatedAt:
+      savedDocument.frontmatter.updatedAt ?? savedDocument.lastSavedAt ?? now.toISOString(),
     repository: { ok: true, summary: repositoryResult.data.summary },
     publicRefresh,
     backupCleared: true,

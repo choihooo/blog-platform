@@ -1,5 +1,5 @@
 import { PostList } from "./components/post-list";
-import { getPublishedPosts, getSiteConfig } from "../lib/content";
+import { getPublishedPosts, getSiteConfig } from "../lib/content-source";
 
 export default async function BlogHomePage() {
   const [site, posts] = await Promise.all([getSiteConfig(), getPublishedPosts()]);

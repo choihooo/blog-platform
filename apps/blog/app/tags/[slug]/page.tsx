@@ -3,7 +3,12 @@ import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
-import { getContentCollection, getPostsByTag, getSiteConfig, getTag } from "../../../lib/content";
+import {
+  getContentCollection,
+  getPostsByTag,
+  getSiteConfig,
+  getTag,
+} from "../../../lib/content-source";
 
 type TagPageProps = {
   params: Promise<{

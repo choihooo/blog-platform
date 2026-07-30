@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@blog-platform/design-system";
 
-import type { PublicPost } from "../../lib/content";
+import type { PublicPost } from "../../lib/content-source";
 
 type PostListProps = {
   posts: PublicPost[];

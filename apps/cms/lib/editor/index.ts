@@ -28,6 +28,7 @@ export { mapPublishAuthFailure, runPublicationOperation } from "./publish-workfl
 export { seoReportForEditorDocument } from "./seo-report";
 export { analyticsLinksForEditorDocument } from "./analytics-links";
 export {
+  createConfiguredPublicRefresh,
   createPublicRefreshRetryToken,
   publicRefreshTargets,
   refreshPublicTargets,

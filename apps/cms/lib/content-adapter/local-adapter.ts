@@ -1,7 +1,11 @@
 import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import bundledSiteConfig from "../../../../content/site.json";
+
+import { createGitHubContentAdapterFromCredential } from "./github-adapter";
 import { commitSummary } from "./commit-intent";
+import { getGitHubAppInstallationToken } from "./github-app-token";
 import { assertAllowedPath, classifyRepositoryPath, listRootToPath } from "./paths";
 import { repositoryFailure } from "./repository-error";
 import type {
@@ -11,7 +15,92 @@ import type {
   ContentChangeResult,
   RepositoryContentFile,
   RepositoryFileSummary,
+  RepositoryFailureState,
 } from "./types";
+
+type LegacyTargetConfig = {
+  github?: {
+    owner?: unknown;
+    repo?: unknown;
+    branch?: unknown;
+  };
+};
+
+function githubAppEnvConfigured() {
+  return Boolean(
+    process.env.GITHUB_APP_ID ||
+    process.env.GITHUB_APP_PRIVATE_KEY ||
+    process.env.GITHUB_INSTALLATION_ID,
+  );
+}
+
+function parseGitHubTarget(config: LegacyTargetConfig) {
+  const owner = typeof config.github?.owner === "string" ? config.github.owner.trim() : "";
+  const repo = typeof config.github?.repo === "string" ? config.github.repo.trim() : "";
+  const branch = typeof config.github?.branch === "string" ? config.github.branch.trim() : "";
+
+  if (!owner || !repo || !branch || owner === "replace-me" || repo === "replace-me") {
+    return {
+      success: false as const,
+      error: repositoryFailure("missing-config", {
+        message: "GitHub repository target is not configured in content/site.json.",
+      }),
+    };
+  }
+
+  return { success: true as const, data: { owner, repo, branch } };
+}
+
+async function readGitHubTarget(rootDir: string) {
+  try {
+    const raw = await readFile(path.join(rootDir, "content/site.json"), "utf8");
+    return parseGitHubTarget(JSON.parse(raw) as LegacyTargetConfig);
+  } catch {
+    return parseGitHubTarget(bundledSiteConfig as LegacyTargetConfig);
+  }
+}
+
+function failingAdapter(error: RepositoryFailureState): ContentAdapter {
+  return {
+    async listFiles() {
+      return { success: false as const, error };
+    },
+    async readFile() {
+      return { success: false as const, error };
+    },
+    async createFile(input) {
+      return { success: false as const, error: { ...error, submittedContent: input.content } };
+    },
+    async updateFile(input) {
+      return { success: false as const, error: { ...error, submittedContent: input.content } };
+    },
+    async deleteFile() {
+      return { success: false as const, error };
+    },
+    async commitMedia() {
+      return { success: false as const, error };
+    },
+  };
+}
+
+export function isLocalLegacyMode() {
+  return !githubAppEnvConfigured();
+}
+
+export async function createLegacyContentAdapter(rootDir = process.cwd()): Promise<ContentAdapter> {
+  if (isLocalLegacyMode()) return createLocalContentAdapter(rootDir);
+
+  const target = await readGitHubTarget(rootDir);
+  if (!target.success) return failingAdapter(target.error);
+
+  const credential = await getGitHubAppInstallationToken({});
+  const adapter = createGitHubContentAdapterFromCredential({
+    ...target.data,
+    credential,
+  });
+
+  return adapter.success ? adapter.data : failingAdapter(adapter.error);
+}
 
 function fileSha(content: Buffer | string): string {
   return createHash("sha256").update(content).digest("hex");

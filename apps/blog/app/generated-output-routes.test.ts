@@ -35,7 +35,7 @@ const longPost: PublicPost = {
   coverImage: undefined,
 };
 
-vi.mock("../lib/content", () => ({
+vi.mock("../lib/content-source", () => ({
   getSiteConfig: () => Promise.resolve({ siteName: "Blog", siteUrl: "https://example.com" }),
   getPublishedPosts: () => Promise.resolve([publishedPost, longPost]),
   getPostBySlug: (slug: string) =>

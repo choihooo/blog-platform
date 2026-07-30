@@ -1,6 +1,6 @@
 import { generateFeedOutput, serializeFeed } from "@blog-platform/seo-engine";
 
-import { getPublishedPosts, getSiteConfig } from "../../lib/content";
+import { getPublishedPosts, getSiteConfig } from "../../lib/content-source";
 import { postsToSeoSubjects, siteForSeo } from "../../lib/seo";
 
 export async function GET() {

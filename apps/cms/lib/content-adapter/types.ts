@@ -66,6 +66,70 @@ export type ContentChangeResult = {
   status: "created" | "updated" | "deleted";
 };
 
+// Phase 2 migration domain models (D1/R2 bridge)
+// These are kept separately from repository adapter types because CMS content-ops still
+// consume `RepositoryFailure*` and related types.
+export type Post = {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  summary: string;
+  categoryId: string | null;
+  heroImageKey: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  isPublished: 0 | 1;
+  viewCount: number;
+};
+
+export type Tag = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  parentId: string | null;
+  parentSlug: string | null;
+  depth: 1 | 2;
+  createdAt: string;
+};
+
+export type PostTag = {
+  postId: string;
+  tagId: string;
+};
+
+export type MediaReference = {
+  id: string;
+  postId: string;
+  r2Key: string;
+  kind: "hero" | "body" | "og" | "pdf" | "attachment";
+  width: number | null;
+  height: number | null;
+  createdAt: string;
+};
+
+export type Admin = {
+  id: string;
+  githubIdentity: string;
+  displayName: string;
+  isActive: 0 | 1;
+};
+
+export type MigrationRun = {
+  id: string;
+  phase: "extract" | "upload" | "import" | "verify" | "complete" | "rollback";
+  status: "running" | "succeeded" | "failed" | "cancelled";
+  startAt: string;
+  endAt: string | null;
+  summary: string;
+};
+
 export type ContentAdapter = {
   listFiles(input: {
     root: ListFilesRoot;

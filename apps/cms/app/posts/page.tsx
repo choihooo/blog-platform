@@ -1,4 +1,12 @@
-import { Badge } from "@blog-platform/design-system";
+import {
+  Badge,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@blog-platform/design-system";
 import { ArrowUpRight, Plus } from "lucide-react";
 
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
@@ -34,37 +42,56 @@ export function PostsPageView({
             <Plus aria-hidden="true" size={16} />새 초안
           </a>
         </div>
-        <div className="overflow-hidden rounded-lg border border-border bg-card">
-          {posts.map((post) => (
-            <a
-              key={post.path}
-              className="group flex items-center justify-between gap-5 border-b border-border px-5 py-4 last:border-b-0 hover:bg-muted/60"
-              href={`/posts/${post.slug}`}
-            >
-              <span className="min-w-0">
-                <span className="block truncate font-medium">{post.title}</span>
-                <span className="mt-1 block truncate font-mono text-xs text-muted-foreground">
-                  {post.path}
-                </span>
-              </span>
-              <span className="flex shrink-0 items-center gap-3">
-                <Badge variant="outline">{post.status}</Badge>
-                <ArrowUpRight
-                  aria-hidden="true"
-                  className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  size={16}
-                />
-              </span>
-            </a>
-          ))}
-          {posts.length === 0 ? (
+        <div className="rounded-lg border border-border bg-card">
+          {posts.length > 0 ? (
+            <Table className="min-w-[46rem]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[16rem] whitespace-nowrap">제목</TableHead>
+                  <TableHead className="whitespace-nowrap">상태</TableHead>
+                  <TableHead className="whitespace-nowrap">경로</TableHead>
+                  <TableHead className="whitespace-nowrap">바로가기</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {posts.map((post) => (
+                  <TableRow key={post.path} className="hover:bg-muted/60">
+                    <TableCell className="min-w-[16rem]">
+                      <a
+                        className="block min-w-0 truncate font-medium"
+                        href={`/posts/${post.slug}`}
+                      >
+                        {post.title}
+                      </a>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{post.status}</Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {post.path}
+                    </TableCell>
+                    <TableCell>
+                      <a
+                        className="inline-flex items-center gap-2 text-muted-foreground transition-transform hover:-translate-y-0.5 hover:translate-x-0.5"
+                        href={`/posts/${post.slug}`}
+                        aria-label={`${post.title}로 이동`}
+                      >
+                        열기
+                        <ArrowUpRight aria-hidden="true" size={16} />
+                      </a>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
             <div className="px-5 py-14 text-center">
               <p className="font-medium">표시할 글이 없습니다.</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 저장소 연결을 확인하거나 첫 초안을 만들어보세요.
               </p>
             </div>
-          ) : null}
+          )}
         </div>
       </section>
     </CmsShell>

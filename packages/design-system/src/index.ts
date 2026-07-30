@@ -1,4 +1,13 @@
 export { Badge, badgeVariants } from "./ui/badge.js";
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table.js";
 export { Button, buttonVariants } from "./ui/button.js";
 export {
   Card,

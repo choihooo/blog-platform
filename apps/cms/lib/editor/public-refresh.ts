@@ -32,6 +32,28 @@ export type PublicRefreshRetryToken = {
   issuedAt: string;
 };
 
+type PublicRefreshEnv = {
+  [key: string]: string | undefined;
+  BLOG_DEPLOY_HOOK_URL?: string;
+  BLOG_REVALIDATE_SECRET?: string;
+  BLOG_REVALIDATE_URL?: string;
+  VERCEL_DEPLOY_HOOK_URL?: string;
+};
+
+type RefreshFetch = (
+  input: string | URL,
+  init?: {
+    method?: string;
+    headers?: Record<string, string>;
+    body?: string;
+  },
+) => Promise<{ ok: boolean; status: number }>;
+
+function configured(value: string | undefined) {
+  const cleaned = value?.trim();
+  return cleaned && cleaned !== "replace-me" ? cleaned : undefined;
+}
+
 function addMetadataTargets(targets: Set<string>, metadata?: PublicRefreshMetadata) {
   if (!metadata) return;
   if (metadata.slug) {
@@ -48,6 +70,37 @@ export function publicRefreshTargets(request: PublicRefreshRequest): string[] {
   addMetadataTargets(targets, request.previous);
   addMetadataTargets(targets, request.next);
   return [...targets];
+}
+
+export function createConfiguredPublicRefresh(
+  env: PublicRefreshEnv = process.env,
+  refreshFetch: RefreshFetch = fetch,
+) {
+  const deployHookUrl = configured(env.BLOG_DEPLOY_HOOK_URL ?? env.VERCEL_DEPLOY_HOOK_URL);
+  if (deployHookUrl) {
+    let requested = false;
+    return async () => {
+      if (requested) return;
+      requested = true;
+      const response = await refreshFetch(deployHookUrl, { method: "POST" });
+      if (!response.ok) throw new Error(`Blog deploy hook failed with ${response.status}`);
+    };
+  }
+
+  const revalidateUrl = configured(env.BLOG_REVALIDATE_URL);
+  const revalidateSecret = configured(env.BLOG_REVALIDATE_SECRET);
+  if (revalidateUrl && revalidateSecret) {
+    return async (target: string) => {
+      const response = await refreshFetch(revalidateUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: target, secret: revalidateSecret }),
+      });
+      if (!response.ok) throw new Error(`Blog revalidate failed with ${response.status}`);
+    };
+  }
+
+  return undefined;
 }
 
 export async function refreshPublicTargets(
