@@ -14,5 +14,7 @@ coverage/
 
 .turbo/
 .vercel/
+.open-next/
+.wrangler/
 
 .agents/

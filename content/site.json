@@ -1,6 +1,6 @@
 {
   "siteName": "Ho's Blog",
-  "siteUrl": "https://example.com",
+  "siteUrl": "https://blog.hozorica.com",
   "defaultAuthor": "ho",
   "adminGithubLogin": "replace-me",
   "adminGithubUserId": "0",
@@ -12,7 +12,7 @@
   "analytics": {
     "provider": "ga4",
     "ga4PropertyId": "replace-me",
-    "searchConsoleProperty": "sc-domain:example.com"
+    "searchConsoleProperty": "sc-domain:hozorica.com"
   },
   "features": {
     "aiAssistant": false,
