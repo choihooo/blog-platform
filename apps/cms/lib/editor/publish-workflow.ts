@@ -276,6 +276,19 @@ export async function runPublicationOperation(input: {
             },
           };
         }
+        const previousPath = prepared.document.path;
+        const previousSha = prepared.document.sourceSha;
+        if (!previousPath || !previousSha) {
+          return {
+            success: false as const,
+            error: {
+              code: "validation-failure",
+              message: "Publication rename requires an existing source path and SHA",
+              retryable: false,
+              path: previousPath,
+            },
+          };
+        }
         const created = await input.adapter.createFile({
           path,
           content: prepared.source,
@@ -283,8 +296,8 @@ export async function runPublicationOperation(input: {
         });
         if (!created.success) return created;
         const deleted = await input.adapter.deleteFile({
-          path: prepared.document.path,
-          expectedSha: prepared.document.sourceSha,
+          path: previousPath,
+          expectedSha: previousSha,
           intent: "delete-file",
         });
         if (!deleted.success) {
