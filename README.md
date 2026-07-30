@@ -114,3 +114,10 @@ CMS Posts 화면은 repository MDX 글 목록, 새 초안 화면, 기존 글 편
 analysis를 소유한다. 현재 editor UI는 Tiptap 기반 contenteditable surface와 frontmatter panel을
 사용한다. 저장은 기존 protected content operation과 SHA 기반 adapter를 사용하며, local draft
 backup은 repository 원본을 대체하지 않는 복구 수단으로만 사용한다.
+
+## Media Upload
+
+CMS editor는 본문 이미지와 커버 이미지를 repository의 `public/media` 아래에 commit한다. 업로드는
+서버에서 허용 확장자, 2MB 제한, 이미지 decode 가능 여부를 검증하고 가능한 경우 webp로 정규화한다.
+성공한 업로드만 `/media/...` public path로 editor document 또는 `coverImage`에 반영하며, 실패한
+업로드의 blob/data/local path는 저장될 MDX에 남기지 않는다.

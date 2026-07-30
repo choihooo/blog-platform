@@ -16,4 +16,21 @@ describe("editorDocumentToMdx", () => {
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.source).toContain("```ts\nconst x = 1;\n```");
   });
+
+  it("serializes image alt, title, and caption", () => {
+    const document = createEmptyEditorDocument();
+    document.frontmatter.title = "Hello";
+    document.body = [
+      {
+        type: "image",
+        src: "/media/posts/hello/a.webp",
+        alt: "Alt",
+        title: "Title",
+        caption: "Caption",
+      },
+    ];
+    const result = editorDocumentToMdx(document);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.body).toBe('![Alt](/media/posts/hello/a.webp "Title")\n\nCaption');
+  });
 });

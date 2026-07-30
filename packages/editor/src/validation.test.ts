@@ -16,4 +16,15 @@ describe("validateEditorDocument", () => {
       "editor.image.unsafe",
     ]);
   });
+
+  it("blocks local image paths and unsafe cover paths", () => {
+    const document = createEmptyEditorDocument();
+    document.frontmatter.title = "Hello";
+    document.frontmatter.coverImage = "file:///tmp/a.png";
+    document.body = [{ type: "image", src: "/Users/me/a.png" }];
+    expect(validateEditorDocument(document).map((issue) => issue.code)).toEqual([
+      "editor.coverImage.unsafe",
+      "editor.image.local-path",
+    ]);
+  });
 });

@@ -1,6 +1,8 @@
 export { EditorScreen } from "./editor-screen";
 export { EditorToolbar } from "./editor-toolbar";
 export { FrontmatterPanel } from "./frontmatter-panel";
+export { MediaUploadControl } from "./media-upload-control";
+export { MediaUploadStatus } from "./media-upload-status";
 export { PreviewPanel } from "./preview-panel";
 export { RecoveryBanner } from "./recovery-banner";
 export { SaveStatusBadge } from "./save-status";

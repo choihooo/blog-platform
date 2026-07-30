@@ -1,18 +1,9 @@
-import {
-  Bold,
-  Code,
-  Heading2,
-  Image,
-  Italic,
-  Link,
-  List,
-  ListOrdered,
-  Quote,
-  Save,
-} from "lucide-react";
+import { Bold, Code, Heading2, Italic, Link, List, ListOrdered, Quote, Save } from "lucide-react";
 import type { Editor } from "@tiptap/react";
 
 import { Button } from "@blog-platform/design-system";
+import type { UploadEditorMediaResult } from "../../lib/editor";
+import { MediaUploadControl } from "./media-upload-control";
 
 const tools = [
   {
@@ -60,10 +51,14 @@ const tools = [
 export function EditorToolbar({
   editor,
   onSave,
+  onMediaUploaded,
+  postSlug,
   saveDisabled,
 }: {
   editor?: Editor | null;
   onSave?: () => void;
+  onMediaUploaded?: (result: Extract<UploadEditorMediaResult, { ok: true }>) => void;
+  postSlug: string;
   saveDisabled?: boolean;
 }) {
   return (
@@ -86,9 +81,9 @@ export function EditorToolbar({
           </Button>
         );
       })}
-      <Button aria-label="Image upload later" disabled size="icon" type="button" variant="ghost">
-        <Image className="h-4 w-4" />
-      </Button>
+      {onMediaUploaded ? (
+        <MediaUploadControl onUploaded={onMediaUploaded} postSlug={postSlug} />
+      ) : null}
       <div className="ml-auto">
         <Button disabled={saveDisabled} onClick={onSave} type="button">
           <Save className="h-4 w-4" />

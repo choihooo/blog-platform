@@ -47,7 +47,7 @@ export type EditorTextNode = {
 export type EditorNode =
   | EditorTextNode
   | { type: "horizontalRule" }
-  | { type: "image"; src: string; alt?: string; title?: string };
+  | { type: "image"; src: string; alt?: string; title?: string; caption?: string };
 
 export type EditorDocument = {
   id: string;

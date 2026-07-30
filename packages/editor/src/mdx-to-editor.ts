@@ -43,7 +43,7 @@ function frontmatter(data: Record<string, unknown>): EditorFrontmatter {
   };
 }
 
-function parseImage(line: string): EditorNode | null {
+function parseImage(line: string): Extract<EditorNode, { type: "image" }> | null {
   const match = /^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)$/.exec(line);
   if (!match?.[2]) return null;
   return { type: "image", alt: match[1] ?? "", src: match[2], title: match[3] };
@@ -63,11 +63,17 @@ function parseInline(
 function bodyToNodes(body: string): EditorNode[] {
   const nodes: EditorNode[] = [];
   const blocks = body.split(/\n{2,}/);
-  for (const raw of blocks) {
+  for (let index = 0; index < blocks.length; index++) {
+    const raw = blocks[index] ?? "";
     const block = raw.trim();
     if (!block) continue;
-    const image = parseImage(block);
+    const image: Extract<EditorNode, { type: "image" }> | null = parseImage(block);
     if (image) {
+      const next = blocks[index + 1]?.trim();
+      if (next && !parseImage(next) && !/^```/.test(next) && !/^(#{1,6})\s+/.test(next)) {
+        image.caption = next;
+        index++;
+      }
       nodes.push(image);
       continue;
     }

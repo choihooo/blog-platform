@@ -27,8 +27,10 @@ function inlineText(node: Extract<EditorNode, { text: string }>): string {
 
 function nodeToMdx(node: EditorNode): string {
   if (node.type === "horizontalRule") return "---";
-  if (node.type === "image")
-    return `![${node.alt ?? ""}](${node.src}${node.title ? ` "${node.title}"` : ""})`;
+  if (node.type === "image") {
+    const image = `![${node.alt ?? ""}](${node.src}${node.title ? ` "${node.title}"` : ""})`;
+    return node.caption ? `${image}\n\n${node.caption}` : image;
+  }
   if (node.type === "heading") return `${"#".repeat(node.depth ?? 2)} ${inlineText(node)}`;
   if (node.type === "bulletList" || node.type === "listItem") return `- ${inlineText(node)}`;
   if (node.type === "orderedList") return `1. ${inlineText(node)}`;

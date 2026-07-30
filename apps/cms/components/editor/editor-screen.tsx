@@ -146,6 +146,15 @@ function nodesToTiptap(nodes: EditorNode[]): JSONContent {
   };
 }
 
+function slugCandidate(document: EditorDocument): string {
+  const titleSlug = document.frontmatter.title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return document.frontmatter.slug || titleSlug || document.id;
+}
+
 export function EditorScreen({ initialDocument }: { initialDocument: EditorDocument }) {
   const [document, setDocument] = useState(initialDocument);
   const documentRef = useRef(initialDocument);
@@ -190,6 +199,7 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
     };
     documentRef.current = dirty;
     setDocument(dirty);
+    setBody(nextBody);
     setStatus(dirty.frontmatter.title.trim() ? "dirty" : "validation");
     if (typeof window !== "undefined" && typeof window.localStorage?.setItem === "function") {
       writeBackup(window.localStorage, dirty);
@@ -231,6 +241,23 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
     });
   }
 
+  function insertUploadedImage(result: {
+    reference: { target: "body"; node: Extract<EditorNode, { type: "image" }> };
+  }) {
+    const node = result.reference.node;
+    editor
+      ?.chain()
+      .focus()
+      .setImage({ src: node.src, alt: node.alt ?? "", title: node.title })
+      .run();
+    const nextBody = [
+      ...(editor ? tiptapToNodes(editor.getJSON()) : body),
+      ...(node.caption ? [{ type: "paragraph" as const, text: node.caption }] : []),
+    ];
+    markDirty(documentRef.current, nextBody);
+    setMessage("Image uploaded. Save the post to keep this reference.");
+  }
+
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background">
       <RecoveryBanner message={message} onDiscard={() => setMessage(undefined)} onRetry={save} />
@@ -240,7 +267,13 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
       </div>
       <EditorToolbar
         editor={editor}
+        onMediaUploaded={(result) => {
+          if (result.reference.target === "body") {
+            insertUploadedImage({ reference: result.reference });
+          }
+        }}
         onSave={save}
+        postSlug={slugCandidate(document)}
         saveDisabled={!document.frontmatter.title.trim() || isPending}
       />
       <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -251,6 +284,7 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
         <FrontmatterPanel
           frontmatter={document.frontmatter}
           onChange={(frontmatter) => markDirty({ ...document, frontmatter })}
+          postSlug={slugCandidate(document)}
         />
       </div>
     </div>

@@ -18,4 +18,10 @@ describe("editor document", () => {
       depth: 2,
     });
   });
+
+  it("allows image captions in the document model", () => {
+    expect({ type: "image", src: "/media/posts/hello/a.webp", caption: "Caption" }).toMatchObject({
+      caption: "Caption",
+    });
+  });
 });

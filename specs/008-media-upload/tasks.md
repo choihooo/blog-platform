@@ -22,11 +22,11 @@
 준비한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T001 Add `sharp` dependency for CMS server-side image validation and webp normalization in `apps/cms/package.json`
-- [ ] T002 Ensure repository media directories exist with keep files in `public/media/covers/.gitkeep` and `public/media/posts/.gitkeep`
-- [ ] T003 [P] Add media upload component exports placeholder to `apps/cms/components/editor/index.ts`
-- [ ] T004 [P] Add media helper exports placeholder to `apps/cms/lib/editor/index.ts`
-- [ ] T005 [P] Add upload media action export placeholder beside existing save action in `apps/cms/app/actions/editor-actions.ts`
+- [x] T001 Add `sharp` dependency for CMS server-side image validation and webp normalization in `apps/cms/package.json`
+- [x] T002 Ensure repository media directories exist with keep files in `public/media/covers/.gitkeep` and `public/media/posts/.gitkeep`
+- [x] T003 [P] Add media upload component exports placeholder to `apps/cms/components/editor/index.ts`
+- [x] T004 [P] Add media helper exports placeholder to `apps/cms/lib/editor/index.ts`
+- [x] T005 [P] Add upload media action export placeholder beside existing save action in `apps/cms/app/actions/editor-actions.ts`
 <!-- prettier-ignore-end -->
 
 ---
@@ -39,20 +39,20 @@ result mapping, adapter 보존 규칙을 구현한다.
 **CRITICAL**: 이 phase가 끝나기 전에는 user story 구현을 시작하지 않는다.
 
 <!-- prettier-ignore-start -->
-- [ ] T006 [P] Add media path tests for cover/body paths, slug requirement, hash suffix, public path conversion, and overwrite avoidance in `apps/cms/lib/editor/media-path.test.ts`
-- [ ] T007 Implement media path generation and public path conversion helpers in `apps/cms/lib/editor/media-path.ts`
-- [ ] T008 [P] Add media file tests for allowed extensions, 2MB limit, invalid decode, webp normalization, and content hash generation in `apps/cms/lib/editor/media-file.test.ts`
-- [ ] T009 Implement server-side media file validation, image decode, webp normalization, and content hash helpers in `apps/cms/lib/editor/media-file.ts`
-- [ ] T010 [P] Add editor media contract tests for upload state transitions, body image reference creation, cover reference creation, and no pending placeholder persistence in `apps/cms/lib/editor/editor-media.test.ts`
-- [ ] T011 Implement editor media request/result types, upload state helpers, body image reference creation, and cover reference creation in `apps/cms/lib/editor/editor-media.ts`
-- [ ] T012 [P] Add editor document tests for image caption support and public-path-only image refs in `packages/editor/src/document.test.ts`
-- [ ] T013 Extend `EditorNode` image shape to include optional caption in `packages/editor/src/document.ts`
-- [ ] T014 [P] Add editor serialization tests for Markdown image syntax with alt/title/caption and rejection of blob/data/local image refs in `packages/editor/src/editor-to-mdx.test.ts`
-- [ ] T015 Update image MDX serialization to preserve caption as following paragraph in `packages/editor/src/editor-to-mdx.ts`
-- [ ] T016 [P] Add editor validation tests for allowed public media paths, forbidden blob/data/file/local paths, and cover image path validation in `packages/editor/src/validation.test.ts`
-- [ ] T017 Update editor image and cover path validation rules in `packages/editor/src/validation.ts`
-- [ ] T018 [P] Add content adapter media tests for base64 media writes, duplicate hash paths, invalid non-media paths, and GitHub payload content preservation in `apps/cms/lib/content-adapter/media.test.ts`
-- [ ] T019 Confirm or adjust local and GitHub media commit behavior for binary base64 content in `apps/cms/lib/content-adapter/local-adapter.ts` and `apps/cms/lib/content-adapter/github-adapter.ts`
+- [x] T006 [P] Add media path tests for cover/body paths, slug requirement, hash suffix, public path conversion, and overwrite avoidance in `apps/cms/lib/editor/media-path.test.ts`
+- [x] T007 Implement media path generation and public path conversion helpers in `apps/cms/lib/editor/media-path.ts`
+- [x] T008 [P] Add media file tests for allowed extensions, 2MB limit, invalid decode, webp normalization, and content hash generation in `apps/cms/lib/editor/media-file.test.ts`
+- [x] T009 Implement server-side media file validation, image decode, webp normalization, and content hash helpers in `apps/cms/lib/editor/media-file.ts`
+- [x] T010 [P] Add editor media contract tests for upload state transitions, body image reference creation, cover reference creation, and no pending placeholder persistence in `apps/cms/lib/editor/editor-media.test.ts`
+- [x] T011 Implement editor media request/result types, upload state helpers, body image reference creation, and cover reference creation in `apps/cms/lib/editor/editor-media.ts`
+- [x] T012 [P] Add editor document tests for image caption support and public-path-only image refs in `packages/editor/src/document.test.ts`
+- [x] T013 Extend `EditorNode` image shape to include optional caption in `packages/editor/src/document.ts`
+- [x] T014 [P] Add editor serialization tests for Markdown image syntax with alt/title/caption and rejection of blob/data/local image refs in `packages/editor/src/editor-to-mdx.test.ts`
+- [x] T015 Update image MDX serialization to preserve caption as following paragraph in `packages/editor/src/editor-to-mdx.ts`
+- [x] T016 [P] Add editor validation tests for allowed public media paths, forbidden blob/data/file/local paths, and cover image path validation in `packages/editor/src/validation.test.ts`
+- [x] T017 Update editor image and cover path validation rules in `packages/editor/src/validation.ts`
+- [x] T018 [P] Add content adapter media tests for base64 media writes, duplicate hash paths, invalid non-media paths, and GitHub payload content preservation in `apps/cms/lib/content-adapter/media.test.ts`
+- [x] T019 Confirm or adjust local and GitHub media commit behavior for binary base64 content in `apps/cms/lib/content-adapter/local-adapter.ts` and `apps/cms/lib/content-adapter/github-adapter.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: Media path generation, image normalization, editor image serialization/validation,
@@ -71,20 +71,20 @@ MDX에 공개 이미지 경로만 남길 수 있다.
 ### Tests for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T020 [P] [US1] Add upload media action tests for successful body upload, slug candidate use, public path result, and protected content operation usage in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T021 [P] [US1] Add body media upload control tests for file selection, alt/title/caption input, pending state, success insertion, and accessible image button in `apps/cms/components/editor/media-upload-control.test.tsx`
-- [ ] T022 [P] [US1] Add editor screen body upload flow tests proving image node insertion, dirty state, backup persistence, and MDX public path serialization in `apps/cms/components/editor/editor-media-flow.test.tsx`
+- [x] T020 [P] [US1] Add upload media action tests for successful body upload, slug candidate use, public path result, and protected content operation usage in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T021 [P] [US1] Add body media upload control tests for file selection, alt/title/caption input, pending state, success insertion, and accessible image button in `apps/cms/components/editor/media-upload-control.test.tsx`
+- [x] T022 [P] [US1] Add editor screen body upload flow tests proving image node insertion, dirty state, backup persistence, and MDX public path serialization in `apps/cms/components/editor/editor-media-flow.test.tsx`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T023 [US1] Implement protected `uploadEditorMediaAction` body upload path with media validation, `commitMedia`, and public image node result in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T024 [P] [US1] Implement reusable media upload status component for pending, uploaded, retryable failure, and non-retryable failure states in `apps/cms/components/editor/media-upload-status.tsx`
-- [ ] T025 [US1] Implement body media upload control with lucide image button, file input, alt/title/caption fields, action submission, and success callback in `apps/cms/components/editor/media-upload-control.tsx`
-- [ ] T026 [US1] Replace disabled image toolbar button with body media upload control wiring in `apps/cms/components/editor/editor-toolbar.tsx`
-- [ ] T027 [US1] Integrate body media upload success into Tiptap image insertion, editor document dirty state, and local backup persistence in `apps/cms/components/editor/editor-screen.tsx`
-- [ ] T028 [US1] Export media upload UI components from `apps/cms/components/editor/index.ts`
+- [x] T023 [US1] Implement protected `uploadEditorMediaAction` body upload path with media validation, `commitMedia`, and public image node result in `apps/cms/app/actions/editor-actions.ts`
+- [x] T024 [P] [US1] Implement reusable media upload status component for pending, uploaded, retryable failure, and non-retryable failure states in `apps/cms/components/editor/media-upload-status.tsx`
+- [x] T025 [US1] Implement body media upload control with lucide image button, file input, alt/title/caption fields, action submission, and success callback in `apps/cms/components/editor/media-upload-control.tsx`
+- [x] T026 [US1] Replace disabled image toolbar button with body media upload control wiring in `apps/cms/components/editor/editor-toolbar.tsx`
+- [x] T027 [US1] Integrate body media upload success into Tiptap image insertion, editor document dirty state, and local backup persistence in `apps/cms/components/editor/editor-screen.tsx`
+- [x] T028 [US1] Export media upload UI components from `apps/cms/components/editor/index.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 1 is complete when an authorized admin can upload a valid body image,
@@ -104,18 +104,18 @@ see a clear uploaded-but-unsaved state.
 ### Tests for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T029 [P] [US2] Add upload media action tests for successful cover upload, cover path format, existing cover replacement without delete, and public cover result in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T030 [P] [US2] Add frontmatter panel cover upload tests for file selection, pending state, cover path update, existing cover display, and dirty state callback in `apps/cms/components/editor/frontmatter-panel.test.tsx`
-- [ ] T031 [P] [US2] Add editor screen cover upload integration tests proving frontmatter update, preview awareness, backup persistence, and separate save requirement in `apps/cms/components/editor/editor-cover-media-flow.test.tsx`
+- [x] T029 [P] [US2] Add upload media action tests for successful cover upload, cover path format, existing cover replacement without delete, and public cover result in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T030 [P] [US2] Add frontmatter panel cover upload tests for file selection, pending state, cover path update, existing cover display, and dirty state callback in `apps/cms/components/editor/frontmatter-panel.test.tsx`
+- [x] T031 [P] [US2] Add editor screen cover upload integration tests proving frontmatter update, preview awareness, backup persistence, and separate save requirement in `apps/cms/components/editor/editor-cover-media-flow.test.tsx`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T032 [US2] Extend `uploadEditorMediaAction` to support cover uploads and return `coverImage` public path result in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T033 [US2] Add cover upload UI, existing cover display, and upload status handling to `apps/cms/components/editor/frontmatter-panel.tsx`
-- [ ] T034 [US2] Integrate cover upload callbacks, dirty state, local backup persistence, and uploaded-but-unsaved messaging in `apps/cms/components/editor/editor-screen.tsx`
-- [ ] T035 [US2] Update preview panel cover image awareness or summary messaging without adding publish/SEO controls in `apps/cms/components/editor/preview-panel.tsx`
+- [x] T032 [US2] Extend `uploadEditorMediaAction` to support cover uploads and return `coverImage` public path result in `apps/cms/app/actions/editor-actions.ts`
+- [x] T033 [US2] Add cover upload UI, existing cover display, and upload status handling to `apps/cms/components/editor/frontmatter-panel.tsx`
+- [x] T034 [US2] Integrate cover upload callbacks, dirty state, local backup persistence, and uploaded-but-unsaved messaging in `apps/cms/components/editor/editor-screen.tsx`
+- [x] T035 [US2] Update preview panel cover image awareness or summary messaging without adding publish/SEO controls in `apps/cms/components/editor/preview-panel.tsx`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 2 is complete when an authorized admin can upload a cover image, see
@@ -135,21 +135,21 @@ and save the updated frontmatter through the existing draft save flow.
 ### Tests for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T036 [P] [US3] Add upload media action failure tests for missing file, invalid type, too large file, invalid decode, slug-required, commit failure, auth-required, forbidden, and session-expired results in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T037 [P] [US3] Add media upload status rendering tests for validation failure, temporary connectivity, forbidden, session expired, retry action, and no public path leakage in `apps/cms/components/editor/media-upload-status.test.tsx`
-- [ ] T038 [P] [US3] Add editor media failure flow tests proving body and cover refs are unchanged, current edits remain, backup excludes pending placeholders, and retry can resubmit in `apps/cms/components/editor/editor-media-failure-flow.test.tsx`
-- [ ] T039 [P] [US3] Add editor validation regression tests proving saved MDX/frontmatter never includes `blob:`, `data:`, `file://`, or local absolute image paths after failed upload in `packages/editor/src/validation.test.ts`
+- [x] T036 [P] [US3] Add upload media action failure tests for missing file, invalid type, too large file, invalid decode, slug-required, commit failure, auth-required, forbidden, and session-expired results in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T037 [P] [US3] Add media upload status rendering tests for validation failure, temporary connectivity, forbidden, session expired, retry action, and no public path leakage in `apps/cms/components/editor/media-upload-status.test.tsx`
+- [x] T038 [P] [US3] Add editor media failure flow tests proving body and cover refs are unchanged, current edits remain, backup excludes pending placeholders, and retry can resubmit in `apps/cms/components/editor/editor-media-failure-flow.test.tsx`
+- [x] T039 [P] [US3] Add editor validation regression tests proving saved MDX/frontmatter never includes `blob:`, `data:`, `file://`, or local absolute image paths after failed upload in `packages/editor/src/validation.test.ts`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T040 [US3] Map media validation, slug, auth, repository, rate-limit, connectivity, and unknown failures to upload action result codes in `apps/cms/lib/editor/editor-media.ts`
-- [ ] T041 [US3] Harden `uploadEditorMediaAction` failure paths so rejected uploads never call `commitMedia` and never return temporary URLs in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T042 [US3] Add retry and discard handling for failed body uploads without mutating editor document before success in `apps/cms/components/editor/media-upload-control.tsx`
-- [ ] T043 [US3] Add retry and unchanged-cover handling for failed cover uploads in `apps/cms/components/editor/frontmatter-panel.tsx`
-- [ ] T044 [US3] Ensure editor local backup serialization excludes pending upload placeholders and preserves only successful public paths in `apps/cms/components/editor/editor-screen.tsx`
-- [ ] T045 [US3] Add no-delete behavior for removed image references and document that repository media cleanup is out of scope in `apps/cms/lib/editor/editor-media.ts`
+- [x] T040 [US3] Map media validation, slug, auth, repository, rate-limit, connectivity, and unknown failures to upload action result codes in `apps/cms/lib/editor/editor-media.ts`
+- [x] T041 [US3] Harden `uploadEditorMediaAction` failure paths so rejected uploads never call `commitMedia` and never return temporary URLs in `apps/cms/app/actions/editor-actions.ts`
+- [x] T042 [US3] Add retry and discard handling for failed body uploads without mutating editor document before success in `apps/cms/components/editor/media-upload-control.tsx`
+- [x] T043 [US3] Add retry and unchanged-cover handling for failed cover uploads in `apps/cms/components/editor/frontmatter-panel.tsx`
+- [x] T044 [US3] Ensure editor local backup serialization excludes pending upload placeholders and preserves only successful public paths in `apps/cms/components/editor/editor-screen.tsx`
+- [x] T045 [US3] Add no-delete behavior for removed image references and document that repository media cleanup is out of scope in `apps/cms/lib/editor/editor-media.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 3 is complete when invalid files and failed uploads do not mutate
@@ -163,20 +163,20 @@ states are clearly separated from terminal failures.
 **Purpose**: 문서, 검증, scope review를 마무리한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T046 [P] Update media upload implementation notes in `README.md`
-- [ ] T047 [P] Update Phase 7 implementation status in `docs/implementation-roadmap.md`
-- [ ] T048 [P] Update media upload validation notes in `specs/008-media-upload/quickstart.md`
-- [ ] T049 [P] Update editor package image/caption behavior notes in `packages/editor/README.md`
-- [ ] T050 Run `pnpm --filter @blog-platform/editor typecheck` and fix issues in `packages/editor`
-- [ ] T051 Run `pnpm --filter @blog-platform/editor lint` and fix issues in `packages/editor`
-- [ ] T052 Run `pnpm --filter @blog-platform/editor test` and fix issues in `packages/editor`
-- [ ] T053 Run `pnpm --filter @blog-platform/cms typecheck` and fix issues in `apps/cms`
-- [ ] T054 Run `pnpm --filter @blog-platform/cms lint` and fix issues in `apps/cms`
-- [ ] T055 Run `pnpm --filter @blog-platform/cms test` and fix issues in `apps/cms`
-- [ ] T056 Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` from `package.json`
-- [ ] T057 Verify quickstart scenarios in `specs/008-media-upload/quickstart.md`
-- [ ] T058 Confirm no forbidden scope was introduced against `.specify/memory/constitution.md`
-- [ ] T059 Confirm no object storage, media library, unused file cleanup, publish/revalidation, SEO scoring, analytics dashboard, AI generation, custom hex palette, or nested-card editor layout was introduced in `apps/cms`, `packages/editor`, and `packages/design-system`
+- [x] T046 [P] Update media upload implementation notes in `README.md`
+- [x] T047 [P] Update Phase 7 implementation status in `docs/implementation-roadmap.md`
+- [x] T048 [P] Update media upload validation notes in `specs/008-media-upload/quickstart.md`
+- [x] T049 [P] Update editor package image/caption behavior notes in `packages/editor/README.md`
+- [x] T050 Run `pnpm --filter @blog-platform/editor typecheck` and fix issues in `packages/editor`
+- [x] T051 Run `pnpm --filter @blog-platform/editor lint` and fix issues in `packages/editor`
+- [x] T052 Run `pnpm --filter @blog-platform/editor test` and fix issues in `packages/editor`
+- [x] T053 Run `pnpm --filter @blog-platform/cms typecheck` and fix issues in `apps/cms`
+- [x] T054 Run `pnpm --filter @blog-platform/cms lint` and fix issues in `apps/cms`
+- [x] T055 Run `pnpm --filter @blog-platform/cms test` and fix issues in `apps/cms`
+- [x] T056 Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` from `package.json`
+- [x] T057 Verify quickstart scenarios in `specs/008-media-upload/quickstart.md`
+- [x] T058 Confirm no forbidden scope was introduced against `.specify/memory/constitution.md`
+- [x] T059 Confirm no object storage, media library, unused file cleanup, publish/revalidation, SEO scoring, analytics dashboard, AI generation, custom hex palette, or nested-card editor layout was introduced in `apps/cms`, `packages/editor`, and `packages/design-system`
 <!-- prettier-ignore-end -->
 
 ---

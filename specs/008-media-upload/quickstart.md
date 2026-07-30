@@ -94,3 +94,18 @@ pnpm lint
 pnpm test
 pnpm build
 ```
+
+## Validation Results
+
+2026-07-30 기준으로 다음 검증을 완료했다.
+
+- `pnpm --filter @blog-platform/editor typecheck`: 통과
+- `pnpm --filter @blog-platform/editor lint`: 통과
+- `pnpm --filter @blog-platform/editor test`: 통과
+- `pnpm --filter @blog-platform/cms typecheck`: 통과
+- `pnpm --filter @blog-platform/cms lint`: 통과
+- `pnpm --filter @blog-platform/cms test`: 통과
+- `pnpm typecheck`: 통과
+- `pnpm lint`: 통과
+- `pnpm test`: 통과
+- `pnpm build`: 통과

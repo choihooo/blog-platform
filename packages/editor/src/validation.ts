@@ -3,7 +3,11 @@ import { createEditorIssue } from "./document.js";
 import { isSupportedBlock, isSupportedMark } from "./supported-format.js";
 
 function isUnsafeUrl(value: string): boolean {
-  return /^\s*(javascript|data|blob):/i.test(value);
+  return /^\s*(javascript|data|blob|file):/i.test(value);
+}
+
+function isLocalPath(value: string): boolean {
+  return /^([a-z]:[\\/]|\/(?!media\/))/i.test(value);
 }
 
 function validateNode(node: EditorNode, index: number): EditorIssue[] {
@@ -39,6 +43,15 @@ function validateNode(node: EditorNode, index: number): EditorIssue[] {
       createEditorIssue("editor.image.unsafe", "Unsafe image URL", ["body", String(index), "src"]),
     );
   }
+  if (node.type === "image" && isLocalPath(node.src)) {
+    issues.push(
+      createEditorIssue("editor.image.local-path", "Image must use a public media path", [
+        "body",
+        String(index),
+        "src",
+      ]),
+    );
+  }
   if (
     node.type === "heading" &&
     "depth" in node &&
@@ -69,6 +82,17 @@ export function validateEditorDocument(document: EditorDocument): EditorIssue[] 
   if (!["draft", "published", "archived"].includes(document.frontmatter.status)) {
     issues.push(
       createEditorIssue("editor.status.invalid", "Invalid post status", ["frontmatter", "status"]),
+    );
+  }
+  if (
+    document.frontmatter.coverImage &&
+    (isUnsafeUrl(document.frontmatter.coverImage) || isLocalPath(document.frontmatter.coverImage))
+  ) {
+    issues.push(
+      createEditorIssue("editor.coverImage.unsafe", "Cover image must use a public media path", [
+        "frontmatter",
+        "coverImage",
+      ]),
     );
   }
   document.body.forEach((node, index) => issues.push(...validateNode(node, index)));

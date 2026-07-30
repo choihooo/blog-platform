@@ -532,6 +532,18 @@ MVP 허용 노드:
 - Markdown image serialization.
 - failed upload rollback.
 
+구현 상태:
+
+- `apps/cms/lib/editor`가 media path 생성, content hash, 2MB 제한, 확장자 검증, 서버 측 image decode
+  및 webp 정규화를 제공한다.
+- CMS editor toolbar는 본문 이미지 업로드를 제공하고, frontmatter panel은 cover image 업로드를
+  제공한다.
+- 업로드 성공 시 기존 protected content operation과 `commitMedia`를 통해 `public/media` 아래에 media
+  commit을 만들고, editor document에는 `/media/...` public path만 반영한다.
+- `packages/editor`는 image caption 직렬화와 unsafe/local image path 차단을 검증한다.
+- package validation은 `pnpm --filter @blog-platform/editor typecheck`, `lint`, `test`,
+  `pnpm --filter @blog-platform/cms typecheck`, `lint`, `test`로 확인한다.
+
 ## 11. Phase 8: Publish Workflow
 
 목표:
