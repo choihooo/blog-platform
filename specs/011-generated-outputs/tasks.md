@@ -21,10 +21,10 @@ OG image fallback, TOC/reading time이 핵심 성공 기준이므로 user story�
 **Purpose**: generated outputs 구현에 필요한 test surface와 fixture 경계를 준비한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T001 Verify generated output feature docs and active feature pointer in `.specify/feature.json` and `specs/011-generated-outputs/plan.md`
-- [ ] T002 [P] Verify `@blog-platform/seo-engine` test script and exports are ready for generated output modules in `packages/seo-engine/package.json` and `packages/seo-engine/src/index.ts`
-- [ ] T003 [P] Verify `@blog-platform/markdown` exports expose published filtering, TOC, heading slug, and reading time helpers in `packages/markdown/src/index.ts`
-- [ ] T004 [P] Verify blog app test script covers route and page integration tests in `apps/blog/package.json`
+- [x] T001 Verify generated output feature docs and active feature pointer in `.specify/feature.json` and `specs/011-generated-outputs/plan.md`
+- [x] T002 [P] Verify `@blog-platform/seo-engine` test script and exports are ready for generated output modules in `packages/seo-engine/package.json` and `packages/seo-engine/src/index.ts`
+- [x] T003 [P] Verify `@blog-platform/markdown` exports expose published filtering, TOC, heading slug, and reading time helpers in `packages/markdown/src/index.ts`
+- [x] T004 [P] Verify blog app test script covers route and page integration tests in `apps/blog/package.json`
 <!-- prettier-ignore-end -->
 
 ---
@@ -36,12 +36,12 @@ OG image fallback, TOC/reading time이 핵심 성공 기준이므로 user story�
 **CRITICAL**: 이 phase가 끝나기 전에는 user story 구현을 시작하지 않는다.
 
 <!-- prettier-ignore-start -->
-- [ ] T005 [P] Add or update published, draft, archived, missing-cover, long-title, duplicate-heading generated output fixtures in `packages/seo-engine/src/test-fixtures.ts`
-- [ ] T006 [P] Add or update blog content fixtures for published, draft, archived, category, tag, author, long title, missing cover, and repeated headings in `apps/blog/app/generated-output-routes.test.ts`
-- [ ] T007 Add SEO site URL normalization, public post URL, canonical URL, and OG image URL tests in `packages/seo-engine/src/subject.test.ts`
-- [ ] T008 Implement or tighten SEO subject URL helpers and published-safe subject creation in `packages/seo-engine/src/subject.ts`
-- [ ] T009 Add app adapter tests proving `PublicPost` maps author, category, tags, TOC, reading time, cover image, and status into SEO subjects in `apps/blog/lib/seo.test.ts`
-- [ ] T010 Implement or tighten `PublicPost` to `SeoSubject` conversion and published-only helper usage in `apps/blog/lib/seo.ts`
+- [x] T005 [P] Add or update published, draft, archived, missing-cover, long-title, duplicate-heading generated output fixtures in `packages/seo-engine/src/test-fixtures.ts`
+- [x] T006 [P] Add or update blog content fixtures for published, draft, archived, category, tag, author, long title, missing cover, and repeated headings in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T007 Add SEO site URL normalization, public post URL, canonical URL, and OG image URL tests in `packages/seo-engine/src/subject.test.ts`
+- [x] T008 Implement or tighten SEO subject URL helpers and published-safe subject creation in `packages/seo-engine/src/subject.ts`
+- [x] T009 Add app adapter tests proving `PublicPost` maps author, category, tags, TOC, reading time, cover image, and status into SEO subjects in `apps/blog/lib/seo.test.ts`
+- [x] T010 Implement or tighten `PublicPost` to `SeoSubject` conversion and published-only helper usage in `apps/blog/lib/seo.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: Shared package와 blog app은 같은 published-only subject와 URL 규칙을 사용한다.
@@ -60,31 +60,31 @@ Twitter metadata, JSON-LD, RSS, Sitemap, robots 정책, OG image URL이 생성�
 ### Tests for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T011 [P] [US1] Add metadata generation tests for canonical URL, Open Graph, Twitter metadata, fallback description, fallback OG image URL, and non-published rejection in `packages/seo-engine/src/metadata.test.ts`
-- [ ] T012 [P] [US1] Add JSON-LD tests for `BlogPosting`, `BreadcrumbList`, author, date, image, category, tags, undefined field cleanup, and non-published rejection in `packages/seo-engine/src/json-ld.test.ts`
-- [ ] T013 [P] [US1] Add RSS tests for XML escaping, empty channel, latest-first ordering, guid/link stability, description fallback, and draft/archived exclusion in `packages/seo-engine/src/feed.test.ts`
-- [ ] T014 [P] [US1] Add Sitemap tests for home URL, published post URLs, public category/tag URLs, last modified dates, duplicate URL removal, and private URL exclusion in `packages/seo-engine/src/sitemap.test.ts`
-- [ ] T015 [P] [US1] Add robots tests for sitemap absolute URL, public allow policy, CMS disallow, preview disallow, and stable line ordering in `packages/seo-engine/src/robots.test.ts`
-- [ ] T016 [P] [US1] Add OG image payload tests for title, site name, category, author, cover image, fallback state, public post URL, and non-published rejection in `packages/seo-engine/src/og-image.test.ts`
-- [ ] T017 [P] [US1] Add blog output route tests for `/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`, unknown slug 404, draft slug 404, and archived slug 404 in `apps/blog/app/generated-output-routes.test.ts`
-- [ ] T018 [P] [US1] Add blog post metadata tests for canonical, Open Graph, Twitter metadata, JSON-LD script output, and draft/archived 404 behavior in `apps/blog/app/public-seo-output.test.tsx`
+- [x] T011 [P] [US1] Add metadata generation tests for canonical URL, Open Graph, Twitter metadata, fallback description, fallback OG image URL, and non-published rejection in `packages/seo-engine/src/metadata.test.ts`
+- [x] T012 [P] [US1] Add JSON-LD tests for `BlogPosting`, `BreadcrumbList`, author, date, image, category, tags, undefined field cleanup, and non-published rejection in `packages/seo-engine/src/json-ld.test.ts`
+- [x] T013 [P] [US1] Add RSS tests for XML escaping, empty channel, latest-first ordering, guid/link stability, description fallback, and draft/archived exclusion in `packages/seo-engine/src/feed.test.ts`
+- [x] T014 [P] [US1] Add Sitemap tests for home URL, published post URLs, public category/tag URLs, last modified dates, duplicate URL removal, and private URL exclusion in `packages/seo-engine/src/sitemap.test.ts`
+- [x] T015 [P] [US1] Add robots tests for sitemap absolute URL, public allow policy, CMS disallow, preview disallow, and stable line ordering in `packages/seo-engine/src/robots.test.ts`
+- [x] T016 [P] [US1] Add OG image payload tests for title, site name, category, author, cover image, fallback state, public post URL, and non-published rejection in `packages/seo-engine/src/og-image.test.ts`
+- [x] T017 [P] [US1] Add blog output route tests for `/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`, unknown slug 404, draft slug 404, and archived slug 404 in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T018 [P] [US1] Add blog post metadata tests for canonical, Open Graph, Twitter metadata, JSON-LD script output, and draft/archived 404 behavior in `apps/blog/app/public-seo-output.test.tsx`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T019 [US1] Implement or tighten generated page metadata behavior in `packages/seo-engine/src/metadata.ts`
-- [ ] T020 [US1] Implement or tighten `BlogPosting` and `BreadcrumbList` JSON-LD generation in `packages/seo-engine/src/json-ld.ts`
-- [ ] T021 [US1] Implement or tighten RSS output generation and XML serialization in `packages/seo-engine/src/feed.ts`
-- [ ] T022 [US1] Implement or tighten Sitemap output generation, taxonomy URL inclusion, private URL exclusion, and XML serialization in `packages/seo-engine/src/sitemap.ts`
-- [ ] T023 [US1] Implement or tighten robots policy generation and text serialization in `packages/seo-engine/src/robots.ts`
-- [ ] T024 [US1] Implement or tighten OG image payload creation and fallback payload behavior in `packages/seo-engine/src/og-image.ts`
-- [ ] T025 [US1] Export generated output APIs from `packages/seo-engine/src/index.ts`
-- [ ] T026 [US1] Wire `/rss.xml` to published-only feed output and correct response headers in `apps/blog/app/rss.xml/route.ts`
-- [ ] T027 [US1] Wire `/sitemap.xml` to published-only sitemap output including public category/tag URLs in `apps/blog/app/sitemap.xml/route.ts`
-- [ ] T028 [US1] Wire `/robots.txt` to robots policy output with sitemap URL and private surface disallow rules in `apps/blog/app/robots.txt/route.ts`
-- [ ] T029 [US1] Wire `/og/[slug]` to published-only post lookup, OG payload, fallback visual, long title wrapping, and private slug 404 in `apps/blog/app/og/[slug]/route.ts`
-- [ ] T030 [US1] Wire post detail metadata and JSON-LD generation into `apps/blog/app/posts/[slug]/page.tsx`
+- [x] T019 [US1] Implement or tighten generated page metadata behavior in `packages/seo-engine/src/metadata.ts`
+- [x] T020 [US1] Implement or tighten `BlogPosting` and `BreadcrumbList` JSON-LD generation in `packages/seo-engine/src/json-ld.ts`
+- [x] T021 [US1] Implement or tighten RSS output generation and XML serialization in `packages/seo-engine/src/feed.ts`
+- [x] T022 [US1] Implement or tighten Sitemap output generation, taxonomy URL inclusion, private URL exclusion, and XML serialization in `packages/seo-engine/src/sitemap.ts`
+- [x] T023 [US1] Implement or tighten robots policy generation and text serialization in `packages/seo-engine/src/robots.ts`
+- [x] T024 [US1] Implement or tighten OG image payload creation and fallback payload behavior in `packages/seo-engine/src/og-image.ts`
+- [x] T025 [US1] Export generated output APIs from `packages/seo-engine/src/index.ts`
+- [x] T026 [US1] Wire `/rss.xml` to published-only feed output and correct response headers in `apps/blog/app/rss.xml/route.ts`
+- [x] T027 [US1] Wire `/sitemap.xml` to published-only sitemap output including public category/tag URLs in `apps/blog/app/sitemap.xml/route.ts`
+- [x] T028 [US1] Wire `/robots.txt` to robots policy output with sitemap URL and private surface disallow rules in `apps/blog/app/robots.txt/route.ts`
+- [x] T029 [US1] Wire `/og/[slug]` to published-only post lookup, OG payload, fallback visual, long title wrapping, and private slug 404 in `apps/blog/app/og/[slug]/route.ts`
+- [x] T030 [US1] Wire post detail metadata and JSON-LD generation into `apps/blog/app/posts/[slug]/page.tsx`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 1 is complete when all generated public outputs are deterministic,
@@ -103,20 +103,20 @@ Sitemap에는 공개 표면만 들어가며, robots 정책에는 Sitemap 위치�
 ### Tests for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T031 [P] [US2] Add RSS route integration tests for empty published collection, multiple published posts, latest-first order, XML content type, and no draft/archived body leakage in `apps/blog/app/generated-output-routes.test.ts`
-- [ ] T032 [P] [US2] Add Sitemap route integration tests for home, published posts, category URLs, tag URLs, duplicate removal, XML content type, and no CMS/preview URLs in `apps/blog/app/generated-output-routes.test.ts`
-- [ ] T033 [P] [US2] Add robots route integration tests for text content type, sitemap absolute URL, CMS disallow, preview disallow, and stable output in `apps/blog/app/generated-output-routes.test.ts`
-- [ ] T034 [P] [US2] Add taxonomy selection tests proving only categories and tags referenced by public content are exposed when required in `apps/blog/lib/seo.test.ts`
+- [x] T031 [P] [US2] Add RSS route integration tests for empty published collection, multiple published posts, latest-first order, XML content type, and no draft/archived body leakage in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T032 [P] [US2] Add Sitemap route integration tests for home, published posts, category URLs, tag URLs, duplicate removal, XML content type, and no CMS/preview URLs in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T033 [P] [US2] Add robots route integration tests for text content type, sitemap absolute URL, CMS disallow, preview disallow, and stable output in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T034 [P] [US2] Add taxonomy selection tests proving only categories and tags referenced by public content are exposed when required in `apps/blog/lib/seo.test.ts`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T035 [US2] Extend blog SEO adapter to provide public category and tag URL inputs for Sitemap generation in `apps/blog/lib/seo.ts`
-- [ ] T036 [US2] Extend Sitemap route to include public category and tag URLs without exposing empty private surfaces in `apps/blog/app/sitemap.xml/route.ts`
-- [ ] T037 [US2] Ensure RSS route handles zero published posts with a valid channel response in `apps/blog/app/rss.xml/route.ts`
-- [ ] T038 [US2] Ensure robots route serializes CMS and preview disallow rules plus absolute Sitemap URL in `apps/blog/app/robots.txt/route.ts`
-- [ ] T039 [US2] Update generated route tests to use explicit fixture data instead of relying on repository content order in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T035 [US2] Extend blog SEO adapter to provide public category and tag URL inputs for Sitemap generation in `apps/blog/lib/seo.ts`
+- [x] T036 [US2] Extend Sitemap route to include public category and tag URLs without exposing empty private surfaces in `apps/blog/app/sitemap.xml/route.ts`
+- [x] T037 [US2] Ensure RSS route handles zero published posts with a valid channel response in `apps/blog/app/rss.xml/route.ts`
+- [x] T038 [US2] Ensure robots route serializes CMS and preview disallow rules plus absolute Sitemap URL in `apps/blog/app/robots.txt/route.ts`
+- [x] T039 [US2] Update generated route tests to use explicit fixture data instead of relying on repository content order in `apps/blog/app/generated-output-routes.test.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 2 is complete when feed and crawler routes remain valid across empty,
@@ -135,19 +135,19 @@ heading anchor와 일치하게 한다.
 ### Tests for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T040 [P] [US3] Add markdown TOC tests for repeated headings, depth ordering, generated anchors, and stable labels in `packages/markdown/src/toc.test.ts`
-- [ ] T041 [P] [US3] Add markdown reading time tests for empty body, short body, long body, and label stability in `packages/markdown/src/reading-time.test.ts`
-- [ ] T042 [P] [US3] Add post page rendering tests for TOC visibility, heading anchor matching, repeated heading anchors, and reading time label in `apps/blog/app/public-seo-output.test.tsx`
+- [x] T040 [P] [US3] Add markdown TOC tests for repeated headings, depth ordering, generated anchors, and stable labels in `packages/markdown/src/toc.test.ts`
+- [x] T041 [P] [US3] Add markdown reading time tests for empty body, short body, long body, and label stability in `packages/markdown/src/reading-time.test.ts`
+- [x] T042 [P] [US3] Add post page rendering tests for TOC visibility, heading anchor matching, repeated heading anchors, and reading time label in `apps/blog/app/public-seo-output.test.tsx`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T043 [US3] Tighten TOC generation and repeated heading anchor behavior in `packages/markdown/src/toc.ts` and `packages/markdown/src/headings.ts`
-- [ ] T044 [US3] Tighten reading time label generation and export behavior in `packages/markdown/src/reading-time.ts` and `packages/markdown/src/index.ts`
-- [ ] T045 [US3] Ensure content loader carries TOC and reading time from Markdown analysis into `PublicPost` in `apps/blog/lib/content.ts`
-- [ ] T046 [US3] Render TOC links and reading time on post detail without duplicating markdown analysis in `apps/blog/app/posts/[slug]/page.tsx`
-- [ ] T047 [US3] Verify TOC link targets match rendered heading IDs in post detail output in `apps/blog/app/public-seo-output.test.tsx`
+- [x] T043 [US3] Tighten TOC generation and repeated heading anchor behavior in `packages/markdown/src/toc.ts` and `packages/markdown/src/headings.ts`
+- [x] T044 [US3] Tighten reading time label generation and export behavior in `packages/markdown/src/reading-time.ts` and `packages/markdown/src/index.ts`
+- [x] T045 [US3] Ensure content loader carries TOC and reading time from Markdown analysis into `PublicPost` in `apps/blog/lib/content.ts`
+- [x] T046 [US3] Render TOC links and reading time on post detail without duplicating markdown analysis in `apps/blog/app/posts/[slug]/page.tsx`
+- [x] T047 [US3] Verify TOC link targets match rendered heading IDs in post detail output in `apps/blog/app/public-seo-output.test.tsx`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 3 is complete when readers can use TOC and reading time on published post
@@ -160,15 +160,15 @@ details, and duplicate headings still navigate correctly.
 **Purpose**: 문서, validation, scope guard를 마무리한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T048 [P] Update generated outputs examples and API notes in `packages/seo-engine/README.md`
-- [ ] T049 [P] Update Markdown TOC and reading time ownership notes in `packages/markdown/README.md`
-- [ ] T050 [P] Update public generated outputs notes in `apps/blog/README.md`
-- [ ] T051 [P] Record validation results for generated outputs in `specs/011-generated-outputs/quickstart.md`
-- [ ] T052 Run `pnpm --filter @blog-platform/seo-engine typecheck`, `pnpm --filter @blog-platform/seo-engine lint`, and `pnpm --filter @blog-platform/seo-engine test` and fix issues in `packages/seo-engine`
-- [ ] T053 Run `pnpm --filter @blog-platform/markdown typecheck`, `pnpm --filter @blog-platform/markdown lint`, and `pnpm --filter @blog-platform/markdown test` and fix issues in `packages/markdown`
-- [ ] T054 Run `pnpm --filter @blog-platform/blog typecheck`, `pnpm --filter @blog-platform/blog lint`, and `pnpm --filter @blog-platform/blog test` and fix issues in `apps/blog`
-- [ ] T055 Run `pnpm typecheck`, `pnpm lint`, and `pnpm test` from `package.json`
-- [ ] T056 Confirm no generated `rss.xml`, `sitemap.xml`, `robots.txt`, OG image files, analytics event work, CMS SEO panel work, GA4/Search Console API dashboard, object storage, CMS database, or AI generation was introduced in `apps/blog`, `packages/seo-engine`, and `packages/markdown`
+- [x] T048 [P] Update generated outputs examples and API notes in `packages/seo-engine/README.md`
+- [x] T049 [P] Update Markdown TOC and reading time ownership notes in `packages/markdown/README.md`
+- [x] T050 [P] Update public generated outputs notes in `apps/blog/README.md`
+- [x] T051 [P] Record validation results for generated outputs in `specs/011-generated-outputs/quickstart.md`
+- [x] T052 Run `pnpm --filter @blog-platform/seo-engine typecheck`, `pnpm --filter @blog-platform/seo-engine lint`, and `pnpm --filter @blog-platform/seo-engine test` and fix issues in `packages/seo-engine`
+- [x] T053 Run `pnpm --filter @blog-platform/markdown typecheck`, `pnpm --filter @blog-platform/markdown lint`, and `pnpm --filter @blog-platform/markdown test` and fix issues in `packages/markdown`
+- [x] T054 Run `pnpm --filter @blog-platform/blog typecheck`, `pnpm --filter @blog-platform/blog lint`, and `pnpm --filter @blog-platform/blog test` and fix issues in `apps/blog`
+- [x] T055 Run `pnpm typecheck`, `pnpm lint`, and `pnpm test` from `package.json`
+- [x] T056 Confirm no generated `rss.xml`, `sitemap.xml`, `robots.txt`, OG image files, analytics event work, CMS SEO panel work, GA4/Search Console API dashboard, object storage, CMS database, or AI generation was introduced in `apps/blog`, `packages/seo-engine`, and `packages/markdown`
 <!-- prettier-ignore-end -->
 
 ---

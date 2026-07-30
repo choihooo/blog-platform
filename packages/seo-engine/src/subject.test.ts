@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createSeoSubject, publicPostUrl } from "./subject.js";
+import { canonicalUrl, createSeoSubject, ogImageUrl, publicPostUrl } from "./subject.js";
 import { seoSubject } from "./test-fixtures.js";
 
 describe("createSeoSubject", () => {
@@ -29,6 +29,11 @@ describe("createSeoSubject", () => {
     expect(subject.internalLinks).toEqual(["/posts/other"]);
     expect(publicPostUrl(subject.site, subject.slug ?? "")).toBe(
       "https://example.com/posts/hello-world",
+    );
+    expect(canonicalUrl(subject)).toBe("https://example.com/posts/hello-world");
+    expect(ogImageUrl(subject.site, subject.slug ?? "")).toBe("https://example.com/og/hello-world");
+    expect(publicPostUrl({ ...subject.site, siteUrl: "https://example.com/" }, "x")).toBe(
+      "https://example.com/posts/x",
     );
   });
 });

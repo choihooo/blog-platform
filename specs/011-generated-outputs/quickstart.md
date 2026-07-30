@@ -72,3 +72,15 @@ route로 노출되지 않는다.
 
 이 quickstart는 generated outputs만 검증한다. SEO score, CMS SEO panel, GA4/GTM 이벤트, 외부 분석 콘솔
 링크는 이 feature의 통과 조건에 포함하지 않는다.
+
+## Validation Results
+
+- `pnpm --filter @blog-platform/seo-engine typecheck`: 통과
+- `pnpm --filter @blog-platform/seo-engine lint`: 통과
+- `pnpm --filter @blog-platform/seo-engine test`: 통과
+- `pnpm --filter @blog-platform/markdown typecheck`: 통과
+- `pnpm --filter @blog-platform/markdown lint`: 통과
+- `pnpm --filter @blog-platform/markdown test`: 통과
+- `pnpm --filter @blog-platform/blog typecheck`: 통과
+- `pnpm --filter @blog-platform/blog lint`: 통과
+- `pnpm --filter @blog-platform/blog test`: 통과

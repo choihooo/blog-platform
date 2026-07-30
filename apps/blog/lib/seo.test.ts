@@ -23,5 +23,8 @@ describe("postToSeoSubject", () => {
     );
     expect(subject.slug).toBe("hello");
     expect(subject.tags[0]?.label).toBe("MDX");
+    expect(subject.toc[0]?.slug).toBe("hello");
+    expect(subject.readingTime?.label).toBe("1 min read");
+    expect(subject.coverImage).toBeUndefined();
   });
 });

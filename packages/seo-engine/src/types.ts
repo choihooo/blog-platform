@@ -115,4 +115,5 @@ export type OgImagePayload = {
   category?: string;
   coverImage?: string;
   fallback: boolean;
+  publicPostUrl: string;
 };

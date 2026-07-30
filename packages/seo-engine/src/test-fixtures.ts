@@ -30,3 +30,39 @@ export function seoSubject(overrides: Partial<SeoSubject> = {}): SeoSubject {
     ...overrides,
   };
 }
+
+export function draftSubject(overrides: Partial<SeoSubject> = {}) {
+  return seoSubject({ status: "draft", slug: "draft-post", ...overrides });
+}
+
+export function archivedSubject(overrides: Partial<SeoSubject> = {}) {
+  return seoSubject({ status: "archived", slug: "archived-post", ...overrides });
+}
+
+export function missingCoverSubject(overrides: Partial<SeoSubject> = {}) {
+  return seoSubject({ coverImage: undefined, ...overrides });
+}
+
+export function longTitleSubject(overrides: Partial<SeoSubject> = {}) {
+  return seoSubject({
+    title:
+      "A Very Long Generated Output Title That Must Wrap Cleanly Inside The Social Sharing Image",
+    slug: "long-generated-output-title",
+    ...overrides,
+  });
+}
+
+export function duplicateHeadingSubject(overrides: Partial<SeoSubject> = {}) {
+  return seoSubject({
+    headings: [
+      { depth: 1, text: "Guide", slug: "guide" },
+      { depth: 2, text: "Intro", slug: "intro" },
+      { depth: 2, text: "Intro", slug: "intro-1" },
+    ],
+    toc: [
+      { depth: 2, text: "Intro", slug: "intro" },
+      { depth: 2, text: "Intro", slug: "intro-1" },
+    ],
+    ...overrides,
+  });
+}

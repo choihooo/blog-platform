@@ -1,5 +1,6 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { generatePageMetadata } from "@blog-platform/seo-engine";
+import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 import { postToSeoSubject, siteForSeo } from "../lib/seo";
 import type { PublicPost } from "../lib/content";
 
@@ -18,10 +19,21 @@ describe("public SEO output", () => {
       tagEntries: [],
       readingTimeLabel: "1 min read",
     };
-    const metadata = generatePageMetadata(
-      postToSeoSubject(post, siteForSeo({ siteName: "Blog", siteUrl: "https://example.com" })),
+    const subject = postToSeoSubject(
+      post,
+      siteForSeo({ siteName: "Blog", siteUrl: "https://example.com" }),
     );
+    const metadata = generatePageMetadata(subject);
     expect(metadata.canonical).toBe("https://example.com/posts/hello");
     expect(metadata.openGraph.title).toBe("Hello MDX");
+    expect(metadata.twitter.images[0]).toBe("https://example.com/og/hello");
+    expect(generateJsonLd(subject)[0]).toMatchObject({ "@type": "BlogPosting" });
+  });
+
+  it("post page renders reading aids from public post data", () => {
+    const source = readFileSync(new URL("./posts/[slug]/page.tsx", import.meta.url), "utf8");
+    expect(source).toContain("post.readingTimeLabel");
+    expect(source).toContain("post.toc.map");
+    expect(source).toContain("href={`#${item.slug}`}");
   });
 });

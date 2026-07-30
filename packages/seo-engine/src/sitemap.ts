@@ -1,3 +1,4 @@
+import { escapeXml } from "./feed.js";
 import { homeEntry, publicPostUrl, trimSlash } from "./subject.js";
 import type { SeoSite, SeoSubject, SitemapEntry } from "./types.js";
 
@@ -29,7 +30,7 @@ export function serializeSitemap(entries: SitemapEntry[]) {
 ${entries
   .map(
     (entry) =>
-      `<url><loc>${entry.loc}</loc>${entry.lastModified ? `<lastmod>${entry.lastModified}</lastmod>` : ""}</url>`,
+      `<url><loc>${escapeXml(entry.loc)}</loc>${entry.lastModified ? `<lastmod>${escapeXml(entry.lastModified)}</lastmod>` : ""}</url>`,
   )
   .join("\n")}
 </urlset>

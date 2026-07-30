@@ -16,4 +16,16 @@ describe("generateToc", () => {
   it("returns an empty list for no headings", () => {
     expect(generateToc([])).toEqual([]);
   });
+
+  it("keeps repeated heading anchors stable", () => {
+    expect(
+      generateToc([
+        { depth: 2, text: "Intro", slug: "intro" },
+        { depth: 2, text: "Intro", slug: "intro-1" },
+      ]),
+    ).toEqual([
+      { depth: 2, text: "Intro", slug: "intro" },
+      { depth: 2, text: "Intro", slug: "intro-1" },
+    ]);
+  });
 });

@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { generatePageMetadata } from "./metadata.js";
-import { seoSubject } from "./test-fixtures.js";
+import { missingCoverSubject, seoSubject } from "./test-fixtures.js";
 
 describe("generatePageMetadata", () => {
-  it("creates canonical and social metadata", () => {
-    const metadata = generatePageMetadata(seoSubject());
+  it("creates canonical and social metadata with fallbacks", () => {
+    const metadata = generatePageMetadata(missingCoverSubject({ excerpt: undefined }));
     expect(metadata.canonical).toBe("https://example.com/posts/hello-world");
     expect(metadata.openGraph.images[0]).toBe("https://example.com/og/hello-world");
+    expect(metadata.twitter.images[0]).toBe("https://example.com/og/hello-world");
+    expect(metadata.description).toBe("Tech notes");
+  });
+
+  it("keeps article metadata for subjects with slugs", () => {
+    expect(generatePageMetadata(seoSubject()).openGraph.type).toBe("article");
   });
 });
