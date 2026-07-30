@@ -1,6 +1,5 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { cache } from "react";
 
 import {
   analyzeMdx,
@@ -45,7 +44,7 @@ function issueCodes(issues: Array<{ code: string }>) {
   return issues.map((item) => item.code).join(", ");
 }
 
-export const getContentCollection = cache(async (): Promise<ContentCollection> => {
+export async function getContentCollection(): Promise<ContentCollection> {
   const [posts, authors, categoriesJson, tagsJson, siteJson] = await Promise.all([
     readContentFiles(path.join(contentRoot, "posts")),
     readContentFiles(path.join(contentRoot, "authors")),
@@ -67,7 +66,7 @@ export const getContentCollection = cache(async (): Promise<ContentCollection> =
   }
 
   return result.data;
-});
+}
 
 function toPublicPost(post: PublishedPost, collection: ContentCollection): PublicPost {
   const analysis = analyzeMdx({ path: post.path, source: post.body });
@@ -86,12 +85,12 @@ function toPublicPost(post: PublishedPost, collection: ContentCollection): Publi
   };
 }
 
-export const getPublishedPosts = cache(async (): Promise<PublicPost[]> => {
+export async function getPublishedPosts(): Promise<PublicPost[]> {
   const collection = await getContentCollection();
   return selectPublishedPosts(collection)
     .map((post) => toPublicPost(post, collection))
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-});
+}
 
 export async function getPostBySlug(slug: string): Promise<PublicPost | undefined> {
   const posts = await getPublishedPosts();

@@ -613,6 +613,16 @@ Revalidation 대상:
 - duplicate slug.
 - revalidate failure.
 
+구현 상태:
+
+- `apps/cms`에 publish workflow helper, public refresh target/result helper,
+  Publish/Unpublish/Archive server action을 추가했다.
+- CMS editor toolbar와 screen에서 Save 옆에 Publish, Unpublish, Archive 동작을 제공한다.
+- public refresh 실패는 repository 변경 성공과 분리해 retry 가능한 상태로 표시한다.
+- `apps/blog`가 `/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]` route handler를 제공하며
+  published-only content selection을 사용한다.
+- 검증은 `specs/009-publish-workflow/quickstart.md`의 Validation Results에 기록한다.
+
 ## 12. Phase 9: SEO Engine
 
 목표:

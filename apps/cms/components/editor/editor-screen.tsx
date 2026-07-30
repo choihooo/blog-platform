@@ -7,13 +7,20 @@ import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
 import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
 
-import { saveEditorDraftAction } from "../../app/actions/editor-actions";
+import {
+  archivePostAction,
+  publishPostAction,
+  retryPublicRefreshAction,
+  saveEditorDraftAction,
+  unpublishPostAction,
+} from "../../app/actions/editor-actions";
 import { clearBackup, writeBackup } from "../../lib/editor/draft-backup";
 import { EditorToolbar } from "./editor-toolbar";
 import { FrontmatterPanel } from "./frontmatter-panel";
 import { PreviewPanel } from "./preview-panel";
 import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
+import type { PublicRefreshRetryToken } from "../../lib/editor";
 
 function textContent(node: JSONContent): string {
   return (node.content ?? []).map((child) => child.text ?? textContent(child)).join("");
@@ -163,6 +170,7 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
     initialDocument.frontmatter.title ? "clean" : "validation",
   );
   const [message, setMessage] = useState<string>();
+  const [retryToken, setRetryToken] = useState<PublicRefreshRetryToken>();
   const [isPending, startTransition] = useTransition();
   const editor = useEditor({
     extensions: [
@@ -226,6 +234,7 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
           setDocument(saved);
           setStatus("saved");
           setMessage(undefined);
+          setRetryToken(undefined);
           if (
             typeof window !== "undefined" &&
             typeof window.localStorage?.removeItem === "function"
@@ -236,6 +245,82 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
         }
         setDocument(result.submittedDocument);
         setStatus(result.code === "validation-failure" ? "validation" : "failed");
+        setMessage(result.message);
+      });
+    });
+  }
+
+  function currentDocument(): EditorDocument {
+    return {
+      ...document,
+      body: editor ? tiptapToNodes(editor.getJSON()) : body,
+    };
+  }
+
+  function runPublication(operation: "publish" | "unpublish" | "archive") {
+    const submitted = currentDocument();
+    const action =
+      operation === "publish"
+        ? publishPostAction({ document: submitted })
+        : operation === "archive"
+          ? archivePostAction({ document: submitted })
+          : unpublishPostAction({ document: submitted });
+    setStatus("pending");
+    startTransition(() => {
+      void action.then((result) => {
+        if (result.ok) {
+          const saved = result.document ?? {
+            ...submitted,
+            path: result.path,
+            sourceSha: result.sha,
+            dirty: false,
+            lastSavedAt: new Date().toISOString(),
+          };
+          documentRef.current = saved;
+          setDocument(saved);
+          setBody(saved.body);
+          setStatus(operation === "publish" ? "published" : "saved");
+          setMessage(undefined);
+          setRetryToken(undefined);
+          if (
+            typeof window !== "undefined" &&
+            typeof window.localStorage?.removeItem === "function"
+          ) {
+            clearBackup(window.localStorage, saved);
+          }
+          return;
+        }
+        if (result.document) {
+          documentRef.current = result.document;
+          setDocument(result.document);
+          setBody(result.document.body);
+        } else if (result.submittedDocument) {
+          documentRef.current = result.submittedDocument;
+          setDocument(result.submittedDocument);
+          setBody(result.submittedDocument.body);
+        }
+        setStatus(result.code === "public-refresh-failed" ? "refreshFailed" : "failed");
+        setRetryToken(result.retryToken);
+        setMessage(result.message);
+      });
+    });
+  }
+
+  function retryRefresh() {
+    if (!retryToken) {
+      save();
+      return;
+    }
+    setStatus("pending");
+    startTransition(() => {
+      void retryPublicRefreshAction({ retryToken }).then((result) => {
+        if (result.ok) {
+          setStatus("saved");
+          setMessage(undefined);
+          setRetryToken(undefined);
+          return;
+        }
+        setStatus("refreshFailed");
         setMessage(result.message);
       });
     });
@@ -260,7 +345,14 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
 
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background">
-      <RecoveryBanner message={message} onDiscard={() => setMessage(undefined)} onRetry={save} />
+      <RecoveryBanner
+        message={message}
+        onDiscard={() => {
+          setMessage(undefined);
+          setRetryToken(undefined);
+        }}
+        onRetry={retryToken ? retryRefresh : save}
+      />
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <h2 className="text-lg font-semibold">Editor</h2>
         <SaveStatusBadge status={isPending ? "pending" : status} />
@@ -272,8 +364,12 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
             insertUploadedImage({ reference: result.reference });
           }
         }}
+        onArchive={() => runPublication("archive")}
+        onPublish={() => runPublication("publish")}
         onSave={save}
+        onUnpublish={() => runPublication("unpublish")}
         postSlug={slugCandidate(document)}
+        publishDisabled={!document.frontmatter.title.trim() || isPending}
         saveDisabled={!document.frontmatter.title.trim() || isPending}
       />
       <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">

@@ -1,4 +1,17 @@
-import { Bold, Code, Heading2, Italic, Link, List, ListOrdered, Quote, Save } from "lucide-react";
+import {
+  Archive,
+  Bold,
+  Code,
+  Heading2,
+  Italic,
+  Link,
+  List,
+  ListOrdered,
+  Quote,
+  Save,
+  Send,
+  Undo2,
+} from "lucide-react";
 import type { Editor } from "@tiptap/react";
 
 import { Button } from "@blog-platform/design-system";
@@ -51,15 +64,23 @@ const tools = [
 export function EditorToolbar({
   editor,
   onSave,
+  onPublish,
+  onUnpublish,
+  onArchive,
   onMediaUploaded,
   postSlug,
   saveDisabled,
+  publishDisabled,
 }: {
   editor?: Editor | null;
   onSave?: () => void;
+  onPublish?: () => void;
+  onUnpublish?: () => void;
+  onArchive?: () => void;
   onMediaUploaded?: (result: Extract<UploadEditorMediaResult, { ok: true }>) => void;
   postSlug: string;
   saveDisabled?: boolean;
+  publishDisabled?: boolean;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-1 border-b border-border p-2">
@@ -85,10 +106,28 @@ export function EditorToolbar({
         <MediaUploadControl onUploaded={onMediaUploaded} postSlug={postSlug} />
       ) : null}
       <div className="ml-auto">
-        <Button disabled={saveDisabled} onClick={onSave} type="button">
+        <Button disabled={saveDisabled} onClick={onSave} type="button" variant="secondary">
           <Save className="h-4 w-4" />
           Save
         </Button>
+        {onPublish ? (
+          <Button disabled={publishDisabled} onClick={onPublish} type="button">
+            <Send className="h-4 w-4" />
+            Publish
+          </Button>
+        ) : null}
+        {onUnpublish ? (
+          <Button disabled={publishDisabled} onClick={onUnpublish} type="button" variant="outline">
+            <Undo2 className="h-4 w-4" />
+            Unpublish
+          </Button>
+        ) : null}
+        {onArchive ? (
+          <Button disabled={publishDisabled} onClick={onArchive} type="button" variant="outline">
+            <Archive className="h-4 w-4" />
+            Archive
+          </Button>
+        ) : null}
       </div>
     </div>
   );

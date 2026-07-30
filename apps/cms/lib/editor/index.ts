@@ -23,7 +23,15 @@ export {
 } from "./editor-media";
 export { prepareMediaFile, MAX_MEDIA_BYTES } from "./media-file";
 export { mediaHash, mediaPath, publicPath, slugForMedia } from "./media-path";
+export { mapPublishAuthFailure, runPublicationOperation } from "./publish-workflow";
+export {
+  createPublicRefreshRetryToken,
+  publicRefreshTargets,
+  refreshPublicTargets,
+} from "./public-refresh";
 export type { DraftBackupRecord } from "./draft-backup";
 export type { EditorLoadResult, PostSummary } from "./editor-loader";
 export type { SaveEditorDraftResult } from "./editor-save";
 export type { MediaUploadState, UploadEditorMediaResult } from "./editor-media";
+export type { PublicationResult } from "./publish-workflow";
+export type { PublicRefreshResult, PublicRefreshRetryToken } from "./public-refresh";

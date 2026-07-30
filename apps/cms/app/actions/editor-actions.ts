@@ -11,13 +11,17 @@ import {
 import {
   authToUploadCode,
   imageNode,
+  mapPublishAuthFailure,
   mediaPath,
   prepareMediaFile,
   publicPath,
+  refreshPublicTargets,
+  runPublicationOperation,
   repositoryToUploadCode,
   saveEditorDraft,
   slugForMedia,
   targetFromForm,
+  type PublicRefreshRetryToken,
   type UploadEditorMediaResult,
 } from "../../lib/editor/index";
 import { repositoryRoot } from "../../lib/editor/root";
@@ -61,6 +65,78 @@ export async function saveEditorDraftAction(document: EditorDocument) {
 
   const result = await saveEditorDraft(document, guardedAdapter);
   return result;
+}
+
+async function publicationAction(
+  operation: "publish" | "unpublish" | "archive",
+  document: EditorDocument,
+  now?: Date,
+) {
+  const root = repositoryRoot();
+  const decision = await evaluateAccess(await getCmsSession(), root);
+  if (decision.status !== "authorized") {
+    return mapPublishAuthFailure(operation, document, {
+      code:
+        decision.status === "unauthenticated"
+          ? "auth-required"
+          : decision.status === "expired"
+            ? "session-expired"
+            : decision.status === "misconfigured"
+              ? "auth-misconfigured"
+              : "forbidden",
+      message: decision.reason,
+      retryable: decision.status === "unauthenticated" || decision.status === "expired",
+    });
+  }
+
+  const adapter = createLocalContentAdapter(root);
+  return runPublicationOperation({ operation, document, adapter, now });
+}
+
+export async function publishPostAction(input: { document: EditorDocument; nowIso?: string }) {
+  return publicationAction(
+    "publish",
+    input.document,
+    input.nowIso ? new Date(input.nowIso) : undefined,
+  );
+}
+
+export async function unpublishPostAction(input: { document: EditorDocument }) {
+  return publicationAction("unpublish", input.document);
+}
+
+export async function archivePostAction(input: { document: EditorDocument }) {
+  return publicationAction("archive", input.document);
+}
+
+export async function retryPublicRefreshAction(input: { retryToken: PublicRefreshRetryToken }) {
+  const root = repositoryRoot();
+  const decision = await evaluateAccess(await getCmsSession(), root);
+  if (decision.status !== "authorized") {
+    return {
+      ok: false as const,
+      operation: "retry-public-refresh" as const,
+      code:
+        decision.status === "unauthenticated"
+          ? "auth-required"
+          : decision.status === "expired"
+            ? "session-expired"
+            : "forbidden",
+      retryable: decision.status === "unauthenticated" || decision.status === "expired",
+      message: decision.reason,
+    };
+  }
+  const publicRefresh = await refreshPublicTargets(input.retryToken.targets);
+  return publicRefresh.ok
+    ? { ok: true as const, operation: "retry-public-refresh" as const, publicRefresh }
+    : {
+        ok: false as const,
+        operation: "retry-public-refresh" as const,
+        code: "public-refresh-failed" as const,
+        retryable: publicRefresh.retryable,
+        message: publicRefresh.message,
+        publicRefresh,
+      };
 }
 
 export async function uploadEditorMediaAction(

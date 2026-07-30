@@ -7,7 +7,7 @@ export { validateMdxSyntax } from "./mdx-ast.js";
 export { validateMdxSafety } from "./mdx-safety.js";
 export { parsePostFile } from "./post.js";
 export { calculateReadingTime } from "./reading-time.js";
-export { createSlugCandidate, validateUniqueSlug } from "./slug.js";
+export { createSlugCandidate, validateUniqueSlug } from "./slug-policy.js";
 export { generateToc } from "./toc.js";
 export type {
   ArchivedPost,

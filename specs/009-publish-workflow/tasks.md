@@ -22,11 +22,11 @@
 기반을 준비한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T001 Add publish workflow helper exports placeholder to `apps/cms/lib/editor/index.ts`
-- [ ] T002 [P] Add publish action exports placeholder beside existing editor actions in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T003 [P] Add publish control placeholder exports to `apps/cms/components/editor/index.ts`
-- [ ] T004 [P] Ensure public generated-output route files exist for RSS, Sitemap, robots, and OG image in `apps/blog/app/rss.xml/route.ts`, `apps/blog/app/sitemap.xml/route.ts`, `apps/blog/app/robots.txt/route.ts`, and `apps/blog/app/og/[slug]/route.ts`
-- [ ] T005 [P] Add publish workflow fixture builders for editor documents, adapter results, and public refresh targets in `apps/cms/lib/editor/publish-workflow.test.ts`
+- [x] T001 Add publish workflow helper exports placeholder to `apps/cms/lib/editor/index.ts`
+- [x] T002 [P] Add publish action exports placeholder beside existing editor actions in `apps/cms/app/actions/editor-actions.ts`
+- [x] T003 [P] Add publish control placeholder exports to `apps/cms/components/editor/index.ts`
+- [x] T004 [P] Ensure public generated-output route files exist for RSS, Sitemap, robots, and OG image in `apps/blog/app/rss.xml/route.ts`, `apps/blog/app/sitemap.xml/route.ts`, `apps/blog/app/robots.txt/route.ts`, and `apps/blog/app/og/[slug]/route.ts`
+- [x] T005 [P] Add publish workflow fixture builders for editor documents, adapter results, and public refresh targets in `apps/cms/lib/editor/publish-workflow.test.ts`
 <!-- prettier-ignore-end -->
 
 ---
@@ -39,17 +39,17 @@
 **CRITICAL**: 이 phase가 끝나기 전에는 user story 구현을 시작하지 않는다.
 
 <!-- prettier-ignore-start -->
-- [ ] T006 [P] Add slug policy tests for title-based slug generation, empty title rejection, self-exclusion, and duplicate slug detection in `packages/markdown/src/slug-policy.test.ts`
-- [ ] T007 Implement shared slug policy helpers for publish workflow in `packages/markdown/src/slug-policy.ts`
-- [ ] T008 Export slug policy helpers from `packages/markdown/src/index.ts`
-- [ ] T009 [P] Add publish workflow unit tests for publish/unpublish/archive state transitions, publishedAt preservation, MDX serialization failure, and repository intent selection in `apps/cms/lib/editor/publish-workflow.test.ts`
-- [ ] T010 Implement publish workflow types, state transition helpers, repository intent mapping, and common result shapes in `apps/cms/lib/editor/publish-workflow.ts`
-- [ ] T011 [P] Add public refresh target tests for previous/next slug, category, tag, default routes, duplicate removal, and save-draft exclusion in `apps/cms/lib/editor/public-refresh.test.ts`
-- [ ] T012 Implement public refresh target expansion, retry token creation, and refresh result mapping in `apps/cms/lib/editor/public-refresh.ts`
-- [ ] T013 [P] Add protected publish action auth mapping tests for auth-required, forbidden, session-expired, stale-file, and temporary-connectivity states in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T014 Extend protected editor action adapter wrappers for create/update access reuse across save, publish, unpublish, and archive in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T015 [P] Add generated output route tests for published-only RSS, Sitemap, robots, and OG behavior in `apps/blog/app/generated-output-routes.test.ts`
-- [ ] T016 Implement minimal generated output route handlers backed by published-only content selection in `apps/blog/app/rss.xml/route.ts`, `apps/blog/app/sitemap.xml/route.ts`, `apps/blog/app/robots.txt/route.ts`, and `apps/blog/app/og/[slug]/route.ts`
+- [x] T006 [P] Add slug policy tests for title-based slug generation, empty title rejection, self-exclusion, and duplicate slug detection in `packages/markdown/src/slug-policy.test.ts`
+- [x] T007 Implement shared slug policy helpers for publish workflow in `packages/markdown/src/slug-policy.ts`
+- [x] T008 Export slug policy helpers from `packages/markdown/src/index.ts`
+- [x] T009 [P] Add publish workflow unit tests for publish/unpublish/archive state transitions, publishedAt preservation, MDX serialization failure, and repository intent selection in `apps/cms/lib/editor/publish-workflow.test.ts`
+- [x] T010 Implement publish workflow types, state transition helpers, repository intent mapping, and common result shapes in `apps/cms/lib/editor/publish-workflow.ts`
+- [x] T011 [P] Add public refresh target tests for previous/next slug, category, tag, default routes, duplicate removal, and save-draft exclusion in `apps/cms/lib/editor/public-refresh.test.ts`
+- [x] T012 Implement public refresh target expansion, retry token creation, and refresh result mapping in `apps/cms/lib/editor/public-refresh.ts`
+- [x] T013 [P] Add protected publish action auth mapping tests for auth-required, forbidden, session-expired, stale-file, and temporary-connectivity states in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T014 Extend protected editor action adapter wrappers for create/update access reuse across save, publish, unpublish, and archive in `apps/cms/app/actions/editor-actions.ts`
+- [x] T015 [P] Add generated output route tests for published-only RSS, Sitemap, robots, and OG behavior in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T016 Implement minimal generated output route handlers backed by published-only content selection in `apps/blog/app/rss.xml/route.ts`, `apps/blog/app/sitemap.xml/route.ts`, `apps/blog/app/robots.txt/route.ts`, and `apps/blog/app/og/[slug]/route.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: Publish workflow core validation, repository intent mapping, public refresh target
@@ -69,23 +69,23 @@ available for user story implementation.
 ### Tests for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T017 [P] [US1] Add publish action success tests for slug generation, publishedAt auto-fill, existing publishedAt preservation, `prepare-publish` intent, and public refresh success in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T018 [P] [US1] Add publish workflow validation tests for missing title, missing author, empty body, unsupported MDX, and duplicate slug blocking in `apps/cms/lib/editor/publish-workflow.test.ts`
-- [ ] T019 [P] [US1] Add editor toolbar tests for visible Save and Publish controls, disabled publish when title is missing, and pending publish state in `apps/cms/components/editor/editor-toolbar.test.tsx`
-- [ ] T020 [P] [US1] Add editor screen publish flow tests proving status update, backup clearing, success messaging, and public refresh success display in `apps/cms/components/editor/editor-publish-flow.test.tsx`
-- [ ] T021 [P] [US1] Add public blog smoke tests proving a newly published post appears on home and detail routes while draft posts remain hidden in `apps/blog/app/public-publish-flow.test.tsx`
+- [x] T017 [P] [US1] Add publish action success tests for slug generation, publishedAt auto-fill, existing publishedAt preservation, `prepare-publish` intent, and public refresh success in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T018 [P] [US1] Add publish workflow validation tests for missing title, missing author, empty body, unsupported MDX, and duplicate slug blocking in `apps/cms/lib/editor/publish-workflow.test.ts`
+- [x] T019 [P] [US1] Add editor toolbar tests for visible Save and Publish controls, disabled publish when title is missing, and pending publish state in `apps/cms/components/editor/editor-toolbar.test.tsx`
+- [x] T020 [P] [US1] Add editor screen publish flow tests proving status update, backup clearing, success messaging, and public refresh success display in `apps/cms/components/editor/editor-publish-flow.test.tsx`
+- [x] T021 [P] [US1] Add public blog smoke tests proving a newly published post appears on home and detail routes while draft posts remain hidden in `apps/blog/app/public-publish-flow.test.tsx`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T022 [US1] Implement publish document preparation with status, slug, publishedAt, updatedAt, and published validation in `apps/cms/lib/editor/publish-workflow.ts`
-- [ ] T023 [US1] Implement duplicate slug lookup using repository post files and markdown slug policy helpers in `apps/cms/lib/editor/publish-workflow.ts`
-- [ ] T024 [US1] Implement `publishPostAction` with protected adapter access, `prepare-publish` update/create behavior, and public refresh invocation in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T025 [P] [US1] Implement publish status display states for pending, published, validation failure, and refresh success in `apps/cms/components/editor/save-status.tsx`
-- [ ] T026 [US1] Add Publish button wiring and accessible pending state to the editor toolbar in `apps/cms/components/editor/editor-toolbar.tsx`
-- [ ] T027 [US1] Integrate publish action result handling, document state update, local backup clearing, and success messaging in `apps/cms/components/editor/editor-screen.tsx`
-- [ ] T028 [US1] Ensure published-only public blog content selection reflects newly published local content in `apps/blog/lib/content.ts`
+- [x] T022 [US1] Implement publish document preparation with status, slug, publishedAt, updatedAt, and published validation in `apps/cms/lib/editor/publish-workflow.ts`
+- [x] T023 [US1] Implement duplicate slug lookup using repository post files and markdown slug policy helpers in `apps/cms/lib/editor/publish-workflow.ts`
+- [x] T024 [US1] Implement `publishPostAction` with protected adapter access, `prepare-publish` update/create behavior, and public refresh invocation in `apps/cms/app/actions/editor-actions.ts`
+- [x] T025 [P] [US1] Implement publish status display states for pending, published, validation failure, and refresh success in `apps/cms/components/editor/save-status.tsx`
+- [x] T026 [US1] Add Publish button wiring and accessible pending state to the editor toolbar in `apps/cms/components/editor/editor-toolbar.tsx`
+- [x] T027 [US1] Integrate publish action result handling, document state update, local backup clearing, and success messaging in `apps/cms/components/editor/editor-screen.tsx`
+- [x] T028 [US1] Ensure published-only public blog content selection reflects newly published local content in `apps/blog/lib/content.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 1 is complete when an authorized admin can save a draft, publish it with
@@ -105,22 +105,22 @@ RSS, Sitemap에서 제외되는지 확인한다.
 ### Tests for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T029 [P] [US2] Add unpublish action tests for `prepare-unpublish` intent, draft status result, publishedAt preservation, and public refresh target calculation in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T030 [P] [US2] Add archive action tests for `prepare-archive` intent, archived status result, repository file preservation, and public refresh target calculation in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T031 [P] [US2] Add publish workflow transition tests for published-to-draft, published-to-archived, archived-to-published revalidation requirements, and invalid state guards in `apps/cms/lib/editor/publish-workflow.test.ts`
-- [ ] T032 [P] [US2] Add editor screen unpublish/archive flow tests proving controls, confirmation messaging, state updates, and public removal status in `apps/cms/components/editor/editor-publication-state-flow.test.tsx`
-- [ ] T033 [P] [US2] Add public generated output removal tests proving unpublished and archived posts disappear from RSS, Sitemap, home, detail, category, and tag surfaces in `apps/blog/app/generated-output-routes.test.ts`
+- [x] T029 [P] [US2] Add unpublish action tests for `prepare-unpublish` intent, draft status result, publishedAt preservation, and public refresh target calculation in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T030 [P] [US2] Add archive action tests for `prepare-archive` intent, archived status result, repository file preservation, and public refresh target calculation in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T031 [P] [US2] Add publish workflow transition tests for published-to-draft, published-to-archived, archived-to-published revalidation requirements, and invalid state guards in `apps/cms/lib/editor/publish-workflow.test.ts`
+- [x] T032 [P] [US2] Add editor screen unpublish/archive flow tests proving controls, confirmation messaging, state updates, and public removal status in `apps/cms/components/editor/editor-publication-state-flow.test.tsx`
+- [x] T033 [P] [US2] Add public generated output removal tests proving unpublished and archived posts disappear from RSS, Sitemap, home, detail, category, and tag surfaces in `apps/blog/app/generated-output-routes.test.ts`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T034 [US2] Implement unpublish document preparation and `prepare-unpublish` repository update behavior in `apps/cms/lib/editor/publish-workflow.ts`
-- [ ] T035 [US2] Implement archive document preparation and `prepare-archive` repository update behavior in `apps/cms/lib/editor/publish-workflow.ts`
-- [ ] T036 [US2] Implement `unpublishPostAction` and `archivePostAction` with protected adapter access and public refresh invocation in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T037 [P] [US2] Add Unpublish and Archive controls with state-aware disabling to `apps/cms/components/editor/editor-toolbar.tsx`
-- [ ] T038 [US2] Integrate unpublish/archive action result handling, document state update, public removal messaging, and backup behavior in `apps/cms/components/editor/editor-screen.tsx`
-- [ ] T039 [US2] Ensure public blog home, detail, category, tag, RSS, Sitemap, robots, and OG routes exclude `draft` and `archived` content in `apps/blog/lib/content.ts` and `apps/blog/app/generated-output-routes.test.ts`
+- [x] T034 [US2] Implement unpublish document preparation and `prepare-unpublish` repository update behavior in `apps/cms/lib/editor/publish-workflow.ts`
+- [x] T035 [US2] Implement archive document preparation and `prepare-archive` repository update behavior in `apps/cms/lib/editor/publish-workflow.ts`
+- [x] T036 [US2] Implement `unpublishPostAction` and `archivePostAction` with protected adapter access and public refresh invocation in `apps/cms/app/actions/editor-actions.ts`
+- [x] T037 [P] [US2] Add Unpublish and Archive controls with state-aware disabling to `apps/cms/components/editor/editor-toolbar.tsx`
+- [x] T038 [US2] Integrate unpublish/archive action result handling, document state update, public removal messaging, and backup behavior in `apps/cms/components/editor/editor-screen.tsx`
+- [x] T039 [US2] Ensure public blog home, detail, category, tag, RSS, Sitemap, robots, and OG routes exclude `draft` and `archived` content in `apps/blog/lib/content.ts` and `apps/blog/app/generated-output-routes.test.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 2 is complete when an authorized admin can unpublish or archive a
@@ -140,22 +140,22 @@ repository 변경 성공 후 public refresh만 재시도할 수 있다.
 ### Tests for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T040 [P] [US3] Add publish action failure tests for validation-failure, duplicate-slug, stale-file, temporary-connectivity, auth-required, forbidden, and session-expired results in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T041 [P] [US3] Add public refresh failure tests for partial success, failed target reporting, retry token creation, retry success, and retry failure in `apps/cms/lib/editor/public-refresh.test.ts`
-- [ ] T042 [P] [US3] Add retry public refresh action tests proving repository commit is not repeated and auth guard is enforced in `apps/cms/app/actions/editor-actions.test.ts`
-- [ ] T043 [P] [US3] Add editor failure flow tests proving current edits remain, submitted source is preserved, local backup remains, and retry refresh UI appears only for partial success in `apps/cms/components/editor/editor-publish-failure-flow.test.tsx`
-- [ ] T044 [P] [US3] Add recovery banner tests for stale-file, validation failure, duplicate slug, public-refresh-failed, and retry actions in `apps/cms/components/editor/recovery-banner.test.tsx`
+- [x] T040 [P] [US3] Add publish action failure tests for validation-failure, duplicate-slug, stale-file, temporary-connectivity, auth-required, forbidden, and session-expired results in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T041 [P] [US3] Add public refresh failure tests for partial success, failed target reporting, retry token creation, retry success, and retry failure in `apps/cms/lib/editor/public-refresh.test.ts`
+- [x] T042 [P] [US3] Add retry public refresh action tests proving repository commit is not repeated and auth guard is enforced in `apps/cms/app/actions/editor-actions.test.ts`
+- [x] T043 [P] [US3] Add editor failure flow tests proving current edits remain, submitted source is preserved, local backup remains, and retry refresh UI appears only for partial success in `apps/cms/components/editor/editor-publish-failure-flow.test.tsx`
+- [x] T044 [P] [US3] Add recovery banner tests for stale-file, validation failure, duplicate slug, public-refresh-failed, and retry actions in `apps/cms/components/editor/recovery-banner.test.tsx`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T045 [US3] Map repository, validation, duplicate slug, auth, rate-limit, connectivity, and unknown failures to publish workflow result codes in `apps/cms/lib/editor/publish-workflow.ts`
-- [ ] T046 [US3] Harden publish/unpublish/archive action failure paths so repository failure never triggers public refresh in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T047 [US3] Implement public refresh execution failure mapping, partial success result, and retry token handling in `apps/cms/lib/editor/public-refresh.ts`
-- [ ] T048 [US3] Implement `retryPublicRefreshAction` with protected auth guard and no repository rewrite in `apps/cms/app/actions/editor-actions.ts`
-- [ ] T049 [US3] Add partial success, retry, stale-file, duplicate slug, and validation failure messaging to `apps/cms/components/editor/recovery-banner.tsx`
-- [ ] T050 [US3] Integrate publish failure handling, local backup preservation, submitted document restore, and retry public refresh callback in `apps/cms/components/editor/editor-screen.tsx`
+- [x] T045 [US3] Map repository, validation, duplicate slug, auth, rate-limit, connectivity, and unknown failures to publish workflow result codes in `apps/cms/lib/editor/publish-workflow.ts`
+- [x] T046 [US3] Harden publish/unpublish/archive action failure paths so repository failure never triggers public refresh in `apps/cms/app/actions/editor-actions.ts`
+- [x] T047 [US3] Implement public refresh execution failure mapping, partial success result, and retry token handling in `apps/cms/lib/editor/public-refresh.ts`
+- [x] T048 [US3] Implement `retryPublicRefreshAction` with protected auth guard and no repository rewrite in `apps/cms/app/actions/editor-actions.ts`
+- [x] T049 [US3] Add partial success, retry, stale-file, duplicate slug, and validation failure messaging to `apps/cms/components/editor/recovery-banner.tsx`
+- [x] T050 [US3] Integrate publish failure handling, local backup preservation, submitted document restore, and retry public refresh callback in `apps/cms/components/editor/editor-screen.tsx`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 3 is complete when invalid publish attempts make no repository change,
@@ -169,18 +169,18 @@ commit success, and retry refresh does not create a second content commit.
 **Purpose**: 문서, 검증, scope review를 마무리한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T051 [P] Update Publish Workflow implementation notes and validation status in `specs/009-publish-workflow/quickstart.md`
-- [ ] T052 [P] Update Phase 8 implementation status in `docs/implementation-roadmap.md`
-- [ ] T053 [P] Update CMS publish workflow notes in `apps/cms/README.md`
-- [ ] T054 [P] Update public generated output notes in `apps/blog/README.md`
-- [ ] T055 Run `pnpm --filter @blog-platform/markdown typecheck`, `pnpm --filter @blog-platform/markdown lint`, and `pnpm --filter @blog-platform/markdown test` and fix issues in `packages/markdown`
-- [ ] T056 Run `pnpm --filter @blog-platform/editor typecheck`, `pnpm --filter @blog-platform/editor lint`, and `pnpm --filter @blog-platform/editor test` and fix issues in `packages/editor`
-- [ ] T057 Run `pnpm --filter @blog-platform/cms typecheck`, `pnpm --filter @blog-platform/cms lint`, and `pnpm --filter @blog-platform/cms test` and fix issues in `apps/cms`
-- [ ] T058 Run `pnpm --filter @blog-platform/blog typecheck`, `pnpm --filter @blog-platform/blog lint`, and `pnpm --filter @blog-platform/blog build` and fix issues in `apps/blog`
-- [ ] T059 Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` from `package.json`
-- [ ] T060 Verify quickstart scenarios in `specs/009-publish-workflow/quickstart.md`
-- [ ] T061 Confirm no forbidden scope was introduced against `.specify/memory/constitution.md`
-- [ ] T062 Confirm no CMS database, RSS/Sitemap file commit, scheduled publishing, approval workflow, SEO scoring implementation, analytics dashboard, AI generation, object storage, or multi-author permission system was introduced in `apps/cms`, `apps/blog`, `packages/markdown`, and `packages/editor`
+- [x] T051 [P] Update Publish Workflow implementation notes and validation status in `specs/009-publish-workflow/quickstart.md`
+- [x] T052 [P] Update Phase 8 implementation status in `docs/implementation-roadmap.md`
+- [x] T053 [P] Update CMS publish workflow notes in `apps/cms/README.md`
+- [x] T054 [P] Update public generated output notes in `apps/blog/README.md`
+- [x] T055 Run `pnpm --filter @blog-platform/markdown typecheck`, `pnpm --filter @blog-platform/markdown lint`, and `pnpm --filter @blog-platform/markdown test` and fix issues in `packages/markdown`
+- [x] T056 Run `pnpm --filter @blog-platform/editor typecheck`, `pnpm --filter @blog-platform/editor lint`, and `pnpm --filter @blog-platform/editor test` and fix issues in `packages/editor`
+- [x] T057 Run `pnpm --filter @blog-platform/cms typecheck`, `pnpm --filter @blog-platform/cms lint`, and `pnpm --filter @blog-platform/cms test` and fix issues in `apps/cms`
+- [x] T058 Run `pnpm --filter @blog-platform/blog typecheck`, `pnpm --filter @blog-platform/blog lint`, and `pnpm --filter @blog-platform/blog build` and fix issues in `apps/blog`
+- [x] T059 Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` from `package.json`
+- [x] T060 Verify quickstart scenarios in `specs/009-publish-workflow/quickstart.md`
+- [x] T061 Confirm no forbidden scope was introduced against `.specify/memory/constitution.md`
+- [x] T062 Confirm no CMS database, RSS/Sitemap file commit, scheduled publishing, approval workflow, SEO scoring implementation, analytics dashboard, AI generation, object storage, or multi-author permission system was introduced in `apps/cms`, `apps/blog`, `packages/markdown`, and `packages/editor`
 <!-- prettier-ignore-end -->
 
 ---
