@@ -80,4 +80,6 @@ Next.js dev server는 외장 볼륨에서 실행되어 slow filesystem warning�
 
 공개 블로그는 `content/` 파일을 읽고 `packages/markdown`의 content validation, published-only
 filtering, MDX analysis를 재사용한다. 공개 route는 `/`, `/posts/[slug]`, `/categories/[slug]`,
-`/tags/[slug]`를 제공하며 draft, archived, invalid, unsafe MDX는 공개 출력에 포함하지 않는다.
+`/tags/[slug]`를 제공하며 draft, archived, invalid, unsafe MDX는 공개 출력에 포함하지 않는다. UI는
+Tailwind CSS와 `packages/design-system`의 shadcn/ui 스타일 `Card`, `Badge`, `Separator` primitive를
+사용한다.

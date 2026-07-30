@@ -27,11 +27,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   if (!category) notFound();
 
   return (
-    <main className="page">
-      <section className="hero">
-        <p className="eyebrow">Category</p>
-        <h1>{category.label}</h1>
-        {category.description ? <p>{category.description}</p> : null}
+    <main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
+      <section className="mb-10 grid gap-4">
+        <p className="text-sm font-semibold uppercase text-muted-foreground">Category</p>
+        <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-normal sm:text-7xl">
+          {category.label}
+        </h1>
+        {category.description ? (
+          <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+            {category.description}
+          </p>
+        ) : null}
       </section>
       <PostList posts={posts} />
     </main>

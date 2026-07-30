@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { ReactNode } from "react";
+import { Badge, Card, CardContent } from "@blog-platform/design-system";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
@@ -15,7 +16,11 @@ type PostPageProps = {
 };
 
 function Callout({ children }: { children: ReactNode }) {
-  return <aside className="callout">{children}</aside>;
+  return (
+    <aside className="my-6 border-l-4 border-primary bg-secondary px-4 py-3 text-secondary-foreground">
+      {children}
+    </aside>
+  );
 }
 
 export async function generateStaticParams() {
@@ -40,26 +45,30 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) notFound();
 
   return (
-    <main className="page">
-      <article className="post-layout">
+    <main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
+      <article className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div>
-          <header className="post-header">
-            <div className="meta">
+          <header className="mb-10 grid gap-4">
+            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
               <time dateTime={post.publishedAt}>{post.publishedAt}</time>
               <span>{post.readingTimeLabel}</span>
               {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
             </div>
-            <h1>{post.title}</h1>
-            {post.excerpt ? <p className="post-summary">{post.excerpt}</p> : null}
-            <div className="taxonomy">
+            <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-normal sm:text-7xl">
+              {post.title}
+            </h1>
+            {post.excerpt ? (
+              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
+            ) : null}
+            <div className="flex flex-wrap gap-2">
               {post.categoryEntry ? (
-                <Link className="pill" href={`/categories/${post.categoryEntry.slug}`}>
-                  {post.categoryEntry.label}
+                <Link href={`/categories/${post.categoryEntry.slug}`}>
+                  <Badge variant="secondary">{post.categoryEntry.label}</Badge>
                 </Link>
               ) : null}
               {post.tagEntries.map((tag) => (
-                <Link className="pill" href={`/tags/${tag.slug}`} key={tag.slug}>
-                  {tag.label}
+                <Link href={`/tags/${tag.slug}`} key={tag.slug}>
+                  <Badge variant="outline">{tag.label}</Badge>
                 </Link>
               ))}
             </div>
@@ -78,14 +87,16 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </div>
         {post.toc.length > 0 ? (
-          <aside className="toc" aria-label="Table of contents">
-            <strong>On this page</strong>
-            {post.toc.map((item) => (
-              <a href={`#${item.slug}`} key={`${item.depth}-${item.slug}`}>
-                {item.text}
-              </a>
-            ))}
-          </aside>
+          <Card className="h-fit lg:sticky lg:top-6" aria-label="Table of contents">
+            <CardContent className="grid gap-3 p-4 text-sm">
+              <strong>On this page</strong>
+              {post.toc.map((item) => (
+                <a className="text-muted-foreground" href={`#${item.slug}`} key={item.slug}>
+                  {item.text}
+                </a>
+              ))}
+            </CardContent>
+          </Card>
         ) : null}
       </article>
     </main>

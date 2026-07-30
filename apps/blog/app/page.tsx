@@ -5,11 +5,15 @@ export default async function BlogHomePage() {
   const [site, posts] = await Promise.all([getSiteConfig(), getPublishedPosts()]);
 
   return (
-    <main className="page">
-      <section className="hero">
-        <p className="eyebrow">Published posts</p>
-        <h1>{site.siteName}</h1>
-        <p>Repository에 저장된 MDX 글 중 공개 상태인 글만 보여줍니다.</p>
+    <main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
+      <section className="mb-10 grid gap-4">
+        <p className="text-sm font-semibold uppercase text-muted-foreground">Published posts</p>
+        <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-normal sm:text-7xl">
+          {site.siteName}
+        </h1>
+        <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+          Repository에 저장된 MDX 글 중 공개 상태인 글만 보여줍니다.
+        </p>
       </section>
       <PostList posts={posts} />
     </main>

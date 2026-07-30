@@ -1,4 +1,12 @@
 import Link from "next/link";
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@blog-platform/design-system";
 
 import type { PublicPost } from "../../lib/content";
 
@@ -8,35 +16,43 @@ type PostListProps = {
 
 export function PostList({ posts }: PostListProps) {
   if (posts.length === 0) {
-    return <p className="empty">공개된 글이 없습니다.</p>;
+    return (
+      <Card className="border-dashed">
+        <CardContent className="p-6 text-sm text-muted-foreground">
+          공개된 글이 없습니다.
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
-    <div className="post-list">
+    <div className="grid gap-4">
       {posts.map((post) => (
-        <article className="post-card" key={post.path}>
-          <div className="meta">
-            <time dateTime={post.publishedAt}>{post.publishedAt}</time>
-            <span>{post.readingTimeLabel}</span>
-            {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
-          </div>
-          <h2>
-            <Link href={`/posts/${post.slug}`}>{post.title}</Link>
-          </h2>
-          {post.excerpt ? <p>{post.excerpt}</p> : null}
-          <div className="taxonomy">
+        <Card key={post.path}>
+          <CardHeader>
+            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+              <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+              <span>{post.readingTimeLabel}</span>
+              {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
+            </div>
+            <CardTitle className="text-2xl">
+              <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+            </CardTitle>
+            {post.excerpt ? <CardDescription>{post.excerpt}</CardDescription> : null}
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
             {post.categoryEntry ? (
-              <Link className="pill" href={`/categories/${post.categoryEntry.slug}`}>
-                {post.categoryEntry.label}
+              <Link href={`/categories/${post.categoryEntry.slug}`}>
+                <Badge variant="secondary">{post.categoryEntry.label}</Badge>
               </Link>
             ) : null}
             {post.tagEntries.map((tag) => (
-              <Link className="pill" href={`/tags/${tag.slug}`} key={tag.slug}>
-                {tag.label}
+              <Link href={`/tags/${tag.slug}`} key={tag.slug}>
+                <Badge variant="outline">{tag.label}</Badge>
               </Link>
             ))}
-          </div>
-        </article>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );
