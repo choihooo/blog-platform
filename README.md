@@ -75,3 +75,9 @@ app shell은 GitHub credential, content file, authentication setup, deployment c
 
 Next.js dev server는 외장 볼륨에서 실행되어 slow filesystem warning을 표시했지만, 두 app 모두
 정상적으로 `200` 응답을 반환했다.
+
+## Blog Rendering
+
+공개 블로그는 `content/` 파일을 읽고 `packages/markdown`의 content validation, published-only
+filtering, MDX analysis를 재사용한다. 공개 route는 `/`, `/posts/[slug]`, `/categories/[slug]`,
+`/tags/[slug]`를 제공하며 draft, archived, invalid, unsafe MDX는 공개 출력에 포함하지 않는다.

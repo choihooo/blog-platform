@@ -20,10 +20,10 @@ of each story.
 
 **Purpose**: Blog Rendering에 필요한 blog app dependency와 shared package 연결을 준비한다.
 
-- [ ] T001 Add `@blog-platform/markdown`, MDX rendering helper, `remark-gfm`, and `rehype-slug`
+- [x] T001 Add `@blog-platform/markdown`, MDX rendering helper, `remark-gfm`, and `rehype-slug`
       dependencies in `apps/blog/package.json`
-- [ ] T002 Run dependency installation and update `pnpm-lock.yaml`
-- [ ] T003 [P] Confirm blog app package scripts still expose `build`, `typecheck`, `lint`, and `dev`
+- [x] T002 Run dependency installation and update `pnpm-lock.yaml`
+- [x] T003 [P] Confirm blog app package scripts still expose `build`, `typecheck`, `lint`, and `dev`
       in `apps/blog/package.json`
 
 ---
@@ -34,16 +34,16 @@ of each story.
 
 **CRITICAL**: 이 phase가 끝나기 전에는 사용자 스토리 route 작업을 시작하지 않는다.
 
-- [ ] T004 Create local file reader for `content/posts/*.mdx`, `content/authors/*.md`,
+- [x] T004 Create local file reader for `content/posts/*.mdx`, `content/authors/*.md`,
       `content/categories.json`, `content/tags.json`, and `content/site.json` in
       `apps/blog/lib/content.ts`
-- [ ] T005 Integrate `validateContentCollection` and fail-fast issue formatting in
+- [x] T005 Integrate `validateContentCollection` and fail-fast issue formatting in
       `apps/blog/lib/content.ts`
-- [ ] T006 Implement published-only post selection using `getPublishedPosts` in
+- [x] T006 Implement published-only post selection using `getPublishedPosts` in
       `apps/blog/lib/content.ts`
-- [ ] T007 Implement public post view adapter with resolved author, category, tags, `analyzeMdx`,
+- [x] T007 Implement public post view adapter with resolved author, category, tags, `analyzeMdx`,
       TOC, reading time, and validated body in `apps/blog/lib/content.ts`
-- [ ] T008 Export `getSiteConfig`, `getPublishedPosts`, `getPostBySlug`, `getPostsByCategory`,
+- [x] T008 Export `getSiteConfig`, `getPublishedPosts`, `getPostBySlug`, `getPostsByCategory`,
       `getPostsByTag`, `getCategory`, and `getTag` helpers from `apps/blog/lib/content.ts`
 
 **Checkpoint**: Shared local content loader can produce public-only view data without GitHub
@@ -62,12 +62,12 @@ excerpt, 발행일, author, reading time, category, tag, detail link가 보이�
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Add reusable public post list component in
+- [x] T009 [P] [US1] Add reusable public post list component in
       `apps/blog/app/components/post-list.tsx`
-- [ ] T010 [P] [US1] Add public blog typography and layout styles in `apps/blog/app/globals.css`
-- [ ] T011 [US1] Import global styles and update public site metadata in `apps/blog/app/layout.tsx`
-- [ ] T012 [US1] Replace initial blog shell with published post home in `apps/blog/app/page.tsx`
-- [ ] T013 [US1] Verify home route contract from
+- [x] T010 [P] [US1] Add public blog typography and layout styles in `apps/blog/app/globals.css`
+- [x] T011 [US1] Import global styles and update public site metadata in `apps/blog/app/layout.tsx`
+- [x] T012 [US1] Replace initial blog shell with published post home in `apps/blog/app/page.tsx`
+- [x] T013 [US1] Verify home route contract from
       `specs/004-blog-rendering/contracts/public-blog-routes.md` against `apps/blog/app/page.tsx`
 
 **Checkpoint**: User Story 1 is independently functional when `/` displays only published post
@@ -86,17 +86,17 @@ time, taxonomy, TOC, validated body가 보이고 unknown/draft/archived slug는 
 
 ### Implementation for User Story 2
 
-- [ ] T014 [P] [US2] Create published post detail route with `generateStaticParams` in
+- [x] T014 [P] [US2] Create published post detail route with `generateStaticParams` in
       `apps/blog/app/posts/[slug]/page.tsx`
-- [ ] T015 [US2] Implement post metadata and not-found handling in
+- [x] T015 [US2] Implement post metadata and not-found handling in
       `apps/blog/app/posts/[slug]/page.tsx`
-- [ ] T016 [US2] Render validated MDX body with allowed components and GFM support in
+- [x] T016 [US2] Render validated MDX body with allowed components and GFM support in
       `apps/blog/app/posts/[slug]/page.tsx`
-- [ ] T017 [US2] Add slugged heading anchor support matching generated TOC in
+- [x] T017 [US2] Add slugged heading anchor support matching generated TOC in
       `apps/blog/app/posts/[slug]/page.tsx`
-- [ ] T018 [US2] Render reading time, author, published date, category links, tag links, and TOC in
+- [x] T018 [US2] Render reading time, author, published date, category links, tag links, and TOC in
       `apps/blog/app/posts/[slug]/page.tsx`
-- [ ] T019 [US2] Verify post detail route contract from
+- [x] T019 [US2] Verify post detail route contract from
       `specs/004-blog-rendering/contracts/public-blog-routes.md` against
       `apps/blog/app/posts/[slug]/page.tsx`
 
@@ -114,17 +114,17 @@ matching published 글만 보이고 unknown taxonomy slug는 not found로 처리
 
 ### Implementation for User Story 3
 
-- [ ] T020 [P] [US3] Create category listing route with `generateStaticParams` in
+- [x] T020 [P] [US3] Create category listing route with `generateStaticParams` in
       `apps/blog/app/categories/[slug]/page.tsx`
-- [ ] T021 [P] [US3] Create tag listing route with `generateStaticParams` in
+- [x] T021 [P] [US3] Create tag listing route with `generateStaticParams` in
       `apps/blog/app/tags/[slug]/page.tsx`
-- [ ] T022 [US3] Render registered category metadata and matching published posts in
+- [x] T022 [US3] Render registered category metadata and matching published posts in
       `apps/blog/app/categories/[slug]/page.tsx`
-- [ ] T023 [US3] Render registered tag metadata and matching published posts in
+- [x] T023 [US3] Render registered tag metadata and matching published posts in
       `apps/blog/app/tags/[slug]/page.tsx`
-- [ ] T024 [US3] Implement not-found handling for unknown category and tag slugs in
+- [x] T024 [US3] Implement not-found handling for unknown category and tag slugs in
       `apps/blog/app/categories/[slug]/page.tsx` and `apps/blog/app/tags/[slug]/page.tsx`
-- [ ] T025 [US3] Verify category and tag route contracts from
+- [x] T025 [US3] Verify category and tag route contracts from
       `specs/004-blog-rendering/contracts/public-blog-routes.md` against
       `apps/blog/app/categories/[slug]/page.tsx` and `apps/blog/app/tags/[slug]/page.tsx`
 
@@ -137,18 +137,18 @@ published posts.
 
 **Purpose**: 구현된 Blog Rendering scope를 문서, 검증 command, 전체 workspace 기준으로 마무리한다.
 
-- [ ] T026 [P] Update Blog Rendering validation notes in `specs/004-blog-rendering/quickstart.md` if
+- [x] T026 [P] Update Blog Rendering validation notes in `specs/004-blog-rendering/quickstart.md` if
       runnable commands changed
-- [ ] T027 [P] Update public blog implementation notes in `README.md`
-- [ ] T028 Run `pnpm --filter @blog-platform/blog typecheck` and fix any issues in `apps/blog`
-- [ ] T029 Run `pnpm --filter @blog-platform/blog lint` and fix any issues in `apps/blog`
-- [ ] T030 Run `pnpm --filter @blog-platform/blog build` and fix route generation issues in
+- [x] T027 [P] Update public blog implementation notes in `README.md`
+- [x] T028 Run `pnpm --filter @blog-platform/blog typecheck` and fix any issues in `apps/blog`
+- [x] T029 Run `pnpm --filter @blog-platform/blog lint` and fix any issues in `apps/blog`
+- [x] T030 Run `pnpm --filter @blog-platform/blog build` and fix route generation issues in
       `apps/blog`
-- [ ] T031 Run `pnpm build` and fix workspace integration issues in `apps/blog/package.json`,
+- [x] T031 Run `pnpm build` and fix workspace integration issues in `apps/blog/package.json`,
       `pnpm-lock.yaml`, or shared package references
-- [ ] T032 Start `pnpm dev:blog` and verify `/`, `/posts/hello-world`, `/categories/engineering`,
+- [x] T032 Start `pnpm dev:blog` and verify `/`, `/posts/hello-world`, `/categories/engineering`,
       and `/tags/mdx` respond successfully
-- [ ] T033 Confirm forbidden scope from `specs/004-blog-rendering/plan.md` was not introduced in
+- [x] T033 Confirm forbidden scope from `specs/004-blog-rendering/plan.md` was not introduced in
       `apps/blog` or `packages/markdown`
 
 ---

@@ -77,3 +77,11 @@ Expected outcome:
 - Blog Rendering 변경이 CMS app과 shared package build를 깨뜨리지 않는다.
 - public blog route generation은 GitHub credential, CMS session, database, object storage 없이
   완료된다.
+
+## 구현 메모
+
+- Public route 구현은 `apps/blog`에 위치한다.
+- Content parsing, collection validation, published-only filtering, MDX analysis, TOC, reading
+  time은 `packages/markdown` API를 재사용한다.
+- RSS, Sitemap, robots.txt, JSON-LD, OG image, SEO score, analytics event는 이 phase에 포함하지
+  않는다.
