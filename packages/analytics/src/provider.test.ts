@@ -7,5 +7,8 @@ describe("initializeProvider", () => {
     expect(initializeProvider(ga4Config).ok).toBe(true);
     expect(initializeProvider(gtmConfig).ok).toBe(true);
     expect(initializeProvider(disabledConfig).ok).toBe(false);
+    expect(initializeProvider({ provider: "ga4" }).ok).toBe(false);
+    expect(initializeProvider({ provider: "gtm" }).ok).toBe(false);
+    expect(initializeProvider({ provider: "plausible" }).ok).toBe(false);
   });
 });

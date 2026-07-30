@@ -24,6 +24,7 @@ import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 import { SeoPanel } from "./seo-panel";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
+import type { EditorSiteAnalyticsConfig } from "../../lib/editor";
 
 function textContent(node: JSONContent): string {
   return (node.content ?? []).map((child) => child.text ?? textContent(child)).join("");
@@ -165,7 +166,13 @@ function slugCandidate(document: EditorDocument): string {
   return document.frontmatter.slug || titleSlug || document.id;
 }
 
-export function EditorScreen({ initialDocument }: { initialDocument: EditorDocument }) {
+export function EditorScreen({
+  initialDocument,
+  siteAnalytics,
+}: {
+  initialDocument: EditorDocument;
+  siteAnalytics?: EditorSiteAnalyticsConfig;
+}) {
   const [document, setDocument] = useState(initialDocument);
   const documentRef = useRef(initialDocument);
   const [body, setBody] = useState(initialDocument.body);
@@ -203,8 +210,8 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
   const previewDocument = useMemo(() => ({ ...document, body }), [body, document]);
   const seoReport = useMemo(() => seoReportForEditorDocument(previewDocument), [previewDocument]);
   const analyticsLinks = useMemo(
-    () => analyticsLinksForEditorDocument(previewDocument),
-    [previewDocument],
+    () => analyticsLinksForEditorDocument(previewDocument, siteAnalytics),
+    [previewDocument, siteAnalytics],
   );
 
   function markDirty(next: EditorDocument, nextBody: EditorNode[] = body) {

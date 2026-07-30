@@ -9,20 +9,30 @@ export type AnalyticsConfig = {
 };
 
 export type BlogEventName =
-  "page_view" | "post_read" | "heading_navigate" | "external_link_click" | "share_attempt";
+  | "article_view"
+  | "scroll_50"
+  | "scroll_90"
+  | "code_copy"
+  | "toc_click"
+  | "internal_link_click"
+  | "external_link_click"
+  | "search"
+  | "share";
 
 export type BlogEvent = {
   name: BlogEventName;
   slug: string;
+  title?: string;
   url: string;
   category?: string;
   tags?: string[];
+  target?: string;
   occurredAt: string;
   provider: AnalyticsProvider;
 };
 
 export type ProviderPayload =
-  | { ok: true; provider: "ga4"; event: string; params: Record<string, string | string[]> }
+  | { ok: true; provider: "ga4"; event: BlogEventName; params: Record<string, string | string[]> }
   | { ok: true; provider: "gtm"; dataLayer: Record<string, string | string[]> }
   | { ok: false; provider: "disabled"; reason: string };
 
@@ -37,3 +47,6 @@ export type ExternalConsoleLinks = {
   searchConsoleUrl?: string;
   disabledReasons: string[];
 };
+
+export type LinkClassification =
+  { kind: "internal" | "external"; url: string } | { kind: "ignored"; url: string; reason: string };

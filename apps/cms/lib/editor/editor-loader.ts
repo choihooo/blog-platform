@@ -3,6 +3,8 @@ import {
   mdxToEditorDocument,
   type EditorDocument,
 } from "@blog-platform/editor";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import {
   createLocalContentAdapter,
@@ -27,6 +29,15 @@ export type EditorLoadResult =
       message: string;
       rawSource?: string;
     };
+
+export type EditorSiteAnalyticsConfig = {
+  siteUrl: string;
+  analytics: {
+    provider: string;
+    ga4PropertyId?: string;
+    searchConsoleProperty?: string;
+  };
+};
 
 function slugFromPath(path: string) {
   return path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "");
@@ -91,4 +102,25 @@ export async function loadEditorDocument(
 
 export function pathForSlug(slug: string) {
   return `content/posts/${slug}.mdx`;
+}
+
+export async function loadEditorSiteAnalyticsConfig(
+  root = repositoryRoot(),
+): Promise<EditorSiteAnalyticsConfig> {
+  const raw = JSON.parse(await readFile(path.join(root, "content/site.json"), "utf8")) as {
+    siteUrl?: string;
+    analytics?: {
+      provider?: string;
+      ga4PropertyId?: string;
+      searchConsoleProperty?: string;
+    };
+  };
+  return {
+    siteUrl: raw.siteUrl ?? "",
+    analytics: {
+      provider: raw.analytics?.provider ?? "disabled",
+      ga4PropertyId: raw.analytics?.ga4PropertyId,
+      searchConsoleProperty: raw.analytics?.searchConsoleProperty,
+    },
+  };
 }

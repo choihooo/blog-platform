@@ -1,7 +1,11 @@
 import { EditorScreen } from "../../../components/editor/index";
 import { AccessState, CmsShell } from "../../../components/shell/index";
 import { requireCmsAccess, type AccessDecision } from "../../../lib/auth/index";
-import { loadEditorDocument, pathForSlug } from "../../../lib/editor/index";
+import {
+  loadEditorDocument,
+  loadEditorSiteAnalyticsConfig,
+  pathForSlug,
+} from "../../../lib/editor/index";
 
 export async function ExistingPostPageView({
   decision,
@@ -12,11 +16,14 @@ export async function ExistingPostPageView({
 }) {
   if (decision.status !== "authorized") return <AccessState decision={decision} />;
 
-  const loaded = await loadEditorDocument(pathForSlug(slug));
+  const [loaded, siteAnalytics] = await Promise.all([
+    loadEditorDocument(pathForSlug(slug)),
+    loadEditorSiteAnalyticsConfig(),
+  ]);
   return (
     <CmsShell activePath="/posts" session={decision.session} title="Edit post">
       {loaded.ok ? (
-        <EditorScreen initialDocument={loaded.document} />
+        <EditorScreen initialDocument={loaded.document} siteAnalytics={siteAnalytics} />
       ) : (
         <section className="rounded-md border border-border p-6">
           <h2 className="text-lg font-semibold">Cannot edit this post</h2>

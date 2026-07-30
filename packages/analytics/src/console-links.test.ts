@@ -7,10 +7,29 @@ describe("createExternalConsoleLinks", () => {
     const links = createExternalConsoleLinks({
       siteUrl: "https://example.com",
       postSlug: "hello-world",
+      postStatus: "published",
       config: ga4Config,
     });
     expect(links.publicPostUrl).toBe("https://example.com/posts/hello-world");
     expect(links.ga4Url).toContain("analytics.google.com");
     expect(links.searchConsoleUrl).toContain("search.google.com");
+  });
+
+  it("disables links for non-public or unconfigured states", () => {
+    expect(
+      createExternalConsoleLinks({
+        siteUrl: "https://example.com",
+        postSlug: "hello-world",
+        postStatus: "draft",
+        config: ga4Config,
+      }).publicPostUrl,
+    ).toBeUndefined();
+    expect(
+      createExternalConsoleLinks({
+        siteUrl: "not a url",
+        postStatus: "published",
+        config: { provider: "disabled" },
+      }).disabledReasons.length,
+    ).toBeGreaterThan(0);
   });
 });

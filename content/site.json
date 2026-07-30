@@ -10,7 +10,9 @@
     "branch": "main"
   },
   "analytics": {
-    "provider": "ga4"
+    "provider": "ga4",
+    "ga4PropertyId": "replace-me",
+    "searchConsoleProperty": "sc-domain:example.com"
   },
   "features": {
     "aiAssistant": false,

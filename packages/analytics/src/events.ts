@@ -2,11 +2,15 @@ import { providerFrom } from "./provider.js";
 import type { AnalyticsConfig, BlogEvent, BlogEventName, ProviderPayload } from "./types.js";
 
 const eventNames = new Set<BlogEventName>([
-  "page_view",
-  "post_read",
-  "heading_navigate",
+  "article_view",
+  "scroll_50",
+  "scroll_90",
+  "code_copy",
+  "toc_click",
+  "internal_link_click",
   "external_link_click",
-  "share_attempt",
+  "search",
+  "share",
 ]);
 
 export function createBlogEvent(
@@ -15,12 +19,15 @@ export function createBlogEvent(
   const provider = providerFrom(input.provider);
   if (provider === "disabled") return undefined;
   if (!eventNames.has(input.name) || !input.slug || !input.url) return undefined;
+  if (input.name === "search" && !input.target?.trim()) return undefined;
   return {
     name: input.name,
     slug: input.slug,
+    title: input.title,
     url: input.url,
     category: input.category,
     tags: input.tags ?? [],
+    target: input.target?.trim(),
     occurredAt: input.occurredAt,
     provider,
   };
@@ -41,9 +48,11 @@ export function toProviderPayload(
       event: event.name,
       params: {
         slug: event.slug,
+        title: event.title ?? "",
         url: event.url,
         category: event.category ?? "",
         tags: event.tags ?? [],
+        target: event.target ?? "",
       },
     };
   }
@@ -57,9 +66,11 @@ export function toProviderPayload(
       dataLayer: {
         event: event.name,
         slug: event.slug,
+        title: event.title ?? "",
         url: event.url,
         category: event.category ?? "",
         tags: event.tags ?? [],
+        target: event.target ?? "",
       },
     };
   }

@@ -11,10 +11,14 @@ function cleanSiteUrl(siteUrl: string) {
 export function createExternalConsoleLinks(input: {
   siteUrl: string;
   postSlug?: string;
+  postStatus?: string;
   config: AnalyticsConfig;
 }): ExternalConsoleLinks {
   const origin = cleanSiteUrl(input.siteUrl);
   const disabledReasons: string[] = [];
+  if (input.postStatus && input.postStatus !== "published") {
+    return { disabledReasons: ["Only published posts have public analytics links"] };
+  }
   if (!origin || !input.postSlug) {
     return { disabledReasons: ["Published post URL is unavailable"] };
   }

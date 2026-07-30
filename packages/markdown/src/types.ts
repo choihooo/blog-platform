@@ -86,6 +86,8 @@ export interface SiteConfig {
   };
   analytics: {
     provider: string;
+    ga4PropertyId?: string;
+    searchConsoleProperty?: string;
   };
   features: {
     aiAssistant: boolean;

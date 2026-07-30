@@ -5,6 +5,7 @@ import { Separator } from "@blog-platform/design-system";
 
 import { getSiteConfig } from "../lib/content";
 import { analyticsInit } from "../lib/analytics";
+import { AnalyticsProvider } from "./components/analytics-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -46,7 +47,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             </nav>
           </header>
           <Separator />
-          {children}
+          <AnalyticsProvider>{children}</AnalyticsProvider>
           <Separator />
           <footer className="px-5 py-4 text-sm text-muted-foreground sm:px-14">
             Repository-backed MDX blog

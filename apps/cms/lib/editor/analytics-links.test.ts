@@ -7,8 +7,15 @@ describe("analyticsLinksForEditorDocument", () => {
     const draft = createEmptyEditorDocument(new Date("2026-07-30"));
     expect(analyticsLinksForEditorDocument(draft).publicPostUrl).toBeUndefined();
     draft.frontmatter = { title: "Hello", status: "published", slug: "hello" };
-    expect(analyticsLinksForEditorDocument(draft).publicPostUrl).toBe(
-      "http://localhost:3000/posts/hello",
-    );
+    expect(
+      analyticsLinksForEditorDocument(draft, {
+        siteUrl: "https://example.com",
+        analytics: {
+          provider: "ga4",
+          ga4PropertyId: "123",
+          searchConsoleProperty: "sc-domain:example.com",
+        },
+      }).publicPostUrl,
+    ).toBe("https://example.com/posts/hello");
   });
 });

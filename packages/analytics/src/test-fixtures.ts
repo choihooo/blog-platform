@@ -15,11 +15,13 @@ export const gtmConfig: AnalyticsConfig = {
 export const disabledConfig: AnalyticsConfig = { provider: "disabled" };
 
 export const sampleEvent: BlogEvent = {
-  name: "page_view",
+  name: "article_view",
   slug: "hello-world",
+  title: "Hello World",
   url: "https://example.com/posts/hello-world",
   category: "engineering",
   tags: ["mdx"],
+  target: "post",
   occurredAt: "2026-07-30T00:00:00.000Z",
   provider: "ga4",
 };

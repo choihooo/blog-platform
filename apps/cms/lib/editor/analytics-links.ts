@@ -1,13 +1,25 @@
 import { createExternalConsoleLinks } from "@blog-platform/analytics";
 import type { EditorDocument } from "@blog-platform/editor";
 
-export function analyticsLinksForEditorDocument(document: EditorDocument) {
-  if (document.frontmatter.status !== "published") {
-    return { disabledReasons: ["Only published posts have public analytics links"] };
-  }
+export function analyticsLinksForEditorDocument(
+  document: EditorDocument,
+  site: {
+    siteUrl?: string;
+    analytics?: {
+      provider?: string;
+      ga4PropertyId?: string;
+      searchConsoleProperty?: string;
+    };
+  } = {},
+) {
   return createExternalConsoleLinks({
-    siteUrl: "http://localhost:3000",
-    postSlug: document.frontmatter.slug || document.id,
-    config: { provider: "disabled" },
+    siteUrl: site.siteUrl ?? "",
+    postSlug: document.frontmatter.slug,
+    postStatus: document.frontmatter.status,
+    config: {
+      provider: site.analytics?.provider ?? "disabled",
+      ga4PropertyId: site.analytics?.ga4PropertyId,
+      searchConsoleProperty: site.analytics?.searchConsoleProperty,
+    },
   });
 }

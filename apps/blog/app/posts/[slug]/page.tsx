@@ -10,6 +10,7 @@ import remarkGfm from "remark-gfm";
 
 import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/content";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
+import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 
 type PostPageProps = {
   params: Promise<{
@@ -50,9 +51,21 @@ export default async function PostPage({ params }: PostPageProps) {
   const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
   if (!post) notFound();
   const jsonLd = generateJsonLd(postToSeoSubject(post, siteForSeo(site)));
+  const postUrl = `${site.siteUrl.replace(/\/$/, "")}/posts/${post.slug}`;
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
+      <PostAnalyticsEvents
+        context={{
+          provider: site.analytics.provider,
+          slug: post.slug,
+          title: post.title,
+          url: postUrl,
+          siteUrl: site.siteUrl,
+          category: post.category,
+          tags: post.tags,
+        }}
+      />
       <script
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         type="application/ld+json"
@@ -106,7 +119,12 @@ export default async function PostPage({ params }: PostPageProps) {
             <CardContent className="grid gap-3 p-4 text-sm">
               <strong>On this page</strong>
               {post.toc.map((item) => (
-                <a className="text-muted-foreground" href={`#${item.slug}`} key={item.slug}>
+                <a
+                  className="text-muted-foreground"
+                  data-analytics-toc
+                  href={`#${item.slug}`}
+                  key={item.slug}
+                >
                   {item.text}
                 </a>
               ))}

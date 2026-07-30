@@ -50,6 +50,8 @@ export const siteConfigSchema = z.object({
   }),
   analytics: z.object({
     provider: z.string().trim().min(1),
+    ga4PropertyId: z.string().trim().min(1).optional(),
+    searchConsoleProperty: z.string().trim().min(1).optional(),
   }),
   features: z.object({
     aiAssistant: z.boolean(),
