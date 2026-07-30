@@ -39,9 +39,9 @@ pnpm dev:blog
 pnpm dev:cms
 ```
 
-`apps/blog`는 기본적으로 port `3000`에서 시작하고, `apps/cms`는 port `3001`에서 시작한다. Phase 0
-app shell은 GitHub credential, content file, authentication setup, deployment configuration을
-요구하지 않는다.
+`apps/blog`는 기본적으로 port `3000`에서 시작하고, `apps/cms`는 port `3001`에서 시작한다. CMS 보호
+화면은 GitHub OAuth 설정(`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_SECRET`)과
+`content/site.json`의 `adminGithubLogin`, `adminGithubUserId`가 필요하다.
 
 ## Shared package ownership
 
@@ -91,3 +91,10 @@ adapter는 GitHub credential 없이 `content/`와 `public/media/` 경계 안의
 list/read/create/update/delete 및 media commit 동작을 검증하고, GitHub adapter는 Contents API 요청
 payload와 provider error normalization을 담당한다. 기존 파일 update/delete는 마지막 read SHA를
 요구해 stale write overwrite를 막는다.
+
+## CMS Auth + Shell
+
+CMS는 `apps/cms/lib/auth`에서 GitHub OAuth session, 관리자 identity loading, route guard, mutation
+guard를 소유한다. 관리자 기준값은 `content/site.json`의 `adminGithubLogin`과 `adminGithubUserId`이며
+둘 다 일치해야 보호 화면과 mutation이 허용된다. `apps/cms/components/shell`은 sidebar, top bar,
+Posts/Settings 준비 화면을 제공하고 editor, media upload, publish workflow는 아직 노출하지 않는다.

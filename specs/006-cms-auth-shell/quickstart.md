@@ -62,6 +62,13 @@ Expected outcome:
   content.
 - Mutation returns an auth-required result and does not call the content adapter.
 
+Auth failure contract:
+
+- `auth-required`: user can retry after login.
+- `session-expired`: user can retry after login.
+- `forbidden`: user must use the configured GitHub admin account.
+- `auth-misconfigured`: operator must fix `content/site.json` admin fields before retrying.
+
 ## Scenario 3: Non-Admin Access
 
 1. Configure `content/site.json` for a different GitHub account than the one used to log in.

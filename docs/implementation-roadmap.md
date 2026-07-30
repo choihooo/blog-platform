@@ -379,6 +379,18 @@ MVP에서 금지:
 - unauthenticated redirect.
 - mutation guard.
 
+구현 상태:
+
+- `apps/cms/lib/auth`에 GitHub OAuth 설정, session enrichment, 관리자 identity loader, route guard,
+  mutation guard, protected content operation wrapper를 구현했다.
+- `content/site.json`의 `adminGithubLogin`과 `adminGithubUserId`가 모두 일치해야 CMS 보호 화면과
+  mutation이 허용된다.
+- `apps/cms/components/shell`에 sidebar, top bar, Posts/Settings navigation, 접근 상태 화면을
+  구현했다.
+- `packages/design-system`에 Button, Input, Dialog, Tabs, Dropdown Menu, Form primitive를 추가했다.
+- package validation은 `pnpm --filter @blog-platform/design-system typecheck`, `lint`,
+  `pnpm --filter @blog-platform/cms typecheck`, `lint`, `test`로 확인한다.
+
 ## 9. Phase 6: CMS Editor
 
 목표:

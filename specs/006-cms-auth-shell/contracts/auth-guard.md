@@ -74,7 +74,10 @@ type AccessDecision =
 
 ## Mutation Guard Behavior
 
-Mutation handlers or server actions must call the guard before content adapter operations.
+Mutation handlers or server actions must call the guard before content adapter operations. Future
+CMS mutations must use `guardMutation` or `createProtectedContentOperations` at the server boundary
+before invoking `createFile`, `updateFile`, `deleteFile`, `commitMedia`, or settings update
+operations. Page-level access checks are not sufficient authorization for mutation handlers.
 
 ```ts
 type GuardedMutationResult<TSuccess> =
