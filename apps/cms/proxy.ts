@@ -1,15 +1,18 @@
+import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
 const protectedPaths = ["/", "/posts", "/settings"];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isProtected = protectedPaths.some(
+    (path) => pathname === path || (path !== "/" && pathname.startsWith(`${path}/`)),
+  );
 
   if (
-    protectedPaths.includes(pathname) &&
+    isProtected &&
     !(process.env.NODE_ENV === "development" && process.env.CMS_DEV_BYPASS_AUTH === "1") &&
-    !request.cookies.has("next-auth.session-token") &&
-    !request.cookies.has("__Secure-next-auth.session-token")
+    !(await getToken({ req: request, secret: process.env.AUTH_SECRET }))
   ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
