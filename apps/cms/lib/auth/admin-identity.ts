@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import bundledSiteConfig from "../../../../content/site.json";
+
 import type { AdminIdentity } from "./types";
 
 type SiteConfigLike = {
@@ -41,6 +43,10 @@ export async function loadAdminIdentity(root = process.cwd()): Promise<AdminIden
     const raw = await readFile(path.join(root, siteConfigPath), "utf8");
     return parseAdminIdentity(JSON.parse(raw) as SiteConfigLike);
   } catch {
+    if (root === process.cwd()) {
+      return parseAdminIdentity(bundledSiteConfig);
+    }
+
     return { success: false, reason: "content/site.json could not be read" };
   }
 }

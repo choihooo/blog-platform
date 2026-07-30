@@ -14,11 +14,13 @@ type CmsShellProps = {
 
 export function CmsShell({ activePath, children, session, title }: CmsShellProps) {
   return (
-    <div className="min-h-screen bg-background text-foreground sm:flex">
+    <div className="cms-shell">
       <Sidebar items={getShellNavigation(activePath)} />
-      <div className="min-w-0 flex-1">
+      <div className="cms-workspace">
         <TopBar session={session} title={title} />
-        <main className="px-5 py-6">{children}</main>
+        <main className="cms-main" id="main-content">
+          {children}
+        </main>
       </div>
     </div>
   );

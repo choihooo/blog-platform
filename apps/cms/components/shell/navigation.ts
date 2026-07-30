@@ -1,12 +1,18 @@
 export type ShellNavigationItem = {
-  id: "posts" | "settings";
-  label: "Posts" | "Settings";
-  href: "/posts" | "/settings";
+  id: "dashboard" | "posts" | "settings";
+  label: "Dashboard" | "Posts" | "Settings";
+  href: "/" | "/posts" | "/settings";
   state: "active" | "available" | "disabled";
 };
 
 export function getShellNavigation(pathname: string): ShellNavigationItem[] {
   return [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      href: "/",
+      state: pathname === "/" ? "active" : "available",
+    },
     {
       id: "posts",
       label: "Posts",

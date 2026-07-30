@@ -8,6 +8,7 @@ export type { GitHubAppCredentialState } from "./github-app-token";
 export { createLocalContentAdapter } from "./local-adapter";
 export { assertAllowedPath, classifyRepositoryPath, normalizeRepositoryPath } from "./paths";
 export { normalizeHttpFailure, repositoryFailure } from "./repository-error";
+export { createRuntimeContentAdapter } from "./runtime-adapter";
 export type {
   AdapterResult,
   ContentAdapter,

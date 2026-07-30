@@ -69,7 +69,9 @@ export type PublicationResult =
       document?: EditorDocument;
     };
 
-type PublishAdapter = Pick<ContentAdapter, "createFile" | "updateFile" | "listFiles" | "readFile">;
+type PublishAdapter = Pick<ContentAdapter, "createFile" | "updateFile" | "listFiles" | "readFile"> & {
+  deleteFile?: ContentAdapter["deleteFile"];
+};
 
 function codeFromRepository(code: RepositoryFailureCode): PublishWorkflowCode {
   if (code === "stale-file") return "stale-file";
@@ -252,20 +254,55 @@ export async function runPublicationOperation(input: {
   if (!prepared.ok) return prepared.result;
 
   const path = pathForDocument(prepared.document);
+  const shouldRename =
+    prepared.document.path !== undefined &&
+    prepared.document.path !== path &&
+    Boolean(prepared.document.sourceSha);
   const intent =
     input.operation === "publish"
       ? "prepare-publish"
       : input.operation === "archive"
         ? "prepare-archive"
         : "prepare-unpublish";
-  const repositoryResult: AdapterResult<ContentChangeResult> = prepared.document.sourceSha
-    ? await input.adapter.updateFile({
-        path,
-        content: prepared.source,
-        expectedSha: prepared.document.sourceSha,
-        intent,
-      })
-    : await input.adapter.createFile({ path, content: prepared.source, intent });
+  const repositoryResult: AdapterResult<ContentChangeResult> = shouldRename
+    ? await (async () => {
+        if (!input.adapter.deleteFile) {
+          return {
+            success: false as const,
+            error: {
+              code: "unauthorized",
+              message: "Publication rename requires delete permission",
+              retryable: false,
+            },
+          };
+        }
+        const created = await input.adapter.createFile({
+          path,
+          content: prepared.source,
+          intent,
+        });
+        if (!created.success) return created;
+        const deleted = await input.adapter.deleteFile({
+          path: prepared.document.path,
+          expectedSha: prepared.document.sourceSha,
+          intent: "delete-file",
+        });
+        if (!deleted.success) {
+          return {
+            success: false as const,
+            error: deleted.error,
+          };
+        }
+        return created;
+      })()
+    : prepared.document.sourceSha
+      ? await input.adapter.updateFile({
+          path,
+          content: prepared.source,
+          expectedSha: prepared.document.sourceSha,
+          intent,
+        })
+      : await input.adapter.createFile({ path, content: prepared.source, intent });
 
   if (!repositoryResult.success) {
     return repositoryFailure(

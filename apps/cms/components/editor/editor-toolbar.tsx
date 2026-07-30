@@ -108,7 +108,7 @@ export function EditorToolbar({
       {onMediaUploaded ? (
         <MediaUploadControl onUploaded={onMediaUploaded} postSlug={postSlug} />
       ) : null}
-      <div className="ml-auto">
+      <div className="ml-auto flex flex-wrap items-center gap-2">
         <Button disabled={saveDisabled} onClick={onSave} type="button" variant="secondary">
           <Save className="h-4 w-4" />
           Save

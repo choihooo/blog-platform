@@ -16,11 +16,14 @@ type TopBarProps = {
 
 export function TopBar({ session, title }: TopBarProps) {
   return (
-    <header className="flex min-h-14 items-center justify-between border-b bg-background px-5">
-      <h1 className="text-base font-semibold">{title}</h1>
+    <header className="cms-topbar">
+      <div>
+        <p className="cms-eyebrow">Workspace</p>
+        <h1>{title}</h1>
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button aria-label="Account menu" variant="ghost">
+          <Button aria-label="Account menu" className="cms-account" variant="ghost">
             <UserCircle aria-hidden="true" size={18} />
             <span>{session.displayName ?? session.githubLogin}</span>
           </Button>

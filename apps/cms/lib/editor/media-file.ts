@@ -1,5 +1,3 @@
-import sharp from "sharp";
-
 import { mediaHash } from "./media-path";
 
 export const MAX_MEDIA_BYTES = 2 * 1024 * 1024;
@@ -27,6 +25,7 @@ export async function prepareMediaFile(file: File): Promise<PreparedMediaFile> {
 
   const original = Buffer.from(await file.arrayBuffer());
   try {
+    const { default: sharp } = await import("sharp");
     const buffer = await sharp(original).rotate().webp({ quality: 82 }).toBuffer();
     if (buffer.byteLength > MAX_MEDIA_BYTES) {
       return { ok: false, message: "Optimized image must be 2MB or smaller" };

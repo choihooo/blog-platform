@@ -182,10 +182,11 @@ export function EditorScreen({
   );
   const [message, setMessage] = useState<string>();
   const [retryToken, setRetryToken] = useState<PublicRefreshRetryToken>();
+  const [previewHtml, setPreviewHtml] = useState("");
   const [isPending, startTransition] = useTransition();
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({ link: false }),
       Link.configure({ openOnClick: false }),
       Image.configure({ allowBase64: false }),
     ],
@@ -199,7 +200,11 @@ export function EditorScreen({
         role: "textbox",
       },
     },
+    onCreate: ({ editor }) => {
+      setPreviewHtml(editor.getHTML());
+    },
     onUpdate: ({ editor }) => {
+      setPreviewHtml(editor.getHTML());
       markDirty(documentRef.current, tiptapToNodes(editor.getJSON()));
     },
   });
@@ -248,6 +253,7 @@ export function EditorScreen({
           };
           documentRef.current = saved;
           setDocument(saved);
+          setPreviewHtml(editor?.getHTML() ?? previewHtml);
           setStatus("saved");
           setMessage(undefined);
           setRetryToken(undefined);
@@ -295,6 +301,7 @@ export function EditorScreen({
           documentRef.current = saved;
           setDocument(saved);
           setBody(saved.body);
+          setPreviewHtml(editor?.getHTML() ?? previewHtml);
           setStatus(operation === "publish" ? "published" : "saved");
           setMessage(undefined);
           setRetryToken(undefined);
@@ -310,10 +317,12 @@ export function EditorScreen({
           documentRef.current = result.document;
           setDocument(result.document);
           setBody(result.document.body);
+          setPreviewHtml(editor?.getHTML() ?? previewHtml);
         } else if (result.submittedDocument) {
           documentRef.current = result.submittedDocument;
           setDocument(result.submittedDocument);
           setBody(result.submittedDocument.body);
+          setPreviewHtml(editor?.getHTML() ?? previewHtml);
         }
         setStatus(result.code === "public-refresh-failed" ? "refreshFailed" : "failed");
         setRetryToken(result.retryToken);
@@ -373,6 +382,7 @@ export function EditorScreen({
       ...(node.caption ? [{ type: "paragraph" as const, text: node.caption }] : []),
     ];
     markDirty(documentRef.current, nextBody);
+    setPreviewHtml(editor?.getHTML() ?? "");
     setMessage("Image uploaded. Save the post to keep this reference.");
   }
 
@@ -409,7 +419,7 @@ export function EditorScreen({
       <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
         <main className="min-w-0">
           <EditorContent editor={editor} />
-          <PreviewPanel document={previewDocument} />
+          <PreviewPanel document={previewDocument} html={previewHtml} />
         </main>
         <aside className="border-l border-border">
           <FrontmatterPanel

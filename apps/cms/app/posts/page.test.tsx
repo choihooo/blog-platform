@@ -27,9 +27,9 @@ describe("PostsPageView", () => {
         ],
       }),
     );
-    expect(screen.getByRole("heading", { level: 2, name: "Posts" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "모든 글" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /Hello World/ })).toBeTruthy();
-    expect(screen.getByRole("link", { name: /New draft/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /새 초안/ })).toBeTruthy();
     expect(screen.queryByRole("button", { name: /Publish/i })).toBeNull();
     expect(screen.queryByRole("button", { name: /Upload/i })).toBeNull();
     expect(screen.getByRole("link", { name: /Posts/ }).getAttribute("aria-current")).toBe("page");

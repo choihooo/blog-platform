@@ -13,8 +13,8 @@ type GitHubSession = {
   };
 };
 
-export function toCmsSession(session: GitHubSession | null): CmsSession | null {
-  if (!session?.githubLogin || !session.githubUserId || !session.expires) {
+export function toCmsSession(session: GitHubSession | null, now = new Date()): CmsSession | null {
+  if (!session?.githubLogin || !session.githubUserId) {
     return null;
   }
 
@@ -23,10 +23,23 @@ export function toCmsSession(session: GitHubSession | null): CmsSession | null {
     githubUserId: session.githubUserId,
     displayName: session.user?.name ?? undefined,
     avatarUrl: session.user?.image ?? undefined,
-    expiresAt: session.expires,
+    // getServerSession can omit `expires` while rendering a Server Component.
+    // At this point NextAuth has already validated the JWT, so a short-lived
+    // fallback is sufficient for the synchronous CMS access decision.
+    expiresAt: session.expires ?? new Date(now.getTime() + 60_000).toISOString(),
   };
 }
 
 export async function getCmsSession() {
-  return toCmsSession((await getServerSession(authOptions)) as GitHubSession | null);
+  const session = (await getServerSession(authOptions)) as GitHubSession | null;
+  const cmsSession = toCmsSession(session);
+
+  if (session && !cmsSession) {
+    console.warn("[cms-auth] NextAuth session could not be converted to a CMS session", {
+      hasGithubLogin: Boolean(session.githubLogin),
+      hasGithubUserId: Boolean(session.githubUserId),
+    });
+  }
+
+  return cmsSession;
 }

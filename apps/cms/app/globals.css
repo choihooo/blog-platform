@@ -25,36 +25,300 @@
 }
 
 :root {
-  --background: white;
-  --foreground: oklch(0.145 0 0);
-  --card: white;
-  --card-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.205 0 0);
+  --card: oklch(0.99 0 0);
+  --card-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.22 0.043 265);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.967 0.006 261);
+  --secondary-foreground: oklch(0.205 0.01 261);
+  --muted: oklch(0.97 0.007 260);
+  --muted-foreground: oklch(0.451 0.028 261);
+  --accent: oklch(0.97 0.007 260);
+  --accent-foreground: oklch(0.205 0.01 261);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: white;
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.909 0.006 258);
+  --input: oklch(0.92 0.006 258);
+  --ring: oklch(0.65 0.063 261);
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--background);
   color: var(--foreground);
   font-family:
     Inter,
+    "Inter Variable",
     ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.cms-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  color: var(--foreground);
+}
+
+.cms-sidebar {
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  padding: 0.875rem;
+}
+
+.cms-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cms-brand-mark {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-family: "Geist", "Inter Variable", ui-sans-serif, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.cms-brand strong,
+.cms-brand small {
+  display: block;
+}
+
+.cms-brand strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.cms-brand small {
+  margin-top: 0.05rem;
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+}
+
+.cms-navigation {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.875rem;
+  overflow-x: auto;
+}
+
+.cms-nav-item {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.8rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.cms-nav-item:hover {
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+  color: var(--foreground);
+}
+
+.cms-nav-item:active {
+  transform: translateY(1px);
+}
+
+.cms-nav-item-active {
+  border: 1px solid var(--border);
+  background: var(--accent);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.cms-workspace {
+  min-width: 0;
+}
+
+.cms-topbar {
+  display: flex;
+  min-height: 4.75rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+  padding: 0.8rem 1.25rem;
+}
+
+.cms-topbar h1 {
+  margin: 0.1rem 0 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.cms-eyebrow {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.cms-account {
+  border: 1px solid transparent;
+}
+
+.cms-account:hover {
+  border-color: var(--border);
+}
+
+.cms-main {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding: 2rem 1.25rem 4rem;
+}
+
+@media (min-width: 48rem) {
+  .cms-shell {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
+
+  .cms-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+    padding: 1.25rem 1rem;
+    width: 15rem;
+  }
+
+  .cms-navigation {
+    flex-direction: column;
+    margin-top: 2rem;
+    overflow: visible;
+  }
+
+  .cms-topbar {
+    padding-inline: 2rem;
+  }
+
+  .cms-main {
+    padding: 3rem 2rem 5rem;
+  }
+}
+
+.cms-live-preview-body {
+  min-height: 10rem;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+
+.cms-live-preview-body h1,
+.cms-live-preview-body h2,
+.cms-live-preview-body h3,
+.cms-live-preview-body h4,
+.cms-live-preview-body h5,
+.cms-live-preview-body h6 {
+  margin: 1.1em 0 0.4em;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.cms-live-preview-body h1 {
+  font-size: 1.65rem;
+}
+
+.cms-live-preview-body h2 {
+  font-size: 1.35rem;
+}
+
+.cms-live-preview-body h3 {
+  font-size: 1.2rem;
+}
+
+.cms-live-preview-body p {
+  margin: 0.4em 0;
+}
+
+.cms-live-preview-body ul,
+.cms-live-preview-body ol {
+  margin: 0.5em 0 0.5em 1.15em;
+  padding: 0;
+}
+
+.cms-live-preview-body li {
+  margin: 0.2em 0;
+}
+
+.cms-live-preview-body blockquote {
+  margin: 0.8em 0;
+  border-left: 4px solid var(--border);
+  padding-left: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.cms-live-preview-body pre {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--secondary);
+  padding: 0.7rem 0.8rem;
+}
+
+.cms-live-preview-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  font-size: 0.92em;
+}
+
+.cms-live-preview-body pre code {
+  display: block;
+  white-space: pre-wrap;
+}
+
+.cms-live-preview-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.cms-live-preview-body a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }

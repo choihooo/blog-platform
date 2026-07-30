@@ -18,8 +18,16 @@ export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [result, setResult] = useState<UploadEditorMediaResult>();
   const [isPending, startTransition] = useTransition();
+  const normalizedPostSlug = frontmatter.slug ?? "";
   const update = (key: keyof EditorFrontmatter, value: string) =>
     onChange?.({ ...frontmatter, [key]: value });
+  const normalizeSlug = (value: string) =>
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  const isSlugMutated = Boolean(frontmatter.slug && frontmatter.slug !== postSlug);
 
   function upload(file: File) {
     const formData = new FormData();
@@ -58,14 +66,26 @@ export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
           onChange={(event) => update("excerpt", event.currentTarget.value)}
         />
       </div>
+      <div>
+        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-slug">
+          Slug
+        </label>
+        <Input
+          id="editor-slug"
+          value={normalizedPostSlug}
+          onChange={(event) => update("slug", normalizeSlug(event.currentTarget.value))}
+          placeholder="created on save"
+        />
+        {isSlugMutated ? (
+          <p className="mt-1 text-xs text-muted-foreground">
+            변경한 slug는 저장/발행 시 새 파일명으로 이동됩니다.
+          </p>
+        ) : null}
+      </div>
       <dl className="space-y-2 text-sm">
         <div>
           <dt className="text-muted-foreground">Status</dt>
           <dd>{frontmatter.status}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Slug</dt>
-          <dd>{frontmatter.slug ?? "created on save"}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground">Cover</dt>

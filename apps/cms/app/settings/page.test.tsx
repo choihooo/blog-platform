@@ -14,8 +14,9 @@ const decision = {
 describe("SettingsPageView", () => {
   it("renders readiness state and active settings navigation", () => {
     render(createElement(SettingsPageView, { decision }));
-    expect(screen.getByRole("heading", { level: 2, name: "Settings" })).toBeTruthy();
-    expect(screen.getByText(/후속 phase/)).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "사이트 설정" })).toBeTruthy();
+    expect(screen.getByText("Ho's Blog")).toBeTruthy();
+    expect(screen.getByText("choihooo/blog-platform")).toBeTruthy();
     expect(screen.getByRole("link", { name: /Settings/ }).getAttribute("aria-current")).toBe(
       "page",
     );

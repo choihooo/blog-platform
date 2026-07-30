@@ -8,6 +8,18 @@ import type {
   RepositoryFailureState,
 } from "../content-adapter/index";
 
+function normalizeSlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function slugFromPath(path: string) {
+  return path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "");
+}
+
 type SaveErrorCode =
   | "validation-failure"
   | "unsupported-mdx"
@@ -72,21 +84,20 @@ export function mapAuthFailure(
 }
 
 export function pathForDocument(document: EditorDocument) {
-  if (document.path) return document.path;
+  const fallback = slugFromPath(document.path ?? "");
   const slug =
-    document.frontmatter.slug ||
-    document.frontmatter.title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "") ||
+    normalizeSlug(document.frontmatter.slug ?? "") ||
+    normalizeSlug(document.frontmatter.title) ||
+    fallback ||
     `draft-${Date.now()}`;
   return `content/posts/${slug}.mdx`;
 }
 
 export async function saveEditorDraft(
   document: EditorDocument,
-  adapter: Pick<ContentAdapter, "createFile" | "updateFile">,
+  adapter: Pick<ContentAdapter, "createFile" | "updateFile"> & {
+    deleteFile?: ContentAdapter["deleteFile"];
+  },
 ): Promise<SaveEditorDraftResult> {
   const serialized = editorDocumentToMdx(document);
   if (!serialized.ok) {
@@ -100,6 +111,45 @@ export async function saveEditorDraft(
   }
 
   const path = pathForDocument(document);
+  const nextDocument: EditorDocument = {
+    ...document,
+    frontmatter: {
+      ...document.frontmatter,
+      slug: normalizeSlug(document.frontmatter.slug ?? ""),
+    },
+  };
+
+  if (document.sourceSha && document.path && document.path !== path) {
+    if (!adapter.deleteFile) {
+      return {
+        ok: false,
+        code: "forbidden",
+        retryable: false,
+        message: "Draft rename requires delete permission",
+        submittedDocument: nextDocument,
+      };
+    }
+    const createResult = await adapter.createFile({
+      path,
+      content: serialized.source,
+      intent: "create-draft",
+    });
+    if (!createResult.success) return failureResult(nextDocument, createResult.error, serialized.source);
+    const deleteResult = await adapter.deleteFile({
+      path: document.path,
+      expectedSha: document.sourceSha,
+      intent: "delete-file",
+    });
+    if (!deleteResult.success) return failureResult(nextDocument, deleteResult.error, serialized.source);
+    return {
+      ok: true,
+      path: createResult.data.path,
+      sha: createResult.data.sha ?? "",
+      commitId: createResult.data.commitId,
+      backupCleared: true,
+    };
+  }
+
   const result: AdapterResult<ContentChangeResult> = document.sourceSha
     ? await adapter.updateFile({
         path,
@@ -113,7 +163,7 @@ export async function saveEditorDraft(
         intent: "create-draft",
       });
 
-  if (!result.success) return failureResult(document, result.error, serialized.source);
+  if (!result.success) return failureResult(nextDocument, result.error, serialized.source);
   return {
     ok: true,
     path: result.data.path,

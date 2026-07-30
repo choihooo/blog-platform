@@ -6,8 +6,10 @@ import {
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import bundledSiteConfig from "../../../../content/site.json";
+
 import {
-  createLocalContentAdapter,
+  createRuntimeContentAdapter,
   type ContentAdapter,
   type RepositoryFileSummary,
 } from "../content-adapter/index";
@@ -51,16 +53,15 @@ function statusFromSource(source: string) {
   return /^status:\s*"?([^"\n]+)"?/m.exec(source)?.[1]?.trim() ?? "draft";
 }
 
-export async function listPostSummaries(
-  adapter: ContentAdapter = createLocalContentAdapter(repositoryRoot()),
-) {
-  const listed = await adapter.listFiles({ root: "posts" });
+export async function listPostSummaries(adapter?: ContentAdapter) {
+  const contentAdapter = adapter ?? (await createRuntimeContentAdapter(repositoryRoot()));
+  const listed = await contentAdapter.listFiles({ root: "posts" });
   if (!listed.success) return [];
   const posts = await Promise.all(
     listed.data.files
       .filter((file): file is RepositoryFileSummary & { kind: "post" } => file.kind === "post")
       .map(async (file) => {
-        const read = await adapter.readFile({ path: file.path });
+        const read = await contentAdapter.readFile({ path: file.path });
         if (!read.success) return null;
         return {
           path: file.path,
@@ -80,9 +81,10 @@ export function createNewEditorDocument(now = new Date()) {
 
 export async function loadEditorDocument(
   path: string,
-  adapter: ContentAdapter = createLocalContentAdapter(repositoryRoot()),
+  adapter?: ContentAdapter,
 ): Promise<EditorLoadResult> {
-  const read = await adapter.readFile({ path });
+  const contentAdapter = adapter ?? (await createRuntimeContentAdapter(repositoryRoot()));
+  const read = await contentAdapter.readFile({ path });
   if (!read.success) return { ok: false, code: "missing-file", message: read.error.message };
   const loaded = mdxToEditorDocument({
     path: read.data.file.path,
@@ -107,7 +109,7 @@ export function pathForSlug(slug: string) {
 export async function loadEditorSiteAnalyticsConfig(
   root = repositoryRoot(),
 ): Promise<EditorSiteAnalyticsConfig> {
-  const raw = JSON.parse(await readFile(path.join(root, "content/site.json"), "utf8")) as {
+  let config: {
     siteUrl?: string;
     analytics?: {
       provider?: string;
@@ -115,12 +117,21 @@ export async function loadEditorSiteAnalyticsConfig(
       searchConsoleProperty?: string;
     };
   };
+
+  try {
+    config = JSON.parse(
+      await readFile(path.join(root, "content/site.json"), "utf8"),
+    ) as typeof config;
+  } catch {
+    config = bundledSiteConfig;
+  }
+
   return {
-    siteUrl: raw.siteUrl ?? "",
+    siteUrl: config.siteUrl ?? "",
     analytics: {
-      provider: raw.analytics?.provider ?? "disabled",
-      ga4PropertyId: raw.analytics?.ga4PropertyId,
-      searchConsoleProperty: raw.analytics?.searchConsoleProperty,
+      provider: config.analytics?.provider ?? "disabled",
+      ga4PropertyId: config.analytics?.ga4PropertyId,
+      searchConsoleProperty: config.analytics?.searchConsoleProperty,
     },
   };
 }
