@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
-import { getCategory, getContentCollection, getPostsByCategory } from "../../../lib/content";
+import {
+  getCategory,
+  getContentCollection,
+  getPostsByCategory,
+  getSiteConfig,
+} from "../../../lib/content";
 
 type CategoryPageProps = {
   params: Promise<{
@@ -17,8 +23,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategory(slug);
-  return category ? { title: category.label, description: category.description } : {};
+  const [category, site] = await Promise.all([getCategory(slug), getSiteConfig()]);
+  return category
+    ? {
+        title: category.label,
+        description: category.description,
+        alternates: { canonical: `${trimSlash(site.siteUrl)}/categories/${category.slug}` },
+      }
+    : {};
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

@@ -1,0 +1,31 @@
+import { canonicalUrl } from "./subject.js";
+import type { SeoSubject } from "./types.js";
+
+export function generateJsonLd(subject: SeoSubject) {
+  if (subject.status !== "published" || !subject.slug || !subject.title) return [];
+  const url = canonicalUrl(subject);
+  const data: unknown[] = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: subject.title,
+      description: subject.excerpt,
+      url,
+      datePublished: subject.publishedAt,
+      dateModified: subject.updatedAt ?? subject.publishedAt,
+      author: subject.author ? { "@type": "Person", name: subject.author.name } : undefined,
+      image: subject.coverImage,
+      keywords: subject.tags.map((tag) => tag.label).join(", "),
+      articleSection: subject.category?.label,
+    },
+  ];
+  data.push({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: subject.site.siteName, item: subject.site.siteUrl },
+      { "@type": "ListItem", position: 2, name: subject.title, item: url },
+    ],
+  });
+  return data;
+}

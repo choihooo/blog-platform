@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
-import { getContentCollection, getPostsByTag, getTag } from "../../../lib/content";
+import { getContentCollection, getPostsByTag, getSiteConfig, getTag } from "../../../lib/content";
 
 type TagPageProps = {
   params: Promise<{
@@ -17,8 +18,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const tag = await getTag(slug);
-  return tag ? { title: tag.label, description: tag.description } : {};
+  const [tag, site] = await Promise.all([getTag(slug), getSiteConfig()]);
+  return tag
+    ? {
+        title: tag.label,
+        description: tag.description,
+        alternates: { canonical: `${trimSlash(site.siteUrl)}/tags/${tag.slug}` },
+      }
+    : {};
 }
 
 export default async function TagPage({ params }: TagPageProps) {

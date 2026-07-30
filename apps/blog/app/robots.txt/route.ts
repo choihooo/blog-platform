@@ -1,8 +1,11 @@
+import { generateRobotsPolicy, serializeRobots } from "@blog-platform/seo-engine";
+
 import { getSiteConfig } from "../../lib/content";
+import { siteForSeo } from "../../lib/seo";
 
 export async function GET() {
   const site = await getSiteConfig();
-  return new Response(`User-agent: *\nAllow: /\nSitemap: ${site.siteUrl}/sitemap.xml\n`, {
+  return new Response(serializeRobots(generateRobotsPolicy(siteForSeo(site))), {
     headers: { "content-type": "text/plain; charset=utf-8" },
   });
 }

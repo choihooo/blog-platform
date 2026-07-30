@@ -11,3 +11,10 @@
 - Publish, Unpublish, Archive 이후 public refresh target을 계산하고, refresh 실패는 repository
   commit 성공과 분리해서 표시한다.
 - 예약 발행, 승인 workflow, CMS database, RSS/Sitemap 파일 commit은 MVP 범위가 아니다.
+
+## SEO와 분석 링크
+
+- Editor sidebar는 현재 editor document 기준의 SEO score, blocking issue, warning, 검색 미리보기를
+  표시한다.
+- 발행 글에는 공개 글 링크를 제공하고, GA4/Search Console 설정이 없으면 비활성 이유를 표시한다.
+- CMS는 GA4/Search Console 지표를 직접 조회하거나 저장하지 않는다.

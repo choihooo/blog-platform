@@ -14,12 +14,15 @@ import {
   saveEditorDraftAction,
   unpublishPostAction,
 } from "../../app/actions/editor-actions";
+import { analyticsLinksForEditorDocument } from "../../lib/editor/analytics-links";
 import { clearBackup, writeBackup } from "../../lib/editor/draft-backup";
+import { seoReportForEditorDocument } from "../../lib/editor/seo-report";
 import { EditorToolbar } from "./editor-toolbar";
 import { FrontmatterPanel } from "./frontmatter-panel";
 import { PreviewPanel } from "./preview-panel";
 import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
+import { SeoPanel } from "./seo-panel";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
 
 function textContent(node: JSONContent): string {
@@ -198,6 +201,11 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
   }, [document]);
 
   const previewDocument = useMemo(() => ({ ...document, body }), [body, document]);
+  const seoReport = useMemo(() => seoReportForEditorDocument(previewDocument), [previewDocument]);
+  const analyticsLinks = useMemo(
+    () => analyticsLinksForEditorDocument(previewDocument),
+    [previewDocument],
+  );
 
   function markDirty(next: EditorDocument, nextBody: EditorNode[] = body) {
     const dirty = {
@@ -377,11 +385,14 @@ export function EditorScreen({ initialDocument }: { initialDocument: EditorDocum
           <EditorContent editor={editor} />
           <PreviewPanel document={previewDocument} />
         </main>
-        <FrontmatterPanel
-          frontmatter={document.frontmatter}
-          onChange={(frontmatter) => markDirty({ ...document, frontmatter })}
-          postSlug={slugCandidate(document)}
-        />
+        <aside className="border-l border-border">
+          <FrontmatterPanel
+            frontmatter={document.frontmatter}
+            onChange={(frontmatter) => markDirty({ ...document, frontmatter })}
+            postSlug={slugCandidate(document)}
+          />
+          <SeoPanel links={analyticsLinks} report={seoReport} />
+        </aside>
       </div>
     </div>
   );

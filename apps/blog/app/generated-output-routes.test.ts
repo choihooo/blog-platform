@@ -1,5 +1,4 @@
-import assert from "node:assert/strict";
-import { test } from "node:test";
+import { expect, test } from "vitest";
 
 test("generated output route modules export GET handlers", async () => {
   const rss = await import("./rss.xml/route");
@@ -7,8 +6,8 @@ test("generated output route modules export GET handlers", async () => {
   const robots = await import("./robots.txt/route");
   const og = await import("./og/[slug]/route");
 
-  assert.equal(typeof rss.GET, "function");
-  assert.equal(typeof sitemap.GET, "function");
-  assert.equal(typeof robots.GET, "function");
-  assert.equal(typeof og.GET, "function");
+  expect(typeof rss.GET).toBe("function");
+  expect(typeof sitemap.GET).toBe("function");
+  expect(typeof robots.GET).toBe("function");
+  expect(typeof og.GET).toBe("function");
 });

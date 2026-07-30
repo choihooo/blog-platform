@@ -6,4 +6,5 @@ export { MediaUploadStatus } from "./media-upload-status";
 export { PreviewPanel } from "./preview-panel";
 export { RecoveryBanner } from "./recovery-banner";
 export { SaveStatusBadge } from "./save-status";
+export { SeoPanel } from "./seo-panel";
 export type { SaveStatus } from "./save-status";

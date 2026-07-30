@@ -2,5 +2,16 @@
 
 `packages/seo-engine`는 rule-based SEO scoring과 generated SEO output contract를 소유한다.
 
-Phase 0에서는 package boundary와 validation 참여만 제공한다. 실제 score rule과 metadata generation은
-이후 SEO phase에서 정의한다.
+## 제공 기능
+
+- 발행 글 SEO subject 정규화
+- page metadata, JSON-LD, RSS, Sitemap, robots, OG image payload 생성
+- 0-100 rule-based SEO score와 blocking/warning/pass report 생성
+
+## 검증
+
+```sh
+pnpm --filter @blog-platform/seo-engine typecheck
+pnpm --filter @blog-platform/seo-engine lint
+pnpm --filter @blog-platform/seo-engine test
+```

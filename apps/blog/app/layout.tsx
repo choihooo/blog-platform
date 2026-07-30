@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Separator } from "@blog-platform/design-system";
 
+import { getSiteConfig } from "../lib/content";
+import { analyticsInit } from "../lib/analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,10 +19,18 @@ type RootLayoutProps = {
   children: ReactNode;
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const analytics = analyticsInit(await getSiteConfig());
   return (
     <html lang="ko">
       <body>
+        {analytics.ok ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.__BLOG_ANALYTICS__=${JSON.stringify(analytics)};`,
+            }}
+          />
+        ) : null}
         <div className="min-h-screen bg-background">
           <header className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-14">
             <Link className="font-semibold no-underline" href="/">

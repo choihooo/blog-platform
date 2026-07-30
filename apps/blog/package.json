@@ -8,11 +8,14 @@
     "dev": "next dev --port 3000",
     "format:check": "prettier . --check",
     "lint": "eslint app next.config.mjs",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@blog-platform/design-system": "workspace:^",
+    "@blog-platform/analytics": "workspace:^",
     "@blog-platform/markdown": "workspace:^",
+    "@blog-platform/seo-engine": "workspace:^",
     "next": "^16.2.12",
     "next-mdx-remote": "^6.0.0",
     "react": "^19.2.8",
@@ -23,6 +26,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "postcss": "^8.5.25",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "vitest": "^4.1.10"
   }
 }

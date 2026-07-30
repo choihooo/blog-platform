@@ -38,12 +38,18 @@ importers:
 
   apps/blog:
     dependencies:
+      '@blog-platform/analytics':
+        specifier: workspace:^
+        version: link:../../packages/analytics
       '@blog-platform/design-system':
         specifier: workspace:^
         version: link:../../packages/design-system
       '@blog-platform/markdown':
         specifier: workspace:^
         version: link:../../packages/markdown
+      '@blog-platform/seo-engine':
+        specifier: workspace:^
+        version: link:../../packages/seo-engine
       next:
         specifier: ^16.2.12
         version: 16.2.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -72,9 +78,15 @@ importers:
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.1.5(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))
 
   apps/cms:
     dependencies:
+      '@blog-platform/analytics':
+        specifier: workspace:^
+        version: link:../../packages/analytics
       '@blog-platform/design-system':
         specifier: workspace:^
         version: link:../../packages/design-system
@@ -84,6 +96,9 @@ importers:
       '@blog-platform/markdown':
         specifier: workspace:^
         version: link:../../packages/markdown
+      '@blog-platform/seo-engine':
+        specifier: workspace:^
+        version: link:../../packages/seo-engine
       '@tiptap/extension-image':
         specifier: ^3.29.2
         version: 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
@@ -142,7 +157,11 @@ importers:
 
   packages/ai: {}
 
-  packages/analytics: {}
+  packages/analytics:
+    devDependencies:
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.1.5(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))
 
   packages/design-system:
     dependencies:
@@ -242,7 +261,11 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.1.5(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))
 
-  packages/seo-engine: {}
+  packages/seo-engine:
+    devDependencies:
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.1.5(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))
 
 packages:
 

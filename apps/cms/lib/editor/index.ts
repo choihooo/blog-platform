@@ -24,6 +24,8 @@ export {
 export { prepareMediaFile, MAX_MEDIA_BYTES } from "./media-file";
 export { mediaHash, mediaPath, publicPath, slugForMedia } from "./media-path";
 export { mapPublishAuthFailure, runPublicationOperation } from "./publish-workflow";
+export { seoReportForEditorDocument } from "./seo-report";
+export { analyticsLinksForEditorDocument } from "./analytics-links";
 export {
   createPublicRefreshRetryToken,
   publicRefreshTargets,

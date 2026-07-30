@@ -4,10 +4,12 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { ReactNode } from "react";
 import { Badge, Card, CardContent } from "@blog-platform/design-system";
+import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
-import { getPostBySlug, getPublishedPosts } from "../../../lib/content";
+import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/content";
+import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 
 type PostPageProps = {
   params: Promise<{
@@ -30,22 +32,31 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
   if (!post) return {};
+  const metadata = generatePageMetadata(postToSeoSubject(post, siteForSeo(site)));
 
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: metadata.title,
+    description: metadata.description,
+    alternates: { canonical: metadata.canonical },
+    openGraph: metadata.openGraph,
+    twitter: metadata.twitter,
   };
 }
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
   if (!post) notFound();
+  const jsonLd = generateJsonLd(postToSeoSubject(post, siteForSeo(site)));
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        type="application/ld+json"
+      />
       <article className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div>
           <header className="mb-10 grid gap-4">
@@ -73,7 +84,11 @@ export default async function PostPage({ params }: PostPageProps) {
               ))}
             </div>
           </header>
-          <div className="prose">
+          <div
+            className="prose"
+            data-analytics-category={post.category}
+            data-analytics-slug={post.slug}
+          >
             <MDXRemote
               source={post.body}
               components={{ Callout }}
