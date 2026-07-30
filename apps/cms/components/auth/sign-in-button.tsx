@@ -1,7 +1,4 @@
-"use client";
-
 import { Button } from "@blog-platform/design-system";
-import { signIn } from "next-auth/react";
 
 type GitHubSignInButtonProps = {
   children?: string;
@@ -13,12 +10,8 @@ export function GitHubSignInButton({
   className = "mt-6",
 }: GitHubSignInButtonProps) {
   return (
-    <Button
-      className={className}
-      type="button"
-      onClick={() => signIn("github", { callbackUrl: "/" })}
-    >
-      {children}
+    <Button asChild className={className}>
+      <a href="/api/auth/start/github">{children}</a>
     </Button>
   );
 }

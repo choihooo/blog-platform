@@ -1,18 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { LoginPageView } from "./page";
-
-vi.mock("next-auth/react", () => ({
-  signIn: vi.fn(),
-}));
 
 describe("LoginPageView", () => {
   it("renders sign-in state", () => {
     render(createElement(LoginPageView));
     expect(screen.getByRole("heading", { name: "GitHub Login" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "GitHub로 로그인" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "GitHub로 로그인" }).getAttribute("href")).toBe(
+      "/api/auth/start/github",
+    );
   });
 
   it("renders denied state", () => {
