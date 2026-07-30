@@ -56,7 +56,21 @@ body {
 .prose h2,
 .prose h3 {
   margin: 34px 0 12px;
+  color: var(--foreground);
+  font-weight: 700;
   line-height: 1.2;
+}
+
+.prose h1 {
+  font-size: 36px;
+}
+
+.prose h2 {
+  font-size: 28px;
+}
+
+.prose h3 {
+  font-size: 22px;
 }
 
 .prose p {
