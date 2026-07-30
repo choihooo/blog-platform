@@ -21,10 +21,10 @@
 **Purpose**: CMS adapter 구현을 위한 테스트와 파일 구조를 준비한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T001 Add CMS test script and Vitest dependency in `apps/cms/package.json`
-- [ ] T002 Create CMS Vitest configuration in `apps/cms/vitest.config.ts`
-- [ ] T003 Create adapter skeleton in `apps/cms/lib/content-adapter/index.ts`
-- [ ] T004 Update CMS lint scope to include adapter source in `apps/cms/package.json`
+- [x] T001 Add CMS test script and Vitest dependency in `apps/cms/package.json`
+- [x] T002 Create CMS Vitest configuration in `apps/cms/vitest.config.ts`
+- [x] T003 Create adapter skeleton in `apps/cms/lib/content-adapter/index.ts`
+- [x] T004 Update CMS lint scope to include adapter source in `apps/cms/package.json`
 <!-- prettier-ignore-end -->
 
 ---
@@ -37,14 +37,14 @@
 **CRITICAL**: 이 phase가 끝나기 전에는 user story 구현을 시작하지 않는다.
 
 <!-- prettier-ignore-start -->
-- [ ] T005 Define adapter result, file, request, change result, and failure state types in `apps/cms/lib/content-adapter/types.ts`
-- [ ] T006 [P] Add path boundary tests in `apps/cms/lib/content-adapter/paths.test.ts`
-- [ ] T007 Implement approved path classification and normalization in `apps/cms/lib/content-adapter/paths.ts`
-- [ ] T008 [P] Add commit intent summary tests in `apps/cms/lib/content-adapter/commit-intent.test.ts`
-- [ ] T009 Implement commit summary generation in `apps/cms/lib/content-adapter/commit-intent.ts`
-- [ ] T010 [P] Add repository error normalization tests in `apps/cms/lib/content-adapter/repository-error.test.ts`
-- [ ] T011 Implement repository error normalization helpers in `apps/cms/lib/content-adapter/repository-error.ts`
-- [ ] T012 Export foundational adapter types and helpers from `apps/cms/lib/content-adapter/index.ts`
+- [x] T005 Define adapter result, file, request, change result, and failure state types in `apps/cms/lib/content-adapter/types.ts`
+- [x] T006 [P] Add path boundary tests in `apps/cms/lib/content-adapter/paths.test.ts`
+- [x] T007 Implement approved path classification and normalization in `apps/cms/lib/content-adapter/paths.ts`
+- [x] T008 [P] Add commit intent summary tests in `apps/cms/lib/content-adapter/commit-intent.test.ts`
+- [x] T009 Implement commit summary generation in `apps/cms/lib/content-adapter/commit-intent.ts`
+- [x] T010 [P] Add repository error normalization tests in `apps/cms/lib/content-adapter/repository-error.test.ts`
+- [x] T011 Implement repository error normalization helpers in `apps/cms/lib/content-adapter/repository-error.ts`
+- [x] T012 Export foundational adapter types and helpers from `apps/cms/lib/content-adapter/index.ts`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: Adapter contract foundation is typed, path-safe, and independently testable.
@@ -62,17 +62,17 @@ SHA-like change identifier를 받을 수 있다.
 ### Tests for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T013 [P] [US1] Add local adapter list/read tests in `apps/cms/lib/content-adapter/local-adapter.read.test.ts`
-- [ ] T014 [P] [US1] Add content file kind classification tests in `apps/cms/lib/content-adapter/content-kind.test.ts`
+- [x] T013 [P] [US1] Add local adapter list/read tests in `apps/cms/lib/content-adapter/local-adapter.read.test.ts`
+- [x] T014 [P] [US1] Add content file kind classification tests in `apps/cms/lib/content-adapter/content-kind.test.ts`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 1
 
 <!-- prettier-ignore-start -->
-- [ ] T015 [US1] Implement content kind classification in `apps/cms/lib/content-adapter/paths.ts`
-- [ ] T016 [US1] Implement local adapter listFiles and readFile operations in `apps/cms/lib/content-adapter/local-adapter.ts`
-- [ ] T017 [US1] Add local adapter factory export in `apps/cms/lib/content-adapter/index.ts`
-- [ ] T018 [US1] Document local read usage in `specs/005-github-content-adapter/quickstart.md`
+- [x] T015 [US1] Implement content kind classification in `apps/cms/lib/content-adapter/paths.ts`
+- [x] T016 [US1] Implement local adapter listFiles and readFile operations in `apps/cms/lib/content-adapter/local-adapter.ts`
+- [x] T017 [US1] Add local adapter factory export in `apps/cms/lib/content-adapter/index.ts`
+- [x] T018 [US1] Document local read usage in `specs/005-github-content-adapter/quickstart.md`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 1 is complete when the CMS local adapter can list and read MVP sample
@@ -91,19 +91,19 @@ summary를 받을 수 있다.
 ### Tests for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T019 [P] [US2] Add local adapter createFile tests in `apps/cms/lib/content-adapter/local-adapter.write.test.ts`
-- [ ] T020 [P] [US2] Add local adapter updateFile tests in `apps/cms/lib/content-adapter/local-adapter.update.test.ts`
-- [ ] T021 [P] [US2] Add GitHub adapter create/update mapping tests in `apps/cms/lib/content-adapter/github-adapter.test.ts`
+- [x] T019 [P] [US2] Add local adapter createFile tests in `apps/cms/lib/content-adapter/local-adapter.write.test.ts`
+- [x] T020 [P] [US2] Add local adapter updateFile tests in `apps/cms/lib/content-adapter/local-adapter.update.test.ts`
+- [x] T021 [P] [US2] Add GitHub adapter create/update mapping tests in `apps/cms/lib/content-adapter/github-adapter.test.ts`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 2
 
 <!-- prettier-ignore-start -->
-- [ ] T022 [US2] Implement local adapter createFile in `apps/cms/lib/content-adapter/local-adapter.ts`
-- [ ] T023 [US2] Implement local adapter updateFile in `apps/cms/lib/content-adapter/local-adapter.ts`
-- [ ] T024 [US2] Implement GitHub adapter createFile/updateFile mapping in `apps/cms/lib/content-adapter/github-adapter.ts`
-- [ ] T025 [US2] Add adapter write operation exports in `apps/cms/lib/content-adapter/index.ts`
-- [ ] T026 [US2] Document draft create/update validation in `specs/005-github-content-adapter/quickstart.md`
+- [x] T022 [US2] Implement local adapter createFile in `apps/cms/lib/content-adapter/local-adapter.ts`
+- [x] T023 [US2] Implement local adapter updateFile in `apps/cms/lib/content-adapter/local-adapter.ts`
+- [x] T024 [US2] Implement GitHub adapter createFile/updateFile mapping in `apps/cms/lib/content-adapter/github-adapter.ts`
+- [x] T025 [US2] Add adapter write operation exports in `apps/cms/lib/content-adapter/index.ts`
+- [x] T026 [US2] Document draft create/update validation in `specs/005-github-content-adapter/quickstart.md`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 2 is complete when draft create and save work through the adapter
@@ -122,22 +122,22 @@ media failures are normalized without losing submitted content.
 ### Tests for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T027 [P] [US3] Add stale SHA conflict tests in `apps/cms/lib/content-adapter/local-adapter.conflict.test.ts`
-- [ ] T028 [P] [US3] Add submitted content preservation tests in `apps/cms/lib/content-adapter/content-preservation.test.ts`
-- [ ] T029 [P] [US3] Add GitHub adapter error mapping tests in `apps/cms/lib/content-adapter/github-errors.test.ts`
-- [ ] T030 [P] [US3] Add media path commit tests in `apps/cms/lib/content-adapter/media.test.ts`
+- [x] T027 [P] [US3] Add stale SHA conflict tests in `apps/cms/lib/content-adapter/local-adapter.conflict.test.ts`
+- [x] T028 [P] [US3] Add submitted content preservation tests in `apps/cms/lib/content-adapter/content-preservation.test.ts`
+- [x] T029 [P] [US3] Add GitHub adapter error mapping tests in `apps/cms/lib/content-adapter/github-errors.test.ts`
+- [x] T030 [P] [US3] Add media path commit tests in `apps/cms/lib/content-adapter/media.test.ts`
 <!-- prettier-ignore-end -->
 
 ### Implementation for User Story 3
 
 <!-- prettier-ignore-start -->
-- [ ] T031 [US3] Implement local adapter deleteFile in `apps/cms/lib/content-adapter/local-adapter.ts`
-- [ ] T032 [US3] Implement local adapter commitMedia in `apps/cms/lib/content-adapter/local-adapter.ts`
-- [ ] T033 [US3] Implement GitHub adapter deleteFile/commitMedia mapping in `apps/cms/lib/content-adapter/github-adapter.ts`
-- [ ] T034 [US3] Implement GitHub response error normalization in `apps/cms/lib/content-adapter/github-adapter.ts`
-- [ ] T035 [US3] Preserve submitted payloads on failed writes in `apps/cms/lib/content-adapter/local-adapter.ts`
-- [ ] T036 [US3] Export delete, media, and error mapping surfaces from `apps/cms/lib/content-adapter/index.ts`
-- [ ] T037 [US3] Document conflict, failure, and media recovery validation in `specs/005-github-content-adapter/quickstart.md`
+- [x] T031 [US3] Implement local adapter deleteFile in `apps/cms/lib/content-adapter/local-adapter.ts`
+- [x] T032 [US3] Implement local adapter commitMedia in `apps/cms/lib/content-adapter/local-adapter.ts`
+- [x] T033 [US3] Implement GitHub adapter deleteFile/commitMedia mapping in `apps/cms/lib/content-adapter/github-adapter.ts`
+- [x] T034 [US3] Implement GitHub response error normalization in `apps/cms/lib/content-adapter/github-adapter.ts`
+- [x] T035 [US3] Preserve submitted payloads on failed writes in `apps/cms/lib/content-adapter/local-adapter.ts`
+- [x] T036 [US3] Export delete, media, and error mapping surfaces from `apps/cms/lib/content-adapter/index.ts`
+- [x] T037 [US3] Document conflict, failure, and media recovery validation in `specs/005-github-content-adapter/quickstart.md`
 <!-- prettier-ignore-end -->
 
 **Checkpoint**: User Story 3 is complete when stale writes never overwrite newer content and every
@@ -150,14 +150,14 @@ failed write returns a recoverable, user-actionable failure state.
 **Purpose**: 문서, 검증, scope review를 마무리한다.
 
 <!-- prettier-ignore-start -->
-- [ ] T038 [P] Update CMS adapter implementation notes in `README.md`
-- [ ] T039 [P] Update Phase 4 implementation status in `docs/implementation-roadmap.md`
-- [ ] T040 Run `pnpm --filter @blog-platform/cms typecheck` and fix issues in `apps/cms`
-- [ ] T041 Run `pnpm --filter @blog-platform/cms lint` and fix issues in `apps/cms`
-- [ ] T042 Run `pnpm --filter @blog-platform/cms test` and fix issues in `apps/cms`
-- [ ] T043 Run root validation commands defined in `package.json`
-- [ ] T044 Verify quickstart scenarios in `specs/005-github-content-adapter/quickstart.md`
-- [ ] T045 Confirm forbidden scope was not introduced in `apps/cms/lib/content-adapter` against `.specify/memory/constitution.md`
+- [x] T038 [P] Update CMS adapter implementation notes in `README.md`
+- [x] T039 [P] Update Phase 4 implementation status in `docs/implementation-roadmap.md`
+- [x] T040 Run `pnpm --filter @blog-platform/cms typecheck` and fix issues in `apps/cms`
+- [x] T041 Run `pnpm --filter @blog-platform/cms lint` and fix issues in `apps/cms`
+- [x] T042 Run `pnpm --filter @blog-platform/cms test` and fix issues in `apps/cms`
+- [x] T043 Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` from `package.json`
+- [x] T044 Verify quickstart scenarios in `specs/005-github-content-adapter/quickstart.md`
+- [x] T045 Confirm forbidden scope was not introduced in `apps/cms/lib/content-adapter` against `.specify/memory/constitution.md`
 <!-- prettier-ignore-end -->
 
 ---

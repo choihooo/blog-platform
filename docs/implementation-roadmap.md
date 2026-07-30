@@ -323,6 +323,16 @@ MVP에서 금지:
 - auth error.
 - network error.
 
+구현 상태:
+
+- `apps/cms/lib/content-adapter`에 adapter contract, local adapter, GitHub Contents API adapter,
+  path boundary, commit summary, repository error normalization을 구현했다.
+- local adapter는 GitHub credential 없이 list/read/create/update/delete/commitMedia 동작과 stale SHA
+  protection을 검증한다.
+- GitHub adapter는 Contents API create/update/delete/media payload와 HTTP failure normalization을
+  검증한다.
+- package validation은 `pnpm --filter @blog-platform/cms typecheck`, `lint`, `test`로 확인한다.
+
 ## 8. Phase 5: CMS Auth + Shell
 
 목표:

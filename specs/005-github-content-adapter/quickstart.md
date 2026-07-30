@@ -23,6 +23,12 @@ Expected outcome:
 - Local adapter tests cover list/read/create/update/delete, stale SHA, duplicate path, disallowed
   path, and error normalization.
 
+2026-07-30 validation:
+
+- `pnpm --filter @blog-platform/cms typecheck`: 통과
+- `pnpm --filter @blog-platform/cms lint`: 통과
+- `pnpm --filter @blog-platform/cms test`: 통과, 12 files / 21 tests
+
 ## 2. Local Content Read Scenario
 
 Use the local adapter against the repository sample content.
@@ -104,3 +110,6 @@ Confirm this phase did not add:
 Expected outcome:
 
 - The feature remains limited to the repository-backed CMS content adapter boundary.
+
+2026-07-30 scope review: CMS database, object storage, multi-author approval workflow, public blog
+GitHub credential dependency, rich-text editor UI, publish/revalidation workflow를 추가하지 않았다.

@@ -83,3 +83,11 @@ filtering, MDX analysis를 재사용한다. 공개 route는 `/`, `/posts/[slug]`
 `/tags/[slug]`를 제공하며 draft, archived, invalid, unsafe MDX는 공개 출력에 포함하지 않는다. UI는
 Tailwind CSS와 `packages/design-system`의 shadcn/ui 스타일 `Card`, `Badge`, `Separator` primitive를
 사용한다.
+
+## GitHub Content Adapter
+
+CMS는 `apps/cms/lib/content-adapter`에서 repository content adapter contract를 소유한다. Local
+adapter는 GitHub credential 없이 `content/`와 `public/media/` 경계 안의
+list/read/create/update/delete 및 media commit 동작을 검증하고, GitHub adapter는 Contents API 요청
+payload와 provider error normalization을 담당한다. 기존 파일 update/delete는 마지막 read SHA를
+요구해 stale write overwrite를 막는다.
