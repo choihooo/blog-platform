@@ -1,4 +1,4 @@
-import { GitHubSignInButton } from "./sign-in-button";
+import { GitHubSignInButton } from "../../components/auth/index";
 
 type LoginPageViewProps = {
   state?: "denied" | "setup-error";

@@ -1,6 +1,7 @@
 import { Button } from "@blog-platform/design-system";
 
 import type { AccessDecision } from "../../lib/auth/index";
+import { GitHubSignInButton } from "../auth/index";
 
 type AccessStateProps = {
   decision: Exclude<AccessDecision, { status: "authorized" }>;
@@ -11,13 +12,11 @@ const copy = {
     title: "로그인이 필요합니다",
     description: "GitHub 관리자 계정으로 로그인한 뒤 CMS에 접근할 수 있습니다.",
     action: "GitHub로 로그인",
-    href: "/api/auth/signin/github",
   },
   expired: {
     title: "세션이 만료되었습니다",
     description: "다시 로그인하면 CMS 작업을 계속할 수 있습니다.",
     action: "다시 로그인",
-    href: "/api/auth/signin/github",
   },
   forbidden: {
     title: "CMS 접근 권한이 없습니다",
@@ -35,6 +34,8 @@ const copy = {
 
 export function AccessState({ decision }: AccessStateProps) {
   const state = copy[decision.status];
+  const shouldSignIn = decision.status === "unauthenticated" || decision.status === "expired";
+  const href = decision.status === "forbidden" ? "/api/auth/signout" : "/login";
 
   return (
     <main className="grid min-h-screen place-items-center bg-background px-6">
@@ -42,9 +43,13 @@ export function AccessState({ decision }: AccessStateProps) {
         <p className="mb-2 text-sm text-muted-foreground">{decision.reason}</p>
         <h1 className="text-2xl font-semibold">{state.title}</h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">{state.description}</p>
-        <Button asChild className="mt-6">
-          <a href={state.href}>{state.action}</a>
-        </Button>
+        {shouldSignIn ? (
+          <GitHubSignInButton>{state.action}</GitHubSignInButton>
+        ) : (
+          <Button asChild className="mt-6">
+            <a href={href}>{state.action}</a>
+          </Button>
+        )}
       </section>
     </main>
   );
