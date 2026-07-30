@@ -27,7 +27,7 @@ export default async function TagPage({ params }: TagPageProps) {
   if (!tag) notFound();
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <section className="mb-10 grid gap-4">
         <p className="text-sm font-semibold uppercase text-muted-foreground">Tag</p>
         <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-normal sm:text-7xl">

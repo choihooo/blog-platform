@@ -45,7 +45,7 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) notFound();
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <article className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div>
           <header className="mb-10 grid gap-4">

@@ -21,7 +21,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ko">
       <body>
-        <div className="grid min-h-screen grid-rows-[auto_1fr_auto]">
+        <div className="min-h-screen bg-background">
           <header className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-14">
             <Link className="font-semibold no-underline" href="/">
               Ho's Blog
