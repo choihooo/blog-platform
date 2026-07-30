@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { ListFilesRoot, RepositoryContentKind } from "./types.js";
+import type { ListFilesRoot, RepositoryContentKind } from "./types";
 
 const configKinds = new Map<string, RepositoryContentKind>([
   ["content/site.json", "site-config"],

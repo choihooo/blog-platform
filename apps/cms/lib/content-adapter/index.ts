@@ -1,8 +1,8 @@
-export { commitSummary } from "./commit-intent.js";
-export { createGitHubContentAdapter } from "./github-adapter.js";
-export { createLocalContentAdapter } from "./local-adapter.js";
-export { assertAllowedPath, classifyRepositoryPath, normalizeRepositoryPath } from "./paths.js";
-export { normalizeHttpFailure, repositoryFailure } from "./repository-error.js";
+export { commitSummary } from "./commit-intent";
+export { createGitHubContentAdapter } from "./github-adapter";
+export { createLocalContentAdapter } from "./local-adapter";
+export { assertAllowedPath, classifyRepositoryPath, normalizeRepositoryPath } from "./paths";
+export { normalizeHttpFailure, repositoryFailure } from "./repository-error";
 export type {
   AdapterResult,
   ContentAdapter,
@@ -15,4 +15,4 @@ export type {
   RepositoryFailureCode,
   RepositoryFailureState,
   RepositoryFileSummary,
-} from "./types.js";
+} from "./types";

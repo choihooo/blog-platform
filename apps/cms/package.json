@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@blog-platform/design-system": "workspace:^",
+    "@blog-platform/editor": "workspace:^",
     "lucide-react": "^1.27.0",
     "next": "^16.2.12",
     "next-auth": "^4.24.15",

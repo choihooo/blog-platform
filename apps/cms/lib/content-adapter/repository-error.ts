@@ -1,4 +1,4 @@
-import type { RepositoryFailureCode, RepositoryFailureState } from "./types.js";
+import type { RepositoryFailureCode, RepositoryFailureState } from "./types";
 
 const retryable = new Set<RepositoryFailureCode>([
   "rate-limit",

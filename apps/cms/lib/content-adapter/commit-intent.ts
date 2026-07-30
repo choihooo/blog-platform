@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { ContentChangeIntent } from "./types.js";
+import type { ContentChangeIntent } from "./types";
 
 function slugFromPath(repoPath: string): string {
   return path.posix.basename(repoPath).replace(/\.(mdx|md|json|webp|png|jpe?g)$/i, "");

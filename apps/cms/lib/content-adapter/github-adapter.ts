@@ -1,6 +1,6 @@
-import { commitSummary } from "./commit-intent.js";
-import { assertAllowedPath } from "./paths.js";
-import { normalizeHttpFailure, repositoryFailure } from "./repository-error.js";
+import { commitSummary } from "./commit-intent";
+import { assertAllowedPath } from "./paths";
+import { normalizeHttpFailure, repositoryFailure } from "./repository-error";
 import type {
   AdapterResult,
   ContentAdapter,
@@ -8,7 +8,7 @@ import type {
   ContentChangeResult,
   RepositoryContentFile,
   RepositoryFileSummary,
-} from "./types.js";
+} from "./types";
 
 type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 

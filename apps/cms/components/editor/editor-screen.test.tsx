@@ -1,0 +1,24 @@
+import { render, screen } from "@testing-library/react";
+import { createElement } from "react";
+import { describe, expect, it, vi } from "vitest";
+import { createEmptyEditorDocument } from "@blog-platform/editor";
+
+import { EditorScreen } from "./editor-screen";
+
+vi.mock("../../app/actions/editor-actions", () => ({
+  saveEditorDraftAction: vi.fn(),
+}));
+
+describe("EditorScreen", () => {
+  it("renders title, body, toolbar, status, frontmatter, and preview", () => {
+    const doc = createEmptyEditorDocument();
+    doc.frontmatter.title = "Hello";
+    doc.body = [{ type: "heading", depth: 2, text: "Intro" }];
+    render(createElement(EditorScreen, { initialDocument: doc }));
+    expect(screen.getByRole("heading", { name: "Editor" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Post body" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
+    expect(screen.getByLabelText("Title")).toBeTruthy();
+    expect(screen.getAllByText(/headings/).length).toBeGreaterThan(0);
+  });
+});

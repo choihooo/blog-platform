@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { commitSummary } from "./commit-intent.js";
-import { assertAllowedPath, classifyRepositoryPath, listRootToPath } from "./paths.js";
-import { repositoryFailure } from "./repository-error.js";
+import { commitSummary } from "./commit-intent";
+import { assertAllowedPath, classifyRepositoryPath, listRootToPath } from "./paths";
+import { repositoryFailure } from "./repository-error";
 import type {
   AdapterResult,
   ContentAdapter,
@@ -11,7 +11,7 @@ import type {
   ContentChangeResult,
   RepositoryContentFile,
   RepositoryFileSummary,
-} from "./types.js";
+} from "./types";
 
 function fileSha(content: Buffer | string): string {
   return createHash("sha256").update(content).digest("hex");

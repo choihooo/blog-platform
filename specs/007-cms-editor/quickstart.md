@@ -105,3 +105,21 @@ Confirm during implementation review:
 - No SEO scoring, generated outputs, analytics dashboard, or AI writing generation was added.
 - No public blog runtime dependency on GitHub credentials or CMS session was introduced.
 - No custom hex palette or nested-card editor layout was introduced.
+
+## Implementation Validation Notes
+
+2026-07-30 구현 기준:
+
+- `packages/editor`는 supported editor document와 MDX round-trip helper를 제공한다.
+- CMS editor 화면은 native textarea 기반 MVP로 구현되었고, Tiptap 기반 rich toolbar execution은 후속
+  refinement로 남긴다.
+- 저장은 기존 protected content operation과 local content adapter를 통해 create draft/save draft를
+  수행한다.
+- Local draft backup helper는 30일 TTL과 restore candidate 판단을 제공한다.
+- 검증 명령:
+  - `pnpm --filter @blog-platform/editor typecheck`
+  - `pnpm --filter @blog-platform/editor lint`
+  - `pnpm --filter @blog-platform/editor test`
+  - `pnpm --filter @blog-platform/cms typecheck`
+  - `pnpm --filter @blog-platform/cms lint`
+  - `pnpm --filter @blog-platform/cms test`

@@ -98,3 +98,11 @@ CMS는 `apps/cms/lib/auth`에서 GitHub OAuth session, 관리자 identity loadin
 guard를 소유한다. 관리자 기준값은 `content/site.json`의 `adminGithubLogin`과 `adminGithubUserId`이며
 둘 다 일치해야 보호 화면과 mutation이 허용된다. `apps/cms/components/shell`은 sidebar, top bar,
 Posts/Settings 준비 화면을 제공하고 editor, media upload, publish workflow는 아직 노출하지 않는다.
+
+## CMS Editor
+
+CMS Posts 화면은 repository MDX 글 목록, 새 초안 화면, 기존 글 편집 화면을 제공한다.
+`packages/editor`는 editor document model, supported MDX subset, validation, MDX 변환, preview
+analysis를 소유한다. 현재 editor UI는 Tiptap 의존성을 준비했지만 MVP 구현은 native textarea와
+frontmatter panel을 사용한다. 저장은 기존 protected content operation과 SHA 기반 adapter를 사용하며,
+local draft backup은 repository 원본을 대체하지 않는 복구 수단으로만 사용한다.

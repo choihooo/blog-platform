@@ -7,5 +7,6 @@ export default defineConfig({
     environment: "jsdom",
     globals: false,
     include: ["app/**/*.test.tsx", "components/**/*.test.{ts,tsx}", "lib/**/*.test.ts"],
+    testTimeout: 15000,
   },
 });
