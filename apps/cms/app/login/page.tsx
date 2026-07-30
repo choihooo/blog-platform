@@ -1,4 +1,4 @@
-import { Button } from "@blog-platform/design-system";
+import { GitHubSignInButton } from "./sign-in-button";
 
 type LoginPageViewProps = {
   state?: "denied" | "setup-error";
@@ -18,9 +18,7 @@ export function LoginPageView({ state }: LoginPageViewProps) {
         <p className="text-sm text-muted-foreground">CMS</p>
         <h1 className="mt-2 text-2xl font-semibold">GitHub Login</h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">{message}</p>
-        <Button asChild className="mt-6">
-          <a href="/api/auth/signin/github">GitHub로 로그인</a>
-        </Button>
+        <GitHubSignInButton />
       </section>
     </main>
   );
