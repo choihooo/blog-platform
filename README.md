@@ -43,6 +43,14 @@ pnpm dev:cms
 화면은 GitHub OAuth 설정(`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_SECRET`)과
 `content/site.json`의 `adminGithubLogin`, `adminGithubUserId`가 필요하다.
 
+로컬에서 OAuth 없이 CMS editor를 확인할 때만 다음처럼 개발 bypass를 사용할 수 있다.
+
+```sh
+CMS_DEV_BYPASS_AUTH=1 pnpm dev:cms
+```
+
+이 bypass는 `NODE_ENV=development`에서만 동작한다.
+
 ## Shared package ownership
 
 - `packages/editor`: CMS editor behavior

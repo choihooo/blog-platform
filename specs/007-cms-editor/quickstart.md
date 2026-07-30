@@ -9,6 +9,8 @@
   - `AUTH_SECRET`
 - `content/site.json` contains the operator's `adminGithubLogin` and `adminGithubUserId`.
 - Existing specs `005-github-content-adapter` and `006-cms-auth-shell` remain valid.
+- For local UI-only validation without GitHub OAuth, run CMS with `CMS_DEV_BYPASS_AUTH=1`. This
+  bypass is development-only.
 
 ## Validation Commands
 
@@ -37,6 +39,12 @@ pnpm build
 
    ```sh
    pnpm dev:cms
+   ```
+
+   OAuth 없는 로컬 확인은 다음 명령을 사용한다.
+
+   ```sh
+   CMS_DEV_BYPASS_AUTH=1 pnpm dev:cms
    ```
 
 2. Sign in as the configured GitHub admin.

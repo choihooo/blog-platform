@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { decideAccess } from "./guard";
+import { decideAccess, evaluateAccess } from "./guard";
 import type { AdminIdentity, CmsSession } from "./types";
 
 const admin: AdminIdentity = {
@@ -53,5 +53,24 @@ describe("decideAccess", () => {
       status: "misconfigured",
       nextAction: "fix-site-config",
     });
+  });
+});
+
+describe("evaluateAccess", () => {
+  it("allows local development bypass only when explicitly enabled", async () => {
+    const previousNodeEnv = process.env.NODE_ENV;
+    const previousBypass = process.env.CMS_DEV_BYPASS_AUTH;
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("CMS_DEV_BYPASS_AUTH", "1");
+
+    try {
+      await expect(evaluateAccess(null, "/missing-root")).resolves.toMatchObject({
+        status: "authorized",
+        session: { githubLogin: "dev-admin", githubUserId: "dev" },
+      });
+    } finally {
+      vi.stubEnv("NODE_ENV", previousNodeEnv);
+      vi.stubEnv("CMS_DEV_BYPASS_AUTH", previousBypass);
+    }
   });
 });
