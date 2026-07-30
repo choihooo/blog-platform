@@ -1,11 +1,20 @@
 "use server";
 
 import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import type { EditorDocument } from "@blog-platform/editor";
 import { editorDocumentToMdx } from "@blog-platform/editor";
 
-import { createLocalContentAdapter } from "../../lib/content-adapter/index";
+import {
+  createGitHubContentAdapterFromCredential,
+  createLocalContentAdapter,
+  getGitHubAppInstallationToken,
+  repositoryFailure,
+  type ContentAdapter,
+  type RepositoryFailureState,
+} from "../../lib/content-adapter/index";
 import {
   createProtectedContentOperations,
   evaluateAccess,
@@ -44,10 +53,93 @@ function redact(message: string | undefined) {
   return secretFreeMessage(message, responseSecrets());
 }
 
+type GitHubTargetConfig = {
+  github?: {
+    owner?: unknown;
+    repo?: unknown;
+    branch?: unknown;
+  };
+};
+
+function githubAppEnvConfigured() {
+  return Boolean(
+    process.env.GITHUB_APP_ID ||
+      process.env.GITHUB_APP_PRIVATE_KEY ||
+      process.env.GITHUB_INSTALLATION_ID,
+  );
+}
+
+function failingAdapter(error: RepositoryFailureState): ContentAdapter {
+  return {
+    async listFiles() {
+      return { success: false as const, error };
+    },
+    async readFile() {
+      return { success: false as const, error };
+    },
+    async createFile(input) {
+      return { success: false as const, error: { ...error, submittedContent: input.content } };
+    },
+    async updateFile(input) {
+      return { success: false as const, error: { ...error, submittedContent: input.content } };
+    },
+    async deleteFile() {
+      return { success: false as const, error };
+    },
+    async commitMedia() {
+      return { success: false as const, error };
+    },
+  };
+}
+
+async function readGitHubTarget(root: string) {
+  try {
+    const raw = await readFile(path.join(root, "content/site.json"), "utf8");
+    const config = JSON.parse(raw) as GitHubTargetConfig;
+    const owner = typeof config.github?.owner === "string" ? config.github.owner.trim() : "";
+    const repo = typeof config.github?.repo === "string" ? config.github.repo.trim() : "";
+    const branch = typeof config.github?.branch === "string" ? config.github.branch.trim() : "";
+
+    if (!owner || !repo || !branch || owner === "replace-me" || repo === "replace-me") {
+      return {
+        success: false as const,
+        error: repositoryFailure("missing-config", {
+          message: "GitHub repository target is not configured in content/site.json.",
+        }),
+      };
+    }
+
+    return { success: true as const, data: { owner, repo, branch } };
+  } catch {
+    return {
+      success: false as const,
+      error: repositoryFailure("missing-config", {
+        message: "content/site.json could not be read for GitHub repository target.",
+      }),
+    };
+  }
+}
+
+async function createRepositoryAdapter(root: string): Promise<ContentAdapter> {
+  if (!githubAppEnvConfigured()) return createLocalContentAdapter(root);
+
+  const target = await readGitHubTarget(root);
+  if (!target.success) return failingAdapter(target.error);
+
+  const credential = await getGitHubAppInstallationToken({});
+  const adapter = createGitHubContentAdapterFromCredential({
+    ...target.data,
+    credential,
+  });
+
+  return adapter.success ? adapter.data : failingAdapter(adapter.error);
+}
+
 export async function saveEditorDraftAction(document: EditorDocument) {
-  const adapter = createLocalContentAdapter(repositoryRoot());
+  const root = repositoryRoot();
+  const adapter = await createRepositoryAdapter(root);
   const protectedOperations = createProtectedContentOperations(adapter, async () =>
-    evaluateAccess(await getCmsSession(), repositoryRoot()),
+    evaluateAccess(await getCmsSession(), root),
   );
 
   const guardedAdapter = {
@@ -107,7 +199,7 @@ async function publicationAction(
     });
   }
 
-  const adapter = createLocalContentAdapter(root);
+  const adapter = await createRepositoryAdapter(root);
   return runPublicationOperation({ operation, document, adapter, now });
 }
 
@@ -202,9 +294,10 @@ export async function uploadEditorMediaAction(
     };
   }
 
-  const adapter = createLocalContentAdapter(repositoryRoot());
+  const root = repositoryRoot();
+  const adapter = await createRepositoryAdapter(root);
   const protectedOperations = createProtectedContentOperations(adapter, async () =>
-    evaluateAccess(await getCmsSession(), repositoryRoot()),
+    evaluateAccess(await getCmsSession(), root),
   );
   const path = mediaPath({ target, slug, hash: prepared.hash, extension: prepared.extension });
   const result = await protectedOperations.commitMedia({

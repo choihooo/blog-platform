@@ -2,11 +2,11 @@
   "siteName": "Ho's Blog",
   "siteUrl": "https://blog.hozorica.com",
   "defaultAuthor": "ho",
-  "adminGithubLogin": "replace-me",
-  "adminGithubUserId": "0",
+  "adminGithubLogin": "choihooo",
+  "adminGithubUserId": "67588757",
   "github": {
-    "owner": "replace-me",
-    "repo": "blog",
+    "owner": "choihooo",
+    "repo": "blog-platform",
     "branch": "main"
   },
   "analytics": {
