@@ -15,6 +15,8 @@ export type ContentChangeIntent =
 
 export type RepositoryFailureCode =
   | "unauthorized"
+  | "missing-config"
+  | "invalid-config"
   | "missing-file"
   | "duplicate-file"
   | "stale-file"

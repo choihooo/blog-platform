@@ -9,6 +9,7 @@ import type {
   RepositoryContentFile,
   RepositoryFileSummary,
 } from "./types";
+import type { GitHubAppCredentialState } from "./github-app-token";
 
 type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 
@@ -18,6 +19,10 @@ type GitHubAdapterOptions = {
   branch: string;
   token: string;
   fetchImpl?: FetchLike;
+};
+
+type GitHubAdapterCredentialOptions = Omit<GitHubAdapterOptions, "token"> & {
+  credential: GitHubAppCredentialState;
 };
 
 type GitHubContentResponse = {
@@ -68,6 +73,7 @@ export function createGitHubContentAdapter(options: GitHubAdapterOptions): Conte
             path: repoPath,
             submittedContent,
             message: await readMessage(response),
+            secrets: [options.token],
           }),
         };
       }
@@ -182,5 +188,17 @@ export function createGitHubContentAdapter(options: GitHubAdapterOptions): Conte
         "PUT",
       );
     },
+  };
+}
+
+export function createGitHubContentAdapterFromCredential(
+  options: GitHubAdapterCredentialOptions,
+): AdapterResult<ContentAdapter> {
+  if (options.credential.status === "failure") {
+    return { success: false, error: options.credential.error };
+  }
+  return {
+    success: true,
+    data: createGitHubContentAdapter({ ...options, token: options.credential.token }),
   };
 }

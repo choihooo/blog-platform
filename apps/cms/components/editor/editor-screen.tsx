@@ -9,6 +9,7 @@ import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/edit
 
 import {
   archivePostAction,
+  createPreviewTokenAction,
   publishPostAction,
   retryPublicRefreshAction,
   saveEditorDraftAction,
@@ -341,6 +342,23 @@ export function EditorScreen({
     });
   }
 
+  function openPreview() {
+    const submitted = currentDocument();
+    setStatus("pending");
+    startTransition(() => {
+      void createPreviewTokenAction({ document: submitted }).then((result) => {
+        if (!result.ok) {
+          setStatus("failed");
+          setMessage(result.message);
+          return;
+        }
+        setStatus("saved");
+        setMessage(undefined);
+        window.open(result.url, "_blank", "noopener,noreferrer");
+      });
+    });
+  }
+
   function insertUploadedImage(result: {
     reference: { target: "body"; node: Extract<EditorNode, { type: "image" }> };
   }) {
@@ -380,6 +398,7 @@ export function EditorScreen({
           }
         }}
         onArchive={() => runPublication("archive")}
+        onPreview={openPreview}
         onPublish={() => runPublication("publish")}
         onSave={save}
         onUnpublish={() => runPublication("unpublish")}

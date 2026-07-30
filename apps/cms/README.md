@@ -18,3 +18,13 @@
   표시한다.
 - 발행 글에는 공개 글 링크를 제공하고, GA4/Search Console 설정이 없으면 비활성 이유를 표시한다.
 - CMS는 GA4/Search Console 지표를 직접 조회하거나 저장하지 않는다.
+
+## Security Environment
+
+- `PREVIEW_TOKEN_SECRET`: CMS가 draft preview URL을 발급할 때 사용하는 HMAC secret이다. Blog app에도
+  같은 값이 설정되어야 한다.
+- `GITHUB_APP_ID`, `GITHUB_INSTALLATION_ID`, `GITHUB_APP_PRIVATE_KEY`: GitHub App installation token
+  발급에 필요한 값이다. 누락, invalid private key, unauthorized, rate limit 응답은 repository
+  failure로 정규화된다.
+- `GITHUB_TOKEN`, `GITHUB_APP_PRIVATE_KEY`, `PREVIEW_TOKEN_SECRET`, `NEXTAUTH_SECRET`, `AUTH_SECRET`
+  값은 CMS action/repository failure message에서 redaction 대상이다.

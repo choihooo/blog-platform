@@ -38,6 +38,14 @@ describe("admin identity", () => {
     ).toMatchObject({ success: false });
   });
 
+  it("keeps login and immutable user id as separate required values", () => {
+    expect(parseAdminIdentity({ adminGithubLogin: "ho", adminGithubUserId: "123" })).toMatchObject({
+      success: true,
+    });
+    expect(parseAdminIdentity({ adminGithubLogin: "ho" })).toMatchObject({ success: false });
+    expect(parseAdminIdentity({ adminGithubUserId: "123" })).toMatchObject({ success: false });
+  });
+
   it("loads identity from content/site.json", async () => {
     const root = await writeSite({ adminGithubLogin: "ho", adminGithubUserId: "123" });
     await expect(loadAdminIdentity(root)).resolves.toMatchObject({

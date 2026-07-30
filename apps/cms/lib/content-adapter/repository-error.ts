@@ -1,4 +1,5 @@
 import type { RepositoryFailureCode, RepositoryFailureState } from "./types";
+import { secretFreeMessage } from "../security";
 
 const retryable = new Set<RepositoryFailureCode>([
   "rate-limit",
@@ -8,6 +9,8 @@ const retryable = new Set<RepositoryFailureCode>([
 
 const messages: Record<RepositoryFailureCode, string> = {
   unauthorized: "Repository access is not authorized.",
+  "missing-config": "Repository credential configuration is incomplete.",
+  "invalid-config": "Repository credential configuration is invalid.",
   "missing-file": "The target file no longer exists.",
   "duplicate-file": "A file already exists at this path.",
   "stale-file": "The file changed after it was loaded.",
@@ -19,11 +22,16 @@ const messages: Record<RepositoryFailureCode, string> = {
 
 export function repositoryFailure(
   code: RepositoryFailureCode,
-  options: { path?: string; submittedContent?: string; message?: string } = {},
+  options: {
+    path?: string;
+    submittedContent?: string;
+    message?: string;
+    secrets?: Array<string | undefined>;
+  } = {},
 ): RepositoryFailureState {
   return {
     code,
-    message: options.message ?? messages[code],
+    message: secretFreeMessage(options.message ?? messages[code], options.secrets),
     retryable: retryable.has(code),
     path: options.path,
     submittedContent: options.submittedContent,
@@ -32,7 +40,12 @@ export function repositoryFailure(
 
 export function normalizeHttpFailure(
   status: number,
-  options: { path?: string; submittedContent?: string; message?: string } = {},
+  options: {
+    path?: string;
+    submittedContent?: string;
+    message?: string;
+    secrets?: Array<string | undefined>;
+  } = {},
 ): RepositoryFailureState {
   if (status === 401 || status === 403) {
     const code = options.message?.toLowerCase().includes("rate limit")

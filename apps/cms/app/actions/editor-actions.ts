@@ -1,6 +1,9 @@
 "use server";
 
+import { createHash } from "node:crypto";
+
 import type { EditorDocument } from "@blog-platform/editor";
+import { editorDocumentToMdx } from "@blog-platform/editor";
 
 import { createLocalContentAdapter } from "../../lib/content-adapter/index";
 import {
@@ -25,6 +28,21 @@ import {
   type UploadEditorMediaResult,
 } from "../../lib/editor/index";
 import { repositoryRoot } from "../../lib/editor/root";
+import { issuePreviewToken, secretFreeMessage } from "../../lib/security";
+
+function responseSecrets() {
+  return [
+    process.env.GITHUB_TOKEN,
+    process.env.GITHUB_APP_PRIVATE_KEY,
+    process.env.PREVIEW_TOKEN_SECRET,
+    process.env.NEXTAUTH_SECRET,
+    process.env.AUTH_SECRET,
+  ];
+}
+
+function redact(message: string | undefined) {
+  return secretFreeMessage(message, responseSecrets());
+}
 
 export async function saveEditorDraftAction(document: EditorDocument) {
   const adapter = createLocalContentAdapter(repositoryRoot());
@@ -41,7 +59,7 @@ export async function saveEditorDraftAction(document: EditorDocument) {
             success: false as const,
             error: {
               code: "unauthorized" as const,
-              message: result.message,
+              message: redact(result.message),
               retryable: result.retryable,
               submittedContent: input.content,
             },
@@ -55,7 +73,7 @@ export async function saveEditorDraftAction(document: EditorDocument) {
             success: false as const,
             error: {
               code: "unauthorized" as const,
-              message: result.message,
+              message: redact(result.message),
               retryable: result.retryable,
               submittedContent: input.content,
             },
@@ -84,7 +102,7 @@ async function publicationAction(
             : decision.status === "misconfigured"
               ? "auth-misconfigured"
               : "forbidden",
-      message: decision.reason,
+      message: redact(decision.reason),
       retryable: decision.status === "unauthenticated" || decision.status === "expired",
     });
   }
@@ -123,7 +141,7 @@ export async function retryPublicRefreshAction(input: { retryToken: PublicRefres
             ? "session-expired"
             : "forbidden",
       retryable: decision.status === "unauthenticated" || decision.status === "expired",
-      message: decision.reason,
+      message: redact(decision.reason),
     };
   }
   const publicRefresh = await refreshPublicTargets(input.retryToken.targets);
@@ -134,7 +152,7 @@ export async function retryPublicRefreshAction(input: { retryToken: PublicRefres
         operation: "retry-public-refresh" as const,
         code: "public-refresh-failed" as const,
         retryable: publicRefresh.retryable,
-        message: publicRefresh.message,
+        message: redact(publicRefresh.message),
         publicRefresh,
       };
 }
@@ -176,7 +194,12 @@ export async function uploadEditorMediaAction(
 
   const prepared = await prepareMediaFile(file);
   if (!prepared.ok) {
-    return { ok: false, code: "validation-failure", retryable: false, message: prepared.message };
+    return {
+      ok: false,
+      code: "validation-failure",
+      retryable: false,
+      message: redact(prepared.message),
+    };
   }
 
   const adapter = createLocalContentAdapter(repositoryRoot());
@@ -195,7 +218,7 @@ export async function uploadEditorMediaAction(
       ok: false,
       code: authToUploadCode(result.code),
       retryable: result.retryable,
-      message: result.message,
+      message: redact(result.message),
     };
   }
   if (!result.value.success) {
@@ -203,7 +226,7 @@ export async function uploadEditorMediaAction(
       ok: false,
       code: repositoryToUploadCode(result.value.error.code),
       retryable: result.value.error.retryable,
-      message: result.value.error.message,
+      message: redact(result.value.error.message),
     };
   }
 
@@ -222,5 +245,36 @@ export async function uploadEditorMediaAction(
         ? { target, coverImage: publicMediaPath }
         : { target, node: imageNode({ src: publicMediaPath, alt, title, caption }) },
     message: "Image uploaded. Save the post to keep this reference.",
+  };
+}
+
+export async function createPreviewTokenAction(input: { document: EditorDocument }) {
+  const secret = process.env.PREVIEW_TOKEN_SECRET;
+  if (!secret) {
+    return {
+      ok: false as const,
+      code: "preview-misconfigured" as const,
+      message: "Preview token secret is not configured.",
+    };
+  }
+
+  const serialized = editorDocumentToMdx(input.document);
+  if (!serialized.ok) {
+    return {
+      ok: false as const,
+      code: serialized.code,
+      message: "Preview is unavailable until the document is valid.",
+    };
+  }
+
+  const slug = input.document.frontmatter.slug || input.document.id;
+  const contentSha = createHash("sha256").update(serialized.source).digest("hex");
+  const token = issuePreviewToken({ slug, contentSha, secret });
+  return {
+    ok: true as const,
+    slug,
+    contentSha,
+    expiresInSeconds: 30 * 60,
+    url: `/preview/${encodeURIComponent(slug)}?token=${encodeURIComponent(token)}`,
   };
 }

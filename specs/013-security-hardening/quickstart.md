@@ -7,6 +7,19 @@
 - local validation용 GitHub App 환경변수 fixture 준비
 - preview validation용 `PREVIEW_TOKEN_SECRET` 설정
 
+## Implementation Notes
+
+- CMS write entrypoint는 `saveEditorDraftAction`, publish/unpublish/archive action, media upload
+  action, protected content operations로 한정했다.
+- 관리자 검증은 login과 immutable GitHub user id가 모두 일치해야 통과한다.
+- GitHub App installation token은 readiness helper에서만 발급하고, adapter 실패 메시지는
+  token/private key/preview secret/session secret 후보를 redaction한다.
+- Draft preview는 30분 TTL stateless HMAC token과 content SHA 검증을 사용한다.
+- Preview content는 public RSS, sitemap, robots, OG output 경계 밖에 두고 `/preview/[slug]` 응답은
+  `Cache-Control: private, no-store`를 반환한다.
+- 범위 밖 항목인 multi-admin workflow, approval workflow, audit dashboard, security database, object
+  storage migration은 추가하지 않았다.
+
 ## Validation Commands
 
 ```sh
@@ -37,8 +50,8 @@ Expected outcome:
 ## Scenario 2: GitHub write credential readiness
 
 1. 필수 GitHub App 설정이 모두 있는 ready fixture를 검증한다.
-2. `GITHUB_APP_PRIVATE_KEY`, `GITHUB_INSTALLATION_ID`, repository owner/repo/branch가 누락된 fixture를 각각
-   검증한다.
+2. `GITHUB_APP_PRIVATE_KEY`, `GITHUB_INSTALLATION_ID`, repository owner/repo/branch가 누락된
+   fixture를 각각 검증한다.
 3. unauthorized, rate limit, temporary failure 응답을 adapter failure로 정규화한다.
 
 Expected outcome:
@@ -74,9 +87,21 @@ Expected outcome:
 
 ## Scenario 5: Secret exposure guard
 
-1. known secret-like fixture 값을 GitHub token, private key, preview secret, session secret으로 준비한다.
+1. known secret-like fixture 값을 GitHub token, private key, preview secret, session secret으로
+   준비한다.
 2. UI failure message, repository failure, analytics payload, generated output 문자열을 검사한다.
 
 Expected outcome:
 
 - secret raw value가 public/client-facing 문자열에 포함되는 사례가 0건이다.
+
+## Validation Results
+
+- `pnpm --filter @blog-platform/cms typecheck`: pass
+- `pnpm --filter @blog-platform/cms lint`: pass
+- `pnpm --filter @blog-platform/cms test`: pass, 55 files / 98 tests
+- `pnpm --filter @blog-platform/blog typecheck`: pass
+- `pnpm --filter @blog-platform/blog lint`: pass
+- `pnpm --filter @blog-platform/blog test`: pass, 11 files / 21 tests
+- `pnpm --filter @blog-platform/markdown typecheck`: pass
+- `pnpm --filter @blog-platform/markdown test`: pass, 19 files / 42 tests

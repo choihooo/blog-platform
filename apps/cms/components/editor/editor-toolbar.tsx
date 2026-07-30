@@ -2,6 +2,7 @@ import {
   Archive,
   Bold,
   Code,
+  Eye,
   Heading2,
   Italic,
   Link,
@@ -65,6 +66,7 @@ export function EditorToolbar({
   editor,
   onSave,
   onPublish,
+  onPreview,
   onUnpublish,
   onArchive,
   onMediaUploaded,
@@ -75,6 +77,7 @@ export function EditorToolbar({
   editor?: Editor | null;
   onSave?: () => void;
   onPublish?: () => void;
+  onPreview?: () => void;
   onUnpublish?: () => void;
   onArchive?: () => void;
   onMediaUploaded?: (result: Extract<UploadEditorMediaResult, { ok: true }>) => void;
@@ -114,6 +117,12 @@ export function EditorToolbar({
           <Button disabled={publishDisabled} onClick={onPublish} type="button">
             <Send className="h-4 w-4" />
             Publish
+          </Button>
+        ) : null}
+        {onPreview ? (
+          <Button disabled={publishDisabled} onClick={onPreview} type="button" variant="outline">
+            <Eye className="h-4 w-4" />
+            Preview
           </Button>
         ) : null}
         {onUnpublish ? (
