@@ -2,8 +2,8 @@
 
 ## Purpose
 
-`apps/cms`가 발행 글 editor surface에서 공개 글, GA4 페이지 성과, Search Console 검색 성과 링크를 제공하는
-계약이다.
+`apps/cms`가 발행 글 editor surface에서 공개 글, GA4 페이지 성과, Search Console 검색 성과 링크를
+제공하는 계약이다.
 
 ## Input
 
@@ -47,5 +47,5 @@ type ExternalConsoleLinks = {
 
 - `publicPostUrl`: `<site origin>/posts/<slug>`
 - `ga4Url`: GA4 property와 public post URL을 기준으로 페이지 성과를 찾기 쉬운 외부 콘솔 URL
-- `searchConsoleUrl`: Search Console property와 public post URL을 기준으로 검색 성과를 찾기 쉬운 외부
-  콘솔 URL
+- `searchConsoleUrl`: Search Console property와 public post URL을 기준으로 검색 성과를 찾기 쉬운
+  외부 콘솔 URL

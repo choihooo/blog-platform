@@ -92,8 +92,10 @@
 ### State Transitions
 
 - 새 글 context가 시작되면 `sent50=false`, `sent90=false`로 초기화한다.
-- 본문 스크롤 진행률이 50% 이상이고 `sent50=false`면 `scroll_50` 이벤트를 만들고 `sent50=true`가 된다.
-- 본문 스크롤 진행률이 90% 이상이고 `sent90=false`면 `scroll_90` 이벤트를 만들고 `sent90=true`가 된다.
+- 본문 스크롤 진행률이 50% 이상이고 `sent50=false`면 `scroll_50` 이벤트를 만들고 `sent50=true`가
+  된다.
+- 본문 스크롤 진행률이 90% 이상이고 `sent90=false`면 `scroll_90` 이벤트를 만들고 `sent90=true`가
+  된다.
 - 같은 articleSlug 안에서는 true가 된 milestone을 false로 되돌리지 않는다.
 
 ## LinkClassification

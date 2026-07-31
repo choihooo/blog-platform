@@ -1,8 +1,7 @@
 # Specification Quality Checklist: CMS Editor
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-07-30
-**Feature**: [spec.md](../spec.md)
+**Created**: 2026-07-30 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
 

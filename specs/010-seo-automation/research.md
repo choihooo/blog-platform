@@ -2,9 +2,9 @@
 
 ## Decision: SEO 계산은 `packages/seo-engine`의 순수 함수 계약으로 둔다
 
-**Rationale**: 공개 블로그와 CMS가 같은 SEO score, metadata, JSON-LD, RSS/Sitemap entry, OG payload를
-사용해야 한다. app 내부에 계산을 두면 공개 산출물과 CMS 미리보기 사이에 drift가 생긴다. 순수 함수
-계약은 repository 콘텐츠 입력만으로 결정적인 결과를 만들 수 있고 테스트하기 쉽다.
+**Rationale**: 공개 블로그와 CMS가 같은 SEO score, metadata, JSON-LD, RSS/Sitemap entry, OG
+payload를 사용해야 한다. app 내부에 계산을 두면 공개 산출물과 CMS 미리보기 사이에 drift가 생긴다.
+순수 함수 계약은 repository 콘텐츠 입력만으로 결정적인 결과를 만들 수 있고 테스트하기 쉽다.
 
 **Alternatives considered**:
 
@@ -26,9 +26,9 @@
 
 ## Decision: generated output route는 shared package 결과를 serialization만 한다
 
-**Rationale**: `rss.xml`, `sitemap.xml`, `robots.txt`, `og/[slug]` route는 이미 app route로 존재한다.
-route는 request/response와 content-type만 책임지고, entry 계산과 escaping/fallback policy는
-`packages/seo-engine` 계약을 사용해야 한다.
+**Rationale**: `rss.xml`, `sitemap.xml`, `robots.txt`, `og/[slug]` route는 이미 app route로
+존재한다. route는 request/response와 content-type만 책임지고, entry 계산과 escaping/fallback
+policy는 `packages/seo-engine` 계약을 사용해야 한다.
 
 **Alternatives considered**:
 
@@ -37,10 +37,10 @@ route는 request/response와 content-type만 책임지고, entry 계산과 escap
 
 ## Decision: OG image는 MVP에서 route 기반 동적 생성 payload로 다룬다
 
-**Rationale**: 명세는 모든 발행 글에 공유 이미지를 요구하지만 이미지 파일 저장은 금지한다. route 기반
-생성은 글 제목, category, author, cover image, fallback layout을 현재 콘텐츠 상태에 맞춰 제공한다.
-`packages/seo-engine`는 1200x630 payload와 fallback 결정을 만들고, `apps/blog` route가 실제 이미지
-응답을 담당한다.
+**Rationale**: 명세는 모든 발행 글에 공유 이미지를 요구하지만 이미지 파일 저장은 금지한다. route
+기반 생성은 글 제목, category, author, cover image, fallback layout을 현재 콘텐츠 상태에 맞춰
+제공한다. `packages/seo-engine`는 1200x630 payload와 fallback 결정을 만들고, `apps/blog` route가
+실제 이미지 응답을 담당한다.
 
 **Alternatives considered**:
 
@@ -61,9 +61,9 @@ Console 링크 생성을 두면 public blog와 CMS가 같은 계약을 사용한
 
 ## Decision: CMS SEO panel은 editor document를 package 입력으로 변환한다
 
-**Rationale**: 운영자는 발행 전 SEO 상태를 봐야 하므로 repository에 저장된 발행 글만 검사해서는 부족하다.
-CMS는 현재 editor document와 MDX serialization/analysis 결과를 `SEO Report Input`으로 만들고,
-published 상태일 때는 public URL과 외부 콘솔 링크도 함께 보여준다.
+**Rationale**: 운영자는 발행 전 SEO 상태를 봐야 하므로 repository에 저장된 발행 글만 검사해서는
+부족하다. CMS는 현재 editor document와 MDX serialization/analysis 결과를 `SEO Report Input`으로
+만들고, published 상태일 때는 public URL과 외부 콘솔 링크도 함께 보여준다.
 
 **Alternatives considered**:
 
@@ -73,8 +73,8 @@ published 상태일 때는 public URL과 외부 콘솔 링크도 함께 보여�
 ## Decision: 공개 노출 경계는 `packages/markdown`의 published-only selection을 기준으로 한다
 
 **Rationale**: 기존 공개 블로그와 발행 workflow가 `draft`/`archived` 제외를 이미 `packages/markdown`
-경계로 잡고 있다. SEO 산출물과 analytics도 같은 selection을 사용해야 preview token이나 비공개 편집물이
-검색/피드/이벤트로 새지 않는다.
+경계로 잡고 있다. SEO 산출물과 analytics도 같은 selection을 사용해야 preview token이나 비공개
+편집물이 검색/피드/이벤트로 새지 않는다.
 
 **Alternatives considered**:
 

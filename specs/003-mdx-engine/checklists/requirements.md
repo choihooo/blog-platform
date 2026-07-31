@@ -1,7 +1,6 @@
 # 명세 품질 체크리스트: Markdown/MDX Engine
 
-**목적**: planning으로 진행하기 전에 명세의 완성도와 품질을 검증한다.
-**Created**: 2026-07-30
+**목적**: planning으로 진행하기 전에 명세의 완성도와 품질을 검증한다. **Created**: 2026-07-30
 **Feature**: [spec.md](../spec.md)
 
 ## 콘텐츠 품질

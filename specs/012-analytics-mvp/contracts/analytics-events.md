@@ -115,5 +115,6 @@ type DisabledPayload = {
 
 - unknown event name, missing slug, missing URL, disabled provider는 disabled payload가 된다.
 - `search` 이벤트는 trim된 검색어가 있을 때만 valid하다.
-- payload는 공개 글 맥락만 포함하고 개인 식별 정보, CMS session, GitHub token, secret을 포함하지 않는다.
+- payload는 공개 글 맥락만 포함하고 개인 식별 정보, CMS session, GitHub token, secret을 포함하지
+  않는다.
 - provider 변환은 외부 네트워크 호출 없이 순수 변환으로 검증 가능해야 한다.

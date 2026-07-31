@@ -27,8 +27,8 @@ pnpm --filter @blog-platform/blog test
    확인한다.
 3. `BlogPosting`과 `BreadcrumbList` JSON-LD가 있고 draft/archived 글에는 생성되지 않는지 확인한다.
 
-**Expected Outcome**: published 글 100%가 metadata, JSON-LD, OG image URL을 제공하고 draft/archived 글은
-404 또는 공개 산출물 없음으로 처리된다.
+**Expected Outcome**: published 글 100%가 metadata, JSON-LD, OG image URL을 제공하고 draft/archived
+글은 404 또는 공개 산출물 없음으로 처리된다.
 
 ## Scenario 2: RSS feed
 
@@ -37,7 +37,8 @@ pnpm --filter @blog-platform/blog test
 3. draft와 archived 글 제목 또는 URL이 포함되지 않는지 확인한다.
 4. 발행 글이 0개인 fixture에서 유효한 RSS channel이 반환되는지 확인한다.
 
-**Expected Outcome**: RSS는 public feed reader가 읽을 수 있는 XML이고 비공개 상태 글을 노출하지 않는다.
+**Expected Outcome**: RSS는 public feed reader가 읽을 수 있는 XML이고 비공개 상태 글을 노출하지
+않는다.
 
 ## Scenario 3: Sitemap과 robots
 
@@ -56,8 +57,8 @@ pnpm --filter @blog-platform/blog test
 4. 긴 제목 fixture에서 제목이 이미지 경계를 넘거나 다른 텍스트와 겹치지 않는지 확인한다.
 5. draft 또는 archived slug는 공개 이미지를 반환하지 않는지 확인한다.
 
-**Expected Outcome**: 모든 published 글이 공유 가능한 OG image URL을 가지고, 비공개 상태 글은 공유 이미지
-route로 노출되지 않는다.
+**Expected Outcome**: 모든 published 글이 공유 가능한 OG image URL을 가지고, 비공개 상태 글은 공유
+이미지 route로 노출되지 않는다.
 
 ## Scenario 5: TOC와 reading time
 
@@ -70,8 +71,8 @@ route로 노출되지 않는다.
 
 ## Scope Guard
 
-이 quickstart는 generated outputs만 검증한다. SEO score, CMS SEO panel, GA4/GTM 이벤트, 외부 분석 콘솔
-링크는 이 feature의 통과 조건에 포함하지 않는다.
+이 quickstart는 generated outputs만 검증한다. SEO score, CMS SEO panel, GA4/GTM 이벤트, 외부 분석
+콘솔 링크는 이 feature의 통과 조건에 포함하지 않는다.
 
 ## Validation Results
 

@@ -2,7 +2,8 @@
 
 ## Purpose
 
-`apps/blog`가 공개 글 상세와 독자 상호작용을 analytics event contract에 연결하는 방식의 UI 동작 계약이다.
+`apps/blog`가 공개 글 상세와 독자 상호작용을 analytics event contract에 연결하는 방식의 UI 동작
+계약이다.
 
 ## Article View
 
@@ -32,7 +33,8 @@
 
 - 사이트 origin과 같은 URL 또는 root-relative URL 클릭은 `internal_link_click`으로 기록한다.
 - 다른 http/https origin 클릭은 `external_link_click`으로 기록한다.
-- hash-only, mailto, tel, 빈 href, 파싱 불가능한 href는 ignored로 처리하고 click event를 만들지 않는다.
+- hash-only, mailto, tel, 빈 href, 파싱 불가능한 href는 ignored로 처리하고 click event를 만들지
+  않는다.
 
 ## Search
 
@@ -47,5 +49,6 @@
 ## Acceptance
 
 - provider 설정 누락 시 공개 글 렌더링과 상호작용 오류가 0건이어야 한다.
-- configured provider에서는 MVP 이벤트 9종이 canonical event name으로 provider payload에 매핑되어야 한다.
+- configured provider에서는 MVP 이벤트 9종이 canonical event name으로 provider payload에 매핑되어야
+  한다.
 - event binding은 콘텐츠 노출 정책을 변경하지 않아야 한다.

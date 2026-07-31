@@ -3,9 +3,9 @@
 ## Decision: D1를 기본 SQL 저장소로 채택하고 타입 변환 정책은 명시 스키마로 고정한다
 
 **Rationale**: 글/태그/관계형 메타데이터는 정합성과 정렬/필터 요건이 크다. D1는 SQLite 계열이라도
-기존 Supabase PostgreSQL 구조를 그대로 쓰지 못하므로, 키/시간/불리언/정수/텍스트를 정규화해
-명시적 스키마 변환이 필요하다. `published_at`, `updated_at`은 ISO8601 텍스트로 유지하고,
-`is_published`는 `INTEGER`(0/1)로 고정한다.
+기존 Supabase PostgreSQL 구조를 그대로 쓰지 못하므로, 키/시간/불리언/정수/텍스트를 정규화해 명시적
+스키마 변환이 필요하다. `published_at`, `updated_at`은 ISO8601 텍스트로 유지하고, `is_published`는
+`INTEGER`(0/1)로 고정한다.
 
 **Alternatives considered**:
 
@@ -29,13 +29,14 @@
 
 **Alternatives considered**:
 
-- 직접 full migration 즉시 전환: 실패 시 rollback은 가능해도 정합성 근거가 부족해 운영 판단 리스크가 높다.
+- 직접 full migration 즉시 전환: 실패 시 rollback은 가능해도 정합성 근거가 부족해 운영 판단 리스크가
+  높다.
 - dual-run 없이 샘플 교차 비교: 실 사용량 분포와 에지 케이스를 놓친다.
 
 ## Decision: 이미지 치환은 URL 치환표를 생성하고 정합성 검사 로그를 먼저 산출한다
 
-**Rationale**: 본문 이미지 URL은 Supabase 도메인/패턴이 혼합될 가능성이 높고, 누락 건을
-빠르게 탐지하려면 `supabase_url -> r2_key` 매핑표가 필요하다. 치환 실패 항목은 재처리 큐에 넣어
+**Rationale**: 본문 이미지 URL은 Supabase 도메인/패턴이 혼합될 가능성이 높고, 누락 건을 빠르게
+탐지하려면 `supabase_url -> r2_key` 매핑표가 필요하다. 치환 실패 항목은 재처리 큐에 넣어
 재업로드+재치환하도록 한다.
 
 **Alternatives considered**:
@@ -45,8 +46,8 @@
 
 ## Decision: 카테고리는 1차/2차 depth로 고정한다
 
-**Rationale**: 글 중심 운영에서 카테고리 분류의 가독성과 라우팅 단순성이 중요하다. 2단계(depth1, depth1/depth2)로
-제한하면 계층 규칙이 명확해지고, D1 쿼리 비용/조인 복잡도를 낮출 수 있다.  
+**Rationale**: 글 중심 운영에서 카테고리 분류의 가독성과 라우팅 단순성이 중요하다. 2단계(depth1,
+depth1/depth2)로 제한하면 계층 규칙이 명확해지고, D1 쿼리 비용/조인 복잡도를 낮출 수 있다.
 마이그레이션 대상 데이터에 3단계 이상이 존재하면 별도 보정 이슈로 기록하고, 운영 스키마에 맞춰
 부모-자식 재매핑 또는 정정 후 적재한다.
 
@@ -57,8 +58,8 @@
 
 ## Decision: 롤백은 환경 변수 기반 라우팅/스위치로 처리한다
 
-**Rationale**: 새 경로 실패 시 1분 내로 기존 데이터 소스 복귀가 요구된다. 코드 변경 없이 동작
-하게 하려면 운영 환경에서 switch 플래그를 중심으로 처리해야 한다.
+**Rationale**: 새 경로 실패 시 1분 내로 기존 데이터 소스 복귀가 요구된다. 코드 변경 없이 동작 하게
+하려면 운영 환경에서 switch 플래그를 중심으로 처리해야 한다.
 
 **Alternatives considered**:
 
@@ -67,8 +68,8 @@
 
 ## Decision: 통계 모니터링은 `조회 일치율`, `이미지 노출율`, `클래스별 처리량` 3축으로 최소화한다
 
-**Rationale**: 블로그 특성상 댓글·검색 같은 이벤트는 부재하므로 핵심 품질 신호는 단순하고
-가시적으로 해석 가능해야 한다.
+**Rationale**: 블로그 특성상 댓글·검색 같은 이벤트는 부재하므로 핵심 품질 신호는 단순하고 가시적으로
+해석 가능해야 한다.
 
 **Alternatives considered**:
 

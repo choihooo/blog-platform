@@ -2,7 +2,8 @@
 
 ## Purpose
 
-CMS가 GitHub repository에 최소 권한으로 콘텐츠를 쓰기 위한 credential readiness와 failure normalization 계약이다.
+CMS가 GitHub repository에 최소 권한으로 콘텐츠를 쓰기 위한 credential readiness와 failure
+normalization 계약이다.
 
 ## Required Runtime Settings
 

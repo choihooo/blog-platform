@@ -19,15 +19,15 @@
 **우선순위 근거**: Markdown/MDX 변환은 공개 렌더링, CMS preview, SEO, generated outputs의 공통
 기반이다. 이 기준이 먼저 안정화되지 않으면 이후 phase가 같은 콘텐츠를 다르게 처리할 위험이 크다.
 
-**독립 테스트**: 샘플 MDX와 frontmatter를 입력으로 제공했을 때, 공개 렌더링용 결과와 preview용 결과가
-동일한 metadata, 본문 구조, heading 정보를 반환하는지 검증해 독립적으로 테스트할 수 있다.
+**독립 테스트**: 샘플 MDX와 frontmatter를 입력으로 제공했을 때, 공개 렌더링용 결과와 preview용
+결과가 동일한 metadata, 본문 구조, heading 정보를 반환하는지 검증해 독립적으로 테스트할 수 있다.
 
 **Acceptance Scenarios**:
 
 1. **Given** 유효한 frontmatter와 본문을 가진 샘플 MDX 글이 있을 때, **When** 글 변환을 실행하면,
    **Then** 제목, slug, 작성자, 발행일, 요약, 본문이 구분된 결과로 제공된다.
-2. **Given** 같은 샘플 MDX 글을 공개 블로그와 CMS preview가 사용할 때, **When** 두 흐름이 변환 결과를
-   요청하면, **Then** 동일한 본문 구조와 metadata를 기준으로 표시할 수 있다.
+2. **Given** 같은 샘플 MDX 글을 공개 블로그와 CMS preview가 사용할 때, **When** 두 흐름이 변환
+   결과를 요청하면, **Then** 동일한 본문 구조와 metadata를 기준으로 표시할 수 있다.
 3. **Given** frontmatter가 누락되었거나 형식이 잘못된 글이 있을 때, **When** 글 변환을 실행하면,
    **Then** 운영자가 수정할 수 있는 명확한 실패 사유가 제공된다.
 
@@ -84,8 +84,8 @@
 - frontmatter 구분자가 깨졌거나 값 형식이 잘못된 글은 조용히 무시되지 않고 수정 가능한 실패로
   보고되어야 한다.
 - code block 언어가 없거나 지원하지 않는 언어로 지정되어도 글 전체 변환이 실패해서는 안 된다.
-- unsafe HTML, inline `<script>`, event handler, 임의 import/export, runtime evaluation은 공개 가능한
-  출력에 포함되지 않아야 한다.
+- unsafe HTML, inline `<script>`, event handler, 임의 import/export, runtime evaluation은 공개
+  가능한 출력에 포함되지 않아야 한다.
 - MDX component allowlist 밖의 component는 안전한 fallback 또는 명확한 실패로 처리되어야 한다.
 - 같은 입력을 반복 처리해도 metadata, TOC, heading slug, reading time 결과는 바뀌지 않아야 한다.
 
@@ -96,16 +96,16 @@
 - **FR-001**: 시스템은 MDX 글에서 frontmatter와 본문을 분리하고, 유효한 metadata와 본문을 구분된
   결과로 제공해야 한다.
 - **FR-002**: 시스템은 metadata를 다시 파일 저장 가능한 frontmatter 형태로 표현할 수 있어야 한다.
-- **FR-003**: 시스템은 공개 블로그와 CMS preview가 같은 입력에서 같은 변환 결과를 사용할 수 있는 공통
-  콘텐츠 변환 계약을 제공해야 한다.
+- **FR-003**: 시스템은 공개 블로그와 CMS preview가 같은 입력에서 같은 변환 결과를 사용할 수 있는
+  공통 콘텐츠 변환 계약을 제공해야 한다.
 - **FR-004**: 시스템은 글 본문에서 heading 목록을 추출하고 각 heading에 안정적인 anchor를 부여해야
   한다.
 - **FR-005**: 시스템은 허용된 heading depth를 기준으로 게시글 TOC를 생성해야 한다.
 - **FR-006**: 시스템은 본문 내용을 기준으로 예상 reading time을 일관된 규칙으로 계산해야 한다.
 - **FR-007**: 시스템은 code block을 사람이 읽기 쉬운 표시 대상으로 준비하되, 지원되지 않는 언어가 글
   전체 실패로 이어지지 않게 처리해야 한다.
-- **FR-008**: 시스템은 unsafe HTML, inline script, event handler, 임의 import/export, arbitrary runtime
-  evaluation을 공개 가능한 출력에서 차단해야 한다.
+- **FR-008**: 시스템은 unsafe HTML, inline script, event handler, 임의 import/export, arbitrary
+  runtime evaluation을 공개 가능한 출력에서 차단해야 한다.
 - **FR-009**: 시스템은 MVP에서 허용된 MDX component만 렌더링 대상으로 인정하고, 허용되지 않은
   component를 명확한 실패 또는 안전한 fallback으로 처리해야 한다.
 - **FR-010**: 시스템은 변환 실패가 발생했을 때 운영자가 원인을 수정할 수 있도록 실패 위치 또는 실패
@@ -151,7 +151,7 @@
   생성은 이후 phase에서 다룬다.
 - MVP에서는 글 작성자가 임의 interactive component를 추가하거나 편집할 수 없으며, 허용된 component만
   표시 대상으로 인정한다.
-- code block 표시 품질은 글을 읽을 수 있는 수준을 목표로 하며, 지원되지 않는 언어는 안전한 일반
-  code block으로 표시될 수 있다.
+- code block 표시 품질은 글을 읽을 수 있는 수준을 목표로 하며, 지원되지 않는 언어는 안전한 일반 code
+  block으로 표시될 수 있다.
 - 콘텐츠 원본은 repository의 로컬 파일이며 공개 블로그 runtime은 외부 콘텐츠 API 접근 없이 렌더링
   준비된 결과를 사용할 수 있어야 한다.

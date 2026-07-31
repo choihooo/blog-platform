@@ -31,7 +31,8 @@ OG image fallback, TOC/reading time이 핵심 성공 기준이므로 user story�
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: 모든 user story가 공유하는 subject 변환, URL 생성, fixture, public-only 입력 경계를 안정화한다.
+**Purpose**: 모든 user story가 공유하는 subject 변환, URL 생성, fixture, public-only 입력 경계를
+안정화한다.
 
 **CRITICAL**: 이 phase가 끝나기 전에는 user story 구현을 시작하지 않는다.
 
@@ -50,12 +51,12 @@ OG image fallback, TOC/reading time이 핵심 성공 기준이므로 user story�
 
 ## Phase 3: User Story 1 - 발행 글 SEO 산출물 자동 제공 (Priority: P1) MVP
 
-**Goal**: 발행 글에서 page metadata, JSON-LD, RSS, Sitemap, robots, OG image URL과 payload를 자동 생성하고
-초안/보관 글을 모든 공개 산출물에서 제외한다.
+**Goal**: 발행 글에서 page metadata, JSON-LD, RSS, Sitemap, robots, OG image URL과 payload를 자동
+생성하고 초안/보관 글을 모든 공개 산출물에서 제외한다.
 
 **Independent Test**: 발행 상태의 샘플 글을 기준으로 공개 글 metadata, canonical 정보, Open Graph,
-Twitter metadata, JSON-LD, RSS, Sitemap, robots 정책, OG image URL이 생성되고 초안/보관 글이 제외되는지
-확인한다.
+Twitter metadata, JSON-LD, RSS, Sitemap, robots 정책, OG image URL이 생성되고 초안/보관 글이
+제외되는지 확인한다.
 
 ### Tests for User Story 1
 
@@ -94,11 +95,11 @@ route-backed, and expose only published content.
 
 ## Phase 4: User Story 2 - 피드와 크롤러용 사이트 산출물 제공 (Priority: P2)
 
-**Goal**: RSS, Sitemap, robots의 site-level discovery 품질을 완성하고, 발행 글 0개와 taxonomy edge case에서도
-표준 응답을 제공한다.
+**Goal**: RSS, Sitemap, robots의 site-level discovery 품질을 완성하고, 발행 글 0개와 taxonomy edge
+case에서도 표준 응답을 제공한다.
 
-**Independent Test**: 발행 글 여러 개와 카테고리/태그가 있는 상태에서 RSS에는 최신 발행 글이 들어가고,
-Sitemap에는 공개 표면만 들어가며, robots 정책에는 Sitemap 위치가 포함되는지 확인한다.
+**Independent Test**: 발행 글 여러 개와 카테고리/태그가 있는 상태에서 RSS에는 최신 발행 글이
+들어가고, Sitemap에는 공개 표면만 들어가며, robots 정책에는 Sitemap 위치가 포함되는지 확인한다.
 
 ### Tests for User Story 2
 
@@ -126,11 +127,11 @@ multi-post, taxonomy, and private-content edge cases.
 
 ## Phase 5: User Story 3 - 글 본문 보조 정보 표시 (Priority: P3)
 
-**Goal**: 글 상세 페이지에서 Markdown/MDX 분석 결과 기반 TOC와 reading time을 표시하고, 목차 링크가 실제
-heading anchor와 일치하게 한다.
+**Goal**: 글 상세 페이지에서 Markdown/MDX 분석 결과 기반 TOC와 reading time을 표시하고, 목차 링크가
+실제 heading anchor와 일치하게 한다.
 
-**Independent Test**: heading이 여러 개 있는 발행 글 상세를 열어 목차, heading anchor, reading time이
-표시되고 본문 구조와 일치하는지 확인한다.
+**Independent Test**: heading이 여러 개 있는 발행 글 상세를 열어 목차, heading anchor, reading
+time이 표시되고 본문 구조와 일치하는지 확인한다.
 
 ### Tests for User Story 3
 
@@ -180,10 +181,10 @@ details, and duplicate headings still navigate correctly.
 - **Setup (Phase 1)**: No dependencies. Can start immediately.
 - **Foundational (Phase 2)**: Depends on Setup completion and blocks all user story phases.
 - **User Story 1 (Phase 3)**: Depends on Foundational. MVP scope.
-- **User Story 2 (Phase 4)**: Depends on Foundational and can use US1's shared package outputs, but is
-  independently testable through route contracts.
-- **User Story 3 (Phase 5)**: Depends on Foundational and existing Markdown/MDX analysis; independent
-  from RSS/Sitemap/robots routes.
+- **User Story 2 (Phase 4)**: Depends on Foundational and can use US1's shared package outputs, but
+  is independently testable through route contracts.
+- **User Story 3 (Phase 5)**: Depends on Foundational and existing Markdown/MDX analysis;
+  independent from RSS/Sitemap/robots routes.
 - **Polish (Phase 6)**: Depends on selected user stories being complete.
 
 ### User Story Dependencies
@@ -197,7 +198,8 @@ details, and duplicate headings still navigate correctly.
 
 ### Parallel Opportunities
 
-- T002, T003, and T004 can run in parallel because they inspect separate package/app configuration files.
+- T002, T003, and T004 can run in parallel because they inspect separate package/app configuration
+  files.
 - T005 and T006 can run in parallel because they update package and app fixtures separately.
 - T011 through T018 can run in parallel as US1 tests across separate files.
 - T031 through T034 can run in parallel as US2 tests and adapter coverage.
@@ -242,7 +244,8 @@ Task: "Add post page rendering tests for TOC visibility, heading anchor matching
 1. Complete Phase 1: Setup.
 2. Complete Phase 2: Foundational.
 3. Complete Phase 3: User Story 1.
-4. Stop and validate generated metadata, JSON-LD, RSS, Sitemap, robots, and OG image published-only behavior.
+4. Stop and validate generated metadata, JSON-LD, RSS, Sitemap, robots, and OG image published-only
+   behavior.
 
 ### Incremental Delivery
 
@@ -254,8 +257,9 @@ Task: "Add post page rendering tests for TOC visibility, heading anchor matching
 
 ### Scope Guard
 
-- Do not implement SEO score, CMS SEO panel, GA4/GTM analytics events, external analytics console links,
-  repository-committed generated files, object storage, CMS database, AI generation, or multi-author
-  permissions in this feature.
+- Do not implement SEO score, CMS SEO panel, GA4/GTM analytics events, external analytics console
+  links, repository-committed generated files, object storage, CMS database, AI generation, or
+  multi-author permissions in this feature.
 - Keep generated output rules in shared packages and framework route wiring in `apps/blog`.
-- Reuse `packages/markdown` for TOC, heading slug, and reading time instead of duplicating parsing logic.
+- Reuse `packages/markdown` for TOC, heading slug, and reading time instead of duplicating parsing
+  logic.

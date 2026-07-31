@@ -49,7 +49,8 @@ Repository write에 필요한 GitHub App 설정과 installation token 준비 상
 - `ready`가 아니면 GitHub write adapter를 생성하지 않는다.
 - message는 secret 원문이나 private key 내용을 포함하지 않는다.
 - 필요한 권한 범위는 contents write와 metadata read에 한정한다.
-- missing/invalid/unauthorized 상태에서도 제출된 editor content는 보존 가능한 실패 상태에 포함되어야 한다.
+- missing/invalid/unauthorized 상태에서도 제출된 editor content는 보존 가능한 실패 상태에 포함되어야
+  한다.
 
 ## PreviewTokenPayload
 
@@ -104,5 +105,5 @@ Secret이 노출되면 안 되는 출력 표면.
 
 - `NEXT_PUBLIC_`이 아닌 runtime secret은 client bundle에 포함하지 않는다.
 - UI와 repository failure message는 secret raw value를 포함하지 않는다.
-- analytics payload와 generated output은 GitHub token, private key, preview secret, session secret을 포함하지
-  않는다.
+- analytics payload와 generated output은 GitHub token, private key, preview secret, session secret을
+  포함하지 않는다.

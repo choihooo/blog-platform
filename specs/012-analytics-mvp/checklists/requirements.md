@@ -1,7 +1,6 @@
 # 명세 품질 체크리스트: Analytics MVP
 
-**Purpose**: 계획 단계로 넘어가기 전 명세의 완성도와 품질을 검증
-**Created**: 2026-07-30
+**Purpose**: 계획 단계로 넘어가기 전 명세의 완성도와 품질을 검증 **Created**: 2026-07-30
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -31,4 +30,5 @@
 
 ## Notes
 
-- 검증 결과 모든 항목 통과. 자체 분석 대시보드, 분석 DB, GA4/Search Console API 조회는 MVP 범위에서 제외됨을 명시했다.
+- 검증 결과 모든 항목 통과. 자체 분석 대시보드, 분석 DB, GA4/Search Console API 조회는 MVP 범위에서
+  제외됨을 명시했다.

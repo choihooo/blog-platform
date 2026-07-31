@@ -2,7 +2,8 @@
 
 ## Purpose
 
-`apps/cms`의 모든 repository write mutation이 단일 관리자 identity 검증을 통과한 뒤에만 실행되는 계약이다.
+`apps/cms`의 모든 repository write mutation이 단일 관리자 identity 검증을 통과한 뒤에만 실행되는
+계약이다.
 
 ## Protected Operations
 
@@ -30,7 +31,8 @@ type MutationAccessDecision =
 - `authorized`가 아니면 repository adapter operation을 호출하지 않는다.
 - 관리자 권한은 GitHub login과 immutable user id가 모두 일치할 때만 인정한다.
 - auth failure response는 submitted editor content를 보존 가능한 상태로 유지해야 한다.
-- failure message는 OAuth secret, GitHub token, GitHub App private key, preview secret을 포함하지 않는다.
+- failure message는 OAuth secret, GitHub token, GitHub App private key, preview secret을 포함하지
+  않는다.
 
 ## Acceptance
 

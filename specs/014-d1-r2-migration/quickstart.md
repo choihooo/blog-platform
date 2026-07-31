@@ -11,8 +11,10 @@
 ## 1. 사전 점검
 
 1. CMS와 blog의 현재 글/태그 API 조회가 정상인지 확인한다.
-2. Supabase에서 대상 글, 태그, `categories`(1차/2차), `post_tag`, 미디어 메타를 추출 가능한지 점검한다.
-3. 기존 공개 링크에서 이미지 URL 패턴과 카테고리 경로(`depth1`/`depth1/depth2`)를 샘플링해 R2/ D1 이동 규칙을 적용할 수 있는지 검토한다.
+2. Supabase에서 대상 글, 태그, `categories`(1차/2차), `post_tag`, 미디어 메타를 추출 가능한지
+   점검한다.
+3. 기존 공개 링크에서 이미지 URL 패턴과 카테고리 경로(`depth1`/`depth1/depth2`)를 샘플링해 R2/ D1
+   이동 규칙을 적용할 수 있는지 검토한다.
 4. R2 버킷 접근 권한과 CORS/폴더 규칙을 확인한다.
 
 Expected:
@@ -99,7 +101,8 @@ Expected:
 
 Expected:
 
-- `listPosts` p95 600ms 이하, `getPostBySlug` p95 500ms 이하, `getPostsByTag`/`getPostsByCategoryPath` p95 700ms 이하.
+- `listPosts` p95 600ms 이하, `getPostBySlug` p95 500ms 이하,
+  `getPostsByTag`/`getPostsByCategoryPath` p95 700ms 이하.
 - read timeout 2.5초, write timeout 5초, upload timeout 15초 준수.
 - `retryable-failure` 5% 초과 시 대응 티켓 등록.
 

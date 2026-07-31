@@ -72,7 +72,8 @@ CMS가 운영자에게 보여주는 글별 SEO 점검 결과다.
 - `rssChannel`: 사이트 feed metadata와 최신 발행 글 item
 - `sitemapEntries`: 홈, 글, category, tag 공개 URL entry
 - `robotsPolicy`: 공개 색인 정책과 Sitemap 위치
-- `ogImagePayload`: 1200x630 공유 이미지 생성을 위한 제목, category, author, cover image, fallback 정보
+- `ogImagePayload`: 1200x630 공유 이미지 생성을 위한 제목, category, author, cover image, fallback
+  정보
 
 **Validation Rules**:
 

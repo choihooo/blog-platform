@@ -2,8 +2,8 @@
 
 ## Scope
 
-`packages/analytics`는 public blog 이벤트 payload와 CMS external console link를 생성한다. 이 package는
-분석 API에서 데이터를 조회하거나 자체 저장소에 이벤트를 저장하지 않는다.
+`packages/analytics`는 public blog 이벤트 payload와 CMS external console link를 생성한다. 이
+package는 분석 API에서 데이터를 조회하거나 자체 저장소에 이벤트를 저장하지 않는다.
 
 ## Event Names
 

@@ -6,20 +6,20 @@
 
 ## Summary
 
-발행 콘텐츠의 검색/공유/피드 산출물과 CMS SEO 점검을 `packages/seo-engine`에 모으고, 공개 블로그와 CMS가
-같은 계산 결과를 사용하게 한다. `packages/markdown`는 기존 콘텐츠 검증, published-only filtering,
-heading/TOC/reading time 분석을 계속 담당하고, `packages/seo-engine`는 metadata, JSON-LD, RSS/Sitemap
-entry, robots policy, OG image payload, SEO score/report를 생성한다. `packages/analytics`는 GA4/GTM
-초기화 payload, 공개 독자 이벤트 계약, CMS 외부 콘솔 링크 생성을 담당하며 API 기반 대시보드와 자체
-분석 저장소는 제외한다.
+발행 콘텐츠의 검색/공유/피드 산출물과 CMS SEO 점검을 `packages/seo-engine`에 모으고, 공개 블로그와
+CMS가 같은 계산 결과를 사용하게 한다. `packages/markdown`는 기존 콘텐츠 검증, published-only
+filtering, heading/TOC/reading time 분석을 계속 담당하고, `packages/seo-engine`는 metadata, JSON-LD,
+RSS/Sitemap entry, robots policy, OG image payload, SEO score/report를 생성한다.
+`packages/analytics`는 GA4/GTM 초기화 payload, 공개 독자 이벤트 계약, CMS 외부 콘솔 링크 생성을
+담당하며 API 기반 대시보드와 자체 분석 저장소는 제외한다.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 6.0, React 19, Next.js App Router, Node.js, ESM
 
 **Primary Dependencies**: 기존 `@blog-platform/markdown`, `@blog-platform/seo-engine`,
-`@blog-platform/analytics`, `@blog-platform/design-system`, `@blog-platform/editor`, Next.js metadata
-및 route handler 표면
+`@blog-platform/analytics`, `@blog-platform/design-system`, `@blog-platform/editor`, Next.js
+metadata 및 route handler 표면
 
 **Storage**: Repository file storage. 글 원본은 `content/posts/*.mdx`, 사이트 설정은
 `content/site.json`, taxonomy는 `content/categories.json`와 `content/tags.json`에 둔다. SEO 산출물,
@@ -49,12 +49,12 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **MVP 범위 규율**: 통과. 자체 분석 대시보드, API 기반 지표 조회, AI SEO 생성, 내부 링크 자동 추천,
   예약 발행, 다중 작성자 workflow를 도입하지 않는다.
-- **파일 기반 콘텐츠 권위**: 통과. 모든 SEO 산출물은 repository 콘텐츠와 사이트 설정에서 생성하며 별도
-  CMS database나 generated file commit을 만들지 않는다.
+- **파일 기반 콘텐츠 권위**: 통과. 모든 SEO 산출물은 repository 콘텐츠와 사이트 설정에서 생성하며
+  별도 CMS database나 generated file commit을 만들지 않는다.
 - **공유 패키지 소유권**: 통과. SEO 계산은 `packages/seo-engine`, 분석 이벤트/링크는
   `packages/analytics`, 콘텐츠 분석은 `packages/markdown`, UI 표시와 route 연결은 app 경계에 둔다.
-- **안전한 발행 경계**: 통과. `packages/markdown`의 published-only selection을 기준으로 공개 산출물을
-  만들고 초안/보관/preview token 콘텐츠를 RSS/Sitemap/JSON-LD/analytics에서 제외한다.
+- **안전한 발행 경계**: 통과. `packages/markdown`의 published-only selection을 기준으로 공개
+  산출물을 만들고 초안/보관/preview token 콘텐츠를 RSS/Sitemap/JSON-LD/analytics에서 제외한다.
 - **생성형 SEO 및 분석 산출물**: 통과. metadata, JSON-LD, RSS, Sitemap, robots, OG image, rule-based
   SEO score, GA4/GTM event emission을 구현 범위로 삼되 직접 파일 commit과 API 대시보드는 제외한다.
 - **한국어 문서화 및 완료 workflow**: 통과. 모든 신규 산출물은 한국어로 작성하고 완료 시 변경사항을
@@ -146,10 +146,10 @@ content/
 └── site.json
 ```
 
-**Structure Decision**: SEO와 analytics domain 계산은 shared package에 둔다. `apps/blog`는 public route와
-metadata 연결만 담당하고, `apps/cms`는 editor document 또는 repository post를 shared package 입력으로
-변환해 SEO panel과 외부 콘솔 링크를 보여준다. `packages/markdown`에 이미 있는 content validation,
-published filtering, MDX analysis, reading time, TOC는 중복하지 않는다.
+**Structure Decision**: SEO와 analytics domain 계산은 shared package에 둔다. `apps/blog`는 public
+route와 metadata 연결만 담당하고, `apps/cms`는 editor document 또는 repository post를 shared package
+입력으로 변환해 SEO panel과 외부 콘솔 링크를 보여준다. `packages/markdown`에 이미 있는 content
+validation, published filtering, MDX analysis, reading time, TOC는 중복하지 않는다.
 
 ## Complexity Tracking
 
@@ -163,13 +163,13 @@ See [research.md](./research.md).
 
 See [data-model.md](./data-model.md), [seo-engine.md](./contracts/seo-engine.md),
 [generated-output-routes.md](./contracts/generated-output-routes.md),
-[analytics-events.md](./contracts/analytics-events.md), [cms-seo-panel.md](./contracts/cms-seo-panel.md),
-and [quickstart.md](./quickstart.md).
+[analytics-events.md](./contracts/analytics-events.md),
+[cms-seo-panel.md](./contracts/cms-seo-panel.md), and [quickstart.md](./quickstart.md).
 
 ## Post-Design Constitution Check
 
-- **MVP 범위 규율**: 통과. contracts는 rule-based SEO, generated output, 이벤트 발행, 외부 콘솔 링크만
-  다루며 API 대시보드, AI 생성, 자동 추천을 추가하지 않는다.
+- **MVP 범위 규율**: 통과. contracts는 rule-based SEO, generated output, 이벤트 발행, 외부 콘솔
+  링크만 다루며 API 대시보드, AI 생성, 자동 추천을 추가하지 않는다.
 - **파일 기반 콘텐츠 권위**: 통과. data model의 입력은 repository 콘텐츠와 사이트 설정이며 산출물은
   요청 시 생성되는 표현으로 정의했다.
 - **공유 패키지 소유권**: 통과. `SEO Report`, `Generated SEO Output`, `Analytics Event`,

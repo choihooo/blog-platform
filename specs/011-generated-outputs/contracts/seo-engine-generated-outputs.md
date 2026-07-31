@@ -1,7 +1,7 @@
 # Contract: SEO Engine Generated Outputs
 
-`packages/seo-engine`는 framework에 독립적인 순수 생성 함수를 제공한다. 모든 함수는 같은 입력에서 같은
-출력을 반환해야 하며 repository에 파일을 쓰지 않는다.
+`packages/seo-engine`는 framework에 독립적인 순수 생성 함수를 제공한다. 모든 함수는 같은 입력에서
+같은 출력을 반환해야 하며 repository에 파일을 쓰지 않는다.
 
 ## Input Boundary
 
@@ -30,8 +30,8 @@
 **Required Behavior**:
 
 - published 글에만 JSON-LD를 생성한다.
-- `BlogPosting`에는 headline, description, url, datePublished, dateModified, author, image, keywords,
-  articleSection을 가능한 범위에서 포함한다.
+- `BlogPosting`에는 headline, description, url, datePublished, dateModified, author, image,
+  keywords, articleSection을 가능한 범위에서 포함한다.
 - `BreadcrumbList`에는 site root와 글 상세 URL을 포함한다.
 - undefined 값은 JSON 직렬화 결과에서 불필요하게 노출되지 않아야 한다.
 

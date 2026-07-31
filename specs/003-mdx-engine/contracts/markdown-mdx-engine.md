@@ -88,8 +88,8 @@ analyzeMdx(
 
 ### Contract
 
-- frontmatter/body 분리, MDX syntax 확인, safety validation, heading 추출, TOC 생성, reading time 계산을
-  한 번에 수행한다.
+- frontmatter/body 분리, MDX syntax 확인, safety validation, heading 추출, TOC 생성, reading time
+  계산을 한 번에 수행한다.
 - blocking safety failure가 있으면 `success: false`를 반환한다.
 - 같은 입력과 option은 같은 결과를 반환해야 한다.
 
@@ -143,8 +143,8 @@ validateMdxSafety(
 
 ### Contract
 
-- unsafe HTML, inline script, event handler, import/export, runtime evaluation, unsupported component를
-  차단한다.
+- unsafe HTML, inline script, event handler, import/export, runtime evaluation, unsupported
+  component를 차단한다.
 - 실패는 [mdx-safety-policy.md](./mdx-safety-policy.md)의 error code를 사용한다.
 
 ## Required Error Codes

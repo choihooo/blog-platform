@@ -1,8 +1,7 @@
 # Specification Quality Checklist: SEO 자동화
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-07-30
-**Feature**: [spec.md](../spec.md)
+**Created**: 2026-07-30 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
 
@@ -31,5 +30,5 @@
 
 ## Notes
 
-- 1차 검증에서 통과. `GA4`, `GTM`, `Search Console`은 사용자가 받는 외부 서비스/제품 범위로만 언급했고,
-  API 기반 통합 대시보드와 자체 분석 저장소는 명시적으로 제외했다.
+- 1차 검증에서 통과. `GA4`, `GTM`, `Search Console`은 사용자가 받는 외부 서비스/제품 범위로만
+  언급했고, API 기반 통합 대시보드와 자체 분석 저장소는 명시적으로 제외했다.

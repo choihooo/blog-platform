@@ -16,8 +16,7 @@
 - `contentSourceMode` 기본값은 `legacy` 또는 `dual` 시작 상태로 둔다.
 - `dualRunEnabled=true`일 때는 write 동작은 새 모드로, read compare 로그는 legacy + new로 남긴다.
 - 전환 완료 조건: 설정 변경 후 7일간 성공률 하한과 이미지 노출율 하한을 만족해야 한다.
-- 임계치 초과 실패 시 운영자는 `contentSourceMode=legacy`로 즉시 변경해 1분 내 공개 장애를
-  회복한다.
+- 임계치 초과 실패 시 운영자는 `contentSourceMode=legacy`로 즉시 변경해 1분 내 공개 장애를 회복한다.
 
 ### State Machine
 
@@ -38,4 +37,3 @@
 - 조회 일치율, 이미지 노출율, 500 응답률, 이중 조회 차이율은 1일 집계한다.
 - 임계치 미달이 1회라도 발생하면 이슈 티켓으로 이관한다.
 - 롤백 횟수는 운영 기록에 남겨 추적 가능한 형태로 보존한다.
-

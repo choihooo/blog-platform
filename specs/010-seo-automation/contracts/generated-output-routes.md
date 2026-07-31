@@ -81,6 +81,7 @@ published-only selection, content-type, status code, response serialization을 �
 
 ## Acceptance Criteria
 
-- 모든 generated output route는 GitHub credential, CMS session, analytics API credential 없이 동작한다.
+- 모든 generated output route는 GitHub credential, CMS session, analytics API credential 없이
+  동작한다.
 - public generated output에서 draft/archived 콘텐츠 노출은 0건이어야 한다.
 - route는 generated XML/image 파일을 repository에 쓰지 않는다.

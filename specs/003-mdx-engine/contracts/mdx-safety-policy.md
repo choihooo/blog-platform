@@ -58,6 +58,7 @@ Expected: heading으로 추출되고 TOC 대상이 될 수 있다.
 
 ```md
 ## Intro
+
 ## Intro
 ```
 

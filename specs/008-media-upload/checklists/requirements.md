@@ -1,8 +1,7 @@
 # Specification Quality Checklist: Media Upload
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-07-30
-**Feature**: [spec.md](../spec.md)
+**Created**: 2026-07-30 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
 
@@ -31,4 +30,5 @@
 
 ## Notes
 
-- Validation iteration 1 passed. The specification has no clarification markers, keeps Post-MVP items out of scope, and is ready for `$speckit-plan`.
+- Validation iteration 1 passed. The specification has no clarification markers, keeps Post-MVP
+  items out of scope, and is ready for `$speckit-plan`.

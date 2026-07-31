@@ -33,8 +33,8 @@ deterministic repeated output
 analysis linear over post body size
 
 **Constraints**: Public blog runtime must not require GitHub credentials, a CMS database, remote MDX
-runtime evaluation, arbitrary import/export, inline script, event handler, unsafe HTML, or unsupported
-interactive component editing
+runtime evaluation, arbitrary import/export, inline script, event handler, unsafe HTML, or
+unsupported interactive component editing
 
 **Scale/Scope**: Single-operator MVP technical blog with repository-backed MDX posts and a
 small-to-medium content set
@@ -44,8 +44,8 @@ small-to-medium content set
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **I. MVP 범위 규율**: PASS. Plan covers shared Markdown/MDX processing only and excludes AI
-  generation, analytics dashboard, CMS database, object storage, scheduled publishing, and multi-user
-  editorial flows.
+  generation, analytics dashboard, CMS database, object storage, scheduled publishing, and
+  multi-user editorial flows.
 - **II. 파일 기반 콘텐츠 권위**: PASS. `content/posts/*.mdx` remains the source of truth and public
   blog reading stays local-file based.
 - **III. 공유 패키지 소유권**: PASS. Shared parsing, validation, TOC, reading time, and rendering
@@ -113,8 +113,8 @@ Phase 0 결과는 [research.md](./research.md)에 기록했다. 주요 결정은
 - MDX 처리는 custom parser가 아니라 MDX/unified/remark/rehype 생태계를 감싼다.
 - frontmatter parsing은 기존 `gray-matter`를 유지하고 serialization API를 추가한다.
 - heading/TOC는 MDX AST 기반으로 추출해 raw string parsing을 피한다.
-- unsafe MDX는 sanitize만 믿지 않고 import/export, JSX event handler, script, unsupported component를
-  명시 검증한다.
+- unsafe MDX는 sanitize만 믿지 않고 import/export, JSX event handler, script, unsupported
+  component를 명시 검증한다.
 - runtime evaluation API는 MVP 렌더링 계약에서 제외한다.
 
 Unresolved clarification은 없다.

@@ -64,7 +64,8 @@
 - `slug`는 slug 정책을 따른다.
 - `depth`는 1 또는 2만 허용한다.
 - `depth=1`이면 `parent_id`와 `parent_slug`는 null이다.
-- `depth=2`이면 `parent_id`와 `parent_slug`가 모두 있어야 하고, `parent_id`는 depth=1 카테고리를 가리켜야 한다.
+- `depth=2`이면 `parent_id`와 `parent_slug`가 모두 있어야 하고, `parent_id`는 depth=1 카테고리를
+  가리켜야 한다.
 - `parent_id`는 동일 테이블의 Category.id만 허용한다.
 
 ## Entity: PostTag

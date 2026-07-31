@@ -1,7 +1,6 @@
 # 명세 품질 체크리스트: Security Hardening
 
-**Purpose**: 계획 단계로 넘어가기 전 명세의 완성도와 품질을 검증
-**Created**: 2026-07-30
+**Purpose**: 계획 단계로 넘어가기 전 명세의 완성도와 품질을 검증 **Created**: 2026-07-30
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -31,4 +30,5 @@
 
 ## Notes
 
-- 검증 결과 모든 항목 통과. 다중 관리자, 승인 workflow, audit dashboard, 별도 보안 DB, object storage 전환은 MVP 범위에서 제외했다.
+- 검증 결과 모든 항목 통과. 다중 관리자, 승인 workflow, audit dashboard, 별도 보안 DB, object
+  storage 전환은 MVP 범위에서 제외했다.

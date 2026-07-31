@@ -13,17 +13,17 @@ Supabase 미디어 URL을 R2 키로 이전하고, 본문 이미지 치환 및 �
 
 ## Mapping Record
 
-| Field | Type | 설명 |
-| --- | --- | --- |
-| `source_url` | string | 기존 Supabase public URL |
-| `canonical_post_slug` | string | 매핑 대상 글 slug |
-| `target_r2_key` | string | `blog/{YYYY}/{MM}/{post-slug}/{uuid}.webp` 형식 |
-| `r2_url` | string | 공개 접근 URL 또는 프록시 URL |
-| `kind` | string | `hero`, `body`, `og`, `pdf` |
-| `width` | integer | 이미지 실제 가로 |
-| `height` | integer | 이미지 실제 세로 |
-| `status` | string | `pending`, `uploaded`, `mapped`, `failed`, `skipped` |
-| `notes` | string | 실패 사유 또는 예외 메모 |
+| Field                 | Type    | 설명                                                 |
+| --------------------- | ------- | ---------------------------------------------------- |
+| `source_url`          | string  | 기존 Supabase public URL                             |
+| `canonical_post_slug` | string  | 매핑 대상 글 slug                                    |
+| `target_r2_key`       | string  | `blog/{YYYY}/{MM}/{post-slug}/{uuid}.webp` 형식      |
+| `r2_url`              | string  | 공개 접근 URL 또는 프록시 URL                        |
+| `kind`                | string  | `hero`, `body`, `og`, `pdf`                          |
+| `width`               | integer | 이미지 실제 가로                                     |
+| `height`              | integer | 이미지 실제 세로                                     |
+| `status`              | string  | `pending`, `uploaded`, `mapped`, `failed`, `skipped` |
+| `notes`               | string  | 실패 사유 또는 예외 메모                             |
 
 ## Validation Rules
 
@@ -31,7 +31,8 @@ Supabase 미디어 URL을 R2 키로 이전하고, 본문 이미지 치환 및 �
 - `target_r2_key`는 월 단위 디렉터리와 slug 기반 경로를 따른다.
 - `r2_url`은 공개 모드 또는 서명 URL 정책을 준수해야 한다.
 - `kind`는 허용 enum만 허용하고 기본값은 `body`이다.
-- 상태 전이는 `pending -> uploaded -> mapped` 또는 `pending -> failed`, `uploaded -> mapped`로만 허용한다.
+- 상태 전이는 `pending -> uploaded -> mapped` 또는 `pending -> failed`, `uploaded -> mapped`로만
+  허용한다.
 
 ## Migration Procedure
 
@@ -46,4 +47,3 @@ Supabase 미디어 URL을 R2 키로 이전하고, 본문 이미지 치환 및 �
 - 업로드/치환 실패는 동일 run에서 최대 지정 횟수만큼 재시도한다.
 - `failed` 상태는 보고서에 남고, 다음 run에서 재수집 대상이 된다.
 - 재시도 불가 항목은 수동 검증 대상으로 분리한다.
-

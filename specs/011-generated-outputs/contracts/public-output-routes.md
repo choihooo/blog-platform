@@ -72,8 +72,8 @@
 
 **Expected Behavior**:
 
-- published 글 상세는 canonical, Open Graph, Twitter metadata, `BlogPosting`, `BreadcrumbList` JSON-LD를
-  제공한다.
+- published 글 상세는 canonical, Open Graph, Twitter metadata, `BlogPosting`, `BreadcrumbList`
+  JSON-LD를 제공한다.
 - draft 또는 archived slug는 404이며 metadata/JSON-LD를 제공하지 않는다.
 - 글 상세에는 TOC와 reading time이 표시된다.
 - TOC link는 실제 heading anchor와 일치한다.
@@ -82,6 +82,6 @@
 
 - route tests는 published/draft/archived fixture를 모두 포함해야 한다.
 - RSS/Sitemap/robots response는 content type과 핵심 body line을 검증해야 한다.
-- OG image route는 존재하는 published slug, 긴 제목 slug, 대표 이미지 없는 slug, draft slug를 검증해야
-  한다.
+- OG image route는 존재하는 published slug, 긴 제목 slug, 대표 이미지 없는 slug, draft slug를
+  검증해야 한다.
 - 글 상세 rendering test는 metadata/JSON-LD presence와 TOC/reading time 표시를 검증해야 한다.

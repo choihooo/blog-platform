@@ -1,6 +1,7 @@
 # Contract: Analytics Provider Normalization
 
-GA4와 Google Search Console 원본 조회 결과를 CMS dashboard view model로 정규화하기 위한 provider 계약이다.
+GA4와 Google Search Console 원본 조회 결과를 CMS dashboard view model로 정규화하기 위한 provider
+계약이다.
 
 ## Provider Input
 
@@ -60,10 +61,10 @@ type AnalyticsProviderResult =
 
 ## Error Mapping
 
-| Source Condition | Provider Code | Retryable |
-| ---------------- | ------------- | --------- |
-| 필수 property 또는 credential 없음 | `missing-config` | false |
-| 권한 부족, property 접근 거부 | `unauthorized` | false |
-| quota 초과 또는 rate limit | `quota-limited` | true |
-| 네트워크 오류, upstream 5xx | `temporary-failure` | true |
-| 예상하지 못한 응답 형식 | `unknown` | false |
+| Source Condition                   | Provider Code       | Retryable |
+| ---------------------------------- | ------------------- | --------- |
+| 필수 property 또는 credential 없음 | `missing-config`    | false     |
+| 권한 부족, property 접근 거부      | `unauthorized`      | false     |
+| quota 초과 또는 rate limit         | `quota-limited`     | true      |
+| 네트워크 오류, upstream 5xx        | `temporary-failure` | true      |
+| 예상하지 못한 응답 형식            | `unknown`           | false     |
