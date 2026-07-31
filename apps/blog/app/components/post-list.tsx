@@ -40,14 +40,31 @@ function PostTaxonomy({ post }: { post: PublicPost }) {
   );
 }
 
-function Cover({ post, size }: { post: PublicPost; size: "tile" | "list" }) {
+function Cover({
+  post,
+  priority,
+  size,
+}: {
+  post: PublicPost;
+  priority?: boolean;
+  size: "tile" | "list";
+}) {
   const className =
     size === "tile"
       ? "aspect-[1.92/1] w-full object-cover"
       : "aspect-[1.45/1] w-full rounded-md object-cover";
 
   if (post.coverImage) {
-    return <img alt={`${post.title} cover`} className={className} src={post.coverImage} />;
+    return (
+      <img
+        alt={`${post.title} cover`}
+        className={className}
+        decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
+        loading={priority ? "eager" : "lazy"}
+        src={post.coverImage}
+      />
+    );
   }
 
   return (
@@ -59,11 +76,11 @@ function Cover({ post, size }: { post: PublicPost; size: "tile" | "list" }) {
   );
 }
 
-function PostTile({ post }: { post: PublicPost }) {
+function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) {
   return (
     <Card className="flex h-full flex-col overflow-hidden border-0 bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
       <Link className="block flex-1" href={`/posts/${post.slug}`}>
-        <Cover post={post} size="tile" />
+        <Cover post={post} priority={priority} size="tile" />
         <CardContent className="grid gap-4 p-5">
           <PostMeta post={post} />
           <div>
@@ -83,12 +100,12 @@ function PostTile({ post }: { post: PublicPost }) {
   );
 }
 
-function PostListItem({ post }: { post: PublicPost }) {
+function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean }) {
   return (
     <article className="border-b border-border py-6 last:border-b-0">
       <div className="grid gap-5 sm:grid-cols-[11rem_minmax(0,1fr)]">
         <Link href={`/posts/${post.slug}`}>
-          <Cover post={post} size="list" />
+          <Cover post={post} priority={priority} size="list" />
         </Link>
         <div className="min-w-0">
           <PostMeta post={post} />
@@ -123,8 +140,8 @@ export function PostList({ posts, view = "list" }: PostListProps) {
   if (view === "tile") {
     return (
       <div className="grid gap-6 sm:grid-cols-2">
-        {posts.map((post) => (
-          <PostTile key={post.path} post={post} />
+        {posts.map((post, index) => (
+          <PostTile key={post.path} post={post} priority={index === 0} />
         ))}
       </div>
     );
@@ -132,8 +149,8 @@ export function PostList({ posts, view = "list" }: PostListProps) {
 
   return (
     <div className="bg-card shadow-sm">
-      {posts.map((post) => (
-        <PostListItem key={post.path} post={post} />
+      {posts.map((post, index) => (
+        <PostListItem key={post.path} post={post} priority={index === 0} />
       ))}
     </div>
   );

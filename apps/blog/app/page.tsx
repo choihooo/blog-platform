@@ -4,7 +4,7 @@ import { paginateItems, parsePageParam, PostPagination } from "./components/post
 import { PostList } from "./components/post-list";
 import { getPublishedPosts, listCategories, searchPosts } from "../lib/content-source";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 type BlogHomePageProps = {
   searchParams?: Promise<{
@@ -36,12 +36,13 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
   const view = firstParam(resolvedSearchParams.view) === "list" ? "list" : "tile";
   const requestedPage = parsePageParam(resolvedSearchParams.page);
-  const [sourcePosts, allPosts, parentCategories, childCategories] = await Promise.all([
-    query ? searchPosts({ query, limit: 100 }) : getPublishedPosts({ limit: 100 }),
-    getPublishedPosts({ limit: 100 }),
+  const [allPosts, searchedPosts, parentCategories, childCategories] = await Promise.all([
+    getPublishedPosts({ limit: 100, analyzeBody: false }),
+    query ? searchPosts({ query, limit: 100 }) : Promise.resolve(null),
     listCategories({ depth: 1 }),
     listCategories({ depth: 2 }),
   ]);
+  const sourcePosts = searchedPosts ?? allPosts;
   const posts = activeCategory
     ? sourcePosts.filter(
         (post) =>

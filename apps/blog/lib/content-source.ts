@@ -356,7 +356,7 @@ export async function getPostBySlug(
 }
 
 export async function getRecommendedPosts(post: PublicPost, limit = 3): Promise<PublicPost[]> {
-  const posts = await getPublishedPosts({ limit: 100 });
+  const posts = await getPublishedPosts({ analyzeBody: false, limit: 100 });
   const currentTags = new Set(post.tags ?? []);
 
   return posts

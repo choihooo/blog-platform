@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import type { ReactNode } from "react";
+import type { ImgHTMLAttributes, ReactNode } from "react";
 import { Badge, Card, CardContent } from "@blog-platform/design-system";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 import rehypeSlug from "rehype-slug";
@@ -19,7 +19,7 @@ import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 import { RecommendedPosts } from "../../components/recommended-posts";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 900;
 
 type PostPageProps = {
   params: Promise<{
@@ -33,6 +33,10 @@ function Callout({ children }: { children: ReactNode }) {
       {children}
     </aside>
   );
+}
+
+function MdxImage(props: ImgHTMLAttributes<HTMLImageElement>) {
+  return <img {...props} decoding={props.decoding ?? "async"} loading={props.loading ?? "lazy"} />;
 }
 
 export async function generateStaticParams() {
@@ -89,6 +93,9 @@ export default async function PostPage({ params }: PostPageProps) {
               <img
                 alt=""
                 className="aspect-[16/9] w-full object-cover"
+                decoding="async"
+                fetchPriority="high"
+                loading="eager"
                 src={post.coverImage}
               />
             ) : null}
@@ -120,7 +127,7 @@ export default async function PostPage({ params }: PostPageProps) {
           >
             <MDXRemote
               source={post.body}
-              components={{ Callout }}
+              components={{ Callout, img: MdxImage }}
               options={{
                 mdxOptions: {
                   rehypePlugins: [rehypeSlug],
