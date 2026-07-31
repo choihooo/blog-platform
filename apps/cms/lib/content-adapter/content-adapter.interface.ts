@@ -86,6 +86,9 @@ export type ContentListInput = {
   tagSlug?: string;
   categoryPath?: string;
   query?: string;
+  includeTotal?: boolean;
+  includeTags?: boolean;
+  includeMedia?: boolean;
 };
 
 export type CategoryListInput = {

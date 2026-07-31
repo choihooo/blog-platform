@@ -37,6 +37,10 @@ export type ContentListInput = {
   tagSlug?: string;
   categoryPath?: string;
   query?: string;
+  includeTotal?: boolean;
+  includeTags?: boolean;
+  includeMedia?: boolean;
+  analyzeBody?: boolean;
 };
 
 export type CategoryHierarchy = Category & {
@@ -94,21 +98,24 @@ function labelFromSlug(slug: string) {
 
 function toPublicSourcePost(
   post: PostRecordWithTags,
-  options?: { tagSlugs?: string[] },
+  options?: { tagSlugs?: string[]; analyzeBody?: boolean },
 ): PublicPost {
   const normalizedSlug = post.slug.trim().toLowerCase();
   const categoryPath = post.categoryPath ?? null;
   const requestedTags = normalizeTagInput(post.tags ?? options?.tagSlugs);
   const isPublished = post.isPublished === 1;
   const fallbackBody = post.content ?? "";
-  const analysis = analyzeMdx({ path: `db/posts/${normalizedSlug}.md`, source: fallbackBody });
-  const toc = analysis.success && analysis.data ? analysis.data.toc : [];
+  const shouldAnalyzeBody = options?.analyzeBody ?? true;
+  const analysis = shouldAnalyzeBody
+    ? analyzeMdx({ path: `db/posts/${normalizedSlug}.md`, source: fallbackBody })
+    : undefined;
+  const toc = analysis?.success && analysis.data ? analysis.data.toc : [];
   const readingTimeLabel =
-    analysis.success && analysis.data
+    analysis?.success && analysis.data
       ? analysis.data.readingTime.label
       : `${Math.max(1, Math.ceil(fallbackBody.length / 1000))} min read`;
   const finalBody =
-    analysis.success && analysis.data
+    analysis?.success && analysis.data
       ? analysis.data.body
       : fallbackBody
         ? fallbackBody
@@ -211,10 +218,15 @@ function createD1R2Source(): BlogContentSource {
       tagSlug: input.tagSlug,
       categoryPath: input.categoryPath,
       query: input.query,
+      includeTotal: input.includeTotal,
+      includeTags: input.includeTags,
+      includeMedia: input.includeMedia,
     });
     if (!result.ok) return [];
 
-    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
+    return Promise.all(
+      result.data.items.map((post) => toPublicSourcePost(post, { analyzeBody: input.analyzeBody })),
+    );
   }
 
   async function getPostsByTagFromD1(input: {
@@ -327,6 +339,8 @@ export async function searchPosts(input: {
     limit: input.limit,
     categoryPath: input.categoryPath,
     query: input.query,
+    includeTotal: false,
+    analyzeBody: false,
   });
 }
 

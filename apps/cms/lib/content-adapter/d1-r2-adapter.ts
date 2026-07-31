@@ -391,6 +391,9 @@ function normalizeListInput(input: ContentListInput) {
     tagSlug: input.tagSlug ? normalizeSlug(input.tagSlug) : undefined,
     categoryPath: input.categoryPath ? normalizeCategorySlug(input.categoryPath) : undefined,
     query: normalizeSearchQuery(input.query),
+    includeTotal: input.includeTotal ?? true,
+    includeTags: input.includeTags ?? true,
+    includeMedia: input.includeMedia ?? true,
   };
 }
 
@@ -466,15 +469,16 @@ async function runD1Posts(binding: D1Database, input: ReturnType<typeof normaliz
     binding.prepare(dataSql),
     limit ? [...params, limit, offset] : params,
   );
-  const total = await queryPostTotal(binding, input);
-  const tagMap = await loadPostTags(
-    binding,
-    rows.results.map((row) => row.id),
-  );
-  const mediaMap = await loadMediaRefs(
-    binding,
-    rows.results.map((row) => row.id),
-  );
+  const postIds = rows.results.map((row) => row.id);
+  const [total, tagMap, mediaMap] = await Promise.all([
+    input.includeTotal ? queryPostTotal(binding, input) : Promise.resolve(rows.results.length),
+    input.includeTags
+      ? loadPostTags(binding, postIds)
+      : Promise.resolve(new Map<string, string[]>()),
+    input.includeMedia
+      ? loadMediaRefs(binding, postIds)
+      : Promise.resolve(new Map<string, MediaReference[]>()),
+  ]);
 
   return {
     posts: rows.results.map((row) => ({
