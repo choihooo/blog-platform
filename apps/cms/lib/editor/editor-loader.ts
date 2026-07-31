@@ -44,7 +44,7 @@ export type EditorSiteAnalyticsConfig = {
 
 export type EditorCategoryOption = {
   slug: string;
-  label: string;
+  name: string;
   depth: 1 | 2;
   parentSlug?: string | null;
 };
@@ -199,7 +199,7 @@ export async function loadEditorCategories(): Promise<EditorCategoryOption[]> {
   return categories
     .map((category) => ({
       slug: category.slug,
-      label: category.name,
+      name: category.name,
       depth: category.depth,
       parentSlug: category.parentSlug ?? undefined,
     }))

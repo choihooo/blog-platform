@@ -20,7 +20,7 @@ describe("SettingsPageView", () => {
           categories: [
             {
               id: "cat_engineering",
-              name: "개발",
+              name: "Engineering",
               slug: "engineering",
               parentId: null,
               parentSlug: null,

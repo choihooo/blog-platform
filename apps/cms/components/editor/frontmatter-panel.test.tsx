@@ -33,8 +33,8 @@ describe("FrontmatterPanel media upload", () => {
     render(
       <FrontmatterPanel
         categories={[
-          { slug: "engineering", label: "개발", depth: 1 },
-          { slug: "engineering/fe", label: "FE", depth: 2, parentSlug: "engineering" },
+          { slug: "engineering", name: "Engineering", depth: 1 },
+          { slug: "engineering/fe", name: "FE", depth: 2, parentSlug: "engineering" },
         ]}
         frontmatter={{
           title: "Hello",

@@ -130,7 +130,7 @@ function slugForTag(name: string) {
 function categoryFor(label: string | undefined) {
   const normalized = (label ?? "Tistory").trim();
   const table: Record<string, { name: string; slug: string }> = {
-    개발: { name: "개발", slug: "engineering" },
+    개발: { name: "Engineering", slug: "engineering" },
     "개발/FE": { name: "FE", slug: "engineering/fe" },
     "개발/AI": { name: "AI", slug: "engineering/ai" },
     "개발/CS": { name: "CS", slug: "engineering/cs" },

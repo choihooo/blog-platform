@@ -17,7 +17,7 @@ type Props = {
 
 export type CategoryOption = {
   slug: string;
-  label: string;
+  name: string;
   depth: 1 | 2;
   parentSlug?: string | null;
 };
@@ -130,7 +130,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
           <option value="">카테고리 없음</option>
           {parentCategories.map((category) => (
             <option key={category.slug} value={category.slug}>
-              {category.label}
+              {category.name}
             </option>
           ))}
         </select>
@@ -149,7 +149,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
           <option value="">선택 안 함</option>
           {selectedChildOptions.map((category) => (
             <option key={category.slug} value={category.slug}>
-              {category.label}
+              {category.name}
             </option>
           ))}
         </select>
