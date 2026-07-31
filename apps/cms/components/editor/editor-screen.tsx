@@ -6,7 +6,15 @@ import Link from "@tiptap/extension-link";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
 import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
-import { Button, Card, CardContent, Input } from "@blog-platform/design-system";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  Input,
+} from "@blog-platform/design-system";
 
 import {
   archivePostAction,
@@ -217,6 +225,8 @@ export function EditorScreen({
   const [message, setMessage] = useState<string>();
   const [retryToken, setRetryToken] = useState<PublicRefreshRetryToken>();
   const [selectedImage, setSelectedImage] = useState<SelectedImageState>();
+  const selectedImagePosRef = useRef<number | undefined>(undefined);
+  const [imageAttributesOpen, setImageAttributesOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function syncSelectedImage(editorInstance: NonNullable<ReturnType<typeof useEditor>>) {
@@ -230,9 +240,15 @@ export function EditorScreen({
 
     if (!selectedNode || typeof selectedNode.node.attrs.src !== "string") {
       setSelectedImage(undefined);
+      selectedImagePosRef.current = undefined;
+      setImageAttributesOpen(false);
       return;
     }
 
+    if (selectedImagePosRef.current !== selectedNode.pos) {
+      setImageAttributesOpen(true);
+    }
+    selectedImagePosRef.current = selectedNode.pos;
     setSelectedImage({
       pos: selectedNode.pos,
       src: selectedNode.node.attrs.src,
@@ -278,7 +294,13 @@ export function EditorScreen({
   }, [document]);
 
   const previewDocument = useMemo(() => ({ ...document, body }), [body, document]);
-  const seoReport = useMemo(() => seoReportForEditorDocument(previewDocument), [previewDocument]);
+  const seoReport = useMemo(
+    () =>
+      seoReportForEditorDocument(previewDocument, {
+        siteUrl: siteAnalytics?.siteUrl,
+      }),
+    [previewDocument, siteAnalytics?.siteUrl],
+  );
   const analyticsLinks = useMemo(
     () => analyticsLinksForEditorDocument(previewDocument, siteAnalytics),
     [previewDocument, siteAnalytics],
@@ -517,6 +539,7 @@ export function EditorScreen({
     setSelectedImage(nextImage);
     const nextBody = tiptapToNodes(editor.getJSON());
     markDirty(documentRef.current, nextBody);
+    setImageAttributesOpen(false);
   }
 
   return (
@@ -565,55 +588,82 @@ export function EditorScreen({
             onChange={(frontmatter) => markDirty({ ...document, frontmatter })}
             postSlug={slugCandidate(document)}
           />
-          <Card className="m-4">
-            <CardContent className="space-y-3 p-4 text-sm">
-              <div>
-                <h3 className="font-semibold">Image attributes</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {selectedImage ? "Selected body image" : "Select a body image to edit alt text."}
-                </p>
-              </div>
-              <Input
-                aria-label="Selected image alt text"
-                disabled={!selectedImage}
-                onChange={(event) =>
-                  setSelectedImage((current) =>
-                    current ? { ...current, alt: event.currentTarget.value } : current,
-                  )
-                }
-                placeholder="Alt text"
-                value={selectedImage?.alt ?? ""}
-              />
-              <Input
-                aria-label="Selected image title"
-                disabled={!selectedImage}
-                onChange={(event) =>
-                  setSelectedImage((current) =>
-                    current ? { ...current, title: event.currentTarget.value } : current,
-                  )
-                }
-                placeholder="Title"
-                value={selectedImage?.title ?? ""}
-              />
-              <Button
-                className="w-full"
-                disabled={!selectedImage}
-                onClick={() =>
-                  applySelectedImageAttributes({
-                    alt: selectedImage?.alt,
-                    title: selectedImage?.title,
-                  })
-                }
-                type="button"
-                variant="secondary"
-              >
-                Apply image text
-              </Button>
-            </CardContent>
-          </Card>
           <SeoPanel links={analyticsLinks} report={seoReport} />
         </aside>
       </div>
+      <Dialog open={imageAttributesOpen} onOpenChange={setImageAttributesOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Image attributes</DialogTitle>
+            <DialogDescription>Set alt text and title for the selected body image.</DialogDescription>
+          </DialogHeader>
+          {selectedImage ? (
+            <div className="space-y-4">
+              <img
+                alt={selectedImage.alt || "Selected body image"}
+                className="aspect-video w-full rounded-md border border-border object-contain"
+                src={selectedImage.src}
+              />
+              <div className="space-y-2">
+                <label
+                  className="text-xs font-medium text-muted-foreground"
+                  htmlFor="selected-image-alt"
+                >
+                  Alt text
+                </label>
+                <Input
+                  id="selected-image-alt"
+                  onChange={(event) =>
+                    setSelectedImage((current) =>
+                      current ? { ...current, alt: event.currentTarget.value } : current,
+                    )
+                  }
+                  placeholder="Describe the image"
+                  value={selectedImage.alt}
+                />
+              </div>
+              <div className="space-y-2">
+                <label
+                  className="text-xs font-medium text-muted-foreground"
+                  htmlFor="selected-image-title"
+                >
+                  Title
+                </label>
+                <Input
+                  id="selected-image-title"
+                  onChange={(event) =>
+                    setSelectedImage((current) =>
+                      current ? { ...current, title: event.currentTarget.value } : current,
+                    )
+                  }
+                  placeholder="Optional title"
+                  value={selectedImage.title}
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  onClick={() => setImageAttributesOpen(false)}
+                  type="button"
+                  variant="outline"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() =>
+                    applySelectedImageAttributes({
+                      alt: selectedImage.alt,
+                      title: selectedImage.title,
+                    })
+                  }
+                  type="button"
+                >
+                  Apply
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

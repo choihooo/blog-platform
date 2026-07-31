@@ -27,4 +27,12 @@ describe("seoReportForEditorDocument", () => {
     ];
     expect(seoReportForEditorDocument(doc).score).toBeGreaterThanOrEqual(70);
   });
+
+  it("uses the configured site URL in search preview", () => {
+    const doc = createEmptyEditorDocument(new Date("2026-07-30"));
+    doc.frontmatter.title = "Configured URL";
+    doc.frontmatter.slug = "configured-url";
+    const report = seoReportForEditorDocument(doc, { siteUrl: "https://example.com" });
+    expect(report.searchPreview.url).toBe("https://example.com/posts/configured-url");
+  });
 });

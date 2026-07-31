@@ -2,9 +2,21 @@ import { editorDocumentToMdx, type EditorDocument } from "@blog-platform/editor"
 import { analyzeMdx } from "@blog-platform/markdown";
 import { createSeoSubject, evaluateSeo, type SeoReport } from "@blog-platform/seo-engine";
 
-const site = { siteName: "Ho's Blog", siteUrl: "http://localhost:3000" };
+type EditorSeoSite = {
+  siteName?: string;
+  siteUrl?: string;
+};
 
-export function seoReportForEditorDocument(document: EditorDocument): SeoReport {
+const fallbackSite = { siteName: "Ho's Blog", siteUrl: "https://blog.hozorica.com" };
+
+export function seoReportForEditorDocument(
+  document: EditorDocument,
+  siteConfig: EditorSeoSite = {},
+): SeoReport {
+  const site = {
+    siteName: siteConfig.siteName?.trim() || fallbackSite.siteName,
+    siteUrl: siteConfig.siteUrl?.trim() || fallbackSite.siteUrl,
+  };
   const serialized = editorDocumentToMdx(document);
   const body = serialized.ok
     ? serialized.body

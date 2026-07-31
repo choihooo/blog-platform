@@ -21,7 +21,10 @@ describe("FrontmatterPanel media upload", () => {
         postSlug="hello"
       />,
     );
-    expect(screen.getByText("/media/covers/hello-a.webp")).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Hello cover" })).toHaveProperty(
+      "src",
+      expect.stringContaining("/media/covers/hello-a.webp"),
+    );
     expect(screen.getByRole("button", { name: "Upload cover" })).toBeTruthy();
   });
 

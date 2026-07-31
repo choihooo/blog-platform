@@ -172,7 +172,17 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         </div>
         <div>
           <dt className="text-muted-foreground">Cover</dt>
-          <dd>{frontmatter.coverImage ?? "none"}</dd>
+          <dd className="mt-2">
+            {frontmatter.coverImage ? (
+              <img
+                alt={`${frontmatter.title || "Post"} cover`}
+                className="aspect-video w-full rounded-md border border-border object-cover"
+                src={frontmatter.coverImage}
+              />
+            ) : (
+              <span>none</span>
+            )}
+          </dd>
         </div>
       </dl>
       <div className="space-y-2">
