@@ -595,7 +595,9 @@ export function EditorScreen({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Image attributes</DialogTitle>
-            <DialogDescription>Set alt text and title for the selected body image.</DialogDescription>
+            <DialogDescription>
+              Set alt text and title for the selected body image.
+            </DialogDescription>
           </DialogHeader>
           {selectedImage ? (
             <div className="space-y-4">

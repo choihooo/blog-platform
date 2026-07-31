@@ -8,8 +8,6 @@ describe("post date formatting", () => {
   });
 
   it("formats detail dates with local time", () => {
-    expect(formatPostDateTime("2026-07-27T15:55:39+09:00")).toBe(
-      "2026. 7. 27. 오후 3:55",
-    );
+    expect(formatPostDateTime("2026-07-27T15:55:39+09:00")).toBe("2026. 7. 27. 오후 3:55");
   });
 });
