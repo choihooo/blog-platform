@@ -19,6 +19,8 @@ describe("PostsPageView", () => {
       title: `Post ${index}`,
       status: "published",
       sha: `sha-${index}`,
+      publishedAt: `2026-07-${String(index).padStart(2, "0")}T00:00:00.000Z`,
+      updatedAt: `2026-08-${String(index).padStart(2, "0")}T00:00:00.000Z`,
     };
   }
 
@@ -33,6 +35,8 @@ describe("PostsPageView", () => {
             title: "Hello World",
             status: "published",
             sha: "sha",
+            publishedAt: "2026-07-31T00:00:00.000Z",
+            updatedAt: "2026-08-01T00:00:00.000Z",
           },
         ],
       }),
@@ -40,8 +44,11 @@ describe("PostsPageView", () => {
     expect(screen.getByRole("heading", { level: 2, name: "모든 글" })).toBeTruthy();
     expect(screen.getByRole("columnheader", { name: "제목" })).toBeTruthy();
     expect(screen.getByRole("columnheader", { name: "상태" })).toBeTruthy();
+    expect(screen.getByRole("columnheader", { name: "발행일" })).toBeTruthy();
+    expect(screen.getByRole("columnheader", { name: "수정일" })).toBeTruthy();
     expect(screen.getByRole("columnheader", { name: "경로" })).toBeTruthy();
     expect(screen.getByRole("columnheader", { name: "바로가기" })).toBeTruthy();
+    expect(screen.getByLabelText("Sort posts")).toBeTruthy();
     const postLinks = screen.getAllByRole("link", { name: /Hello World/ });
     expect(postLinks[0]).toBeTruthy();
     expect(postLinks[0]?.getAttribute("href")).toBe("/posts/hello-world");
@@ -63,6 +70,8 @@ describe("PostsPageView", () => {
             title: "검증 가능한 AI UI 설계하기",
             status: "published",
             sha: "sha",
+            publishedAt: "2026-07-31T00:00:00.000Z",
+            updatedAt: "2026-08-01T00:00:00.000Z",
           },
         ],
       }),
@@ -70,6 +79,7 @@ describe("PostsPageView", () => {
 
     expect(screen.getAllByLabelText("Search posts").at(-1)).toBeTruthy();
     expect(screen.getByDisplayValue("AI")).toBeTruthy();
+    expect(screen.getAllByDisplayValue("최신순").at(-1)).toBeTruthy();
     expect(screen.getByText('"AI" 검색 결과 1개')).toBeTruthy();
     expect(screen.getByRole("link", { name: "초기화" }).getAttribute("href")).toBe("/posts");
   });
@@ -91,6 +101,27 @@ describe("PostsPageView", () => {
       "/posts?page=3",
     );
     expect(screen.getAllByRole("link", { name: /^Post \d+$/ })).toHaveLength(10);
+  });
+
+  it("keeps updated sort in pagination links", () => {
+    render(
+      createElement(PostsPageView, {
+        decision,
+        posts: Array.from({ length: 10 }, (_, index) => postSummary(index + 1)),
+        currentPage: 2,
+        totalPages: 3,
+        totalCount: 25,
+        sort: "updated",
+      }),
+    );
+
+    expect(screen.getAllByDisplayValue("최근 수정순").at(-1)).toBeTruthy();
+    expect(screen.getAllByRole("link", { name: "이전" }).at(-1)?.getAttribute("href")).toBe(
+      "/posts?sort=updated",
+    );
+    expect(screen.getAllByRole("link", { name: "다음" }).at(-1)?.getAttribute("href")).toBe(
+      "/posts?sort=updated&page=3",
+    );
   });
 
   it("renders empty state message when no posts exist", () => {

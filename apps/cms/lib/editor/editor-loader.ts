@@ -19,6 +19,8 @@ export type PostSummary = {
   title: string;
   status: string;
   sha: string;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
 };
 
 export type EditorLoadResult =
@@ -48,6 +50,7 @@ export type EditorCategoryOption = {
 
 export type ListPostSummariesOptions = {
   query?: string;
+  sort?: "published" | "updated";
 };
 
 function slugFromPath(path: string) {
@@ -62,8 +65,30 @@ function statusFromSource(source: string) {
   return /^status:\s*"?([^"\n]+)"?/m.exec(source)?.[1]?.trim() ?? "draft";
 }
 
+function dateFromSource(source: string, field: "publishedAt" | "updatedAt") {
+  return new RegExp(`^${field}:\\s*"?([^"\\n]+)"?`, "m").exec(source)?.[1]?.trim() ?? null;
+}
+
 function normalizeSearchQuery(query?: string) {
   return query?.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function timestamp(value?: string | null) {
+  if (!value) return 0;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) ? time : 0;
+}
+
+function sortPostSummaries(posts: PostSummary[], sort: ListPostSummariesOptions["sort"]) {
+  const primaryField = sort === "updated" ? "updatedAt" : "publishedAt";
+  const secondaryField = sort === "updated" ? "publishedAt" : "updatedAt";
+  return [...posts].sort((left, right) => {
+    const primary = timestamp(right[primaryField]) - timestamp(left[primaryField]);
+    if (primary !== 0) return primary;
+    const secondary = timestamp(right[secondaryField]) - timestamp(left[secondaryField]);
+    if (secondary !== 0) return secondary;
+    return left.slug.localeCompare(right.slug);
+  });
 }
 
 function matchesSearchQuery(input: {
@@ -87,6 +112,7 @@ export async function listPostSummaries(
 ) {
   const contentAdapter = adapter ?? (await createRuntimeContentAdapter(repositoryRoot()));
   const query = normalizeSearchQuery(options.query);
+  const sort = options.sort === "updated" ? "updated" : "published";
   const listed = await contentAdapter.listFiles({ root: "posts" });
   if (!listed.success) return [];
   const posts = await Promise.all(
@@ -98,6 +124,8 @@ export async function listPostSummaries(
         const slug = slugFromPath(file.path);
         const title = titleFromSource(read.data.file.content, slug);
         const status = statusFromSource(read.data.file.content);
+        const publishedAt = dateFromSource(read.data.file.content, "publishedAt");
+        const updatedAt = dateFromSource(read.data.file.content, "updatedAt");
         if (
           !matchesSearchQuery({
             query,
@@ -116,10 +144,13 @@ export async function listPostSummaries(
           title,
           status,
           sha: read.data.file.sha,
+          publishedAt,
+          updatedAt,
         };
       }),
   );
-  return posts.filter((post): post is PostSummary => post !== null);
+  const summaries = posts.filter((post): post is NonNullable<typeof post> => post !== null);
+  return sortPostSummaries(summaries, sort);
 }
 
 export function createNewEditorDocument(now = new Date()) {

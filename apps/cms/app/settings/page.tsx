@@ -175,10 +175,6 @@ export default function SettingsPage() {
       for (const post of posts.data.items) {
         if (!post.categoryPath) continue;
         categoryCounts.set(post.categoryPath, (categoryCounts.get(post.categoryPath) ?? 0) + 1);
-        const parentSlug = post.categoryPath.split("/")[0];
-        if (parentSlug) {
-          categoryCounts.set(parentSlug, (categoryCounts.get(parentSlug) ?? 0) + 1);
-        }
       }
     }
     const categories = [

@@ -18,6 +18,7 @@ import { listPostSummaries, type PostSummary } from "../../lib/editor/editor-loa
 type PostsPageSearchParams = {
   q?: string | string[];
   page?: string | string[];
+  sort?: string | string[];
 };
 
 function firstParam(value: string | string[] | undefined) {
@@ -30,6 +31,20 @@ function parsePage(value: string | undefined) {
   const page = Number(value);
   if (!Number.isFinite(page) || page < 1) return 1;
   return Math.floor(page);
+}
+
+function parseSort(value: string | undefined): "published" | "updated" {
+  return value === "updated" ? "updated" : "published";
+}
+
+function formatDate(value?: string | null) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "-";
+  return new Intl.DateTimeFormat("ko-KR", {
+    dateStyle: "medium",
+    timeZone: "Asia/Seoul",
+  }).format(date);
 }
 
 function paginatePosts(posts: PostSummary[], page: number) {
@@ -45,9 +60,10 @@ function paginatePosts(posts: PostSummary[], page: number) {
   };
 }
 
-function postsHref(params: { query?: string; page?: number }) {
+function postsHref(params: { query?: string; page?: number; sort?: "published" | "updated" }) {
   const search = new URLSearchParams();
   if (params.query) search.set("q", params.query);
+  if (params.sort === "updated") search.set("sort", params.sort);
   if (params.page && params.page > 1) search.set("page", String(params.page));
   const query = search.toString();
   return query ? `/posts?${query}` : "/posts";
@@ -60,6 +76,7 @@ export function PostsPageView({
   currentPage = 1,
   totalPages = 1,
   totalCount = posts.length,
+  sort = "published",
 }: {
   decision: AccessDecision;
   posts?: PostSummary[];
@@ -67,6 +84,7 @@ export function PostsPageView({
   currentPage?: number;
   totalPages?: number;
   totalCount?: number;
+  sort?: "published" | "updated";
 }) {
   if (decision.status !== "authorized") {
     return <AccessState decision={decision} />;
@@ -95,7 +113,7 @@ export function PostsPageView({
             <Plus aria-hidden="true" size={16} />새 초안
           </a>
         </div>
-        <form action="/posts" className="flex max-w-2xl gap-2">
+        <form action="/posts" className="flex max-w-3xl flex-wrap gap-2">
           <Input
             aria-label="Search posts"
             className="h-10"
@@ -104,6 +122,15 @@ export function PostsPageView({
             placeholder="제목, slug, 상태, 본문 검색"
             type="search"
           />
+          <select
+            aria-label="Sort posts"
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            defaultValue={sort}
+            name="sort"
+          >
+            <option value="published">최신순</option>
+            <option value="updated">최근 수정순</option>
+          </select>
           <Button type="submit" variant="secondary">
             검색
           </Button>
@@ -120,6 +147,8 @@ export function PostsPageView({
                 <TableRow>
                   <TableHead className="min-w-[16rem] whitespace-nowrap">제목</TableHead>
                   <TableHead className="whitespace-nowrap">상태</TableHead>
+                  <TableHead className="whitespace-nowrap">발행일</TableHead>
+                  <TableHead className="whitespace-nowrap">수정일</TableHead>
                   <TableHead className="whitespace-nowrap">경로</TableHead>
                   <TableHead className="whitespace-nowrap">바로가기</TableHead>
                 </TableRow>
@@ -137,6 +166,12 @@ export function PostsPageView({
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{post.status}</Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDate(post.publishedAt)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDate(post.updatedAt)}
                     </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {post.path}
@@ -177,7 +212,7 @@ export function PostsPageView({
             <div className="flex items-center gap-2">
               {hasPreviousPage ? (
                 <Button asChild variant="secondary">
-                  <a href={postsHref({ query, page: currentPage - 1 })}>이전</a>
+                  <a href={postsHref({ query, page: currentPage - 1, sort })}>이전</a>
                 </Button>
               ) : (
                 <Button disabled variant="secondary">
@@ -186,7 +221,7 @@ export function PostsPageView({
               )}
               {hasNextPage ? (
                 <Button asChild variant="secondary">
-                  <a href={postsHref({ query, page: currentPage + 1 })}>다음</a>
+                  <a href={postsHref({ query, page: currentPage + 1, sort })}>다음</a>
                 </Button>
               ) : (
                 <Button disabled variant="secondary">
@@ -209,9 +244,10 @@ export default async function PostsPage({
   const resolvedSearchParams = await (searchParams ?? Promise.resolve({} as PostsPageSearchParams));
   const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
   const requestedPage = parsePage(firstParam(resolvedSearchParams.page));
+  const sort = parseSort(firstParam(resolvedSearchParams.sort));
   const [decision, posts] = await Promise.all([
     requireCmsAccess(),
-    listPostSummaries(undefined, { query }),
+    listPostSummaries(undefined, { query, sort }),
   ]);
   const pagination = paginatePosts(posts, requestedPage);
 
@@ -221,6 +257,7 @@ export default async function PostsPage({
       decision={decision}
       posts={pagination.posts}
       query={query}
+      sort={sort}
       totalCount={pagination.totalCount}
       totalPages={pagination.totalPages}
     />
