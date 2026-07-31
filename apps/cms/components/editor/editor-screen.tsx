@@ -221,7 +221,7 @@ export function EditorScreen({
       attributes: {
         "aria-label": "Post body",
         class:
-          "min-h-[420px] px-4 py-3 text-sm leading-6 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "cms-editor-body min-h-[420px] px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-ring",
         role: "textbox",
       },
       handlePaste: (_view, event) => {
@@ -399,9 +399,34 @@ export function EditorScreen({
           setMessage(result.message);
           return;
         }
+        const updatedAt = result.updatedAt ?? new Date().toISOString();
+        const saved = {
+          ...submitted,
+          path: result.path,
+          sourceSha: result.sha,
+          frontmatter: {
+            ...submitted.frontmatter,
+            slug: result.slug,
+            updatedAt,
+          },
+          dirty: false,
+          lastSavedAt: updatedAt,
+        };
+        documentRef.current = saved;
+        setDocument(saved);
+        setBody(saved.body);
+        if (
+          typeof window !== "undefined" &&
+          typeof window.localStorage?.removeItem === "function"
+        ) {
+          clearBackup(window.localStorage, saved);
+        }
         setStatus("saved");
         setMessage(undefined);
-        window.open(result.url, "_blank", "noopener,noreferrer");
+        const previewUrl = siteAnalytics?.siteUrl
+          ? new URL(result.url, siteAnalytics.siteUrl).toString()
+          : result.url;
+        window.open(previewUrl, "_blank", "noopener,noreferrer");
       });
     });
   }

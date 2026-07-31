@@ -1,20 +1,13 @@
 import { createHash, createHmac } from "node:crypto";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { loadDraftPreview } from "./preview";
 
-const roots: string[] = [];
+const getPostBySlug = vi.fn();
 
-async function fixture(source: string) {
-  const root = await mkdtemp(path.join(tmpdir(), "blog-preview-"));
-  roots.push(root);
-  await mkdir(path.join(root, "posts"), { recursive: true });
-  await writeFile(path.join(root, "posts", "draft.mdx"), source);
-  return root;
-}
+vi.mock("../../cms/lib/content-adapter/content-adapter", () => ({
+  createContentAdapter: () => ({ getPostBySlug }),
+}));
 
 function issue(input: { slug?: string; contentSha: string; exp?: number; secret?: string }) {
   const payload = {
@@ -30,37 +23,71 @@ function issue(input: { slug?: string; contentSha: string; exp?: number; secret?
   return `${encoded}.${signature}`;
 }
 
-afterEach(async () => {
-  await Promise.all(roots.map((root) => rm(root, { recursive: true, force: true })));
-  roots.length = 0;
+function draftRecord(overrides = {}) {
+  return {
+    id: "post_draft",
+    slug: "draft",
+    title: "Draft",
+    content: "# Draft",
+    summary: "",
+    categoryId: null,
+    categoryPath: null,
+    heroImageKey: null,
+    publishedAt: null,
+    updatedAt: "2026-07-30T00:00:00.000Z",
+    isPublished: 0,
+    viewCount: 0,
+    tags: [],
+    mediaRefs: [],
+    ...overrides,
+  };
+}
+
+function sourceForDraft() {
+  return [
+    "---",
+    "title: Draft",
+    "status: draft",
+    "slug: draft",
+    "updatedAt: '2026-07-30T00:00:00.000Z'",
+    "excerpt: ''",
+    "---",
+    "",
+    "# Draft",
+    "",
+  ].join("\n");
+}
+
+beforeEach(() => {
+  getPostBySlug.mockReset();
 });
 
 describe("draft preview loader", () => {
   it("loads a valid draft preview", async () => {
-    const source = "---\ntitle: Draft\nslug: draft\nstatus: draft\n---\n\n# Draft";
-    const root = await fixture(source);
+    const source = sourceForDraft();
     const contentSha = createHash("sha256").update(source).digest("hex");
+    getPostBySlug.mockResolvedValueOnce({ ok: true, data: draftRecord() });
+
     const result = await loadDraftPreview({
       slug: "draft",
       token: issue({ contentSha }),
       secret: "preview-secret",
-      contentRoot: root,
     });
 
     expect(result).toMatchObject({ ok: true, post: { title: "Draft", body: "# Draft" } });
+    expect(getPostBySlug).toHaveBeenCalledWith("draft", { includeUnpublished: true });
   });
 
   it("rejects expired, slug mismatch, stale contentSha, and invalid signature states", async () => {
-    const source = "---\ntitle: Draft\nslug: draft\nstatus: draft\n---\n\n# Draft";
-    const root = await fixture(source);
+    const source = sourceForDraft();
     const contentSha = createHash("sha256").update(source).digest("hex");
+    getPostBySlug.mockResolvedValue({ ok: true, data: draftRecord() });
 
     await expect(
       loadDraftPreview({
         slug: "draft",
         token: issue({ contentSha, exp: 1 }),
         secret: "preview-secret",
-        contentRoot: root,
         now: new Date("2026-07-30T00:00:00.000Z"),
       }),
     ).resolves.toMatchObject({ ok: false, reason: "invalid-token" });
@@ -69,7 +96,6 @@ describe("draft preview loader", () => {
         slug: "draft",
         token: issue({ slug: "other", contentSha }),
         secret: "preview-secret",
-        contentRoot: root,
       }),
     ).resolves.toMatchObject({ ok: false, reason: "invalid-token" });
     await expect(
@@ -77,7 +103,6 @@ describe("draft preview loader", () => {
         slug: "draft",
         token: issue({ contentSha: "stale" }),
         secret: "preview-secret",
-        contentRoot: root,
       }),
     ).resolves.toMatchObject({ ok: false, reason: "invalid-token" });
     await expect(
@@ -85,22 +110,23 @@ describe("draft preview loader", () => {
         slug: "draft",
         token: `${issue({ contentSha })}x`,
         secret: "preview-secret",
-        contentRoot: root,
       }),
     ).resolves.toMatchObject({ ok: false, reason: "invalid-token" });
   });
 
   it("blocks unsafe MDX", async () => {
-    const source = "---\ntitle: Draft\nslug: draft\nstatus: draft\n---\n\n<script>x</script>";
-    const root = await fixture(source);
+    const source = sourceForDraft().replace("# Draft", "<script>x</script>");
     const contentSha = createHash("sha256").update(source).digest("hex");
+    getPostBySlug.mockResolvedValueOnce({
+      ok: true,
+      data: draftRecord({ content: "<script>x</script>" }),
+    });
 
     await expect(
       loadDraftPreview({
         slug: "draft",
         token: issue({ contentSha }),
         secret: "preview-secret",
-        contentRoot: root,
       }),
     ).resolves.toMatchObject({ ok: false, reason: "unsafe-mdx" });
   });

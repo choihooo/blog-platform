@@ -242,12 +242,31 @@ button:focus-visible {
   }
 }
 
+.cms-editor-body,
 .cms-live-preview-body {
   min-height: 10rem;
   overflow-wrap: anywhere;
   line-height: 1.7;
 }
 
+.cms-editor-body {
+  color: var(--foreground);
+}
+
+.cms-editor-body .ProseMirror {
+  min-height: inherit;
+}
+
+.cms-editor-body .ProseMirror:focus {
+  outline: none;
+}
+
+.cms-editor-body h1,
+.cms-editor-body h2,
+.cms-editor-body h3,
+.cms-editor-body h4,
+.cms-editor-body h5,
+.cms-editor-body h6,
 .cms-live-preview-body h1,
 .cms-live-preview-body h2,
 .cms-live-preview-body h3,
@@ -259,32 +278,50 @@ button:focus-visible {
   font-weight: 600;
 }
 
+.cms-editor-body h1,
 .cms-live-preview-body h1 {
   font-size: 1.65rem;
 }
 
+.cms-editor-body h2,
 .cms-live-preview-body h2 {
   font-size: 1.35rem;
 }
 
+.cms-editor-body h3,
 .cms-live-preview-body h3 {
   font-size: 1.2rem;
 }
 
+.cms-editor-body p,
 .cms-live-preview-body p {
   margin: 0.4em 0;
 }
 
+.cms-editor-body ul,
+.cms-editor-body ol,
 .cms-live-preview-body ul,
 .cms-live-preview-body ol {
   margin: 0.5em 0 0.5em 1.15em;
   padding: 0;
 }
 
+.cms-editor-body ul,
+.cms-live-preview-body ul {
+  list-style: disc;
+}
+
+.cms-editor-body ol,
+.cms-live-preview-body ol {
+  list-style: decimal;
+}
+
+.cms-editor-body li,
 .cms-live-preview-body li {
   margin: 0.2em 0;
 }
 
+.cms-editor-body blockquote,
 .cms-live-preview-body blockquote {
   margin: 0.8em 0;
   border-left: 4px solid var(--border);
@@ -292,6 +329,7 @@ button:focus-visible {
   color: var(--muted-foreground);
 }
 
+.cms-editor-body pre,
 .cms-live-preview-body pre {
   overflow: auto;
   border: 1px solid var(--border);
@@ -300,6 +338,7 @@ button:focus-visible {
   padding: 0.7rem 0.8rem;
 }
 
+.cms-editor-body code,
 .cms-live-preview-body code {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
@@ -307,17 +346,20 @@ button:focus-visible {
   font-size: 0.92em;
 }
 
+.cms-editor-body pre code,
 .cms-live-preview-body pre code {
   display: block;
   white-space: pre-wrap;
 }
 
+.cms-editor-body img,
 .cms-live-preview-body img {
   max-width: 100%;
   height: auto;
   border-radius: 0.5rem;
 }
 
+.cms-editor-body a,
 .cms-live-preview-body a {
   color: var(--foreground);
   text-decoration: underline;

@@ -51,6 +51,17 @@ function editorPathFromContentPath(path?: string) {
   return `/posts/${path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "")}`;
 }
 
+function slugCandidate(document: EditorDocument): string {
+  const pathSlug = document.path?.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
+  return (
+    document.frontmatter.slug ||
+    slugForMedia(pathSlug ?? "") ||
+    slugForMedia(document.frontmatter.title) ||
+    slugForMedia(document.id) ||
+    document.id
+  );
+}
+
 function refreshCmsEditorPaths(path?: string) {
   revalidatePath("/posts");
   const editorPath = editorPathFromContentPath(path);
@@ -308,13 +319,74 @@ export async function createPreviewTokenAction(input: { document: EditorDocument
     };
   }
 
-  const slug = input.document.frontmatter.slug || input.document.id;
-  const contentSha = createHash("sha256").update(serialized.source).digest("hex");
+  const root = repositoryRoot();
+  const adapter = await createRuntimeContentAdapter(root);
+  const protectedOperations = createProtectedContentOperations(adapter, async () =>
+    evaluateAccess(await getCmsSession(), root),
+  );
+  const guardedAdapter = {
+    async createFile(createInput: Parameters<typeof adapter.createFile>[0]) {
+      const result = await protectedOperations.createFile(createInput);
+      return result.ok
+        ? result.value
+        : {
+            success: false as const,
+            error: {
+              code: "unauthorized" as const,
+              message: redact(result.message),
+              retryable: result.retryable,
+              submittedContent: createInput.content,
+            },
+          };
+    },
+    async updateFile(updateInput: Parameters<typeof adapter.updateFile>[0]) {
+      const result = await protectedOperations.updateFile(updateInput);
+      return result.ok
+        ? result.value
+        : {
+            success: false as const,
+            error: {
+              code: "unauthorized" as const,
+              message: redact(result.message),
+              retryable: result.retryable,
+              submittedContent: updateInput.content,
+            },
+          };
+    },
+    async deleteFile(deleteInput: Parameters<NonNullable<typeof adapter.deleteFile>>[0]) {
+      const result = await protectedOperations.deleteFile(deleteInput);
+      return result.ok
+        ? result.value
+        : {
+            success: false as const,
+            error: {
+              code: "unauthorized" as const,
+              message: redact(result.message),
+              retryable: result.retryable,
+            },
+          };
+    },
+  };
+  const saved = await saveEditorDraft(input.document, guardedAdapter);
+  if (!saved.ok) {
+    return {
+      ok: false as const,
+      code: saved.code,
+      message: saved.message,
+    };
+  }
+
+  refreshCmsEditorPaths(saved.path);
+  const slug = saved.slug || slugCandidate(input.document);
+  const contentSha = saved.sha || createHash("sha256").update(serialized.source).digest("hex");
   const token = issuePreviewToken({ slug, contentSha, secret });
   return {
     ok: true as const,
     slug,
     contentSha,
+    path: saved.path,
+    sha: saved.sha,
+    updatedAt: saved.updatedAt,
     expiresInSeconds: 30 * 60,
     url: `/preview/${encodeURIComponent(slug)}?token=${encodeURIComponent(token)}`,
   };
