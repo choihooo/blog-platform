@@ -3,9 +3,9 @@ import { analyzeMdx } from "@blog-platform/markdown";
 
 import type { PublicPost } from "./content";
 import { toDualRunComparable as toDualRunComparableContent } from "./content";
-import { getSiteConfig } from "./content";
 import type { PostRecord } from "../../cms/lib/content-adapter/content-adapter.interface";
 import { createContentAdapter } from "../../cms/lib/content-adapter/content-adapter";
+import { loadSiteConfig } from "../../cms/lib/site-config";
 
 export type { PublicPost } from "./content";
 
@@ -295,7 +295,7 @@ function createD1R2Source(): BlogContentSource {
       }),
     listCategories: listCategoriesFromD1,
     getCategoryByPath: getCategoryByPathFromD1,
-    getSiteConfig,
+    getSiteConfig: loadSiteConfig,
   };
 }
 
@@ -335,6 +335,29 @@ export async function getPostBySlug(slug: string): Promise<PublicPost | undefine
   return source.getPostBySlug(slug);
 }
 
+export async function getRecommendedPosts(post: PublicPost, limit = 3): Promise<PublicPost[]> {
+  const posts = await getPublishedPosts({ limit: 100 });
+  const currentTags = new Set(post.tags ?? []);
+
+  return posts
+    .filter((candidate) => candidate.slug !== post.slug)
+    .map((candidate) => {
+      const sharedTagCount = (candidate.tags ?? []).filter((tag) => currentTags.has(tag)).length;
+      const sameCategory = candidate.category && candidate.category === post.category ? 4 : 0;
+
+      return {
+        post: candidate,
+        score: sameCategory + sharedTagCount * 2,
+      };
+    })
+    .sort((left, right) => {
+      if (right.score !== left.score) return right.score - left.score;
+      return right.post.publishedAt.localeCompare(left.post.publishedAt);
+    })
+    .slice(0, limit)
+    .map((item) => item.post);
+}
+
 export async function getPostsByCategory(categoryPath: string): Promise<PublicPost[]> {
   const source = await getContentSource();
   return source.getPostsByCategoryPath(categoryPath);
@@ -370,7 +393,7 @@ export async function getContentCollection() {
       groups.flat(),
     ),
     getTags(),
-    getSiteConfig(),
+    loadSiteConfig(),
   ]);
   return {
     posts,
@@ -411,4 +434,4 @@ export function normalizeForDualRunCompare(post: PublicPost) {
   return toDualRunComparableContent(post);
 }
 
-export { getSiteConfig } from "./content";
+export { loadSiteConfig as getSiteConfig } from "../../cms/lib/site-config";

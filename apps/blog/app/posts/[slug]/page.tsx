@@ -8,10 +8,16 @@ import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine"
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
-import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/content-source";
+import {
+  getPostBySlug,
+  getPublishedPosts,
+  getRecommendedPosts,
+  getSiteConfig,
+} from "../../../lib/content-source";
 import { formatPostDateTime } from "../../../lib/date-format";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
+import { RecommendedPosts } from "../../components/recommended-posts";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +59,10 @@ export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
   if (!post) notFound();
-  const jsonLd = generateJsonLd(postToSeoSubject(post, siteForSeo(site)));
+  const [jsonLd, recommendedPosts] = await Promise.all([
+    Promise.resolve(generateJsonLd(postToSeoSubject(post, siteForSeo(site)))),
+    getRecommendedPosts(post, 3),
+  ]);
   const postUrl = `${site.siteUrl.replace(/\/$/, "")}/posts/${post.slug}`;
 
   return (
@@ -76,26 +85,21 @@ export default async function PostPage({ params }: PostPageProps) {
       <article className="grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16">
         <div className="min-w-0">
           <header className="mb-12 grid gap-5 bg-card pb-10">
+            {post.coverImage ? (
+              <img
+                alt=""
+                className="aspect-[16/9] w-full object-cover"
+                src={post.coverImage}
+              />
+            ) : null}
+            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
+              {post.title}
+            </h1>
             <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
               <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
               <span>{post.readingTimeLabel}</span>
               {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
             </div>
-            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
-              {post.title}
-            </h1>
-            {post.excerpt ? (
-              <p className="text-lg leading-8 text-muted-foreground sm:text-xl sm:leading-9">
-                {post.excerpt}
-              </p>
-            ) : null}
-            {post.coverImage ? (
-              <img
-                alt=""
-                className="mt-2 aspect-[16/9] w-full object-cover"
-                src={post.coverImage}
-              />
-            ) : null}
             <div className="flex flex-wrap gap-2">
               {post.categoryEntry ? (
                 <Link href={`/categories/${post.categoryEntry.slug}`}>
@@ -125,6 +129,7 @@ export default async function PostPage({ params }: PostPageProps) {
               }}
             />
           </div>
+          <RecommendedPosts posts={recommendedPosts} />
         </div>
         {post.toc.length > 0 ? (
           <Card
