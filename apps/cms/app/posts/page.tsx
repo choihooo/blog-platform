@@ -17,24 +17,63 @@ import { listPostSummaries, type PostSummary } from "../../lib/editor/editor-loa
 
 type PostsPageSearchParams = {
   q?: string | string[];
+  page?: string | string[];
 };
 
 function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+const POSTS_PER_PAGE = 10;
+
+function parsePage(value: string | undefined) {
+  const page = Number(value);
+  if (!Number.isFinite(page) || page < 1) return 1;
+  return Math.floor(page);
+}
+
+function paginatePosts(posts: PostSummary[], page: number) {
+  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * POSTS_PER_PAGE;
+
+  return {
+    currentPage,
+    totalPages,
+    totalCount: posts.length,
+    posts: posts.slice(start, start + POSTS_PER_PAGE),
+  };
+}
+
+function postsHref(params: { query?: string; page?: number }) {
+  const search = new URLSearchParams();
+  if (params.query) search.set("q", params.query);
+  if (params.page && params.page > 1) search.set("page", String(params.page));
+  const query = search.toString();
+  return query ? `/posts?${query}` : "/posts";
+}
+
 export function PostsPageView({
   decision,
   posts = [],
   query = "",
+  currentPage = 1,
+  totalPages = 1,
+  totalCount = posts.length,
 }: {
   decision: AccessDecision;
   posts?: PostSummary[];
   query?: string;
+  currentPage?: number;
+  totalPages?: number;
+  totalCount?: number;
 }) {
   if (decision.status !== "authorized") {
     return <AccessState decision={decision} />;
   }
+
+  const hasPreviousPage = currentPage > 1;
+  const hasNextPage = currentPage < totalPages;
 
   return (
     <CmsShell activePath="/posts" session={decision.session} title="Posts">
@@ -45,8 +84,8 @@ export function PostsPageView({
             <h2 className="mt-1 text-3xl font-semibold">모든 글</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               {query
-                ? `"${query}" 검색 결과 ${posts.length}개`
-                : `D1 데이터베이스의 초안과 발행 글 ${posts.length}개`}
+                ? `"${query}" 검색 결과 ${totalCount}개`
+                : `D1 데이터베이스의 초안과 발행 글 ${totalCount}개`}
             </p>
           </div>
           <a
@@ -127,6 +166,36 @@ export function PostsPageView({
             </div>
           )}
         </div>
+        {totalCount > POSTS_PER_PAGE ? (
+          <nav
+            aria-label="글 목록 페이지"
+            className="flex flex-wrap items-center justify-between gap-3"
+          >
+            <p className="text-sm text-muted-foreground">
+              {currentPage} / {totalPages} 페이지
+            </p>
+            <div className="flex items-center gap-2">
+              {hasPreviousPage ? (
+                <Button asChild variant="secondary">
+                  <a href={postsHref({ query, page: currentPage - 1 })}>이전</a>
+                </Button>
+              ) : (
+                <Button disabled variant="secondary">
+                  이전
+                </Button>
+              )}
+              {hasNextPage ? (
+                <Button asChild variant="secondary">
+                  <a href={postsHref({ query, page: currentPage + 1 })}>다음</a>
+                </Button>
+              ) : (
+                <Button disabled variant="secondary">
+                  다음
+                </Button>
+              )}
+            </div>
+          </nav>
+        ) : null}
       </section>
     </CmsShell>
   );
@@ -139,9 +208,21 @@ export default async function PostsPage({
 }) {
   const resolvedSearchParams = await (searchParams ?? Promise.resolve({} as PostsPageSearchParams));
   const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
+  const requestedPage = parsePage(firstParam(resolvedSearchParams.page));
   const [decision, posts] = await Promise.all([
     requireCmsAccess(),
     listPostSummaries(undefined, { query }),
   ]);
-  return <PostsPageView decision={decision} posts={posts} query={query} />;
+  const pagination = paginatePosts(posts, requestedPage);
+
+  return (
+    <PostsPageView
+      currentPage={pagination.currentPage}
+      decision={decision}
+      posts={pagination.posts}
+      query={query}
+      totalCount={pagination.totalCount}
+      totalPages={pagination.totalPages}
+    />
+  );
 }

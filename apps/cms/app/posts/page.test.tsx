@@ -12,6 +12,16 @@ const decision = {
 };
 
 describe("PostsPageView", () => {
+  function postSummary(index: number) {
+    return {
+      path: `db/posts/post-${index}`,
+      slug: `post-${index}`,
+      title: `Post ${index}`,
+      status: "published",
+      sha: `sha-${index}`,
+    };
+  }
+
   it("renders post list and active posts navigation", () => {
     render(
       createElement(PostsPageView, {
@@ -62,6 +72,25 @@ describe("PostsPageView", () => {
     expect(screen.getByDisplayValue("AI")).toBeTruthy();
     expect(screen.getByText('"AI" 검색 결과 1개')).toBeTruthy();
     expect(screen.getByRole("link", { name: "초기화" }).getAttribute("href")).toBe("/posts");
+  });
+
+  it("renders pagination controls for paged post lists", () => {
+    render(
+      createElement(PostsPageView, {
+        decision,
+        posts: Array.from({ length: 10 }, (_, index) => postSummary(index + 1)),
+        currentPage: 2,
+        totalPages: 3,
+        totalCount: 25,
+      }),
+    );
+
+    expect(screen.getByText("2 / 3 페이지")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "이전" }).getAttribute("href")).toBe("/posts");
+    expect(screen.getByRole("link", { name: "다음" }).getAttribute("href")).toBe(
+      "/posts?page=3",
+    );
+    expect(screen.getAllByRole("link", { name: /^Post \d+$/ })).toHaveLength(10);
   });
 
   it("renders empty state message when no posts exist", () => {
