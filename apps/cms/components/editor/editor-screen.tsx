@@ -14,6 +14,7 @@ import {
   retryPublicRefreshAction,
   saveEditorDraftAction,
   unpublishPostAction,
+  uploadEditorMediaAction,
 } from "../../app/actions/editor-actions";
 import { analyticsLinksForEditorDocument } from "../../lib/editor/analytics-links";
 import { clearBackup, writeBackup } from "../../lib/editor/draft-backup";
@@ -158,6 +159,23 @@ function nodesToTiptap(nodes: EditorNode[]): JSONContent {
   };
 }
 
+function extensionFromImageType(type: string) {
+  if (type === "image/webp") return "webp";
+  if (type === "image/jpeg") return "jpg";
+  return "png";
+}
+
+function clipboardImageFile(data: DataTransfer | null): File | undefined {
+  const file = Array.from(data?.files ?? []).find((entry) => entry.type.startsWith("image/"));
+  if (!file) return;
+  if (/\.(webp|png|jpe?g)$/i.test(file.name)) return file;
+  const extension = extensionFromImageType(file.type);
+  return new File([file], `clipboard-image.${extension}`, {
+    type: file.type || "image/png",
+    lastModified: file.lastModified,
+  });
+}
+
 function slugCandidate(document: EditorDocument): string {
   const titleSlug = document.frontmatter.title
     .trim()
@@ -205,6 +223,13 @@ export function EditorScreen({
         class:
           "min-h-[420px] px-4 py-3 text-sm leading-6 outline-none focus-visible:ring-2 focus-visible:ring-ring",
         role: "textbox",
+      },
+      handlePaste: (_view, event) => {
+        const file = clipboardImageFile(event.clipboardData);
+        if (!file) return false;
+        event.preventDefault();
+        uploadPastedImage(file);
+        return true;
       },
     },
     onCreate: ({ editor }) => {
@@ -397,6 +422,28 @@ export function EditorScreen({
     markDirty(documentRef.current, nextBody);
     setPreviewHtml(editor?.getHTML() ?? "");
     setMessage("Image uploaded. Save the post to keep this reference.");
+  }
+
+  function uploadPastedImage(file: File) {
+    const formData = new FormData();
+    formData.set("target", "body");
+    formData.set("postSlug", slugCandidate(documentRef.current));
+    formData.set("file", file);
+    formData.set("alt", file.name.replace(/\.[^.]+$/, ""));
+    setStatus("pending");
+    setMessage("Uploading pasted image...");
+    startTransition(() => {
+      void uploadEditorMediaAction(formData).then((result) => {
+        if (result.ok && result.reference.target === "body") {
+          insertUploadedImage({ reference: result.reference });
+          return;
+        }
+        if (!result.ok) {
+          setStatus("failed");
+          setMessage(result.message);
+        }
+      });
+    });
   }
 
   return (
