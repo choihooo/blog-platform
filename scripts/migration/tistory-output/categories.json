@@ -1,0 +1,65 @@
+[
+  {
+    "id": "cat_book_review",
+    "name": "서평",
+    "slug": "book-review",
+    "parentId": null,
+    "parentSlug": null,
+    "depth": 1,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  },
+  {
+    "id": "cat_cs",
+    "name": "CS",
+    "slug": "cs",
+    "parentId": null,
+    "parentSlug": null,
+    "depth": 1,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  },
+  {
+    "id": "cat_engineering",
+    "name": "개발",
+    "slug": "engineering",
+    "parentId": null,
+    "parentSlug": null,
+    "depth": 1,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  },
+  {
+    "id": "cat_engineering_ai",
+    "name": "AI",
+    "slug": "engineering/ai",
+    "parentId": "cat_engineering",
+    "parentSlug": "engineering",
+    "depth": 2,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  },
+  {
+    "id": "cat_engineering_fe",
+    "name": "FE",
+    "slug": "engineering/fe",
+    "parentId": "cat_engineering",
+    "parentSlug": "engineering",
+    "depth": 2,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  },
+  {
+    "id": "cat_retrospective",
+    "name": "회고",
+    "slug": "retrospective",
+    "parentId": null,
+    "parentSlug": null,
+    "depth": 1,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  },
+  {
+    "id": "cat_tistory",
+    "name": "Tistory",
+    "slug": "tistory",
+    "parentId": null,
+    "parentSlug": null,
+    "depth": 1,
+    "createdAt": "2026-07-31T09:30:44.722Z"
+  }
+]

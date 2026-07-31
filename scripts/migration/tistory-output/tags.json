@@ -1,0 +1,112 @@
+[
+  {
+    "id": "tag_ai",
+    "name": "AI",
+    "slug": "ai"
+  },
+  {
+    "id": "tag_certificate_manger",
+    "name": "Certificate Manger",
+    "slug": "certificate-manger"
+  },
+  {
+    "id": "tag_cs",
+    "name": "cs전공지식",
+    "slug": "cs"
+  },
+  {
+    "id": "tag_datastream",
+    "name": "datastream",
+    "slug": "datastream"
+  },
+  {
+    "id": "tag_dv_certificate",
+    "name": "DV Certificate",
+    "slug": "dv-certificate"
+  },
+  {
+    "id": "tag_kafka",
+    "name": "Kafka기반",
+    "slug": "kafka"
+  },
+  {
+    "id": "tag_next",
+    "name": "NeXT",
+    "slug": "next"
+  },
+  {
+    "id": "tag_nextjs",
+    "name": "Nextjs",
+    "slug": "nextjs"
+  },
+  {
+    "id": "tag_ssl",
+    "name": "SSL",
+    "slug": "ssl"
+  },
+  {
+    "id": "tag_ssl_tls",
+    "name": "ssl/tls",
+    "slug": "ssl-tls"
+  },
+  {
+    "id": "tag_tistory_tag_46e51a03",
+    "name": "우리프로그래머들",
+    "slug": "tistory-tag-46e51a03"
+  },
+  {
+    "id": "tag_tistory_tag_85f75719",
+    "name": "협찬",
+    "slug": "tistory-tag-85f75719"
+  },
+  {
+    "id": "tag_tistory_tag_8648bb14",
+    "name": "길벗",
+    "slug": "tistory-tag-8648bb14"
+  },
+  {
+    "id": "tag_tistory_tag_91128800",
+    "name": "서버 컴포넌트",
+    "slug": "tistory-tag-91128800"
+  },
+  {
+    "id": "tag_tistory_tag_95dd261e",
+    "name": "디자인패턴",
+    "slug": "tistory-tag-95dd261e"
+  },
+  {
+    "id": "tag_tistory_tag_95e74138",
+    "name": "거부기린",
+    "slug": "tistory-tag-95e74138"
+  },
+  {
+    "id": "tag_tistory_tag_ac6828de",
+    "name": "정규표현식",
+    "slug": "tistory-tag-ac6828de"
+  },
+  {
+    "id": "tag_tistory_tag_b65551c6",
+    "name": "실시간데이터스트리밍",
+    "slug": "tistory-tag-b65551c6"
+  },
+  {
+    "id": "tag_tistory_tag_e225a6fd",
+    "name": "로그인",
+    "slug": "tistory-tag-e225a6fd"
+  },
+  {
+    "id": "tag_tistory_tag_f56917f5",
+    "name": "구름커밋",
+    "slug": "tistory-tag-f56917f5"
+  },
+  {
+    "id": "tag_tistory_tag_fac711c0",
+    "name": "클라이언트 컴포넌트",
+    "slug": "tistory-tag-fac711c0"
+  },
+  {
+    "id": "tag_tls",
+    "name": "TLS",
+    "slug": "tls"
+  }
+]

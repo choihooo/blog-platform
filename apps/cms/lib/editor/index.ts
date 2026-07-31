@@ -9,6 +9,7 @@ export {
 } from "./draft-backup";
 export {
   createNewEditorDocument,
+  loadEditorCategories,
   loadEditorSiteAnalyticsConfig,
   listPostSummaries,
   loadEditorDocument,
@@ -34,7 +35,12 @@ export {
   refreshPublicTargets,
 } from "./public-refresh";
 export type { DraftBackupRecord } from "./draft-backup";
-export type { EditorLoadResult, EditorSiteAnalyticsConfig, PostSummary } from "./editor-loader";
+export type {
+  EditorCategoryOption,
+  EditorLoadResult,
+  EditorSiteAnalyticsConfig,
+  PostSummary,
+} from "./editor-loader";
 export type { SaveEditorDraftResult } from "./editor-save";
 export type { MediaUploadState, UploadEditorMediaResult } from "./editor-media";
 export type { PublicationResult } from "./publish-workflow";

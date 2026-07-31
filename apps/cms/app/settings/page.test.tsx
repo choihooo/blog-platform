@@ -13,10 +13,45 @@ const decision = {
 
 describe("SettingsPageView", () => {
   it("renders readiness state and active settings navigation", () => {
-    render(createElement(SettingsPageView, { decision }));
+    render(
+      createElement(SettingsPageView, {
+        decision,
+        taxonomy: {
+          categories: [
+            {
+              id: "cat_engineering",
+              name: "개발",
+              slug: "engineering",
+              parentId: null,
+              parentSlug: null,
+              depth: 1,
+              postCount: 6,
+              createdAt: "2026-07-31T00:00:00.000Z",
+            },
+            {
+              id: "cat_engineering_fe",
+              name: "FE",
+              slug: "engineering/fe",
+              parentId: "cat_engineering",
+              parentSlug: "engineering",
+              depth: 2,
+              postCount: 4,
+              createdAt: "2026-07-31T00:00:00.000Z",
+            },
+          ],
+          tags: [],
+        },
+      }),
+    );
     expect(screen.getByRole("heading", { level: 2, name: "사이트 설정" })).toBeTruthy();
     expect(screen.getByText("Ho's Blog")).toBeTruthy();
     expect(screen.getByText("choihooo/blog-platform")).toBeTruthy();
+    expect(screen.getByDisplayValue("engineering")).toBeTruthy();
+    expect(screen.getByDisplayValue("fe")).toBeTruthy();
+    expect(screen.getByText("(6)")).toBeTruthy();
+    expect(screen.getByText("(4)")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Add child" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "FE 저장" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /Settings/ }).getAttribute("aria-current")).toBe(
       "page",
     );

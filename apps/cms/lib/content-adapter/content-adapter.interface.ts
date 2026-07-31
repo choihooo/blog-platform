@@ -119,6 +119,13 @@ export type ContentAdapter = {
     category: Omit<CategoryRecord, "createdAt"> & { createdAt?: string };
     authorIdentity: string;
   }): Promise<ContractResult<CategoryRecord>>;
+  updateCategory(input: {
+    categoryId: string;
+    category: Pick<CategoryRecord, "name" | "slug"> & {
+      parentSlug?: string | null;
+    };
+    authorIdentity: string;
+  }): Promise<ContractResult<CategoryRecord>>;
   createTag(input: { tag: TagRecord; authorIdentity: string }): Promise<ContractResult<TagRecord>>;
   createPost(input: {
     post: PostRecord;

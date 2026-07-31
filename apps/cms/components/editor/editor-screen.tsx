@@ -6,6 +6,7 @@ import Link from "@tiptap/extension-link";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
 import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
+import { Button, Card, CardContent, Input } from "@blog-platform/design-system";
 
 import {
   archivePostAction,
@@ -20,13 +21,19 @@ import { analyticsLinksForEditorDocument } from "../../lib/editor/analytics-link
 import { clearBackup, writeBackup } from "../../lib/editor/draft-backup";
 import { seoReportForEditorDocument } from "../../lib/editor/seo-report";
 import { EditorToolbar } from "./editor-toolbar";
-import { FrontmatterPanel } from "./frontmatter-panel";
-import { PreviewPanel } from "./preview-panel";
+import { FrontmatterPanel, type CategoryOption } from "./frontmatter-panel";
 import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 import { SeoPanel } from "./seo-panel";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
 import type { EditorSiteAnalyticsConfig } from "../../lib/editor";
+
+type SelectedImageState = {
+  pos: number;
+  src: string;
+  alt: string;
+  title: string;
+};
 
 function textContent(node: JSONContent): string {
   return (node.content ?? []).map((child) => child.text ?? textContent(child)).join("");
@@ -193,9 +200,11 @@ function savedMetadata(document: EditorDocument) {
 }
 
 export function EditorScreen({
+  categories = [],
   initialDocument,
   siteAnalytics,
 }: {
+  categories?: CategoryOption[];
   initialDocument: EditorDocument;
   siteAnalytics?: EditorSiteAnalyticsConfig;
 }) {
@@ -207,8 +216,31 @@ export function EditorScreen({
   );
   const [message, setMessage] = useState<string>();
   const [retryToken, setRetryToken] = useState<PublicRefreshRetryToken>();
-  const [previewHtml, setPreviewHtml] = useState("");
+  const [selectedImage, setSelectedImage] = useState<SelectedImageState>();
   const [isPending, startTransition] = useTransition();
+
+  function syncSelectedImage(editorInstance: NonNullable<ReturnType<typeof useEditor>>) {
+    const { selection } = editorInstance.state;
+    const selectedNode =
+      selection.$from.nodeAfter?.type.name === "image"
+        ? { node: selection.$from.nodeAfter, pos: selection.from }
+        : selection.$from.nodeBefore?.type.name === "image"
+          ? { node: selection.$from.nodeBefore, pos: selection.from - 1 }
+          : undefined;
+
+    if (!selectedNode || typeof selectedNode.node.attrs.src !== "string") {
+      setSelectedImage(undefined);
+      return;
+    }
+
+    setSelectedImage({
+      pos: selectedNode.pos,
+      src: selectedNode.node.attrs.src,
+      alt: typeof selectedNode.node.attrs.alt === "string" ? selectedNode.node.attrs.alt : "",
+      title: typeof selectedNode.node.attrs.title === "string" ? selectedNode.node.attrs.title : "",
+    });
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
@@ -232,11 +264,11 @@ export function EditorScreen({
         return true;
       },
     },
-    onCreate: ({ editor }) => {
-      setPreviewHtml(editor.getHTML());
+    onSelectionUpdate: ({ editor }) => {
+      syncSelectedImage(editor);
     },
     onUpdate: ({ editor }) => {
-      setPreviewHtml(editor.getHTML());
+      syncSelectedImage(editor);
       markDirty(documentRef.current, tiptapToNodes(editor.getJSON()));
     },
   });
@@ -291,7 +323,6 @@ export function EditorScreen({
           };
           documentRef.current = saved;
           setDocument(saved);
-          setPreviewHtml(editor?.getHTML() ?? previewHtml);
           setStatus("saved");
           setMessage(undefined);
           setRetryToken(undefined);
@@ -339,7 +370,6 @@ export function EditorScreen({
           documentRef.current = saved;
           setDocument(saved);
           setBody(saved.body);
-          setPreviewHtml(editor?.getHTML() ?? previewHtml);
           setStatus(operation === "publish" ? "published" : "saved");
           setMessage(undefined);
           setRetryToken(undefined);
@@ -355,12 +385,10 @@ export function EditorScreen({
           documentRef.current = result.document;
           setDocument(result.document);
           setBody(result.document.body);
-          setPreviewHtml(editor?.getHTML() ?? previewHtml);
         } else if (result.submittedDocument) {
           documentRef.current = result.submittedDocument;
           setDocument(result.submittedDocument);
           setBody(result.submittedDocument.body);
-          setPreviewHtml(editor?.getHTML() ?? previewHtml);
         }
         setStatus(result.code === "public-refresh-failed" ? "refreshFailed" : "failed");
         setRetryToken(result.retryToken);
@@ -445,7 +473,6 @@ export function EditorScreen({
       ...(node.caption ? [{ type: "paragraph" as const, text: node.caption }] : []),
     ];
     markDirty(documentRef.current, nextBody);
-    setPreviewHtml(editor?.getHTML() ?? "");
     setMessage("Image uploaded. Save the post to keep this reference.");
   }
 
@@ -469,6 +496,27 @@ export function EditorScreen({
         }
       });
     });
+  }
+
+  function applySelectedImageAttributes(next: { alt?: string; title?: string }) {
+    if (!editor || !selectedImage) return;
+    const nextImage = {
+      ...selectedImage,
+      alt: next.alt ?? selectedImage.alt,
+      title: next.title ?? selectedImage.title,
+    };
+    editor
+      .chain()
+      .focus()
+      .setNodeSelection(selectedImage.pos)
+      .updateAttributes("image", {
+        alt: nextImage.alt,
+        title: nextImage.title || null,
+      })
+      .run();
+    setSelectedImage(nextImage);
+    const nextBody = tiptapToNodes(editor.getJSON());
+    markDirty(documentRef.current, nextBody);
   }
 
   return (
@@ -509,14 +557,60 @@ export function EditorScreen({
       <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
         <main className="min-w-0">
           <EditorContent editor={editor} />
-          <PreviewPanel document={previewDocument} html={previewHtml} />
         </main>
         <aside className="border-l border-border">
           <FrontmatterPanel
+            categories={categories}
             frontmatter={document.frontmatter}
             onChange={(frontmatter) => markDirty({ ...document, frontmatter })}
             postSlug={slugCandidate(document)}
           />
+          <Card className="m-4">
+            <CardContent className="space-y-3 p-4 text-sm">
+              <div>
+                <h3 className="font-semibold">Image attributes</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {selectedImage ? "Selected body image" : "Select a body image to edit alt text."}
+                </p>
+              </div>
+              <Input
+                aria-label="Selected image alt text"
+                disabled={!selectedImage}
+                onChange={(event) =>
+                  setSelectedImage((current) =>
+                    current ? { ...current, alt: event.currentTarget.value } : current,
+                  )
+                }
+                placeholder="Alt text"
+                value={selectedImage?.alt ?? ""}
+              />
+              <Input
+                aria-label="Selected image title"
+                disabled={!selectedImage}
+                onChange={(event) =>
+                  setSelectedImage((current) =>
+                    current ? { ...current, title: event.currentTarget.value } : current,
+                  )
+                }
+                placeholder="Title"
+                value={selectedImage?.title ?? ""}
+              />
+              <Button
+                className="w-full"
+                disabled={!selectedImage}
+                onClick={() =>
+                  applySelectedImageAttributes({
+                    alt: selectedImage?.alt,
+                    title: selectedImage?.title,
+                  })
+                }
+                type="button"
+                variant="secondary"
+              >
+                Apply image text
+              </Button>
+            </CardContent>
+          </Card>
           <SeoPanel links={analyticsLinks} report={seoReport} />
         </aside>
       </div>

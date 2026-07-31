@@ -3,6 +3,8 @@ import { Grid2X2, List } from "lucide-react";
 import { PostList } from "./components/post-list";
 import { getPublishedPosts, listCategories, searchPosts } from "../lib/content-source";
 
+export const dynamic = "force-dynamic";
+
 type BlogHomePageProps = {
   searchParams?: Promise<{
     category?: string | string[];
@@ -30,17 +32,28 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   const activeCategory = firstParam(resolvedSearchParams.category);
   const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
   const view = firstParam(resolvedSearchParams.view) === "list" ? "list" : "tile";
-  const [posts, allPosts, categories] = await Promise.all([
-    query
-      ? searchPosts({ query, categoryPath: activeCategory, limit: 100 })
-      : getPublishedPosts({ categoryPath: activeCategory, limit: 100 }),
+  const [sourcePosts, allPosts, parentCategories, childCategories] = await Promise.all([
+    query ? searchPosts({ query, limit: 100 }) : getPublishedPosts({ limit: 100 }),
     getPublishedPosts({ limit: 100 }),
     listCategories({ depth: 1 }),
+    listCategories({ depth: 2 }),
   ]);
+  const posts = activeCategory
+    ? sourcePosts.filter(
+        (post) =>
+          post.category === activeCategory ||
+          (post.category?.startsWith(`${activeCategory}/`) ?? false),
+      )
+    : sourcePosts;
   const categoryCounts = new Map<string, number>();
   for (const post of allPosts) {
-    if (post.category)
+    if (post.category) {
       categoryCounts.set(post.category, (categoryCounts.get(post.category) ?? 0) + 1);
+      const parentSlug = post.category.split("/")[0];
+      if (parentSlug) {
+        categoryCounts.set(parentSlug, (categoryCounts.get(parentSlug) ?? 0) + 1);
+      }
+    }
   }
 
   return (
@@ -76,23 +89,50 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
             >
               전체보기 <span className="text-muted-foreground">({allPosts.length})</span>
             </a>
-            {categories.map((category) => (
-              <a
-                aria-current={activeCategory === category.slug ? "page" : undefined}
-                className={`whitespace-nowrap text-sm ${
-                  activeCategory === category.slug
-                    ? "font-semibold text-primary"
-                    : "text-foreground hover:text-primary"
-                }`}
-                href={hrefFor({ category: category.slug, q: query, view })}
-                key={category.slug}
-              >
-                {category.label}{" "}
-                <span className="text-muted-foreground">
-                  ({categoryCounts.get(category.slug) ?? 0})
-                </span>
-              </a>
-            ))}
+            {parentCategories.map((category) => {
+              const children = childCategories.filter(
+                (child) => child.parentSlug === category.slug,
+              );
+              return (
+                <div className="grid gap-2" key={category.slug}>
+                  <a
+                    aria-current={activeCategory === category.slug ? "page" : undefined}
+                    className={`whitespace-nowrap text-sm ${
+                      activeCategory === category.slug
+                        ? "font-semibold text-primary"
+                        : "text-foreground hover:text-primary"
+                    }`}
+                    href={hrefFor({ category: category.slug, q: query, view })}
+                  >
+                    {category.label}{" "}
+                    <span className="text-muted-foreground">
+                      ({categoryCounts.get(category.slug) ?? 0})
+                    </span>
+                  </a>
+                  {children.length > 0 ? (
+                    <div className="grid gap-2 border-l border-border pl-3">
+                      {children.map((child) => (
+                        <a
+                          aria-current={activeCategory === child.slug ? "page" : undefined}
+                          className={`whitespace-nowrap text-sm ${
+                            activeCategory === child.slug
+                              ? "font-semibold text-primary"
+                              : "text-muted-foreground hover:text-primary"
+                          }`}
+                          href={hrefFor({ category: child.slug, q: query, view })}
+                          key={child.slug}
+                        >
+                          {child.label}{" "}
+                          <span className="text-muted-foreground">
+                            ({categoryCounts.get(child.slug) ?? 0})
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
           </nav>
         </aside>
 

@@ -50,6 +50,24 @@ describe("editor-loader", () => {
     ]);
   });
 
+  it("filters post summaries by title, status, path, slug, or source body", async () => {
+    await expect(
+      listPostSummaries(adapter("---\ntitle: Alpha\nstatus: published\n---\n\n검증 가능한 본문"), {
+        query: "검증 가능",
+      }),
+    ).resolves.toHaveLength(1);
+    await expect(
+      listPostSummaries(adapter("---\ntitle: Alpha\nstatus: published\n---\n\nBody"), {
+        query: "published",
+      }),
+    ).resolves.toHaveLength(1);
+    await expect(
+      listPostSummaries(adapter("---\ntitle: Alpha\nstatus: published\n---\n\nBody"), {
+        query: "missing",
+      }),
+    ).resolves.toEqual([]);
+  });
+
   it("loads supported documents and blocks unsupported MDX", async () => {
     await expect(
       loadEditorDocument(

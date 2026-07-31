@@ -308,8 +308,13 @@ function parseMediaKind(value: string): MediaReference["kind"] {
 }
 
 function r2PublicUrl(r2Key: string) {
-  const base = process.env.R2_PUBLIC_URL?.replace(/\/+$/, "");
-  return base ? `${base}/${r2Key.replace(/^\/+/, "")}` : r2Key;
+  if (/^https?:\/\//i.test(r2Key)) return r2Key;
+  const base = (
+    process.env.R2_PUBLIC_URL ??
+    process.env.NEXT_PUBLIC_R2_PUBLIC_URL ??
+    "https://pub-2eadf17a82cb46679204775b78a2c16a.r2.dev"
+  ).replace(/\/+$/, "");
+  return `${base}/${r2Key.replace(/^\/+/, "")}`;
 }
 
 async function loadMediaRefs(binding: D1Database, postIds: string[]) {
@@ -367,7 +372,13 @@ function getD1Binding(): D1Database | undefined {
 
 function normalizeCategorySlug(input?: string): string | undefined {
   if (!input) return;
-  const normalized = normalizeSlug(input);
+  const normalized = input
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9/]+/g, "-")
+    .replace(/\/+/g, "/")
+    .replace(/^-+|-+$/g, "")
+    .replace(/\/-+|-+\//g, "/");
   if (!/^[a-z0-9-]+(?:\/[a-z0-9-]+)?$/.test(normalized)) return;
   return normalized;
 }
@@ -527,6 +538,16 @@ function normalizePostRecord(input: PostRecord): PostRecord {
     viewCount:
       Number.isFinite(input.viewCount) && input.viewCount >= 0 ? Math.floor(input.viewCount) : 0,
   };
+}
+
+async function runD1CategoryById(binding: D1Database, id: string) {
+  const row = await executeFirst<DbCategoryRow>(
+    binding.prepare(
+      "SELECT id, name, slug, parent_id, parent_slug, depth, created_at FROM categories WHERE id = ? LIMIT 1",
+    ),
+    [id],
+  );
+  return row ? mapCategoryRecord(row) : null;
 }
 
 function mapTagRecord(row: DbTagRow): TagRecord {
@@ -753,6 +774,76 @@ export function createD1R2ContentAdapter(): ContentAdapter {
           createdAt,
         },
       };
+    },
+
+    async updateCategory(input: {
+      categoryId: string;
+      category: Pick<CategoryRecord, "name" | "slug"> & { parentSlug?: string | null };
+      authorIdentity: string;
+    }): Promise<ContractResult<CategoryRecord>> {
+      if (!binding) return failure("upstream-failure", "D1 binding is not configured");
+      const categoryId = input.categoryId.trim();
+      if (!categoryId) return failure("validation-failure", "categoryId is required");
+      const current = await runD1CategoryById(binding, categoryId);
+      if (!current) return failure("not-found", "category not found");
+
+      const requestedSlug = normalizeCategorySlug(input.category.slug);
+      if (!requestedSlug) {
+        return failure("validation-failure", "category slug must be depth 1 or 2");
+      }
+      const requestedParts = requestedSlug.split("/");
+      const requestedDepth = requestedParts.length === 2 ? 2 : 1;
+      if (requestedDepth !== current.depth) {
+        return failure("validation-failure", "category depth cannot be changed");
+      }
+
+      const name = input.category.name.trim() || requestedParts.at(-1) || requestedSlug;
+      const parentSlug = requestedDepth === 2 ? requestedParts[0] : null;
+      const parent = parentSlug
+        ? await executeFirst<{ id: string }>(
+            binding.prepare("SELECT id FROM categories WHERE slug = ? AND depth = 1 LIMIT 1"),
+            [parentSlug],
+          )
+        : null;
+      if (parentSlug && !parent?.id) {
+        return failure("validation-failure", "parent category must exist before child category");
+      }
+
+      const conflict = await executeFirst<{ id: string }>(
+        binding.prepare("SELECT id FROM categories WHERE slug = ? AND id <> ? LIMIT 1"),
+        [requestedSlug, categoryId],
+      );
+      if (conflict?.id) return failure("conflict", "category slug already exists");
+
+      await executeRun(
+        binding.prepare(
+          `UPDATE categories
+             SET name = ?,
+                 slug = ?,
+                 parent_id = ?,
+                 parent_slug = ?,
+                 depth = ?
+           WHERE id = ?`,
+        ),
+        [name, requestedSlug, parent?.id ?? null, parentSlug, requestedDepth, categoryId],
+      );
+
+      if (current.depth === 1 && current.slug !== requestedSlug) {
+        await executeRun(
+          binding.prepare(
+            `UPDATE categories
+               SET parent_slug = ?,
+                   parent_id = ?,
+                   slug = ? || substr(slug, length(?) + 1)
+             WHERE parent_slug = ? AND depth = 2`,
+          ),
+          [requestedSlug, categoryId, requestedSlug, current.slug, current.slug],
+        );
+      }
+
+      const updated = await runD1CategoryById(binding, categoryId);
+      if (!updated) return failure("not-found", "category not found after update");
+      return { ok: true, data: updated };
     },
 
     async createTag(input: {

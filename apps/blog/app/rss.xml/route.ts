@@ -3,6 +3,8 @@ import { generateFeedOutput, serializeFeed } from "@blog-platform/seo-engine";
 import { getPublishedPosts, getSiteConfig } from "../../lib/content-source";
 import { postsToSeoSubjects, siteForSeo } from "../../lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const [site, posts] = await Promise.all([getSiteConfig(), getPublishedPosts()]);
   const seoSite = siteForSeo(site);

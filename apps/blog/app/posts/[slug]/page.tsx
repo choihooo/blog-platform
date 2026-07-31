@@ -12,6 +12,8 @@ import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/co
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 
+export const dynamic = "force-dynamic";
+
 type PostPageProps = {
   params: Promise<{
     slug: string;

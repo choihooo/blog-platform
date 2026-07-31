@@ -5,6 +5,8 @@ import { trimSlash } from "@blog-platform/seo-engine";
 import { PostList } from "../../components/post-list";
 import { getPostsByTag, getSiteConfig, getTag, getTags } from "../../../lib/content-source";
 
+export const dynamic = "force-dynamic";
+
 type TagPageProps = {
   params: Promise<{
     slug: string;

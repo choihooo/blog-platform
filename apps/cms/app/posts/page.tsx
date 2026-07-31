@@ -1,5 +1,7 @@
 import {
   Badge,
+  Button,
+  Input,
   Table,
   TableBody,
   TableCell,
@@ -13,12 +15,22 @@ import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 import { AccessState, CmsShell } from "../../components/shell/index";
 import { listPostSummaries, type PostSummary } from "../../lib/editor/editor-loader";
 
+type PostsPageSearchParams = {
+  q?: string | string[];
+};
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export function PostsPageView({
   decision,
   posts = [],
+  query = "",
 }: {
   decision: AccessDecision;
   posts?: PostSummary[];
+  query?: string;
 }) {
   if (decision.status !== "authorized") {
     return <AccessState decision={decision} />;
@@ -32,7 +44,9 @@ export function PostsPageView({
             <p className="text-sm font-medium text-muted-foreground">Content library</p>
             <h2 className="mt-1 text-3xl font-semibold">모든 글</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              D1 데이터베이스의 초안과 발행 글 {posts.length}개
+              {query
+                ? `"${query}" 검색 결과 ${posts.length}개`
+                : `D1 데이터베이스의 초안과 발행 글 ${posts.length}개`}
             </p>
           </div>
           <a
@@ -42,6 +56,24 @@ export function PostsPageView({
             <Plus aria-hidden="true" size={16} />새 초안
           </a>
         </div>
+        <form action="/posts" className="flex max-w-2xl gap-2">
+          <Input
+            aria-label="Search posts"
+            className="h-10"
+            defaultValue={query}
+            name="q"
+            placeholder="제목, slug, 상태, 본문 검색"
+            type="search"
+          />
+          <Button type="submit" variant="secondary">
+            검색
+          </Button>
+          {query ? (
+            <Button asChild type="button" variant="ghost">
+              <a href="/posts">초기화</a>
+            </Button>
+          ) : null}
+        </form>
         <div className="rounded-lg border border-border bg-card">
           {posts.length > 0 ? (
             <Table className="min-w-[46rem]">
@@ -88,7 +120,9 @@ export function PostsPageView({
             <div className="px-5 py-14 text-center">
               <p className="font-medium">표시할 글이 없습니다.</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                D1 연결을 확인하거나 첫 초안을 만들어보세요.
+                {query
+                  ? "검색어를 바꾸거나 초기화해보세요."
+                  : "D1 연결을 확인하거나 첫 초안을 만들어보세요."}
               </p>
             </div>
           )}
@@ -98,8 +132,16 @@ export function PostsPageView({
   );
 }
 
-export default function PostsPage() {
-  return Promise.all([requireCmsAccess(), listPostSummaries()]).then(([decision, posts]) => (
-    <PostsPageView decision={decision} posts={posts} />
-  ));
+export default async function PostsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<PostsPageSearchParams>;
+}) {
+  const resolvedSearchParams = await (searchParams ?? Promise.resolve({} as PostsPageSearchParams));
+  const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
+  const [decision, posts] = await Promise.all([
+    requireCmsAccess(),
+    listPostSummaries(undefined, { query }),
+  ]);
+  return <PostsPageView decision={decision} posts={posts} query={query} />;
 }

@@ -1,12 +1,18 @@
 import { EditorScreen } from "../../../components/editor/index";
 import { AccessState, CmsShell } from "../../../components/shell/index";
 import { requireCmsAccess, type AccessDecision } from "../../../lib/auth/index";
-import { createNewEditorDocument, loadEditorSiteAnalyticsConfig } from "../../../lib/editor/index";
+import {
+  createNewEditorDocument,
+  loadEditorCategories,
+  loadEditorSiteAnalyticsConfig,
+} from "../../../lib/editor/index";
 
 export function NewPostPageView({
+  categories = [],
   decision,
   siteAnalytics,
 }: {
+  categories?: Awaited<ReturnType<typeof loadEditorCategories>>;
   decision: AccessDecision;
   siteAnalytics?: Awaited<ReturnType<typeof loadEditorSiteAnalyticsConfig>>;
 }) {
@@ -14,15 +20,21 @@ export function NewPostPageView({
 
   return (
     <CmsShell activePath="/posts" session={decision.session} title="New draft">
-      <EditorScreen initialDocument={createNewEditorDocument()} siteAnalytics={siteAnalytics} />
+      <EditorScreen
+        categories={categories}
+        initialDocument={createNewEditorDocument()}
+        siteAnalytics={siteAnalytics}
+      />
     </CmsShell>
   );
 }
 
 export default function NewPostPage() {
-  return Promise.all([requireCmsAccess(), loadEditorSiteAnalyticsConfig()]).then(
-    ([decision, siteAnalytics]) => (
-      <NewPostPageView decision={decision} siteAnalytics={siteAnalytics} />
-    ),
-  );
+  return Promise.all([
+    requireCmsAccess(),
+    loadEditorSiteAnalyticsConfig(),
+    loadEditorCategories(),
+  ]).then(([decision, siteAnalytics, categories]) => (
+    <NewPostPageView categories={categories} decision={decision} siteAnalytics={siteAnalytics} />
+  ));
 }

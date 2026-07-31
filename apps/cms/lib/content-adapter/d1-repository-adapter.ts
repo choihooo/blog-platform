@@ -15,6 +15,7 @@ import type {
 } from "./types";
 
 const AUTHOR_IDENTITY = "cms-editor";
+const DEFAULT_AUTHOR = "ho";
 
 function slugFromPath(path: string) {
   return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
@@ -73,6 +74,7 @@ function postToSource(post: PostRecord) {
       title: post.title,
       status: post.isPublished === 1 ? "published" : post.publishedAt ? "archived" : "draft",
       slug: post.slug,
+      author: DEFAULT_AUTHOR,
       publishedAt: post.publishedAt,
       updatedAt: post.updatedAt,
       excerpt: post.summary,

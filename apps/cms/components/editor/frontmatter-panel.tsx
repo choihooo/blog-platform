@@ -9,12 +9,20 @@ import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadStatus } from "./media-upload-status";
 
 type Props = {
+  categories?: CategoryOption[];
   frontmatter: EditorFrontmatter;
   onChange?: (frontmatter: EditorFrontmatter) => void;
   postSlug: string;
 };
 
-export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
+export type CategoryOption = {
+  slug: string;
+  label: string;
+  depth: 1 | 2;
+  parentSlug?: string | null;
+};
+
+export function FrontmatterPanel({ categories = [], frontmatter, onChange, postSlug }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [result, setResult] = useState<UploadEditorMediaResult>();
   const [isPending, startTransition] = useTransition();
@@ -35,15 +43,26 @@ export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
-  const normalizeCategory = (value: string) =>
-    value
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9/]+/g, "-")
-      .replace(/\/+/g, "/")
-      .replace(/^-+|-+$/g, "")
-      .replace(/\/-+|-+\//g, "/");
   const isSlugMutated = Boolean(frontmatter.slug && frontmatter.slug !== postSlug);
+  const parentCategories = categories.filter((category) => category.depth === 1);
+  const childCategories = categories.filter((category) => category.depth === 2);
+  const selectedCategory = frontmatter.category ?? "";
+  const selectedParent = selectedCategory.includes("/")
+    ? (selectedCategory.split("/")[0] ?? "")
+    : selectedCategory;
+  const selectedChild = selectedCategory.includes("/") ? selectedCategory : "";
+  const selectedChildOptions = childCategories.filter(
+    (category) => category.parentSlug === selectedParent,
+  );
+
+  function updateParentCategory(parentSlug: string) {
+    const firstChild = childCategories.find((category) => category.parentSlug === parentSlug);
+    update("category", firstChild?.slug ?? parentSlug);
+  }
+
+  function updateChildCategory(childSlug: string) {
+    update("category", childSlug || selectedParent);
+  }
 
   function upload(file: File) {
     const formData = new FormData();
@@ -99,15 +118,41 @@ export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
         ) : null}
       </div>
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-category">
-          Category
+        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-category-1">
+          1차 카테고리
         </label>
-        <Input
-          id="editor-category"
-          value={frontmatter.category ?? ""}
-          onChange={(event) => update("category", normalizeCategory(event.currentTarget.value))}
-          placeholder="engineering"
-        />
+        <select
+          className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+          id="editor-category-1"
+          onChange={(event) => updateParentCategory(event.currentTarget.value)}
+          value={selectedParent}
+        >
+          <option value="">카테고리 없음</option>
+          {parentCategories.map((category) => (
+            <option key={category.slug} value={category.slug}>
+              {category.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-category-2">
+          2차 카테고리
+        </label>
+        <select
+          className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!selectedParent || selectedChildOptions.length === 0}
+          id="editor-category-2"
+          onChange={(event) => updateChildCategory(event.currentTarget.value)}
+          value={selectedChild}
+        >
+          <option value="">선택 안 함</option>
+          {selectedChildOptions.map((category) => (
+            <option key={category.slug} value={category.slug}>
+              {category.label}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-tags">

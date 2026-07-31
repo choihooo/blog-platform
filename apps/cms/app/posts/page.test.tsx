@@ -41,6 +41,29 @@ describe("PostsPageView", () => {
     expect(screen.getByRole("link", { name: /Posts/ }).getAttribute("aria-current")).toBe("page");
   });
 
+  it("renders post search controls and result count", () => {
+    render(
+      createElement(PostsPageView, {
+        decision,
+        query: "AI",
+        posts: [
+          {
+            path: "db/posts/tistory-39",
+            slug: "tistory-39",
+            title: "검증 가능한 AI UI 설계하기",
+            status: "published",
+            sha: "sha",
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getAllByLabelText("Search posts").at(-1)).toBeTruthy();
+    expect(screen.getByDisplayValue("AI")).toBeTruthy();
+    expect(screen.getByText('"AI" 검색 결과 1개')).toBeTruthy();
+    expect(screen.getByRole("link", { name: "초기화" }).getAttribute("href")).toBe("/posts");
+  });
+
   it("renders empty state message when no posts exist", () => {
     render(
       createElement(PostsPageView, {

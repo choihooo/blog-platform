@@ -10,6 +10,8 @@ import {
   listCategories,
 } from "../../../lib/content-source";
 
+export const dynamic = "force-dynamic";
+
 type CategoryPageProps = {
   params: Promise<{
     categoryPath: string[];

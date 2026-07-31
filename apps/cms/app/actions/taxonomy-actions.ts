@@ -26,7 +26,10 @@ async function withTaxonomyAccess<T>(operation: () => Promise<T>) {
 }
 
 export async function createCategoryAction(formData: FormData) {
-  const slug = normalizeSlug(String(formData.get("slug") ?? ""));
+  const parentSlug = normalizeSlug(String(formData.get("parentSlug") ?? ""));
+  const childSlug = normalizeSlug(String(formData.get("childSlug") ?? ""));
+  const rawSlug = normalizeSlug(String(formData.get("slug") ?? ""));
+  const slug = parentSlug && childSlug ? `${parentSlug}/${childSlug}` : rawSlug;
   const name = String(formData.get("name") ?? "").trim();
   if (!slug || !name) {
     return;
@@ -47,6 +50,35 @@ export async function createCategoryAction(formData: FormData) {
   );
   if (!result.ok || !result.value.ok) return;
   revalidatePath("/settings");
+}
+
+export async function updateCategoryAction(formData: FormData) {
+  const categoryId = String(formData.get("categoryId") ?? "").trim();
+  const depth = String(formData.get("depth") ?? "");
+  const parentSlug = normalizeSlug(String(formData.get("parentSlug") ?? ""));
+  const childSlug = normalizeSlug(String(formData.get("childSlug") ?? ""));
+  const rawSlug = normalizeSlug(String(formData.get("slug") ?? ""));
+  const slug = depth === "2" && parentSlug && childSlug ? `${parentSlug}/${childSlug}` : rawSlug;
+  const name = String(formData.get("name") ?? "").trim();
+  if (!categoryId || !slug || !name) {
+    return;
+  }
+
+  const result = await withTaxonomyAccess(() =>
+    createContentAdapter("d1r2").updateCategory({
+      categoryId,
+      category: {
+        name,
+        slug,
+        parentSlug: depth === "2" ? parentSlug : null,
+      },
+      authorIdentity: "cms-editor",
+    }),
+  );
+  if (!result.ok || !result.value.ok) return;
+  revalidatePath("/settings");
+  revalidatePath("/");
+  revalidatePath(`/categories/${result.value.data.slug}`);
 }
 
 export async function createTagAction(formData: FormData) {
