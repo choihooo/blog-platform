@@ -96,6 +96,7 @@ export default async function PostPage({ params }: PostPageProps) {
                     alt=""
                     className="object-cover"
                     fill
+                    fetchPriority="high"
                     priority
                     sizes="(min-width: 1024px) 68ch, calc(100vw - 40px)"
                     src={post.coverImage}

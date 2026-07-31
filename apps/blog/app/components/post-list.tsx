@@ -84,6 +84,7 @@ function Cover({
           alt={`${post.title} cover`}
           className="object-cover"
           fill
+          fetchPriority={priority ? "high" : "auto"}
           priority={priority}
           sizes={
             size === "tile"
