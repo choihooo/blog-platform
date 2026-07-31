@@ -11,26 +11,26 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://blog.hozorica.com"),
   title: {
-    default: "Ho's Blog",
-    template: "%s | Ho's Blog",
+    default: "Hozorica",
+    template: "%s | Hozorica",
   },
-  description: "파일 기반 MDX 기술 블로그",
+  description: "기록하고 실험하는 개발 블로그",
   icons: {
     icon: "/icon.png",
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: "Ho's Blog",
-    description: "파일 기반 MDX 기술 블로그",
+    title: "Hozorica",
+    description: "기록하고 실험하는 개발 블로그",
     url: "https://blog.hozorica.com",
-    siteName: "Ho's Blog",
+    siteName: "Hozorica",
     images: ["/brand/hozorica-card.webp"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ho's Blog",
-    description: "파일 기반 MDX 기술 블로그",
+    title: "Hozorica",
+    description: "기록하고 실험하는 개발 블로그",
     images: ["/brand/hozorica-card.webp"],
   },
 };

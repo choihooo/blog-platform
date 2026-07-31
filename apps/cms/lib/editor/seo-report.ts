@@ -7,7 +7,7 @@ type EditorSeoSite = {
   siteUrl?: string;
 };
 
-const fallbackSite = { siteName: "Ho's Blog", siteUrl: "https://blog.hozorica.com" };
+const fallbackSite = { siteName: "Hozorica", siteUrl: "https://blog.hozorica.com" };
 
 export function seoReportForEditorDocument(
   document: EditorDocument,
