@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "monorepo-ci-optimizer": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "skillPath": "ci-cd/monorepo-ci-optimizer/SKILL.md",
+      "computedHash": "ef80fa0f408b8d6a259768134d485408163a9c50853f91a2edfb70ac80f7580e"
+    }
+  }
+}
