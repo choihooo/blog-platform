@@ -42,7 +42,7 @@ export type EditorSiteAnalyticsConfig = {
 };
 
 function slugFromPath(path: string) {
-  return path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "");
+  return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
 }
 
 function titleFromSource(source: string, fallback: string) {
@@ -103,7 +103,7 @@ export async function loadEditorDocument(
 }
 
 export function pathForSlug(slug: string) {
-  return `content/posts/${slug}.mdx`;
+  return `db/posts/${slug}`;
 }
 
 export async function loadEditorSiteAnalyticsConfig(

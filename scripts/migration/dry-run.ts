@@ -13,7 +13,7 @@ type DryRunResult = {
 };
 
 function parseMode(): "legacy" | "d1r2" {
-  return process.env.CONTENT_SOURCE_MODE === "d1r2" ? "d1r2" : "legacy";
+  return process.env.CONTENT_SOURCE_MODE === "legacy" ? "legacy" : "d1r2";
 }
 
 function getSampleSlug() {

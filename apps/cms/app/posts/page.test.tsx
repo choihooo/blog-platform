@@ -18,7 +18,7 @@ describe("PostsPageView", () => {
         decision,
         posts: [
           {
-            path: "content/posts/hello-world.mdx",
+            path: "db/posts/hello-world",
             slug: "hello-world",
             title: "Hello World",
             status: "published",
@@ -50,6 +50,6 @@ describe("PostsPageView", () => {
     );
 
     expect(screen.getByText(/표시할 글이 없습니다./)).toBeTruthy();
-    expect(screen.getByText(/저장소 연결을 확인하거나 첫 초안을 만들어보세요./)).toBeTruthy();
+    expect(screen.getByText(/D1 연결을 확인하거나 첫 초안을 만들어보세요./)).toBeTruthy();
   });
 });

@@ -17,11 +17,11 @@ import type {
 const AUTHOR_IDENTITY = "cms-editor";
 
 function slugFromPath(path: string) {
-  return path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "");
+  return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
 }
 
 function pathForSlug(slug: string) {
-  return `content/posts/${slug}.mdx`;
+  return `db/posts/${slug}`;
 }
 
 function shaFor(value: string) {

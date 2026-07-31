@@ -9,7 +9,7 @@ export type MigrationSwitchState = {
 };
 
 const DEFAULT_SWITCH: MigrationSwitchState = {
-  mode: "legacy",
+  mode: "d1r2",
   dualRunEnabled: false,
   rollbackWindowMinutes: 1,
 };
@@ -32,8 +32,8 @@ type MigrationSwitchOutput = {
 };
 
 function normalizeMode(input: string | undefined): MigrationMode {
-  const mode = input?.trim().toLowerCase();
-  return mode === "d1r2" || mode === "legacy" ? mode : DEFAULT_SWITCH.mode;
+  void input;
+  return "d1r2";
 }
 
 export function getMigrationSwitch(

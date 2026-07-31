@@ -47,8 +47,8 @@ function redact(message: string | undefined) {
 }
 
 function editorPathFromContentPath(path?: string) {
-  if (!path?.startsWith("content/posts/")) return;
-  return `/posts/${path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "")}`;
+  if (!path || !/^(?:content|db)\/posts\//.test(path)) return;
+  return `/posts/${path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "")}`;
 }
 
 function refreshCmsEditorPaths(path?: string) {

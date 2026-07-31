@@ -5,7 +5,7 @@ import "./env";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const DEFAULT_CONTENT_SOURCE_MODE = "legacy";
+const DEFAULT_CONTENT_SOURCE_MODE = "d1r2";
 
 type MigrationMode = "legacy" | "d1r2";
 
@@ -33,7 +33,7 @@ type MigrationState = {
 
 function resolveMigrationMode(): MigrationMode {
   const fromEnv = (process.env.CONTENT_SOURCE_MODE ?? DEFAULT_CONTENT_SOURCE_MODE).trim().toLowerCase();
-  return fromEnv === "d1r2" ? "d1r2" : "legacy";
+  return fromEnv === "legacy" ? "legacy" : "d1r2";
 }
 
 function readCommand(): MigrationCommand {
@@ -46,8 +46,8 @@ function printUsage() {
   console.log(`\nUsage:`);
   console.log(`  pnpm migrate:run [extract|upload|import|verify|full|status]`);
   console.log(`\nModes:`);
-  console.log(`  - legacy: local content + current storage path (default)`);
-  console.log(`  - d1r2: D1/R2 migration path`);
+  console.log(`  - d1r2: D1/R2 migration path (default)`);
+  console.log(`  - legacy: historical local content path`);
 }
 
 function getStateByMode(mode: MigrationMode): MigrationRunState {

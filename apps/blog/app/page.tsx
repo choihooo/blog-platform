@@ -12,7 +12,7 @@ export default async function BlogHomePage() {
           {site.siteName}
         </h1>
         <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-          Repository에 저장된 MDX 글 중 공개 상태인 글만 보여줍니다.
+          D1 데이터베이스에 저장된 공개 글만 보여줍니다.
         </p>
       </section>
       <PostList posts={posts} />

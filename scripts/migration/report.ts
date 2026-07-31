@@ -26,7 +26,7 @@ type DailySummaryInput = {
 const defaultReport: ReportInput = {
   rowsCompared: 0,
   matchedRows: 0,
-  migrationMode: process.env.CONTENT_SOURCE_MODE === "d1r2" ? "d1r2" : "legacy",
+  migrationMode: process.env.CONTENT_SOURCE_MODE === "legacy" ? "legacy" : "d1r2",
   imageSuccessRate: 0,
   errors: [],
 };

@@ -1,14 +1,3 @@
-import { createHash } from "node:crypto";
-import { readdir, readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-import {
-  getPublishedPosts as getPublishedPostsFromMarkdown,
-  parsePostFile,
-  validateContentCollection,
-} from "@blog-platform/markdown";
-
 import type {
   CategoryListInput,
   CategoryRecord,
@@ -29,6 +18,12 @@ type D1Prepared = {
 
 type D1Database = {
   prepare(sql: string): D1Prepared;
+};
+
+type CloudflareD1QueryResponse<T> = {
+  success?: boolean;
+  errors?: Array<{ message?: string }>;
+  result?: Array<{ results?: T[]; success?: boolean }>;
 };
 
 type DbPostRow = {
@@ -70,17 +65,9 @@ type DbCategoryRow = {
   created_at: string;
 };
 
-type LegacyPostFallback = PostRecord & {
-  category: string | null;
-  tags: string[];
-  mediaRefs: MediaReference[];
-};
-
 type CountRow = {
   total: number | string;
 };
-
-const adapterDirname = path.dirname(fileURLToPath(import.meta.url));
 
 function failure(code: ContentFailureCode, message: string): ContractResult<never> {
   return {
@@ -114,8 +101,58 @@ function executeRun(statement: D1Prepared, params: unknown[]) {
   return statement.bind ? statement.bind(...params).run() : statement.run(...params);
 }
 
-function nowSlug(value: string) {
-  return value.trim().toLowerCase();
+function cloudflareD1Config() {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID ?? process.env.D1_DATABASE_ID;
+  const apiToken = process.env.CLOUDFLARE_D1_API_TOKEN ?? process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !databaseId || !apiToken) return;
+  return { accountId, databaseId, apiToken };
+}
+
+function createCloudflareD1RestDatabase(): D1Database | undefined {
+  const config = cloudflareD1Config();
+  if (!config) return;
+  const { accountId, databaseId, apiToken } = config;
+
+  function statement(sql: string, boundParams: unknown[] = []): D1Prepared {
+    async function query<T>(params: unknown[]): Promise<{ results: T[] }> {
+      const response = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ sql, params }),
+        },
+      );
+      const payload = (await response.json()) as CloudflareD1QueryResponse<T>;
+      const result = payload.result?.[0];
+      if (!response.ok || payload.success === false || result?.success === false) {
+        throw new Error(
+          payload.errors?.[0]?.message ?? `Cloudflare D1 query failed with ${response.status}`,
+        );
+      }
+      return { results: result?.results ?? [] };
+    }
+
+    return {
+      bind: (...params: unknown[]) => statement(sql, params),
+      all: <T>(...params: unknown[]) => query<T>(params.length > 0 ? params : boundParams),
+      first: async <T>(...params: unknown[]) => {
+        const rows = await query<T>(params.length > 0 ? params : boundParams);
+        return rows.results[0] ?? null;
+      },
+      run: async (...params: unknown[]) => {
+        await query<unknown>(params.length > 0 ? params : boundParams);
+      },
+    };
+  }
+
+  return {
+    prepare: statement,
+  };
 }
 
 function normalizeSlug(value: string) {
@@ -265,30 +302,6 @@ async function loadMediaRefs(binding: D1Database, postIds: string[]) {
   return grouped;
 }
 
-async function discoverContentRoot(): Promise<string> {
-  const candidates = [
-    process.cwd(),
-    path.join(process.cwd(), "apps/cms"),
-    path.join(process.cwd(), "apps/blog"),
-    path.join(adapterDirname, "../../../../"),
-  ];
-
-  for (const base of candidates) {
-    const folder = path.join(base, "content");
-    try {
-      await readdir(folder);
-      return folder;
-    } catch {
-      // continue
-    }
-  }
-  return path.resolve(process.cwd(), "../../content");
-}
-
-async function readFileText(filePath: string) {
-  return readFile(filePath, "utf8");
-}
-
 function parseJson<T>(value: string, fallback: T): T {
   try {
     return JSON.parse(value) as T;
@@ -297,84 +310,17 @@ function parseJson<T>(value: string, fallback: T): T {
   }
 }
 
-async function fallbackPostsFromMarkdown(): Promise<Array<LegacyPostFallback>> {
-  const contentRoot = await discoverContentRoot();
-  const postsDir = path.join(contentRoot, "posts");
-  const authorsPath = path.join(contentRoot, "authors");
-  const categoriesPath = path.join(contentRoot, "categories.json");
-  const tagsPath = path.join(contentRoot, "tags.json");
-  const sitePath = path.join(contentRoot, "site.json");
-
-  const [rawPosts, authors, categoriesJson, tagsJson, siteJson] = await Promise.all([
-    readdir(postsDir, { withFileTypes: true }).catch(() => []),
-    readdir(authorsPath, { withFileTypes: true }).catch(() => []),
-    readFileText(categoriesPath).catch(() => "[]"),
-    readFileText(tagsPath).catch(() => "[]"),
-    readFileText(sitePath).catch(() => "{}"),
-  ]);
-
-  const files = await Promise.all(
-    rawPosts
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".mdx"))
-      .map((entry) =>
-        readFileText(path.join(postsDir, entry.name)).then((content) => ({
-          file: entry.name,
-          source: content,
-        })),
-      ),
-  );
-
-  const collectionResult = validateContentCollection({
-    posts: files.map((entry) => ({ path: `content/posts/${entry.file}`, source: entry.source })),
-    authors: authors
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
-      .map((entry) => ({ path: `content/authors/${entry.name}`, source: "{}" })),
-    categoriesJson,
-    tagsJson,
-    siteJson,
-  });
-
-  if (!collectionResult.success || !collectionResult.data) {
-    return [];
-  }
-
-  const postList = getPublishedPostsFromMarkdown(collectionResult.data);
-
-  const posts: Array<LegacyPostFallback> = [];
-  for (const post of postList) {
-    const sourcePath = path.join(contentRoot, post.path);
-    const source = await readFileText(sourcePath).catch(() => "");
-    const parsed = parsePostFile({ path: post.path, source });
-    posts.push({
-      id: createHash("md5").update(post.path).digest("hex"),
-      slug: post.slug,
-      title: post.title,
-      content: parsed.success && parsed.data ? parsed.data.body : post.body,
-      summary: post.excerpt ?? "",
-      categoryId: null,
-      heroImageKey: post.coverImage ?? null,
-      publishedAt: post.publishedAt,
-      updatedAt: post.updatedAt ?? new Date().toISOString(),
-      isPublished: 1,
-      viewCount: 0,
-      categoryPath: post.category ?? null,
-      category: post.category ?? null,
-      tags: post.tags ?? [],
-      mediaRefs: [],
-    });
-  }
-
-  return posts;
-}
-
 function getD1Binding(): D1Database | undefined {
   const globalBinding = (globalThis as { D1_DATABASE?: D1Database | string | null }).D1_DATABASE;
   if (isD1Database(globalBinding)) return globalBinding;
 
   const envBinding = process.env.D1_DATABASE;
-  if (!envBinding) return;
-  const parsed = parseJson<unknown>(envBinding, "");
-  return isD1Database(parsed) ? parsed : undefined;
+  if (envBinding) {
+    const parsed = parseJson<unknown>(envBinding, "");
+    if (isD1Database(parsed)) return parsed;
+  }
+
+  return createCloudflareD1RestDatabase();
 }
 
 function normalizeCategorySlug(input?: string): string | undefined {
@@ -391,37 +337,6 @@ function normalizeListInput(input: ContentListInput) {
     limit: normalizeLimit(input.limit),
     tagSlug: input.tagSlug ? normalizeSlug(input.tagSlug) : undefined,
     categoryPath: input.categoryPath ? normalizeCategorySlug(input.categoryPath) : undefined,
-  };
-}
-
-async function loadFallbackRecords() {
-  const posts = await fallbackPostsFromMarkdown();
-  const categoriesRaw = parseJson<unknown[]>(
-    await readFileText(path.join(await discoverContentRoot(), "categories.json")).catch(() => "[]"),
-    [],
-  );
-  const categories = Array.isArray(categoriesRaw)
-    ? (categoriesRaw as Array<{
-        id: string;
-        slug: string;
-        name: string;
-        parent_id?: string | null;
-        parent_slug?: string | null;
-        depth: 1 | 2;
-      }>)
-    : [];
-
-  return {
-    posts,
-    categories: categories.map((category) => ({
-      id: category.id || createHash("md5").update(category.slug).digest("hex"),
-      name: category.name,
-      slug: category.slug,
-      parentId: category.parent_id ?? null,
-      parentSlug: category.parent_slug ?? null,
-      depth: category.depth,
-      createdAt: new Date().toISOString(),
-    })),
   };
 }
 
@@ -584,32 +499,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
     input: ContentListInput,
   ): Promise<{ posts: PostRecord[]; total: number }> {
     if (!binding) {
-      const fallback = await loadFallbackRecords();
-      const normalized = normalizeListInput(input);
-      const posts = fallback.posts
-        .filter((post) => !normalized.publishedOnly || post.isPublished === 1)
-        .filter((post) =>
-          normalized.tagSlug
-            ? post.tags.map((tag) => nowSlug(tag)).includes(normalized.tagSlug)
-            : true,
-        )
-        .filter((post) =>
-          normalized.categoryPath
-            ? post.categoryPath
-              ? nowSlug(post.categoryPath) === normalized.categoryPath
-              : false
-            : true,
-        )
-        .sort((a, b) => {
-          const aDate = a.publishedAt ?? a.updatedAt;
-          const bDate = b.publishedAt ?? b.updatedAt;
-          return bDate.localeCompare(aDate);
-        });
-
-      const start = (normalized.page - 1) * normalized.limit;
-      const total = posts.length;
-      const paginated = posts.slice(start, start + normalized.limit);
-      return { posts: paginated, total };
+      return { posts: [], total: 0 };
     }
 
     const normalized = normalizeListInput(input);
@@ -629,24 +519,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
     const depth = input.depth === 1 || input.depth === 2 ? input.depth : 1;
     const parentSlug = input.parentSlug ? normalizeCategorySlug(input.parentSlug) : undefined;
 
-    if (!binding) {
-      const fallback = await loadFallbackRecords();
-      const items = fallback.categories
-        .filter((category) => category.depth === depth)
-        .filter((category) => (parentSlug ? category.parentSlug === parentSlug : true))
-        .map((category) => ({
-          id: category.id,
-          name: category.name,
-          slug: category.slug,
-          parentId: category.parentId,
-          parentSlug: category.parentSlug,
-          depth,
-          createdAt: category.createdAt,
-        }))
-        .sort((a, b) => a.slug.localeCompare(b.slug));
-
-      return { items };
-    }
+    if (!binding) return { items: [] };
 
     const categorySql = [
       "SELECT id, name, slug, parent_id, parent_slug, depth, created_at",
@@ -681,16 +554,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
       const normalized = normalizeSlug(slug);
       if (!normalized) return failure("validation-failure", "slug is required");
 
-      if (!binding) {
-        const fallback = await loadFallbackRecords();
-        const found = fallback.posts.find((post) => nowSlug(post.slug) === normalized);
-        const visible = options?.includeUnpublished
-          ? found
-          : found && found.isPublished === 1
-            ? found
-            : null;
-        return { ok: true, data: visible ?? null };
-      }
+      if (!binding) return { ok: true, data: null };
 
       const post = await runD1PostBySlug(binding, normalized, options?.includeUnpublished);
       return { ok: true, data: post ?? null };

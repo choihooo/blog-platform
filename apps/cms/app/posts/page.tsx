@@ -32,7 +32,7 @@ export function PostsPageView({
             <p className="text-sm font-medium text-muted-foreground">Content library</p>
             <h2 className="mt-1 text-3xl font-semibold">모든 글</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              GitHub 저장소의 MDX 초안과 발행 글 {posts.length}개
+              D1 데이터베이스의 초안과 발행 글 {posts.length}개
             </p>
           </div>
           <a
@@ -88,7 +88,7 @@ export function PostsPageView({
             <div className="px-5 py-14 text-center">
               <p className="font-medium">표시할 글이 없습니다.</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                저장소 연결을 확인하거나 첫 초안을 만들어보세요.
+                D1 연결을 확인하거나 첫 초안을 만들어보세요.
               </p>
             </div>
           )}

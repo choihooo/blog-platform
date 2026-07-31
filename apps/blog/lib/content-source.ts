@@ -3,20 +3,13 @@ import { analyzeMdx } from "@blog-platform/markdown";
 
 import type { PublicPost } from "./content";
 import { toDualRunComparable as toDualRunComparableContent } from "./content";
-import {
-  getContentCollection as getLegacyContentCollection,
-  getPostBySlug as getLegacyPostBySlug,
-  getPostsByCategory as getLegacyPostsByCategory,
-  getPostsByTag as getLegacyPostsByTag,
-  getPublishedPosts as getLegacyPublishedPosts,
-  getSiteConfig,
-} from "./content";
+import { getSiteConfig } from "./content";
 import type { PostRecord } from "../../cms/lib/content-adapter/content-adapter.interface";
 import { createContentAdapter } from "../../cms/lib/content-adapter/content-adapter";
 
 export type { PublicPost } from "./content";
 
-export type ContentSourceMode = "legacy" | "d1r2";
+export type ContentSourceMode = "d1r2";
 
 export type ContentFailureCode =
   | "validation-failure"
@@ -80,36 +73,34 @@ export interface BlogContentSource {
 
 const CATEGORY_PATH_RE = /^([a-z0-9-]+)(?:\/([a-z0-9-]+))?$/;
 
-type ContentMetadata = Awaited<ReturnType<typeof getLegacyContentCollection>>;
-
 type PostRecordWithTags = PostRecord & {
   tags?: string[];
 };
-
-let contentMetadataPromise: Promise<ContentMetadata> | undefined;
-async function getContentMetadata() {
-  if (!contentMetadataPromise) {
-    contentMetadataPromise = getLegacyContentCollection();
-  }
-  return contentMetadataPromise;
-}
 
 function normalizeTagInput(tags: string[] | undefined) {
   return [...new Set((tags ?? []).map((tag) => tag.trim().toLowerCase()).filter(Boolean))].sort();
 }
 
+function labelFromSlug(slug: string) {
+  return slug
+    .split("/")
+    .at(-1)!
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 function toPublicSourcePost(
   post: PostRecordWithTags,
-  metadata: ContentMetadata,
   options?: { tagSlugs?: string[] },
 ): PublicPost {
   const normalizedSlug = post.slug.trim().toLowerCase();
   const categoryPath = post.categoryPath ?? null;
   const requestedTags = normalizeTagInput(post.tags ?? options?.tagSlugs);
   const isPublished = post.isPublished === 1;
-  const siteDefaultAuthor = metadata.site.defaultAuthor;
   const fallbackBody = post.content ?? "";
-  const analysis = analyzeMdx({ path: `posts/${normalizedSlug}.mdx`, source: fallbackBody });
+  const analysis = analyzeMdx({ path: `db/posts/${normalizedSlug}.md`, source: fallbackBody });
   const toc = analysis.success && analysis.data ? analysis.data.toc : [];
   const readingTimeLabel =
     analysis.success && analysis.data
@@ -126,14 +117,12 @@ function toPublicSourcePost(
     post.mediaRefs?.find((media) => media.kind === "og");
   const coverImage = heroMedia?.r2Url ?? heroMedia?.r2Key ?? post.heroImageKey ?? undefined;
 
-  const categoryEntry = metadata.categories.find((item) => item.slug === categoryPath);
-
   return {
-    path: `posts/${normalizedSlug}.mdx`,
+    path: `db/posts/${normalizedSlug}`,
     status: "published",
     title: post.title,
     slug: normalizedSlug,
-    author: siteDefaultAuthor,
+    author: "db",
     publishedAt: post.publishedAt ?? "",
     updatedAt: post.updatedAt,
     excerpt: post.summary,
@@ -141,19 +130,16 @@ function toPublicSourcePost(
     body: finalBody,
     toc,
     tags: requestedTags,
-    tagEntries: requestedTags
-      .map((tag) => metadata.tags.find((entry) => entry.slug === tag))
-      .filter((tag) => tag !== undefined)
-      .map((tag) => ({ ...tag })),
+    tagEntries: requestedTags.map((tag) => ({ slug: tag, label: labelFromSlug(tag) })),
     category: categoryPath ?? undefined,
-    categoryEntry: categoryEntry
+    categoryEntry: categoryPath
       ? {
-          slug: categoryEntry.slug,
-          label: categoryEntry.label,
-          description: categoryEntry.description,
+          slug: categoryPath,
+          label: labelFromSlug(categoryPath),
+          description: undefined,
         }
       : undefined,
-    authorProfile: metadata.authors.find((entry) => entry.id === siteDefaultAuthor),
+    authorProfile: undefined,
     readingTimeLabel,
   };
 }
@@ -183,117 +169,12 @@ function normalizeSlug(value: string) {
   return value.trim().toLowerCase();
 }
 
-function toCategoryHierarchy(category: Category): CategoryHierarchy {
-  const parts = category.slug.split("/").filter(Boolean);
-  const depth = parts.length > 1 ? 2 : 1;
-  return {
-    ...category,
-    depth: depth as 1 | 2,
-    parentSlug: depth === 2 ? (parts[0] ?? null) : undefined,
-  };
-}
-
-function paginate<T>(items: T[], page = 1, limit = 20): T[] {
-  const start = (normalizePage(page) - 1) * normalizeLimit(limit);
-  return items.slice(start, start + normalizeLimit(limit));
-}
-
-function sortByPublishedDesc(posts: PublicPost[]) {
-  return [...posts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-}
-
 function sortByPathSlug(a: CategoryHierarchy, b: CategoryHierarchy) {
   return a.slug.localeCompare(b.slug);
 }
 
-async function listPostsLegacy(input: ContentListInput = {}): Promise<PublicPost[]> {
-  const posts = await getLegacyPublishedPosts();
-  const categoryPath = input.categoryPath ? normalizeCategoryPath(input.categoryPath) : undefined;
-  const tagSlug = input.tagSlug ? input.tagSlug.trim().toLowerCase() : undefined;
-
-  const filtered = posts.filter((post) => {
-    if (input.publishedOnly === false) return true;
-    if (input.publishedOnly === true && post.status !== "published") return false;
-    if (tagSlug && !(post.tags ?? []).includes(tagSlug)) return false;
-    if (categoryPath && post.category !== categoryPath) return false;
-    return true;
-  });
-
-  const sorted = sortByPublishedDesc(filtered);
-  if (input.page || input.limit) {
-    return paginate(sorted, input.page, input.limit);
-  }
-  return sorted;
-}
-
-async function getPostsByTagLegacy(
-  slug: string,
-  input: Omit<ContentListInput, "tagSlug"> = {},
-): Promise<PublicPost[]> {
-  const posts = await getLegacyPostsByTag(slug);
-  const normalized = sortByPublishedDesc(posts).filter((post) =>
-    post.tags?.some((tag) => tag.toLowerCase() === slug.toLowerCase()),
-  );
-  if (input.page || input.limit) {
-    return paginate(normalized, input.page, input.limit);
-  }
-  return normalized;
-}
-
-async function getPostsByCategoryPathLegacy(
-  categoryPath: string,
-  input: Omit<ContentListInput, "categoryPath"> = {},
-): Promise<PublicPost[]> {
-  const normalized = normalizeCategoryPath(categoryPath);
-  if (!normalized) return [];
-  const candidates = await getLegacyPostsByCategory(normalized);
-  const sorted = sortByPublishedDesc(candidates);
-  if (input.page || input.limit) {
-    return paginate(sorted, input.page, input.limit);
-  }
-  return sorted;
-}
-
-async function getCategoryByPathLegacy(path: string): Promise<CategoryHierarchy | undefined> {
-  const normalized = normalizeCategoryPath(path);
-  if (!normalized) return;
-  const collection = await getLegacyContentCollection();
-  const category = collection.categories.find((entry) => entry.slug === normalized);
-  return category ? toCategoryHierarchy(category) : undefined;
-}
-
-async function listCategoriesLegacy(input: CategoryListInput): Promise<CategoryHierarchy[]> {
-  const collection = await getLegacyContentCollection();
-  if (input.depth === 1) {
-    return collection.categories
-      .map(toCategoryHierarchy)
-      .filter((category) => category.depth === 1)
-      .sort(sortByPathSlug);
-  }
-  const parentSlug = input.parentSlug?.trim().toLowerCase();
-  return collection.categories
-    .map(toCategoryHierarchy)
-    .filter((category) => category.depth === 2)
-    .filter((category) => (parentSlug ? category.parentSlug === parentSlug : true))
-    .sort(sortByPathSlug);
-}
-
 function resolveModeFromEnv(): ContentSourceMode {
-  const rawMode = process.env.CONTENT_SOURCE_MODE?.trim().toLowerCase();
-  return rawMode === "d1r2" ? "d1r2" : "legacy";
-}
-
-function createLegacySource(): BlogContentSource {
-  return {
-    mode: "legacy",
-    listPosts: listPostsLegacy,
-    getPostBySlug: (slug: string) => getLegacyPostBySlug(slug),
-    getPostsByTag: getPostsByTagLegacy,
-    getPostsByCategoryPath: getPostsByCategoryPathLegacy,
-    listCategories: listCategoriesLegacy,
-    getCategoryByPath: getCategoryByPathLegacy,
-    getSiteConfig,
-  };
+  return "d1r2";
 }
 
 function createD1R2Source(): BlogContentSource {
@@ -331,8 +212,7 @@ function createD1R2Source(): BlogContentSource {
     });
     if (!result.ok) return [];
 
-    const metadata = await getContentMetadata();
-    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post, metadata)));
+    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
   }
 
   async function getPostsByTagFromD1(input: {
@@ -350,8 +230,7 @@ function createD1R2Source(): BlogContentSource {
     });
     if (!result.ok) return [];
 
-    const metadata = await getContentMetadata();
-    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post, metadata)));
+    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
   }
 
   async function getPostsByCategoryPathFromD1(input: {
@@ -370,8 +249,7 @@ function createD1R2Source(): BlogContentSource {
     });
     if (!result.ok) return [];
 
-    const metadata = await getContentMetadata();
-    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post, metadata)));
+    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
   }
 
   async function getCategoryByPathFromD1(path: string): Promise<CategoryHierarchy | undefined> {
@@ -389,8 +267,7 @@ function createD1R2Source(): BlogContentSource {
     if (!normalized) return;
     const result = await adapter.getPostBySlug(normalized);
     if (!result.ok || !result.data) return;
-    const metadata = await getContentMetadata();
-    return toPublicSourcePost(result.data, metadata);
+    return toPublicSourcePost(result.data);
   }
 
   return {
@@ -425,9 +302,9 @@ export function getContentSourceMode(): ContentSourceMode {
 }
 
 export async function getContentSource(
-  mode: ContentSourceMode = getContentSourceMode(),
+  _mode: ContentSourceMode = getContentSourceMode(),
 ): Promise<BlogContentSource> {
-  return mode === "d1r2" ? createD1R2Source() : createLegacySource();
+  return createD1R2Source();
 }
 
 export async function getPublishedPosts(input: ContentListInput = {}): Promise<PublicPost[]> {
@@ -459,8 +336,8 @@ export async function getPostsByTag(slug: string): Promise<PublicPost[]> {
 }
 
 export async function getTag(slug: string) {
-  const collection = await getLegacyContentCollection();
-  return collection.tags.find((tag) => tag.slug === slug);
+  const tags = await getTags();
+  return tags.find((tag) => tag.slug === normalizeSlug(slug));
 }
 
 export async function listCategories(input: CategoryListInput): Promise<CategoryHierarchy[]> {
@@ -469,7 +346,21 @@ export async function listCategories(input: CategoryListInput): Promise<Category
 }
 
 export async function getContentCollection() {
-  return getLegacyContentCollection();
+  const [posts, categories, tags, site] = await Promise.all([
+    getPublishedPosts({ limit: 100 }),
+    Promise.all([listCategories({ depth: 1 }), listCategories({ depth: 2 })]).then((groups) =>
+      groups.flat(),
+    ),
+    getTags(),
+    getSiteConfig(),
+  ]);
+  return {
+    posts,
+    authors: [],
+    categories,
+    tags,
+    site,
+  };
 }
 
 export async function getCategory(path: string): Promise<CategoryHierarchy | undefined> {
@@ -478,8 +369,19 @@ export async function getCategory(path: string): Promise<CategoryHierarchy | und
 }
 
 export async function getTags(): Promise<Tag[]> {
-  const collection = await getContentCollection();
-  return collection.tags;
+  const posts = await getPublishedPosts({ limit: 100 });
+  const tagMap = new Map<string, Tag>();
+  for (const post of posts) {
+    for (const tag of post.tagEntries ?? []) {
+      tagMap.set(tag.slug, tag);
+    }
+    for (const slug of post.tags ?? []) {
+      if (!tagMap.has(slug)) {
+        tagMap.set(slug, { slug, label: labelFromSlug(slug) });
+      }
+    }
+  }
+  return [...tagMap.values()].sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 export async function getCategoryByPath(path: string): Promise<CategoryHierarchy | undefined> {

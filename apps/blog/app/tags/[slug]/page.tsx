@@ -3,12 +3,7 @@ import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
-import {
-  getContentCollection,
-  getPostsByTag,
-  getSiteConfig,
-  getTag,
-} from "../../../lib/content-source";
+import { getPostsByTag, getSiteConfig, getTag, getTags } from "../../../lib/content-source";
 
 type TagPageProps = {
   params: Promise<{
@@ -17,8 +12,8 @@ type TagPageProps = {
 };
 
 export async function generateStaticParams() {
-  const collection = await getContentCollection();
-  return collection.tags.map((tag) => ({ slug: tag.slug }));
+  const tags = await getTags();
+  return tags.map((tag) => ({ slug: tag.slug }));
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {

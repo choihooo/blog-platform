@@ -17,7 +17,7 @@ function normalizeSlug(value: string) {
 }
 
 function slugFromPath(path: string) {
-  return path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "");
+  return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
 }
 
 type SaveErrorCode =
@@ -98,7 +98,7 @@ export function pathForDocument(document: EditorDocument) {
     normalizeSlug(document.frontmatter.title) ||
     fallback ||
     `draft-${Date.now()}`;
-  return `content/posts/${slug}.mdx`;
+  return `db/posts/${slug}`;
 }
 
 export async function saveEditorDraft(
@@ -127,7 +127,7 @@ export async function saveEditorDraft(
     },
   };
 
-  if (document.sourceSha && document.path && document.path !== path) {
+  if (document.sourceSha && document.path && slugFromPath(document.path) !== slugFromPath(path)) {
     if (!adapter.deleteFile) {
       return {
         ok: false,

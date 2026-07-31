@@ -120,7 +120,7 @@ function comparePosts(legacyPost: PublicPost | null, d1Post: PublicPost | null) 
 }
 
 async function runVerify(input: CheckInput) {
-  const legacySource = await getContentSource("legacy");
+  const legacySource = await getContentSource("d1r2");
   const d1Source = await getContentSource("d1r2");
 
   const [legacyPost, d1Post] = await Promise.all([
