@@ -81,6 +81,25 @@ export async function updateCategoryAction(formData: FormData) {
   revalidatePath(`/categories/${result.value.data.slug}`);
 }
 
+export async function deleteCategoryAction(formData: FormData) {
+  const categoryId = String(formData.get("categoryId") ?? "").trim();
+  const slug = normalizeSlug(String(formData.get("slug") ?? ""));
+  if (!categoryId) {
+    return;
+  }
+
+  const result = await withTaxonomyAccess(() =>
+    createContentAdapter("d1r2").deleteCategory({
+      categoryId,
+      authorIdentity: "cms-editor",
+    }),
+  );
+  if (!result.ok || !result.value.ok) return;
+  revalidatePath("/settings");
+  revalidatePath("/");
+  revalidatePath(`/categories/${result.value.data.slug || slug}`);
+}
+
 export async function createTagAction(formData: FormData) {
   const slug = normalizeSlug(String(formData.get("slug") ?? "")).replace(/\//g, "-");
   const name = String(formData.get("name") ?? "").trim();

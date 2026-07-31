@@ -850,6 +850,39 @@ export function createD1R2ContentAdapter(): ContentAdapter {
       return { ok: true, data: updated };
     },
 
+    async deleteCategory(input: {
+      categoryId: string;
+      authorIdentity: string;
+    }): Promise<ContractResult<{ id: string; slug: string }>> {
+      if (!binding) return failure("upstream-failure", "D1 binding is not configured");
+      const categoryId = input.categoryId.trim();
+      if (!categoryId) return failure("validation-failure", "categoryId is required");
+
+      const current = await runD1CategoryById(binding, categoryId);
+      if (!current) return failure("not-found", "category not found");
+
+      if (current.depth === 1) {
+        const childCount = await executeFirst<CountRow>(
+          binding.prepare("SELECT COUNT(1) AS total FROM categories WHERE parent_id = ?"),
+          [categoryId],
+        );
+        if (Number(childCount?.total ?? 0) > 0) {
+          return failure("conflict", "delete child categories before deleting the parent category");
+        }
+      }
+
+      const postCount = await executeFirst<CountRow>(
+        binding.prepare("SELECT COUNT(1) AS total FROM posts WHERE category_id = ?"),
+        [categoryId],
+      );
+      if (Number(postCount?.total ?? 0) > 0) {
+        return failure("conflict", "category is used by posts");
+      }
+
+      await executeRun(binding.prepare("DELETE FROM categories WHERE id = ?"), [categoryId]);
+      return { ok: true, data: { id: categoryId, slug: current.slug } };
+    },
+
     async createTag(input: {
       tag: TagRecord;
       authorIdentity: string;

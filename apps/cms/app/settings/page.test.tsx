@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 
@@ -55,14 +55,19 @@ describe("SettingsPageView", () => {
     expect(screen.getByRole("heading", { level: 2, name: "사이트 설정" })).toBeTruthy();
     expect(screen.getByText("Ho's Blog")).toBeTruthy();
     expect(screen.getByText("choihooo/blog-platform")).toBeTruthy();
-    expect(screen.getByDisplayValue("engineering")).toBeTruthy();
-    expect(screen.getByDisplayValue("fe")).toBeTruthy();
-    expect(screen.getByText("(6)")).toBeTruthy();
-    expect(screen.getByText("(4)")).toBeTruthy();
+    expect(screen.getAllByText("Engineering").length).toBeGreaterThan(0);
+    expect(screen.getByText("FE")).toBeTruthy();
+    expect(screen.getByText("engineering")).toBeTruthy();
+    expect(screen.getByText("fe")).toBeTruthy();
+    expect(screen.getByText("상위: engineering")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Add child" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "FE 저장" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "FE 삭제" })).toHaveProperty("disabled", false);
     expect(screen.getByRole("link", { name: /Settings/ }).getAttribute("aria-current")).toBe(
       "page",
     );
+    fireEvent.click(screen.getByRole("button", { name: "FE 수정" }));
+    expect(screen.getByRole("heading", { name: "카테고리 수정" })).toBeTruthy();
+    expect(screen.getByDisplayValue("FE")).toBeTruthy();
+    expect(screen.getByDisplayValue("fe")).toBeTruthy();
   });
 });

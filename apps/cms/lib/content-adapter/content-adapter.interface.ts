@@ -129,6 +129,10 @@ export type ContentAdapter = {
     };
     authorIdentity: string;
   }): Promise<ContractResult<CategoryRecord>>;
+  deleteCategory(input: {
+    categoryId: string;
+    authorIdentity: string;
+  }): Promise<ContractResult<{ id: string; slug: string }>>;
   createTag(input: { tag: TagRecord; authorIdentity: string }): Promise<ContractResult<TagRecord>>;
   createPost(input: {
     post: PostRecord;
