@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Badge, Card, CardContent } from "@blog-platform/design-system";
 
 import type { PublicPost } from "../../lib/content-source";
+import { formatPostDate } from "../../lib/date-format";
 
 type PostListProps = {
   posts: PublicPost[];
@@ -11,7 +12,7 @@ type PostListProps = {
 function PostMeta({ post }: { post: PublicPost }) {
   return (
     <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-      <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+      <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
       <span>{post.readingTimeLabel}</span>
       {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
     </div>

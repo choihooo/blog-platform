@@ -9,6 +9,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 import { getPostBySlug, getPublishedPosts, getSiteConfig } from "../../../lib/content-source";
+import { formatPostDateTime } from "../../../lib/date-format";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 
@@ -76,7 +77,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <div>
           <header className="mb-10 grid gap-4">
             <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-              <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+              <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
               <span>{post.readingTimeLabel}</span>
               {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
             </div>
