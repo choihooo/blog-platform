@@ -57,18 +57,30 @@ function unsupportedRoot(root: ListFilesRoot): AdapterResult<{ files: [] }> {
   return { success: true, data: { files: [] } };
 }
 
+function compactFrontmatter(metadata: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(metadata).filter(([, value]) => {
+      if (value === undefined || value === null) return false;
+      if (Array.isArray(value)) return value.length > 0;
+      return true;
+    }),
+  );
+}
+
 function postToSource(post: PostRecord) {
-  const serialized = serializeFrontmatter({
-    title: post.title,
-    status: post.isPublished === 1 ? "published" : post.publishedAt ? "archived" : "draft",
-    slug: post.slug,
-    publishedAt: post.publishedAt ?? undefined,
-    updatedAt: post.updatedAt,
-    excerpt: post.summary || undefined,
-    coverImage: post.heroImageKey || undefined,
-    category: post.categoryPath || undefined,
-    tags: post.tags,
-  });
+  const serialized = serializeFrontmatter(
+    compactFrontmatter({
+      title: post.title,
+      status: post.isPublished === 1 ? "published" : post.publishedAt ? "archived" : "draft",
+      slug: post.slug,
+      publishedAt: post.publishedAt,
+      updatedAt: post.updatedAt,
+      excerpt: post.summary,
+      coverImage: post.heroImageKey,
+      category: post.categoryPath,
+      tags: post.tags,
+    }),
+  );
   const frontmatter = serialized.success && serialized.data ? serialized.data : "---\n---";
   return `${frontmatter}\n\n${post.content}\n`;
 }
