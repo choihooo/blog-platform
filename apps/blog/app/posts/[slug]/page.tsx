@@ -23,7 +23,7 @@ type PostPageProps = {
 
 function Callout({ children }: { children: ReactNode }) {
   return (
-    <aside className="my-7 border-l-4 border-primary bg-secondary px-5 py-4 text-secondary-foreground">
+    <aside className="my-7 bg-secondary px-5 py-4 text-secondary-foreground shadow-sm">
       {children}
     </aside>
   );
@@ -75,7 +75,7 @@ export default async function PostPage({ params }: PostPageProps) {
       />
       <article className="grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16">
         <div className="min-w-0">
-          <header className="mb-12 grid gap-5 border-b border-border pb-10">
+          <header className="mb-12 grid gap-5 bg-card pb-10">
             <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
               <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
               <span>{post.readingTimeLabel}</span>
@@ -128,7 +128,7 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
         {post.toc.length > 0 ? (
           <Card
-            className="h-fit rounded-md border-border shadow-none lg:sticky lg:top-6"
+            className="h-fit border-0 bg-card shadow-sm lg:sticky lg:top-6"
             aria-label="Table of contents"
           >
             <CardContent className="grid gap-3 p-4 text-sm leading-6">

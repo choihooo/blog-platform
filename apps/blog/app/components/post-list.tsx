@@ -61,7 +61,7 @@ function Cover({ post, size }: { post: PublicPost; size: "tile" | "list" }) {
 
 function PostTile({ post }: { post: PublicPost }) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden transition-transform hover:-translate-y-0.5">
+    <Card className="flex h-full flex-col overflow-hidden border-0 bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
       <Link className="block flex-1" href={`/posts/${post.slug}`}>
         <Cover post={post} size="tile" />
         <CardContent className="grid gap-4 p-5">
@@ -112,7 +112,7 @@ function PostListItem({ post }: { post: PublicPost }) {
 export function PostList({ posts, view = "list" }: PostListProps) {
   if (posts.length === 0) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-0 bg-card shadow-sm">
         <CardContent className="p-6 text-sm text-muted-foreground">
           공개된 글이 없습니다.
         </CardContent>
@@ -131,7 +131,7 @@ export function PostList({ posts, view = "list" }: PostListProps) {
   }
 
   return (
-    <div className="border-y border-border">
+    <div className="bg-card shadow-sm">
       {posts.map((post) => (
         <PostListItem key={post.path} post={post} />
       ))}
