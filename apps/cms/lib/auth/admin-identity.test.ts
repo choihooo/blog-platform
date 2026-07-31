@@ -54,6 +54,23 @@ describe("admin identity", () => {
     });
   });
 
+  it("loads identity from the repository root when cwd is an app directory", async () => {
+    const root = await writeSite({ adminGithubLogin: "ho", adminGithubUserId: "123" });
+    const appRoot = path.join(root, "apps/cms");
+    await mkdir(appRoot, { recursive: true });
+
+    const cwd = process.cwd();
+    try {
+      process.chdir(appRoot);
+      await expect(loadAdminIdentity()).resolves.toMatchObject({
+        success: true,
+        identity: { githubLogin: "ho", githubUserId: "123" },
+      });
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+
   it("fails closed when site config is unreadable", async () => {
     const root = await mkdtemp(path.join(tmpdir(), "cms-auth-"));
     roots.push(root);

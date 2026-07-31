@@ -32,6 +32,6 @@ export function parseAdminIdentity(config: SiteConfigLike): AdminIdentityResult 
   return { success: true, identity: { githubLogin, githubUserId, sourcePath: siteConfigPath } };
 }
 
-export async function loadAdminIdentity(root = process.cwd()): Promise<AdminIdentityResult> {
+export async function loadAdminIdentity(root?: string): Promise<AdminIdentityResult> {
   return parseAdminIdentity(await loadSiteConfig(root));
 }

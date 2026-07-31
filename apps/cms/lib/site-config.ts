@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -118,7 +119,21 @@ export function normalizeSiteConfig(input: SiteConfigInput = {}): SiteConfig {
   };
 }
 
-export async function loadSiteConfig(root = process.cwd()): Promise<SiteConfig> {
+function resolveSiteConfigRoot() {
+  const candidates = [
+    process.env.CONTENT_ROOT ? path.dirname(process.env.CONTENT_ROOT) : "",
+    process.cwd(),
+    path.resolve(process.cwd(), "../.."),
+    path.resolve(process.cwd(), ".."),
+  ].filter(Boolean);
+
+  return (
+    candidates.find((candidate) => existsSync(path.join(candidate, siteConfigPath))) ??
+    process.cwd()
+  );
+}
+
+export async function loadSiteConfig(root = resolveSiteConfigRoot()): Promise<SiteConfig> {
   try {
     const raw = await readFile(path.join(root, siteConfigPath), "utf8");
     return normalizeSiteConfig(JSON.parse(raw) as SiteConfigInput);
