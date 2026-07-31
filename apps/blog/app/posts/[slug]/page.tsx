@@ -23,7 +23,7 @@ type PostPageProps = {
 
 function Callout({ children }: { children: ReactNode }) {
   return (
-    <aside className="my-6 border-l-4 border-primary bg-secondary px-4 py-3 text-secondary-foreground">
+    <aside className="my-7 border-l-4 border-primary bg-secondary px-5 py-4 text-secondary-foreground">
       {children}
     </aside>
   );
@@ -57,7 +57,7 @@ export default async function PostPage({ params }: PostPageProps) {
   const postUrl = `${site.siteUrl.replace(/\/$/, "")}/posts/${post.slug}`;
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
+    <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
       <PostAnalyticsEvents
         context={{
           provider: site.analytics.provider,
@@ -73,24 +73,26 @@ export default async function PostPage({ params }: PostPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         type="application/ld+json"
       />
-      <article className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px]">
-        <div>
-          <header className="mb-10 grid gap-4">
-            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+      <article className="grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16">
+        <div className="min-w-0">
+          <header className="mb-12 grid gap-5 border-b border-border pb-10">
+            <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
               <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
               <span>{post.readingTimeLabel}</span>
               {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
             </div>
-            <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-normal sm:text-7xl">
+            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
               {post.title}
             </h1>
             {post.excerpt ? (
-              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
+              <p className="text-lg leading-8 text-muted-foreground sm:text-xl sm:leading-9">
+                {post.excerpt}
+              </p>
             ) : null}
             {post.coverImage ? (
               <img
                 alt=""
-                className="aspect-[16/9] w-full max-w-3xl object-cover"
+                className="mt-2 aspect-[16/9] w-full object-cover"
                 src={post.coverImage}
               />
             ) : null}
@@ -125,12 +127,15 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </div>
         {post.toc.length > 0 ? (
-          <Card className="h-fit lg:sticky lg:top-6" aria-label="Table of contents">
-            <CardContent className="grid gap-3 p-4 text-sm">
-              <strong>On this page</strong>
+          <Card
+            className="h-fit rounded-md border-border shadow-none lg:sticky lg:top-6"
+            aria-label="Table of contents"
+          >
+            <CardContent className="grid gap-3 p-4 text-sm leading-6">
+              <strong className="text-foreground">On this page</strong>
               {post.toc.map((item) => (
                 <a
-                  className="text-muted-foreground"
+                  className="text-muted-foreground transition-colors hover:text-primary"
                   data-analytics-toc
                   href={`#${item.slug}`}
                   key={item.slug}
