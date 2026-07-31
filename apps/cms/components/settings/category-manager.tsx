@@ -11,7 +11,7 @@ import {
   DialogTitle,
   Input,
 } from "@blog-platform/design-system";
-import { ChevronDown, Edit3, FolderTree, GripVertical, Trash2 } from "lucide-react";
+import { ChevronDown, Edit3, FolderTree, Trash2 } from "lucide-react";
 
 import {
   createCategoryAction,
@@ -48,7 +48,20 @@ function deleteBlockReason(input: { category: CategoryWithCount; childCount: num
 
 export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
   const [dialog, setDialog] = useState<CategoryDialogState>(null);
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const parentCategories = groups.map(({ parent }) => parent);
+
+  function toggleCategory(categoryId: string) {
+    setCollapsed((current) => {
+      const next = new Set(current);
+      if (next.has(categoryId)) {
+        next.delete(categoryId);
+      } else {
+        next.add(categoryId);
+      }
+      return next;
+    });
+  }
 
   return (
     <div className="rounded-lg border border-border bg-card p-5 lg:col-span-2">
@@ -108,22 +121,28 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
               <CategoryRow
                 category={parent}
                 childCount={children.length}
+                collapsed={collapsed.has(parent.id)}
                 level={1}
                 onDelete={(category) =>
                   setDialog({ mode: "delete", category, childCount: children.length })
                 }
                 onEdit={(category) => setDialog({ mode: "edit", category })}
+                onToggle={() => toggleCategory(parent.id)}
               />
-              {children.map((child) => (
-                <CategoryRow
-                  category={child}
-                  childCount={0}
-                  key={child.id}
-                  level={2}
-                  onDelete={(category) => setDialog({ mode: "delete", category, childCount: 0 })}
-                  onEdit={(category) => setDialog({ mode: "edit", category })}
-                />
-              ))}
+              {collapsed.has(parent.id)
+                ? null
+                : children.map((child) => (
+                    <CategoryRow
+                      category={child}
+                      childCount={0}
+                      key={child.id}
+                      level={2}
+                      onDelete={(category) =>
+                        setDialog({ mode: "delete", category, childCount: 0 })
+                      }
+                      onEdit={(category) => setDialog({ mode: "edit", category })}
+                    />
+                  ))}
             </div>
           ))
         ) : (
@@ -157,15 +176,19 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
 function CategoryRow({
   category,
   childCount,
+  collapsed = false,
   level,
   onDelete,
   onEdit,
+  onToggle,
 }: {
   category: CategoryWithCount;
   childCount: number;
+  collapsed?: boolean;
   level: 1 | 2;
   onDelete: (category: CategoryWithCount) => void;
   onEdit: (category: CategoryWithCount) => void;
+  onToggle?: () => void;
 }) {
   const isChild = level === 2;
   const displaySlug = isChild ? childSlugFor(category) : category.slug;
@@ -185,9 +208,26 @@ function CategoryRow({
             isChild ? "ml-8 w-5 border-l border-border" : "w-5",
           ].join(" ")}
         >
-          {isChild ? <span className="h-px w-3 bg-border" /> : <ChevronDown size={15} />}
+          {isChild ? <span className="h-px w-3 bg-border" /> : null}
         </span>
-        <GripVertical aria-hidden="true" className="shrink-0 text-muted-foreground/70" size={15} />
+        {!isChild && childCount > 0 ? (
+          <Button
+            aria-label={`${category.name} ${collapsed ? "펼치기" : "접기"}`}
+            className="h-7 w-7 shrink-0"
+            onClick={onToggle}
+            size="icon"
+            type="button"
+            variant="ghost"
+          >
+            <ChevronDown
+              aria-hidden="true"
+              className={collapsed ? "-rotate-90 transition-transform" : "transition-transform"}
+              size={15}
+            />
+          </Button>
+        ) : (
+          <span className="h-7 w-7 shrink-0" />
+        )}
         <div className="min-w-0">
           <div className={isChild ? "font-medium" : "text-base font-semibold"}>
             {category.name}

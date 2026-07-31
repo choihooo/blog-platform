@@ -168,7 +168,7 @@ export default function SettingsPage() {
       adapter.listCategories({ depth: 1 }),
       adapter.listCategories({ depth: 2 }),
       adapter.listTags(),
-      adapter.listPosts({ publishedOnly: false, page: 1, limit: 100 }),
+      adapter.listPosts({ publishedOnly: true, page: 1, limit: 100 }),
     ]);
     const categoryCounts = new Map<string, number>();
     if (posts.ok) {

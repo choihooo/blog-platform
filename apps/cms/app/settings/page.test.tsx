@@ -61,6 +61,10 @@ describe("SettingsPageView", () => {
     expect(screen.getByText("fe")).toBeTruthy();
     expect(screen.getByText("상위: engineering")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Add child" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Engineering 접기" }));
+    expect(screen.queryByText("상위: engineering")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Engineering 펼치기" }));
+    expect(screen.getByText("상위: engineering")).toBeTruthy();
     expect(screen.getByRole("button", { name: "FE 삭제" })).toHaveProperty("disabled", false);
     expect(screen.getByRole("link", { name: /Settings/ }).getAttribute("aria-current")).toBe(
       "page",

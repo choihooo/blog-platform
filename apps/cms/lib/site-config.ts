@@ -1,6 +1,6 @@
-import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 export type SiteConfig = {
   siteName: string;
@@ -25,6 +25,9 @@ export type SiteConfig = {
 };
 
 export const siteConfigPath = "content/site.json";
+
+const cmsSourceDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repositoryRoot = path.resolve(cmsSourceDirectory, "../..");
 
 type SiteConfigInput = Partial<
   Omit<SiteConfig, "github" | "analytics" | "features"> & {
@@ -120,17 +123,11 @@ export function normalizeSiteConfig(input: SiteConfigInput = {}): SiteConfig {
 }
 
 function resolveSiteConfigRoot() {
-  const candidates = [
-    process.env.CONTENT_ROOT ? path.dirname(process.env.CONTENT_ROOT) : "",
-    process.cwd(),
-    path.resolve(process.cwd(), "../.."),
-    path.resolve(process.cwd(), ".."),
-  ].filter(Boolean);
-
-  return (
-    candidates.find((candidate) => existsSync(path.join(candidate, siteConfigPath))) ??
-    process.cwd()
-  );
+  if (process.env.NODE_ENV === "test") {
+    const cwd = process.cwd();
+    return cwd.endsWith(path.join("apps", "cms")) ? path.resolve(cwd, "../..") : cwd;
+  }
+  return repositoryRoot;
 }
 
 export async function loadSiteConfig(root = resolveSiteConfigRoot()): Promise<SiteConfig> {
