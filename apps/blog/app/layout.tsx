@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { getSiteConfig } from "../lib/content-source";
 import { analyticsInit } from "../lib/analytics";
 import { AnalyticsProvider } from "./components/analytics-provider";
+import { SiteShell } from "./components/site-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,7 +21,8 @@ type RootLayoutProps = {
 };
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const analytics = analyticsInit(await getSiteConfig());
+  const site = await getSiteConfig();
+  const analytics = analyticsInit(site);
   return (
     <html lang="ko">
       <body>
@@ -62,9 +64,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             ) : null}
           </>
         ) : null}
-        <div className="min-h-screen bg-background">
-          <AnalyticsProvider>{children}</AnalyticsProvider>
-        </div>
+        <AnalyticsProvider>
+          <SiteShell siteName={site.siteName}>{children}</SiteShell>
+        </AnalyticsProvider>
       </body>
     </html>
   );

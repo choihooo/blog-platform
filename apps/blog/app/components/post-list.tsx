@@ -24,12 +24,16 @@ function PostTaxonomy({ post }: { post: PublicPost }) {
     <div className="flex flex-wrap gap-2">
       {post.categoryEntry ? (
         <Link href={`/categories/${post.categoryEntry.slug}`}>
-          <Badge variant="secondary">{post.categoryEntry.label}</Badge>
+          <Badge className="h-7" variant="secondary">
+            {post.categoryEntry.label}
+          </Badge>
         </Link>
       ) : null}
       {post.tagEntries.map((tag) => (
         <Link href={`/tags/${tag.slug}`} key={tag.slug}>
-          <Badge variant="outline">{tag.label}</Badge>
+          <Badge className="h-7" variant="outline">
+            {tag.label}
+          </Badge>
         </Link>
       ))}
     </div>
@@ -57,8 +61,8 @@ function Cover({ post, size }: { post: PublicPost; size: "tile" | "list" }) {
 
 function PostTile({ post }: { post: PublicPost }) {
   return (
-    <Card className="overflow-hidden transition-transform hover:-translate-y-0.5">
-      <Link className="block" href={`/posts/${post.slug}`}>
+    <Card className="flex h-full flex-col overflow-hidden transition-transform hover:-translate-y-0.5">
+      <Link className="block flex-1" href={`/posts/${post.slug}`}>
         <Cover post={post} size="tile" />
         <CardContent className="grid gap-4 p-5">
           <PostMeta post={post} />
@@ -72,7 +76,7 @@ function PostTile({ post }: { post: PublicPost }) {
           </div>
         </CardContent>
       </Link>
-      <CardContent className="px-5 pb-5 pt-0">
+      <CardContent className="mt-auto px-5 pb-5 pt-0">
         <PostTaxonomy post={post} />
       </CardContent>
     </Card>

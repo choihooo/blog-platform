@@ -50,7 +50,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
     if (post.category) {
       categoryCounts.set(post.category, (categoryCounts.get(post.category) ?? 0) + 1);
       const parentSlug = post.category.split("/")[0];
-      if (parentSlug) {
+      if (parentSlug && parentSlug !== post.category) {
         categoryCounts.set(parentSlug, (categoryCounts.get(parentSlug) ?? 0) + 1);
       }
     }
@@ -74,7 +74,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
       </section>
 
       <div className="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
-        <aside aria-label="카테고리 목록" className="lg:pt-11">
+        <aside aria-label="카테고리 목록" className="lg:pt-11" id="categories">
           <h2 className="text-base font-semibold">카테고리</h2>
           <div className="mt-3 h-px bg-border" />
           <nav className="mt-4 flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
@@ -136,7 +136,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
           </nav>
         </aside>
 
-        <section className="min-w-0 space-y-5" aria-label="글 목록">
+        <section className="min-w-0 space-y-5" aria-label="글 목록" id="posts">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
               {posts.length}개의 글{query ? `, "${query}" 검색 결과` : ""}
