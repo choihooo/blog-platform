@@ -19,8 +19,8 @@ export function scoreSeo(subject: SeoSubject) {
 
   const h1Count = subject.headings.filter((h) => h.depth === 1).length;
   const h2Count = subject.headings.filter((h) => h.depth === 2).length;
-  add(h1Count > 0, "h1-present", "H1 heading is present", "body", 10);
-  add(h2Count >= 2, "h2-count", "At least two H2 headings are present", "body", 10);
+  add(h1Count > 0, "h1-present", "H1 heading is present", "body", 15);
+  add(h2Count >= 2, "h2-count", "At least two H2 headings are present", "body", 15);
   add(Boolean(subject.excerpt), "meta-description", "Meta description exists", "excerpt", 15);
   add(
     Boolean(subject.title && subject.slug),
@@ -36,20 +36,13 @@ export function scoreSeo(subject: SeoSubject) {
     "title-length",
     "Title length is appropriate",
     "title",
-    10,
+    15,
   );
   add(
     subject.imageAltTexts.length === 0 ||
       subject.imageAltTexts.every((alt) => alt.trim().length > 0),
     "image-alt",
     "Images have alt text",
-    "body",
-    15,
-  );
-  add(
-    subject.internalLinks.length > 0,
-    "internal-link",
-    "At least one internal link exists",
     "body",
     15,
   );
