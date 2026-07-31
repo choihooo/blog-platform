@@ -9,11 +9,30 @@ import { SiteShell } from "./components/site-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://blog.hozorica.com"),
   title: {
     default: "Ho's Blog",
     template: "%s | Ho's Blog",
   },
   description: "파일 기반 MDX 기술 블로그",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+  openGraph: {
+    title: "Ho's Blog",
+    description: "파일 기반 MDX 기술 블로그",
+    url: "https://blog.hozorica.com",
+    siteName: "Ho's Blog",
+    images: ["/brand/hozorica-card.webp"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ho's Blog",
+    description: "파일 기반 MDX 기술 블로그",
+    images: ["/brand/hozorica-card.webp"],
+  },
 };
 
 type RootLayoutProps = {

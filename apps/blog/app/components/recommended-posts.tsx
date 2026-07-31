@@ -18,7 +18,7 @@ function canUseOptimizedImage(src: string) {
 }
 
 function RecommendedPostCover({ post }: { post: PublicPost }) {
-  const className = "relative aspect-[1.65/1] w-full overflow-hidden";
+  const className = "relative aspect-[1.91/1] w-full overflow-hidden";
 
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
@@ -39,8 +39,14 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
   }
 
   return (
-    <div className={`${className} flex items-end bg-muted p-4 text-sm text-muted-foreground`}>
-      {post.categoryEntry?.label ?? "Post"}
+    <div className={className}>
+      <Image
+        alt=""
+        className="object-cover"
+        fill
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, calc(100vw - 40px)"
+        src="/brand/no-thumbnail.webp"
+      />
     </div>
   );
 }

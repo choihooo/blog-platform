@@ -61,8 +61,8 @@ function Cover({
 }) {
   const className =
     size === "tile"
-      ? "relative aspect-[1.92/1] w-full overflow-hidden"
-      : "relative aspect-[1.45/1] w-full overflow-hidden rounded-md";
+      ? "relative aspect-[1.91/1] w-full overflow-hidden"
+      : "relative aspect-[1.91/1] w-full overflow-hidden rounded-md";
 
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
@@ -98,10 +98,20 @@ function Cover({
   }
 
   return (
-    <div
-      className={`${className} flex items-end bg-muted p-4 text-sm font-semibold text-muted-foreground`}
-    >
-      {post.categoryEntry?.label ?? "Post"}
+    <div className={className}>
+      <Image
+        alt=""
+        className="object-cover"
+        fill
+        fetchPriority={priority ? "high" : "auto"}
+        priority={priority}
+        sizes={
+          size === "tile"
+            ? "(min-width: 640px) 50vw, calc(100vw - 40px)"
+            : "(min-width: 640px) 176px, calc(100vw - 40px)"
+        }
+        src="/brand/no-thumbnail.webp"
+      />
     </div>
   );
 }
