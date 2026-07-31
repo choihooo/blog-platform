@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -32,6 +33,15 @@ function Callout({ children }: { children: ReactNode }) {
 
 function MdxImage(props: ImgHTMLAttributes<HTMLImageElement>) {
   return <img {...props} decoding={props.decoding ?? "async"} loading={props.loading ?? "lazy"} />;
+}
+
+function canUseOptimizedImage(src: string) {
+  if (src.startsWith("/")) return true;
+  try {
+    return new URL(src).hostname === "pub-2eadf17a82cb46679204775b78a2c16a.r2.dev";
+  } catch {
+    return false;
+  }
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
@@ -80,14 +90,27 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="min-w-0">
           <header className="mb-12 grid gap-5 bg-card pb-10">
             {post.coverImage ? (
-              <img
-                alt=""
-                className="aspect-[16/9] w-full object-cover"
-                decoding="async"
-                fetchPriority="high"
-                loading="eager"
-                src={post.coverImage}
-              />
+              canUseOptimizedImage(post.coverImage) ? (
+                <div className="relative aspect-[16/9] w-full overflow-hidden">
+                  <Image
+                    alt=""
+                    className="object-cover"
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 68ch, calc(100vw - 40px)"
+                    src={post.coverImage}
+                  />
+                </div>
+              ) : (
+                <img
+                  alt=""
+                  className="aspect-[16/9] w-full object-cover"
+                  decoding="async"
+                  fetchPriority="high"
+                  loading="eager"
+                  src={post.coverImage}
+                />
+              )
             ) : null}
             <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
               {post.title}

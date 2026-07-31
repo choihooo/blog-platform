@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Badge, Card, CardContent } from "@blog-platform/design-system";
 
 import type { PublicPost } from "../../lib/content-source";
@@ -8,6 +9,15 @@ type PostListProps = {
   posts: PublicPost[];
   view?: "tile" | "list";
 };
+
+function canUseOptimizedImage(src: string) {
+  if (src.startsWith("/")) return true;
+  try {
+    return new URL(src).hostname === "pub-2eadf17a82cb46679204775b78a2c16a.r2.dev";
+  } catch {
+    return false;
+  }
+}
 
 function PostMeta({ post }: { post: PublicPost }) {
   return (
@@ -51,19 +61,38 @@ function Cover({
 }) {
   const className =
     size === "tile"
-      ? "aspect-[1.92/1] w-full object-cover"
-      : "aspect-[1.45/1] w-full rounded-md object-cover";
+      ? "relative aspect-[1.92/1] w-full overflow-hidden"
+      : "relative aspect-[1.45/1] w-full overflow-hidden rounded-md";
 
   if (post.coverImage) {
+    if (!canUseOptimizedImage(post.coverImage)) {
+      return (
+        <img
+          alt={`${post.title} cover`}
+          className={`${className} object-cover`}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
+          loading={priority ? "eager" : "lazy"}
+          src={post.coverImage}
+        />
+      );
+    }
+
     return (
-      <img
-        alt={`${post.title} cover`}
-        className={className}
-        decoding="async"
-        fetchPriority={priority ? "high" : "auto"}
-        loading={priority ? "eager" : "lazy"}
-        src={post.coverImage}
-      />
+      <div className={className}>
+        <Image
+          alt={`${post.title} cover`}
+          className="object-cover"
+          fill
+          priority={priority}
+          sizes={
+            size === "tile"
+              ? "(min-width: 640px) 50vw, calc(100vw - 40px)"
+              : "(min-width: 640px) 176px, calc(100vw - 40px)"
+          }
+          src={post.coverImage}
+        />
+      </div>
     );
   }
 

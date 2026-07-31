@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
@@ -7,11 +8,34 @@ type RecommendedPostsProps = {
   posts: PublicPost[];
 };
 
+function canUseOptimizedImage(src: string) {
+  if (src.startsWith("/")) return true;
+  try {
+    return new URL(src).hostname === "pub-2eadf17a82cb46679204775b78a2c16a.r2.dev";
+  } catch {
+    return false;
+  }
+}
+
 function RecommendedPostCover({ post }: { post: PublicPost }) {
-  const className = "aspect-[1.65/1] w-full object-cover";
+  const className = "relative aspect-[1.65/1] w-full overflow-hidden";
 
   if (post.coverImage) {
-    return <img alt="" className={className} src={post.coverImage} />;
+    if (!canUseOptimizedImage(post.coverImage)) {
+      return <img alt="" className={`${className} object-cover`} src={post.coverImage} />;
+    }
+
+    return (
+      <div className={className}>
+        <Image
+          alt=""
+          className="object-cover"
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, calc(100vw - 40px)"
+          src={post.coverImage}
+        />
+      </div>
+    );
   }
 
   return (
