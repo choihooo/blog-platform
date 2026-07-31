@@ -20,6 +20,11 @@ export type PostSummary = {
   slug: string;
   title: string;
   status: string;
+  excerpt?: string;
+  category?: string;
+  coverImage?: string;
+  publishedAt?: string;
+  updatedAt?: string;
   sha: string;
 };
 
@@ -53,14 +58,18 @@ function statusFromSource(source: string) {
   return /^status:\s*"?([^"\n]+)"?/m.exec(source)?.[1]?.trim() ?? "draft";
 }
 
-export async function listPostSummaries(adapter?: ContentAdapter) {
+function optionalFrontmatterString(source: string, key: string) {
+  return new RegExp(`^${key}:\\s*['"]?([^'"\\n]+)['"]?`, "m").exec(source)?.[1]?.trim();
+}
+
+export async function listPostSummaries(adapter?: ContentAdapter): Promise<PostSummary[]> {
   const contentAdapter = adapter ?? (await createRuntimeContentAdapter(repositoryRoot()));
   const listed = await contentAdapter.listFiles({ root: "posts" });
   if (!listed.success) return [];
   const posts = await Promise.all(
     listed.data.files
       .filter((file): file is RepositoryFileSummary & { kind: "post" } => file.kind === "post")
-      .map(async (file) => {
+      .map(async (file): Promise<PostSummary | null> => {
         const read = await contentAdapter.readFile({ path: file.path });
         if (!read.success) return null;
         return {
@@ -68,6 +77,11 @@ export async function listPostSummaries(adapter?: ContentAdapter) {
           slug: slugFromPath(file.path),
           title: titleFromSource(read.data.file.content, slugFromPath(file.path)),
           status: statusFromSource(read.data.file.content),
+          excerpt: optionalFrontmatterString(read.data.file.content, "excerpt"),
+          category: optionalFrontmatterString(read.data.file.content, "category"),
+          coverImage: optionalFrontmatterString(read.data.file.content, "coverImage"),
+          publishedAt: optionalFrontmatterString(read.data.file.content, "publishedAt"),
+          updatedAt: optionalFrontmatterString(read.data.file.content, "updatedAt"),
           sha: read.data.file.sha,
         };
       }),

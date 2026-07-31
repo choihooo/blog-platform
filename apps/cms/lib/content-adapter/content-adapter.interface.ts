@@ -113,6 +113,12 @@ export type ContentAdapter = {
     limit?: number;
   }): Promise<ContractResult<{ items: PostRecord[]; total: number }>>;
   listCategories(input: CategoryListInput): Promise<ContractResult<{ items: CategoryRecord[] }>>;
+  listTags(): Promise<ContractResult<{ items: TagRecord[] }>>;
+  createCategory(input: {
+    category: Omit<CategoryRecord, "createdAt"> & { createdAt?: string };
+    authorIdentity: string;
+  }): Promise<ContractResult<CategoryRecord>>;
+  createTag(input: { tag: TagRecord; authorIdentity: string }): Promise<ContractResult<TagRecord>>;
   createPost(input: {
     post: PostRecord;
     authorIdentity: string;

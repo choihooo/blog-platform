@@ -21,12 +21,28 @@ export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
   const normalizedPostSlug = frontmatter.slug ?? "";
   const update = (key: keyof EditorFrontmatter, value: string) =>
     onChange?.({ ...frontmatter, [key]: value });
+  const updateTags = (value: string) =>
+    onChange?.({
+      ...frontmatter,
+      tags: value
+        .split(",")
+        .map((tag) => tag.trim().toLowerCase())
+        .filter(Boolean),
+    });
   const normalizeSlug = (value: string) =>
     value
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  const normalizeCategory = (value: string) =>
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9/]+/g, "-")
+      .replace(/\/+/g, "/")
+      .replace(/^-+|-+$/g, "")
+      .replace(/\/-+|-+\//g, "/");
   const isSlugMutated = Boolean(frontmatter.slug && frontmatter.slug !== postSlug);
 
   function upload(file: File) {
@@ -81,6 +97,28 @@ export function FrontmatterPanel({ frontmatter, onChange, postSlug }: Props) {
             변경한 slug는 저장/발행 시 새 파일명으로 이동됩니다.
           </p>
         ) : null}
+      </div>
+      <div>
+        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-category">
+          Category
+        </label>
+        <Input
+          id="editor-category"
+          value={frontmatter.category ?? ""}
+          onChange={(event) => update("category", normalizeCategory(event.currentTarget.value))}
+          placeholder="engineering"
+        />
+      </div>
+      <div>
+        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-tags">
+          Tags
+        </label>
+        <Input
+          id="editor-tags"
+          value={(frontmatter.tags ?? []).join(", ")}
+          onChange={(event) => updateTags(event.currentTarget.value)}
+          placeholder="blog, mdx"
+        />
       </div>
       <dl className="space-y-2 text-sm">
         <div>

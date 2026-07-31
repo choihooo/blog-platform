@@ -1,12 +1,29 @@
 import { Badge } from "@blog-platform/design-system";
-import { ExternalLink, GitBranch, Globe2, ShieldCheck } from "lucide-react";
+import { ExternalLink, GitBranch, Globe2, ShieldCheck, Tags } from "lucide-react";
 
 import siteConfig from "../../../../content/site.json";
 
+import { createCategoryAction, createTagAction } from "../actions/taxonomy-actions";
 import { AccessState, CmsShell } from "../../components/shell/index";
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
+import { createContentAdapter } from "../../lib/content-adapter/content-adapter";
+import type {
+  CategoryRecord,
+  TagRecord,
+} from "../../lib/content-adapter/content-adapter.interface";
 
-export function SettingsPageView({ decision }: { decision: AccessDecision }) {
+type TaxonomyData = {
+  categories: CategoryRecord[];
+  tags: TagRecord[];
+};
+
+export function SettingsPageView({
+  decision,
+  taxonomy = { categories: [], tags: [] },
+}: {
+  decision: AccessDecision;
+  taxonomy?: TaxonomyData;
+}) {
   if (decision.status !== "authorized") {
     return <AccessState decision={decision} />;
   }
@@ -72,11 +89,120 @@ export function SettingsPageView({ decision }: { decision: AccessDecision }) {
             </p>
           </div>
         </section>
+
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-lg border border-border bg-card p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Tags aria-hidden="true" size={17} />
+              Categories
+            </div>
+            <form action={createCategoryAction} className="mt-5 grid gap-3">
+              <label className="grid gap-1 text-xs font-medium text-muted-foreground">
+                Name
+                <input
+                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  name="name"
+                  placeholder="Engineering"
+                />
+              </label>
+              <label className="grid gap-1 text-xs font-medium text-muted-foreground">
+                Slug
+                <input
+                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  name="slug"
+                  placeholder="engineering 또는 engineering/nextjs"
+                />
+              </label>
+              <button
+                className="w-fit rounded-md bg-foreground px-3 py-2 text-sm font-semibold text-background"
+                type="submit"
+              >
+                Add category
+              </button>
+            </form>
+            <div className="mt-5 grid gap-2">
+              {taxonomy.categories.length > 0 ? (
+                taxonomy.categories.map((category) => (
+                  <div
+                    className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm"
+                    key={category.id}
+                  >
+                    <span>{category.name}</span>
+                    <code className="text-xs text-muted-foreground">{category.slug}</code>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No categories yet.</p>
+              )}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border bg-card p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Tags aria-hidden="true" size={17} />
+              Tags
+            </div>
+            <form action={createTagAction} className="mt-5 grid gap-3">
+              <label className="grid gap-1 text-xs font-medium text-muted-foreground">
+                Name
+                <input
+                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  name="name"
+                  placeholder="MDX"
+                />
+              </label>
+              <label className="grid gap-1 text-xs font-medium text-muted-foreground">
+                Slug
+                <input
+                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  name="slug"
+                  placeholder="mdx"
+                />
+              </label>
+              <button
+                className="w-fit rounded-md bg-foreground px-3 py-2 text-sm font-semibold text-background"
+                type="submit"
+              >
+                Add tag
+              </button>
+            </form>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {taxonomy.tags.length > 0 ? (
+                taxonomy.tags.map((tag) => (
+                  <Badge key={tag.id} variant="outline">
+                    {tag.name} / {tag.slug}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No tags yet.</p>
+              )}
+            </div>
+          </div>
+        </section>
       </div>
     </CmsShell>
   );
 }
 
 export default function SettingsPage() {
-  return requireCmsAccess().then((decision) => <SettingsPageView decision={decision} />);
+  return requireCmsAccess().then(async (decision) => {
+    if (decision.status !== "authorized") return <SettingsPageView decision={decision} />;
+    const adapter = createContentAdapter("d1r2");
+    const [depth1, depth2, tags] = await Promise.all([
+      adapter.listCategories({ depth: 1 }),
+      adapter.listCategories({ depth: 2 }),
+      adapter.listTags(),
+    ]);
+    return (
+      <SettingsPageView
+        decision={decision}
+        taxonomy={{
+          categories: [
+            ...(depth1.ok ? depth1.data.items : []),
+            ...(depth2.ok ? depth2.data.items : []),
+          ],
+          tags: tags.ok ? tags.data.items : [],
+        }}
+      />
+    );
+  });
 }

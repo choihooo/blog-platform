@@ -7,6 +7,7 @@ import type {
   ContentListInput,
   MediaReference,
   PostRecord,
+  TagRecord,
 } from "./content-adapter.interface";
 
 type D1Prepared = {
@@ -63,6 +64,12 @@ type DbCategoryRow = {
   parent_slug: string | null;
   depth: number;
   created_at: string;
+};
+
+type DbTagRow = {
+  id: string;
+  name: string;
+  slug: string;
 };
 
 type CountRow = {
@@ -156,7 +163,11 @@ function createCloudflareD1RestDatabase(): D1Database | undefined {
 }
 
 function normalizeSlug(value: string) {
-  return value.trim().toLowerCase();
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function normalizePage(input: unknown): number {
@@ -483,6 +494,53 @@ function normalizePostRecord(input: PostRecord): PostRecord {
   };
 }
 
+function mapTagRecord(row: DbTagRow): TagRecord {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+  };
+}
+
+function idFromSlug(prefix: string, slug: string) {
+  return `${prefix}_${slug.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}`;
+}
+
+async function resolveCategoryId(binding: D1Database, categoryPath?: string | null) {
+  const normalized = normalizeCategorySlug(categoryPath ?? undefined);
+  if (!normalized) return null;
+  const row = await executeFirst<{ id: string }>(
+    binding.prepare("SELECT id FROM categories WHERE slug = ? LIMIT 1"),
+    [normalized],
+  );
+  return row?.id ?? null;
+}
+
+async function upsertTagsForPost(binding: D1Database, postId: string, values: string[] = []) {
+  const slugs = normalizeTagValues(values.map(normalizeSlug));
+  await executeRun(binding.prepare("DELETE FROM post_tags WHERE post_id = ?"), [postId]);
+  for (const slug of slugs) {
+    const name = slug
+      .split("-")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+    const tagId = idFromSlug("tag", slug);
+    await executeRun(
+      binding.prepare(
+        `INSERT INTO tags (id, name, slug)
+         VALUES (?, ?, ?)
+         ON CONFLICT(slug) DO UPDATE SET name = excluded.name`,
+      ),
+      [tagId, name || slug, slug],
+    );
+    await executeRun(
+      binding.prepare("INSERT OR IGNORE INTO post_tags (post_id, tag_id) VALUES (?, ?)"),
+      [postId, tagId],
+    );
+  }
+}
+
 function normalizeMediaRef(input: MediaReference): MediaReference {
   return {
     ...input,
@@ -605,6 +663,83 @@ export function createD1R2ContentAdapter(): ContentAdapter {
       return { ok: true, data: items };
     },
 
+    async listTags(): Promise<ContractResult<{ items: TagRecord[] }>> {
+      if (!binding) return { ok: true, data: { items: [] } };
+      const rows = await executeAll<DbTagRow>(
+        binding.prepare("SELECT id, name, slug FROM tags ORDER BY slug ASC"),
+        [],
+      );
+      return { ok: true, data: { items: rows.results.map(mapTagRecord) } };
+    },
+
+    async createCategory(input: {
+      category: Omit<CategoryRecord, "createdAt"> & { createdAt?: string };
+      authorIdentity: string;
+    }): Promise<ContractResult<CategoryRecord>> {
+      if (!binding) return failure("upstream-failure", "D1 binding is not configured");
+      const slug = normalizeCategorySlug(input.category.slug);
+      if (!slug) return failure("validation-failure", "category slug must be depth 1 or 2");
+      const parts = slug.split("/");
+      const depth = parts.length === 2 ? 2 : 1;
+      const name = input.category.name.trim() || parts.at(-1) || slug;
+      const parentSlug = depth === 2 ? parts[0] : null;
+      const parent = parentSlug
+        ? await executeFirst<{ id: string }>(
+            binding.prepare("SELECT id FROM categories WHERE slug = ? AND depth = 1 LIMIT 1"),
+            [parentSlug],
+          )
+        : null;
+      if (parentSlug && !parent?.id) {
+        return failure("validation-failure", "parent category must exist before child category");
+      }
+      const id = input.category.id || idFromSlug("cat", slug);
+      const createdAt = input.category.createdAt ?? new Date().toISOString();
+      await executeRun(
+        binding.prepare(
+          `INSERT INTO categories (id, name, slug, parent_id, parent_slug, depth, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(slug) DO UPDATE SET
+             name = excluded.name,
+             parent_id = excluded.parent_id,
+             parent_slug = excluded.parent_slug,
+             depth = excluded.depth`,
+        ),
+        [id, name, slug, parent?.id ?? null, parentSlug, depth, createdAt],
+      );
+      return {
+        ok: true,
+        data: {
+          id,
+          name,
+          slug,
+          parentId: parent?.id ?? null,
+          parentSlug,
+          depth,
+          createdAt,
+        },
+      };
+    },
+
+    async createTag(input: {
+      tag: TagRecord;
+      authorIdentity: string;
+    }): Promise<ContractResult<TagRecord>> {
+      if (!binding) return failure("upstream-failure", "D1 binding is not configured");
+      const slug = normalizeSlug(input.tag.slug);
+      if (!slug) return failure("validation-failure", "tag slug is required");
+      const name = input.tag.name.trim() || slug;
+      const id = input.tag.id || idFromSlug("tag", slug);
+      await executeRun(
+        binding.prepare(
+          `INSERT INTO tags (id, name, slug)
+           VALUES (?, ?, ?)
+           ON CONFLICT(slug) DO UPDATE SET name = excluded.name`,
+        ),
+        [id, name, slug],
+      );
+      return { ok: true, data: { id, name, slug } };
+    },
+
     async createPost(input: {
       post: PostRecord;
       authorIdentity: string;
@@ -621,6 +756,8 @@ export function createD1R2ContentAdapter(): ContentAdapter {
 
       const now = new Date().toISOString();
       const publishedAt = prepared.isPublished === 1 ? (prepared.publishedAt ?? null) : null;
+      const categoryId =
+        prepared.categoryId ?? (await resolveCategoryId(binding, prepared.categoryPath));
 
       const insert = binding.prepare(
         `INSERT INTO posts (id, slug, title, content, summary, category_id, hero_image_key, published_at, updated_at, is_published, view_count)
@@ -643,18 +780,20 @@ export function createD1R2ContentAdapter(): ContentAdapter {
         prepared.title,
         prepared.content,
         prepared.summary,
-        prepared.categoryId ?? null,
+        categoryId,
         prepared.heroImageKey ?? null,
         publishedAt,
         now,
         prepared.isPublished,
         prepared.viewCount,
       ]);
+      await upsertTagsForPost(binding, prepared.id, prepared.tags ?? []);
 
       return {
         ok: true,
         data: {
           ...prepared,
+          categoryId,
           updatedAt: now,
         },
       };
@@ -691,10 +830,12 @@ export function createD1R2ContentAdapter(): ContentAdapter {
 
       const now = new Date().toISOString();
       const publishedAt = merged.isPublished === 1 ? (merged.publishedAt ?? null) : null;
+      const categoryId =
+        merged.categoryId ?? (await resolveCategoryId(binding, merged.categoryPath));
       const prepared = {
         ...merged,
         slug: normalizeSlug(merged.slug),
-        categoryId: merged.categoryId ?? null,
+        categoryId,
         heroImageKey: merged.heroImageKey ?? null,
         updatedAt: now,
         publishedAt,
@@ -734,6 +875,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
         prepared.viewCount,
         prepared.id,
       ]);
+      await upsertTagsForPost(binding, prepared.id, prepared.tags ?? []);
 
       return { ok: true, data: prepared };
     },
