@@ -41,6 +41,11 @@ ${lines.map((line, index) => `    <tspan x="80" dy="${index === 0 ? 0 : 78}">${e
   </text>
   <text x="80" y="540" fill="#d1d5db" font-size="34" font-family="Arial, sans-serif">${escapeXml(payload.siteName)}</text>
 </svg>`,
-    { headers: { "content-type": "image/svg+xml; charset=utf-8" } },
+    {
+      headers: {
+        "cache-control": "public, s-maxage=900, stale-while-revalidate=86400",
+        "content-type": "image/svg+xml; charset=utf-8",
+      },
+    },
   );
 }

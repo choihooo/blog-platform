@@ -1,5 +1,9 @@
 import { searchPosts } from "../../../lib/content-source";
 
+const searchCacheHeaders = {
+  "cache-control": "public, s-maxage=60, stale-while-revalidate=300",
+};
+
 function firstSearchParam(url: URL, key: string) {
   return url.searchParams.get(key)?.trim() ?? "";
 }
@@ -23,26 +27,29 @@ export async function GET(request: Request) {
   const limit = normalizeLimit(firstSearchParam(url, "limit"));
 
   if (!query) {
-    return Response.json({ items: [], total: 0, query: "" });
+    return Response.json({ items: [], total: 0, query: "" }, { headers: searchCacheHeaders });
   }
 
   const posts = await searchPosts({ query, categoryPath, page, limit });
-  return Response.json({
-    items: posts.map((post) => ({
-      slug: post.slug,
-      title: post.title,
-      excerpt: post.excerpt ?? "",
-      category: post.categoryEntry
-        ? { slug: post.categoryEntry.slug, label: post.categoryEntry.label }
-        : null,
-      tags: post.tagEntries.map((tag) => ({ slug: tag.slug, label: tag.label })),
-      publishedAt: post.publishedAt,
-      updatedAt: post.updatedAt ?? "",
-      readingTimeLabel: post.readingTimeLabel,
-      coverImage: post.coverImage ?? "",
-      url: `/posts/${post.slug}`,
-    })),
-    total: posts.length,
-    query,
-  });
+  return Response.json(
+    {
+      items: posts.map((post) => ({
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt ?? "",
+        category: post.categoryEntry
+          ? { slug: post.categoryEntry.slug, label: post.categoryEntry.label }
+          : null,
+        tags: post.tagEntries.map((tag) => ({ slug: tag.slug, label: tag.label })),
+        publishedAt: post.publishedAt,
+        updatedAt: post.updatedAt ?? "",
+        readingTimeLabel: post.readingTimeLabel,
+        coverImage: post.coverImage ?? "",
+        url: `/posts/${post.slug}`,
+      })),
+      total: posts.length,
+      query,
+    },
+    { headers: searchCacheHeaders },
+  );
 }
