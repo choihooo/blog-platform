@@ -13,13 +13,23 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      CI: true
+      NEXT_TELEMETRY_DISABLED: 1
+      TURBO_TELEMETRY_DISABLED: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -33,8 +43,82 @@ jobs:
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
+      - name: Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run workspace validation
-        run: pnpm exec turbo run lint test typecheck build format:check
+      - name: Resolve Turbo scope
+        id: turbo-scope
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "mode=full" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git diff --name-only "origin/${{ github.base_ref }}...HEAD" > changed-files.txt
+
+          if grep -Eq '^(package.json|pnpm-lock.yaml|pnpm-workspace.yaml|turbo.json|tsconfig\.base\.json|eslint\.config\.mjs|\.prettierrc|\.prettierignore|\.github/workflows/)' changed-files.txt; then
+            echo "mode=full" >> "$GITHUB_OUTPUT"
+          elif grep -Eq '^(apps|packages)/' changed-files.txt && grep -Eq '^content/' changed-files.txt; then
+            echo "mode=affected" >> "$GITHUB_OUTPUT"
+            echo "filter=--filter=...[origin/${{ github.base_ref }}] --filter=@blog-platform/blog" >> "$GITHUB_OUTPUT"
+          elif grep -Eq '^(apps|packages)/' changed-files.txt; then
+            echo "mode=affected" >> "$GITHUB_OUTPUT"
+            echo "filter=--filter=...[origin/${{ github.base_ref }}]" >> "$GITHUB_OUTPUT"
+          elif grep -Eq '^content/' changed-files.txt; then
+            echo "mode=blog" >> "$GITHUB_OUTPUT"
+            echo "filter=--filter=@blog-platform/blog" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=skip" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Lint
+        run: |
+          if [ "${{ steps.turbo-scope.outputs.mode }}" = "full" ]; then
+            pnpm lint
+          elif [ "${{ steps.turbo-scope.outputs.mode }}" = "skip" ]; then
+            echo "No workspace lint targets affected."
+          else
+            pnpm exec turbo run lint ${{ steps.turbo-scope.outputs.filter }}
+          fi
+
+      - name: Typecheck
+        run: |
+          if [ "${{ steps.turbo-scope.outputs.mode }}" = "full" ]; then
+            pnpm typecheck
+          elif [ "${{ steps.turbo-scope.outputs.mode }}" = "skip" ]; then
+            echo "No workspace typecheck targets affected."
+          else
+            pnpm exec turbo run typecheck ${{ steps.turbo-scope.outputs.filter }}
+          fi
+
+      - name: Test
+        run: |
+          if [ "${{ steps.turbo-scope.outputs.mode }}" = "full" ]; then
+            pnpm test
+          elif [ "${{ steps.turbo-scope.outputs.mode }}" = "skip" ]; then
+            echo "No workspace test targets affected."
+          else
+            pnpm exec turbo run test ${{ steps.turbo-scope.outputs.filter }}
+          fi
+
+      - name: Build
+        run: |
+          if [ "${{ steps.turbo-scope.outputs.mode }}" = "full" ]; then
+            pnpm build
+          elif [ "${{ steps.turbo-scope.outputs.mode }}" = "skip" ]; then
+            echo "No workspace build targets affected."
+          else
+            pnpm exec turbo run build ${{ steps.turbo-scope.outputs.filter }}
+          fi
