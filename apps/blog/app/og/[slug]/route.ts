@@ -3,6 +3,8 @@ import { createOgImagePayload } from "@blog-platform/seo-engine";
 import { getPostBySlug, getSiteConfig } from "../../../lib/content-source";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 
+export const revalidate = 900;
+
 function escapeXml(value: string) {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
@@ -20,7 +22,10 @@ function titleLines(title: string) {
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
+  const [post, site] = await Promise.all([
+    getPostBySlug(slug, { analyzeBody: false }),
+    getSiteConfig(),
+  ]);
   if (!post) return new Response("Not found", { status: 404 });
   const payload = createOgImagePayload(postToSeoSubject(post, siteForSeo(site)));
   const category = payload.category ? escapeXml(payload.category) : "";

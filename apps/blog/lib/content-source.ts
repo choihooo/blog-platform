@@ -56,7 +56,7 @@ export type CategoryListInput = {
 export interface BlogContentSource {
   readonly mode: ContentSourceMode;
   listPosts(input?: ContentListInput): Promise<PublicPost[]>;
-  getPostBySlug(slug: string): Promise<PublicPost | undefined>;
+  getPostBySlug(slug: string, options?: { analyzeBody?: boolean }): Promise<PublicPost | undefined>;
   getPostsByTag(tagSlug: string, input?: Omit<ContentListInput, "tagSlug">): Promise<PublicPost[]>;
   getPostsByCategoryPath(
     categoryPath: string,
@@ -276,12 +276,15 @@ function createD1R2Source(): BlogContentSource {
     return categoryItems.find((category) => category.slug === categoryPath);
   }
 
-  async function getPostBySlugFromD1(slug: string): Promise<PublicPost | undefined> {
+  async function getPostBySlugFromD1(
+    slug: string,
+    options?: { analyzeBody?: boolean },
+  ): Promise<PublicPost | undefined> {
     const normalized = normalizeSlug(slug);
     if (!normalized) return;
     const result = await adapter.getPostBySlug(normalized);
     if (!result.ok || !result.data) return;
-    return toPublicSourcePost(result.data);
+    return toPublicSourcePost(result.data, { analyzeBody: options?.analyzeBody });
   }
 
   return {
@@ -344,9 +347,12 @@ export async function searchPosts(input: {
   });
 }
 
-export async function getPostBySlug(slug: string): Promise<PublicPost | undefined> {
+export async function getPostBySlug(
+  slug: string,
+  options?: { analyzeBody?: boolean },
+): Promise<PublicPost | undefined> {
   const source = await getContentSource();
-  return source.getPostBySlug(slug);
+  return source.getPostBySlug(slug, options);
 }
 
 export async function getRecommendedPosts(post: PublicPost, limit = 3): Promise<PublicPost[]> {
