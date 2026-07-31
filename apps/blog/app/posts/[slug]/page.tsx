@@ -8,12 +8,7 @@ import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine"
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
-import {
-  getPostBySlug,
-  getPublishedPosts,
-  getRecommendedPosts,
-  getSiteConfig,
-} from "../../../lib/content-source";
+import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
 import { formatPostDateTime } from "../../../lib/date-format";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
@@ -37,11 +32,6 @@ function Callout({ children }: { children: ReactNode }) {
 
 function MdxImage(props: ImgHTMLAttributes<HTMLImageElement>) {
   return <img {...props} decoding={props.decoding ?? "async"} loading={props.loading ?? "lazy"} />;
-}
-
-export async function generateStaticParams() {
-  const posts = await getPublishedPosts();
-  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
