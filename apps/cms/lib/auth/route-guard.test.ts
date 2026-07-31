@@ -51,4 +51,20 @@ describe("resolveRouteAccess", () => {
       status: "misconfigured",
     });
   });
+
+  it("resolves the repository site config when called from an app directory", async () => {
+    const root = await rootWithSite({ adminGithubLogin: "ho", adminGithubUserId: "123" });
+    const appRoot = path.join(root, "apps/cms");
+    await mkdir(appRoot, { recursive: true });
+
+    const cwd = process.cwd();
+    try {
+      process.chdir(appRoot);
+      await expect(resolveRouteAccess(session)).resolves.toMatchObject({
+        status: "authorized",
+      });
+    } finally {
+      process.chdir(cwd);
+    }
+  });
 });

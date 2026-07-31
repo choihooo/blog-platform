@@ -78,7 +78,7 @@ export function decideAccess(input: {
   };
 }
 
-export async function evaluateAccess(session?: CmsSession | null, root = process.cwd()) {
+export async function evaluateAccess(session?: CmsSession | null, root?: string) {
   if (isDevAuthBypassEnabled()) {
     return devAccess();
   }
