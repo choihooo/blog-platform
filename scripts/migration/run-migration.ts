@@ -9,15 +9,10 @@ const DEFAULT_CONTENT_SOURCE_MODE = "d1r2";
 
 type MigrationMode = "legacy" | "d1r2";
 
-type MigrationCommand =
-  | "extract"
-  | "upload"
-  | "import"
-  | "verify"
-  | "full"
-  | "status";
+type MigrationCommand = "extract" | "upload" | "import" | "verify" | "full" | "status";
 
-type MigrationRunState = "stable-legacy" | "shadow-compare" | "active-new" | "rollback" | "stabilized";
+type MigrationRunState =
+  "stable-legacy" | "shadow-compare" | "active-new" | "rollback" | "stabilized";
 
 type MigrationState = {
   contentSourceMode: MigrationMode;
@@ -32,14 +27,16 @@ type MigrationState = {
 };
 
 function resolveMigrationMode(): MigrationMode {
-  const fromEnv = (process.env.CONTENT_SOURCE_MODE ?? DEFAULT_CONTENT_SOURCE_MODE).trim().toLowerCase();
+  const fromEnv = (process.env.CONTENT_SOURCE_MODE ?? DEFAULT_CONTENT_SOURCE_MODE)
+    .trim()
+    .toLowerCase();
   return fromEnv === "legacy" ? "legacy" : "d1r2";
 }
 
 function readCommand(): MigrationCommand {
   const arg = (process.argv[2] ?? "full").trim().toLowerCase();
   const allow: MigrationCommand[] = ["extract", "upload", "import", "verify", "full", "status"];
-  return (allow.includes(arg as MigrationCommand) ? (arg as MigrationCommand) : "full");
+  return allow.includes(arg as MigrationCommand) ? (arg as MigrationCommand) : "full";
 }
 
 function printUsage() {
@@ -80,8 +77,14 @@ function main() {
   const command = readCommand();
   const contentSourceMode = resolveMigrationMode();
   const runbook: MigrationRunState = getStateByMode(contentSourceMode);
-  const queuePath = resolve(process.cwd(), process.env.MIGRATION_ERROR_QUEUE_FILE ?? "scripts/migration/error-queue.json");
-  const checkpointPath = resolve(process.cwd(), process.env.MIGRATION_CHECKPOINT_FILE ?? "scripts/migration/checkpoint.json");
+  const queuePath = resolve(
+    process.cwd(),
+    process.env.MIGRATION_ERROR_QUEUE_FILE ?? "scripts/migration/error-queue.json",
+  );
+  const checkpointPath = resolve(
+    process.cwd(),
+    process.env.MIGRATION_CHECKPOINT_FILE ?? "scripts/migration/checkpoint.json",
+  );
   const failures = readFailureQueue(queuePath);
 
   if (command === "status") {

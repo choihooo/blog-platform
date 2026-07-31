@@ -9,7 +9,8 @@ import { getContentSource, normalizeForDualRunCompare } from "../../apps/blog/li
 
 import type { PublicPost } from "../../apps/blog/lib/content";
 
-const defaultMode: "legacy" | "d1r2" = process.env.CONTENT_SOURCE_MODE === "d1r2" ? "d1r2" : "legacy";
+const defaultMode: "legacy" | "d1r2" =
+  process.env.CONTENT_SOURCE_MODE === "d1r2" ? "d1r2" : "legacy";
 
 type CheckInput = {
   sampleSlug: string;
@@ -129,7 +130,10 @@ async function runVerify(input: CheckInput) {
   ]);
 
   const comparison = comparePosts(legacyPost, d1Post);
-  const reportPath = resolve(process.cwd(), process.env.MIGRATION_REPORT_FILE ?? "scripts/migration/verify-report.json");
+  const reportPath = resolve(
+    process.cwd(),
+    process.env.MIGRATION_REPORT_FILE ?? "scripts/migration/verify-report.json",
+  );
 
   const rowsCompared = comparison.rowsCompared;
   const rowsMatched = comparison.rowsMatched;
@@ -183,12 +187,17 @@ async function runVerify(input: CheckInput) {
 
 function printUsage() {
   console.log(`\nUsage:`);
-  console.log(`  MIGRATION_SAMPLE_SLUG=<slug> CONTENT_SOURCE_MODE=<legacy|d1r2> pnpm migrate:verify > scripts/migration/verify-output.json`);
+  console.log(
+    `  MIGRATION_SAMPLE_SLUG=<slug> CONTENT_SOURCE_MODE=<legacy|d1r2> pnpm migrate:verify > scripts/migration/verify-output.json`,
+  );
   console.log(`  MIGRATION_REPORT_FILE=./scripts/migration/verify-report.json`);
 }
 
 function readExistingReport() {
-  const outputPath = resolve(process.cwd(), process.env.MIGRATION_REPORT_FILE ?? "scripts/migration/verify-report.json");
+  const outputPath = resolve(
+    process.cwd(),
+    process.env.MIGRATION_REPORT_FILE ?? "scripts/migration/verify-report.json",
+  );
   try {
     const raw = readFileSync(outputPath, "utf8");
     return raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
@@ -205,6 +214,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.stack ?? error.message : String(error));
+  console.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
   process.exit(1);
 });

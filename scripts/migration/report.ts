@@ -82,13 +82,20 @@ function formatReport(input: ReportInput) {
   return summary;
 }
 
-const verifyReport = readJson(resolve(process.cwd(), process.env.MIGRATION_REPORT_FILE ?? "scripts/migration/verify-report.json"));
-const uploadReport = readJson(resolve(process.cwd(), process.env.MIGRATION_UPLOAD_REPORT_FILE ?? "scripts/migration/upload-report.json"));
+const verifyReport = readJson(
+  resolve(
+    process.cwd(),
+    process.env.MIGRATION_REPORT_FILE ?? "scripts/migration/verify-report.json",
+  ),
+);
+const uploadReport = readJson(
+  resolve(
+    process.cwd(),
+    process.env.MIGRATION_UPLOAD_REPORT_FILE ?? "scripts/migration/upload-report.json",
+  ),
+);
 const uploadErrors = stringList(uploadReport.errors);
-const retryQueue = [
-  ...stringList(defaultReport.retryQueue),
-  ...uploadErrors,
-];
+const retryQueue = [...stringList(defaultReport.retryQueue), ...uploadErrors];
 const report = formatReport({
   ...defaultReport,
   rowsCompared: Number(verifyReport.rowsCompared ?? defaultReport.rowsCompared),
@@ -100,7 +107,10 @@ const report = formatReport({
 });
 
 writeFileSync(
-  resolve(process.cwd(), process.env.MIGRATION_DAILY_REPORT_FILE ?? "scripts/migration/daily-report.json"),
+  resolve(
+    process.cwd(),
+    process.env.MIGRATION_DAILY_REPORT_FILE ?? "scripts/migration/daily-report.json",
+  ),
   `${JSON.stringify(report, null, 2)}\n`,
   "utf8",
 );

@@ -36,7 +36,11 @@ function createR2Bucket() {
 
   const host = `${accountId}.r2.cloudflarestorage.com`;
   return {
-    async put(key: string, body: ArrayBuffer, options?: { httpMetadata?: { contentType?: string } }) {
+    async put(
+      key: string,
+      body: ArrayBuffer,
+      options?: { httpMetadata?: { contentType?: string } },
+    ) {
       const now = new Date();
       const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
       const date = amzDate.slice(0, 8);
@@ -114,6 +118,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.stack ?? error.message : String(error));
+  console.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
   process.exit(1);
 });

@@ -30,4 +30,5 @@
 
 - 허용 깊이: `1` 또는 `2`.
 - `depth=1`이면 `parent_id`, `parent_slug`는 `NULL`.
-- `depth=2`이면 `parent_id`, `parent_slug`는 `NOT NULL` 이고 `parent_id`는 동일 테이블의 `depth=1` 카테고리를 가리켜야 함.
+- `depth=2`이면 `parent_id`, `parent_slug`는 `NOT NULL` 이고 `parent_id`는 동일 테이블의 `depth=1`
+  카테고리를 가리켜야 함.

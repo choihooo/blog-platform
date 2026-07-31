@@ -18,7 +18,9 @@ function parseMode(): "legacy" | "d1r2" {
 
 function getSampleSlug() {
   const fallback = process.argv[2]?.trim();
-  return fallback && fallback.length > 0 ? fallback : process.env.MIGRATION_SAMPLE_SLUG ?? "sample-post";
+  return fallback && fallback.length > 0
+    ? fallback
+    : (process.env.MIGRATION_SAMPLE_SLUG ?? "sample-post");
 }
 
 function main() {

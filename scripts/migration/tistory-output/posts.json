@@ -87,13 +87,7 @@
     "updatedAt": "2026-05-26T20:39:33+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "certificate-manger",
-      "dv-certificate",
-      "ssl",
-      "ssl-tls",
-      "tls"
-    ]
+    "tags": ["certificate-manger", "dv-certificate", "ssl", "ssl-tls", "tls"]
   },
   {
     "id": "post_tistory_32",
@@ -123,10 +117,7 @@
     "updatedAt": "2026-05-17T23:45:42+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "ai",
-      "tistory-tag-f56917f5"
-    ]
+    "tags": ["ai", "tistory-tag-f56917f5"]
   },
   {
     "id": "post_tistory_30",
@@ -186,9 +177,7 @@
     "updatedAt": "2026-04-14T14:32:59+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "tistory-tag-95e74138"
-    ]
+    "tags": ["tistory-tag-95e74138"]
   },
   {
     "id": "post_tistory_26",
@@ -203,11 +192,7 @@
     "updatedAt": "2026-04-13T14:42:41+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "datastream",
-      "kafka",
-      "tistory-tag-b65551c6"
-    ]
+    "tags": ["datastream", "kafka", "tistory-tag-b65551c6"]
   },
   {
     "id": "post_tistory_25",
@@ -282,11 +267,7 @@
     "updatedAt": "2026-02-11T19:03:02+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "cs",
-      "cs",
-      "tistory-tag-95dd261e"
-    ]
+    "tags": ["cs", "cs", "tistory-tag-95dd261e"]
   },
   {
     "id": "post_tistory_19",
@@ -301,11 +282,7 @@
     "updatedAt": "2026-02-05T14:47:56+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "tistory-tag-8648bb14",
-      "tistory-tag-46e51a03",
-      "tistory-tag-85f75719"
-    ]
+    "tags": ["tistory-tag-8648bb14", "tistory-tag-46e51a03", "tistory-tag-85f75719"]
   },
   {
     "id": "post_tistory_18",
@@ -335,11 +312,7 @@
     "updatedAt": "2025-03-12T11:58:28+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "next",
-      "nextjs",
-      "tistory-tag-e225a6fd"
-    ]
+    "tags": ["next", "nextjs", "tistory-tag-e225a6fd"]
   },
   {
     "id": "post_tistory_15",
@@ -354,11 +327,7 @@
     "updatedAt": "2025-03-04T21:16:08+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "nextjs",
-      "tistory-tag-91128800",
-      "tistory-tag-fac711c0"
-    ]
+    "tags": ["nextjs", "tistory-tag-91128800", "tistory-tag-fac711c0"]
   },
   {
     "id": "post_tistory_14",
@@ -508,8 +477,6 @@
     "updatedAt": "2024-03-26T14:06:38+09:00",
     "isPublished": 1,
     "viewCount": 0,
-    "tags": [
-      "tistory-tag-ac6828de"
-    ]
+    "tags": ["tistory-tag-ac6828de"]
   }
 ]
