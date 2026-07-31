@@ -4,6 +4,11 @@ import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
 import {
+  paginateItems,
+  parsePageParam,
+  PostPagination,
+} from "../../components/post-pagination";
+import {
   getCategoryByPath,
   getPostsByCategoryPath,
   getSiteConfig,
@@ -15,6 +20,9 @@ export const dynamic = "force-dynamic";
 type CategoryPageProps = {
   params: Promise<{
     categoryPath: string[];
+  }>;
+  searchParams?: Promise<{
+    page?: string | string[];
   }>;
 };
 
@@ -48,16 +56,24 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     : {};
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+function categoryHrefForPage(path: string, page: number) {
+  return page > 1 ? `/categories/${path}?page=${page}` : `/categories/${path}`;
+}
+
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { categoryPath } = await params;
+  const resolvedSearchParams: { page?: string | string[] } = await (
+    searchParams ?? Promise.resolve({})
+  );
   const path = toCanonicalPath(categoryPath);
   if (!path) notFound();
 
   const [category, posts] = await Promise.all([
     getCategoryByPath(path),
-    getPostsByCategoryPath(path, { publishedOnly: true }),
+    getPostsByCategoryPath(path, { limit: 100, publishedOnly: true }),
   ]);
   if (!category) notFound();
+  const pagination = paginateItems(posts, parsePageParam(resolvedSearchParams.page));
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
@@ -72,7 +88,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </p>
         ) : null}
       </section>
-      <PostList posts={posts} />
+      <section className="space-y-5">
+        <PostList posts={pagination.items} />
+        <PostPagination
+          currentPage={pagination.currentPage}
+          hrefForPage={(page) => categoryHrefForPage(path, page)}
+          totalPages={pagination.totalPages}
+        />
+      </section>
     </main>
   );
 }

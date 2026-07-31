@@ -1,5 +1,6 @@
 import { Grid2X2, List } from "lucide-react";
 
+import { paginateItems, parsePageParam, PostPagination } from "./components/post-pagination";
 import { PostList } from "./components/post-list";
 import { getPublishedPosts, listCategories, searchPosts } from "../lib/content-source";
 
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 type BlogHomePageProps = {
   searchParams?: Promise<{
     category?: string | string[];
+    page?: string | string[];
     q?: string | string[];
     view?: string | string[];
   }>;
@@ -17,11 +19,12 @@ function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function hrefFor(params: { category?: string; q?: string; view?: "tile" | "list" }) {
+function hrefFor(params: { category?: string; page?: number; q?: string; view?: "tile" | "list" }) {
   const search = new URLSearchParams();
   if (params.category) search.set("category", params.category);
   if (params.q) search.set("q", params.q);
   if (params.view && params.view !== "tile") search.set("view", params.view);
+  if (params.page && params.page > 1) search.set("page", String(params.page));
   const query = search.toString();
   return query ? `/?${query}` : "/";
 }
@@ -32,6 +35,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   const activeCategory = firstParam(resolvedSearchParams.category);
   const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
   const view = firstParam(resolvedSearchParams.view) === "list" ? "list" : "tile";
+  const requestedPage = parsePageParam(resolvedSearchParams.page);
   const [sourcePosts, allPosts, parentCategories, childCategories] = await Promise.all([
     query ? searchPosts({ query, limit: 100 }) : getPublishedPosts({ limit: 100 }),
     getPublishedPosts({ limit: 100 }),
@@ -45,6 +49,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
           (post.category?.startsWith(`${activeCategory}/`) ?? false),
       )
     : sourcePosts;
+  const pagination = paginateItems(posts, requestedPage);
   const categoryCounts = new Map<string, number>();
   for (const post of allPosts) {
     if (post.category) {
@@ -139,7 +144,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
         <section className="min-w-0 space-y-5" aria-label="글 목록" id="posts">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              {posts.length}개의 글{query ? `, "${query}" 검색 결과` : ""}
+              {pagination.totalCount}개의 글{query ? `, "${query}" 검색 결과` : ""}
             </p>
             <div aria-label="보기 방식" className="flex items-center gap-2">
               <a
@@ -150,7 +155,12 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
                     ? "border-primary text-primary"
                     : "border-border text-muted-foreground"
                 }`}
-                href={hrefFor({ category: activeCategory, q: query, view: "tile" })}
+                href={hrefFor({
+                  category: activeCategory,
+                  page: pagination.currentPage,
+                  q: query,
+                  view: "tile",
+                })}
               >
                 <Grid2X2 aria-hidden="true" size={18} />
               </a>
@@ -162,13 +172,23 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
                     ? "border-primary text-primary"
                     : "border-border text-muted-foreground"
                 }`}
-                href={hrefFor({ category: activeCategory, q: query, view: "list" })}
+                href={hrefFor({
+                  category: activeCategory,
+                  page: pagination.currentPage,
+                  q: query,
+                  view: "list",
+                })}
               >
                 <List aria-hidden="true" size={19} />
               </a>
             </div>
           </div>
-          <PostList posts={posts} view={view} />
+          <PostList posts={pagination.items} view={view} />
+          <PostPagination
+            currentPage={pagination.currentPage}
+            hrefForPage={(page) => hrefFor({ category: activeCategory, page, q: query, view })}
+            totalPages={pagination.totalPages}
+          />
         </section>
       </div>
     </main>

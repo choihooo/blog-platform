@@ -371,9 +371,12 @@ export async function getPostsByCategoryPath(
   return source.getPostsByCategoryPath(categoryPath, input);
 }
 
-export async function getPostsByTag(slug: string): Promise<PublicPost[]> {
+export async function getPostsByTag(
+  slug: string,
+  input: Omit<ContentListInput, "tagSlug"> = {},
+): Promise<PublicPost[]> {
   const source = await getContentSource();
-  return source.getPostsByTag(slug);
+  return source.getPostsByTag(slug, input);
 }
 
 export async function getTag(slug: string) {
