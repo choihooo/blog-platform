@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
-import bundledSiteConfig from "../../../../content/site.json";
 
 import { createGitHubContentAdapterFromCredential } from "./github-adapter";
 import { commitSummary } from "./commit-intent";
@@ -17,6 +16,7 @@ import type {
   RepositoryFileSummary,
   RepositoryFailureState,
 } from "./types";
+import { loadSiteConfig } from "../site-config";
 
 type LegacyTargetConfig = {
   github?: {
@@ -52,12 +52,7 @@ function parseGitHubTarget(config: LegacyTargetConfig) {
 }
 
 async function readGitHubTarget(rootDir: string) {
-  try {
-    const raw = await readFile(path.join(rootDir, "content/site.json"), "utf8");
-    return parseGitHubTarget(JSON.parse(raw) as LegacyTargetConfig);
-  } catch {
-    return parseGitHubTarget(bundledSiteConfig as LegacyTargetConfig);
-  }
+  return parseGitHubTarget(await loadSiteConfig(rootDir));
 }
 
 function failingAdapter(error: RepositoryFailureState): ContentAdapter {

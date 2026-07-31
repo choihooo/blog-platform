@@ -3,10 +3,6 @@ import {
   mdxToEditorDocument,
   type EditorDocument,
 } from "@blog-platform/editor";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
-import bundledSiteConfig from "../../../../content/site.json";
 
 import {
   createRuntimeContentAdapter,
@@ -14,6 +10,7 @@ import {
   type RepositoryFileSummary,
 } from "../content-adapter/index";
 import { createContentAdapter } from "../content-adapter/content-adapter";
+import { loadSiteConfig } from "../site-config";
 import { repositoryRoot } from "./root";
 
 export type PostSummary = {
@@ -159,29 +156,14 @@ export function pathForSlug(slug: string) {
 export async function loadEditorSiteAnalyticsConfig(
   root = repositoryRoot(),
 ): Promise<EditorSiteAnalyticsConfig> {
-  let config: {
-    siteUrl?: string;
-    analytics?: {
-      provider?: string;
-      ga4PropertyId?: string;
-      searchConsoleProperty?: string;
-    };
-  };
-
-  try {
-    config = JSON.parse(
-      await readFile(path.join(root, "content/site.json"), "utf8"),
-    ) as typeof config;
-  } catch {
-    config = bundledSiteConfig;
-  }
+  const config = await loadSiteConfig(root);
 
   return {
-    siteUrl: config.siteUrl ?? "",
+    siteUrl: config.siteUrl,
     analytics: {
-      provider: config.analytics?.provider ?? "disabled",
-      ga4PropertyId: config.analytics?.ga4PropertyId,
-      searchConsoleProperty: config.analytics?.searchConsoleProperty,
+      provider: config.analytics.provider,
+      ga4PropertyId: config.analytics.ga4PropertyId,
+      searchConsoleProperty: config.analytics.searchConsoleProperty,
     },
   };
 }

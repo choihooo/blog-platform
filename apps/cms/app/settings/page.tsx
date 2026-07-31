@@ -10,8 +10,6 @@ import {
   Tags,
 } from "lucide-react";
 
-import siteConfig from "../../../../content/site.json";
-
 import {
   createCategoryAction,
   createTagAction,
@@ -24,6 +22,7 @@ import type {
   CategoryRecord,
   TagRecord,
 } from "../../lib/content-adapter/content-adapter.interface";
+import { loadSiteConfig, type SiteConfig } from "../../lib/site-config";
 
 type TaxonomyData = {
   categories: CategoryWithCount[];
@@ -47,9 +46,11 @@ function categoryTree(categories: CategoryWithCount[]) {
 
 export function SettingsPageView({
   decision,
+  siteConfig,
   taxonomy = { categories: [], tags: [] },
 }: {
   decision: AccessDecision;
+  siteConfig: SiteConfig;
   taxonomy?: TaxonomyData;
 }) {
   if (decision.status !== "authorized") {
@@ -335,7 +336,10 @@ export function SettingsPageView({
 
 export default function SettingsPage() {
   return requireCmsAccess().then(async (decision) => {
-    if (decision.status !== "authorized") return <SettingsPageView decision={decision} />;
+    const siteConfig = await loadSiteConfig();
+    if (decision.status !== "authorized") {
+      return <SettingsPageView decision={decision} siteConfig={siteConfig} />;
+    }
     const adapter = createContentAdapter("d1r2");
     const [depth1, depth2, tags, posts] = await Promise.all([
       adapter.listCategories({ depth: 1 }),
@@ -364,6 +368,7 @@ export default function SettingsPage() {
     return (
       <SettingsPageView
         decision={decision}
+        siteConfig={siteConfig}
         taxonomy={{
           categories,
           tags: tags.ok ? tags.data.items : [],

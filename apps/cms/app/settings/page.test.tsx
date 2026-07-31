@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 
+import { normalizeSiteConfig } from "../../lib/site-config";
 import { SettingsPageView } from "./page";
 
 const decision = {
@@ -16,6 +17,14 @@ describe("SettingsPageView", () => {
     render(
       createElement(SettingsPageView, {
         decision,
+        siteConfig: normalizeSiteConfig({
+          siteName: "Ho's Blog",
+          siteUrl: "https://blog.hozorica.com",
+          adminGithubLogin: "choihooo",
+          adminGithubUserId: "67588757",
+          github: { owner: "choihooo", repo: "blog-platform", branch: "main" },
+          analytics: { provider: "ga4", ga4PropertyId: "replace-me" },
+        }),
         taxonomy: {
           categories: [
             {
