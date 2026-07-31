@@ -96,10 +96,11 @@
 - [ ] T035 [US2] `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 발행 글 목록 조회, canonical URL 생성, provider postPerformance 병합 구현
 - [ ] T036 [US2] `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 range/status/category/tag/sort 입력 처리와 기본 published-only 정책 구현
 - [ ] T037 [P] [US2] `apps/cms/components/analytics/post-performance-table.tsx`에 제목, slug, 발행일, 상태, 방문 수, 활성 사용자, 검색 클릭/노출, CTR, 평균 순위, matchState 표 구현
-- [ ] T038 [P] [US2] `apps/cms/components/analytics/post-performance-table.tsx`에 sort control과 category/tag/status filter control 구현
+- [ ] T038 [US2] `apps/cms/components/analytics/post-performance-table.tsx`에 sort control과 category/tag/status filter control 구현
 - [ ] T039 [US2] `apps/cms/components/analytics/analytics-dashboard.tsx`에 PostPerformanceTable 통합 및 selected post detail 영역 연결
 - [ ] T040 [US2] `packages/analytics/src/gsc-reporting.ts`에 page URL 기준 대표 검색어 topQueries 정규화 구현
 - [ ] T041 [US2] `apps/cms/components/analytics/post-performance-table.tsx`에 검색 성과는 있으나 방문 성과가 없는 글의 0/데이터 없음 표시 구분 구현
+- [ ] T042 [US2] `apps/cms/components/analytics/post-performance-table.tsx`에 선택한 글의 기간별 성과 추이와 대표 검색어 detail panel 구현
 
 **Checkpoint**: User Story 2는 글별 GA/GSC 비교 목록으로 독립 검증 가능해야 한다.
 
@@ -113,17 +114,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T042 [P] [US3] `packages/analytics/src/performance-normalization.test.ts`에 발행 후 1일/7일/28일 window 계산과 pending 상태 test 추가
-- [ ] T043 [P] [US3] `apps/cms/components/analytics/publication-performance.test.tsx`에 window별 누적 성과와 needsReview 표시 test 추가
-- [ ] T044 [P] [US3] `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 최근 발행 글 window와 낮은 성과 기준 test 추가
+- [ ] T043 [P] [US3] `packages/analytics/src/performance-normalization.test.ts`에 발행 후 1일/7일/28일 window 계산과 pending 상태 test 추가
+- [ ] T044 [P] [US3] `apps/cms/components/analytics/publication-performance.test.tsx`에 window별 누적 성과와 needsReview 표시 test 추가
+- [ ] T045 [P] [US3] `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 최근 발행 글 window와 낮은 성과 기준 test 추가
 
 ### Implementation for User Story 3
 
-- [ ] T045 [US3] `packages/analytics/src/performance-normalization.ts`에 PublicationPerformanceWindow 계산과 중앙값 대비 50% 낮은 성과 needsReview 규칙 구현
-- [ ] T046 [US3] `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 최근 28일 발행 글 window별 provider query 요청/결과 병합 구현
-- [ ] T047 [P] [US3] `apps/cms/components/analytics/publication-performance.tsx`에 발행 후 1일/7일/28일 window table/card UI 구현
-- [ ] T048 [US3] `apps/cms/components/analytics/analytics-dashboard.tsx`에 PublicationPerformance 섹션 통합
-- [ ] T049 [US3] `apps/cms/components/analytics/publication-performance.tsx`에 아직 도달하지 않은 window pending 표시와 insufficient-data 표시 구현
+- [ ] T046 [US3] `packages/analytics/src/performance-normalization.ts`에 PublicationPerformanceWindow 계산과 중앙값 대비 50% 낮은 성과 needsReview 규칙 구현
+- [ ] T047 [US3] `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 최근 28일 발행 글 window별 provider query 요청/결과 병합 구현
+- [ ] T048 [P] [US3] `apps/cms/components/analytics/publication-performance.tsx`에 발행 후 1일/7일/28일 window table/card UI 구현
+- [ ] T049 [US3] `apps/cms/components/analytics/analytics-dashboard.tsx`에 PublicationPerformance 섹션 통합
+- [ ] T050 [US3] `apps/cms/components/analytics/publication-performance.tsx`에 아직 도달하지 않은 window pending 표시와 insufficient-data 표시 구현
 
 **Checkpoint**: User Story 3은 발행 이후 성과 추적 섹션으로 독립 검증 가능해야 한다.
 
@@ -133,15 +134,16 @@
 
 **Purpose**: 전체 story를 연결한 뒤 보안, 문서, quickstart 검증을 마무리한다.
 
-- [ ] T050 [P] `apps/cms/components/shell/navigation.test.ts`에 Dashboard, Posts, Analytics, Settings 전체 navigation regression test 정리
-- [ ] T051 `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에서 외부 provider 오류가 CMS page render를 중단하지 않도록 error boundary/fallback 경로 검증
-- [ ] T052 [P] `packages/analytics/README.md`에 GA/GSC dashboard metric normalization과 privacy boundary 문서화
-- [ ] T053 [P] `apps/cms/README.md`에 Analytics dashboard 환경 변수, GA4/GSC 권한 부여, D1 cache 설정 문서화
-- [ ] T054 `specs/015-ga-gsc-dashboard/quickstart.md`의 validation scenarios 기준으로 수동 smoke checklist 실행 결과 확인
-- [ ] T055 `package.json` scripts 또는 README에 analytics dashboard 검증 명령(`pnpm typecheck`, analytics/cms tests) 안내 정리
-- [ ] T056 `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 개인 식별 데이터가 view model로 전달되지 않는 privacy regression test 추가
-- [ ] T057 `pnpm typecheck` 실행
-- [ ] T058 `pnpm test` 실행
+- [ ] T051 [P] `apps/cms/components/shell/navigation.test.ts`에 Dashboard, Posts, Analytics, Settings 전체 navigation regression test 정리
+- [ ] T052 `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에서 외부 provider 오류가 CMS page render를 중단하지 않도록 error boundary/fallback 경로 검증
+- [ ] T053 [P] `packages/analytics/README.md`에 GA/GSC dashboard metric normalization과 privacy boundary 문서화
+- [ ] T054 [P] `apps/cms/README.md`에 Analytics dashboard 환경 변수, GA4/GSC 권한 부여, D1 cache 설정 문서화
+- [ ] T055 `specs/015-ga-gsc-dashboard/quickstart.md`의 validation scenarios 기준으로 수동 smoke checklist 실행 결과 확인
+- [ ] T056 `apps/cms/README.md`에 analytics dashboard 검증 명령(`pnpm typecheck`, analytics/cms tests) 안내 정리
+- [ ] T057 `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 개인 식별 데이터가 view model로 전달되지 않는 privacy regression test 추가
+- [ ] T058 `specs/015-ga-gsc-dashboard/quickstart.md`에 운영자 사용성 체크 결과 기록 섹션 추가
+- [ ] T059 `pnpm typecheck` 실행
+- [ ] T060 `pnpm test` 실행
 
 ---
 
@@ -178,9 +180,9 @@
 - US1의 T027-T028 component task는 병렬 가능
 - US2의 T032-T034 test task는 병렬 가능
 - US2의 T037-T038은 같은 파일이라 동시 작업은 피하고, T040은 병렬 가능
-- US3의 T042-T044 test task는 병렬 가능
-- US3의 T047은 T045/T046과 파일 충돌이 없어 병렬 가능
-- T052-T053 문서 작업은 병렬 가능
+- US3의 T043-T045 test task는 병렬 가능
+- US3의 T048은 T046/T047과 파일 충돌이 없어 병렬 가능
+- T053-T054 문서 작업은 병렬 가능
 
 ---
 
@@ -210,10 +212,10 @@ Task: "T040 [US2] packages/analytics/src/gsc-reporting.ts"
 ## Parallel Example: User Story 3
 
 ```bash
-Task: "T042 [US3] packages/analytics/src/performance-normalization.test.ts"
-Task: "T043 [US3] apps/cms/components/analytics/publication-performance.test.tsx"
-Task: "T044 [US3] apps/cms/lib/analytics/analytics-dashboard-loader.test.ts"
-Task: "T047 [US3] apps/cms/components/analytics/publication-performance.tsx"
+Task: "T043 [US3] packages/analytics/src/performance-normalization.test.ts"
+Task: "T044 [US3] apps/cms/components/analytics/publication-performance.test.tsx"
+Task: "T045 [US3] apps/cms/lib/analytics/analytics-dashboard-loader.test.ts"
+Task: "T048 [US3] apps/cms/components/analytics/publication-performance.tsx"
 ```
 
 ---
