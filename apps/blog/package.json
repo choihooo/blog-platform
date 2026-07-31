@@ -16,6 +16,7 @@
     "@blog-platform/analytics": "workspace:^",
     "@blog-platform/markdown": "workspace:^",
     "@blog-platform/seo-engine": "workspace:^",
+    "lucide-react": "^1.27.0",
     "next": "^16.2.12",
     "next-mdx-remote": "^6.0.0",
     "react": "^19.2.8",

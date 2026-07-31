@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Script from "next/script";
 import type { ReactNode } from "react";
-import { Separator } from "@blog-platform/design-system";
 
 import { getSiteConfig } from "../lib/content-source";
 import { analyticsInit } from "../lib/analytics";
@@ -65,25 +63,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </>
         ) : null}
         <div className="min-h-screen bg-background">
-          <header className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-14">
-            <Link className="font-semibold no-underline" href="/">
-              Ho's Blog
-            </Link>
-            <nav
-              className="flex flex-wrap gap-4 text-sm text-muted-foreground"
-              aria-label="Primary navigation"
-            >
-              <Link href="/">Posts</Link>
-              <Link href="/categories/engineering">Engineering</Link>
-              <Link href="/tags/mdx">MDX</Link>
-            </nav>
-          </header>
-          <Separator />
           <AnalyticsProvider>{children}</AnalyticsProvider>
-          <Separator />
-          <footer className="px-5 py-4 text-sm text-muted-foreground sm:px-14">
-            Repository-backed MDX blog
-          </footer>
         </div>
       </body>
     </html>

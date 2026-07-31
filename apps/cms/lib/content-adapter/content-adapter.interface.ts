@@ -85,6 +85,7 @@ export type ContentListInput = {
   limit: number;
   tagSlug?: string;
   categoryPath?: string;
+  query?: string;
 };
 
 export type CategoryListInput = {

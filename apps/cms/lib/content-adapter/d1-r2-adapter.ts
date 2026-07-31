@@ -181,6 +181,37 @@ function normalizeLimit(input: unknown): number {
   return Math.min(100, limit);
 }
 
+function normalizeSearchQuery(input?: string): string | undefined {
+  const normalized = input?.trim().replace(/\s+/g, " ");
+  if (!normalized) return;
+  return normalized.slice(0, 120);
+}
+
+function escapeLikePattern(input: string) {
+  return input.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
+}
+
+function addPostSearchWhere(where: string[], params: unknown[], query?: string) {
+  if (!query) return;
+  const pattern = `%${escapeLikePattern(query)}%`;
+  where.push(
+    `(
+      p.title LIKE ? ESCAPE '\\'
+      OR p.summary LIKE ? ESCAPE '\\'
+      OR p.content LIKE ? ESCAPE '\\'
+      OR c.name LIKE ? ESCAPE '\\'
+      OR c.slug LIKE ? ESCAPE '\\'
+      OR p.id IN (
+        SELECT pt.post_id
+        FROM post_tags pt
+        JOIN tags t ON t.id = pt.tag_id
+        WHERE t.slug LIKE ? ESCAPE '\\' OR t.name LIKE ? ESCAPE '\\'
+      )
+    )`,
+  );
+  params.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern);
+}
+
 function isPublishedValue(value: unknown): value is 0 | 1 {
   return value === 0 || value === 1;
 }
@@ -348,6 +379,7 @@ function normalizeListInput(input: ContentListInput) {
     limit: normalizeLimit(input.limit),
     tagSlug: input.tagSlug ? normalizeSlug(input.tagSlug) : undefined,
     categoryPath: input.categoryPath ? normalizeCategorySlug(input.categoryPath) : undefined,
+    query: normalizeSearchQuery(input.query),
   };
 }
 
@@ -357,6 +389,7 @@ async function queryPostTotal(
     publishedOnly: boolean;
     tagSlug?: string;
     categoryPath?: string;
+    query?: string;
   },
 ) {
   const where: string[] = ["1=1"];
@@ -376,6 +409,7 @@ async function queryPostTotal(
     where.push("c.slug = ?");
     params.push(options.categoryPath);
   }
+  addPostSearchWhere(where, params, options.query);
 
   const countSql = `SELECT COUNT(1) AS total FROM posts p LEFT JOIN categories c ON c.id = p.category_id WHERE ${where.join(" AND ")}`;
   const row = await executeFirst<CountRow>(binding.prepare(countSql), params);
@@ -402,6 +436,7 @@ async function runD1Posts(binding: D1Database, input: ReturnType<typeof normaliz
     where.push("c.slug = ?");
     params.push(input.categoryPath);
   }
+  addPostSearchWhere(where, params, input.query);
 
   const limit = input.page && input.limit ? input.limit : undefined;
   const offset =

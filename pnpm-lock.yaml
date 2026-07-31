@@ -53,6 +53,9 @@ importers:
       '@blog-platform/seo-engine':
         specifier: workspace:^
         version: link:../../packages/seo-engine
+      lucide-react:
+        specifier: ^1.27.0
+        version: 1.27.0(react@19.2.8)
       next:
         specifier: ^16.2.12
         version: 16.2.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

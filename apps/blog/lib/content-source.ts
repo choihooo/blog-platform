@@ -36,6 +36,7 @@ export type ContentListInput = {
   limit?: number;
   tagSlug?: string;
   categoryPath?: string;
+  query?: string;
 };
 
 export type CategoryHierarchy = Category & {
@@ -209,6 +210,7 @@ function createD1R2Source(): BlogContentSource {
       limit: normalizeLimit(input.limit),
       tagSlug: input.tagSlug,
       categoryPath: input.categoryPath,
+      query: input.query,
     });
     if (!result.ok) return [];
 
@@ -310,6 +312,22 @@ export async function getContentSource(
 export async function getPublishedPosts(input: ContentListInput = {}): Promise<PublicPost[]> {
   const source = await getContentSource();
   return source.listPosts({ ...input, publishedOnly: true, page: input.page, limit: input.limit });
+}
+
+export async function searchPosts(input: {
+  query: string;
+  categoryPath?: string;
+  page?: number;
+  limit?: number;
+}): Promise<PublicPost[]> {
+  const source = await getContentSource();
+  return source.listPosts({
+    publishedOnly: true,
+    page: input.page,
+    limit: input.limit,
+    categoryPath: input.categoryPath,
+    query: input.query,
+  });
 }
 
 export async function getPostBySlug(slug: string): Promise<PublicPost | undefined> {

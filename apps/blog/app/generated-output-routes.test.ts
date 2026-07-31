@@ -38,6 +38,12 @@ const longPost: PublicPost = {
 vi.mock("../lib/content-source", () => ({
   getSiteConfig: () => Promise.resolve({ siteName: "Blog", siteUrl: "https://example.com" }),
   getPublishedPosts: () => Promise.resolve([publishedPost, longPost]),
+  searchPosts: (input: { query: string }) =>
+    Promise.resolve(
+      [publishedPost, longPost].filter((post) =>
+        post.title.toLowerCase().includes(input.query.toLowerCase()),
+      ),
+    ),
   getPostBySlug: (slug: string) =>
     Promise.resolve(slug === "hello" ? publishedPost : slug === "long" ? longPost : undefined),
 }));
@@ -88,5 +94,20 @@ describe("generated output routes", () => {
     expect(body).toContain("<tspan");
     expect(body).toContain("Blog");
     expect(missing.status).toBe(404);
+  });
+
+  it("serves JSON search results", async () => {
+    const { GET } = await import("./api/search/route");
+    const response = await GET(new Request("https://example.com/api/search?q=hello"));
+    const body = (await response.json()) as {
+      items: Array<{ title: string; url: string }>;
+      total: number;
+      query: string;
+    };
+
+    expect(response.headers.get("content-type")).toContain("application/json");
+    expect(body.query).toBe("hello");
+    expect(body.total).toBe(1);
+    expect(body.items[0]).toMatchObject({ title: "Hello & MDX", url: "/posts/hello" });
   });
 });
