@@ -72,8 +72,8 @@ export async function GET(request: Request, context: RouteContext) {
   }
 
   return new Response(
-    `<!doctype html><html><head><title>${escapeHtml(result.post.title)}</title><style>
-      body{margin:0;background:#fbfbf7;color:#17211b;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    `<!doctype html><html><head><title>${escapeHtml(result.post.title)}</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css"><style>
+      body{margin:0;background:#fbfbf7;color:#17211b;font-family:"SUIT Variable",SUIT,Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
       main{max-width:880px;margin:0 auto;padding:48px 24px 72px}
       h1{font-size:52px;line-height:1.05;margin:0 0 32px;font-weight:700}
       article{color:#213029;font-size:18px;line-height:1.85}
