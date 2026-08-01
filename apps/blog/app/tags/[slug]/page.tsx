@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
-import {
-  paginateItems,
-  parsePageParam,
-  PostPagination,
-} from "../../components/post-pagination";
+import { paginateItems, parsePageParam, PostPagination } from "../../components/post-pagination";
 import { getPostsByTag, getSiteConfig, getTag, getTags } from "../../../lib/content-source";
 
 export const dynamic = "force-dynamic";
@@ -44,9 +40,8 @@ function tagHrefForPage(slug: string, page: number) {
 
 export default async function TagPage({ params, searchParams }: TagPageProps) {
   const { slug } = await params;
-  const resolvedSearchParams: { page?: string | string[] } = await (
-    searchParams ?? Promise.resolve({})
-  );
+  const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
+    Promise.resolve({}));
   const [tag, posts] = await Promise.all([getTag(slug), getPostsByTag(slug, { limit: 100 })]);
   if (!tag) notFound();
   const pagination = paginateItems(posts, parsePageParam(resolvedSearchParams.page));

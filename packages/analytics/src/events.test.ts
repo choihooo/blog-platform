@@ -28,7 +28,8 @@ describe("analytics events", () => {
     ] as const;
     for (const name of names) {
       expect(
-        createBlogEvent({ ...sampleEvent, name, target: name === "search" ? "mdx" : name })?.name,
+        createBlogEvent({ ...sampleEvent, name, target: name === "search" ? "content-json" : name })
+          ?.name,
       ).toBe(name);
     }
   });

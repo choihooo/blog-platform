@@ -17,7 +17,7 @@ vi.mock("../../app/actions/editor-actions", () => ({
 
 function publishedDoc() {
   const doc = createEmptyEditorDocument();
-  doc.path = "content/posts/a.mdx";
+  doc.path = "db/posts/a";
   doc.sourceSha = "sha";
   doc.frontmatter = {
     title: "A",

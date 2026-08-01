@@ -16,7 +16,6 @@
     "@blog-platform/analytics": "workspace:^",
     "@blog-platform/design-system": "workspace:^",
     "@blog-platform/editor": "workspace:^",
-    "@blog-platform/markdown": "workspace:^",
     "@blog-platform/seo-engine": "workspace:^",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",

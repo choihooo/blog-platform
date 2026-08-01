@@ -3,14 +3,15 @@ import { postToSeoSubject, siteForSeo } from "./seo";
 import type { PublicPost } from "./content";
 
 const post: PublicPost = {
-  path: "posts/hello.mdx",
+  path: "db/posts/hello",
   status: "published",
-  title: "Hello MDX",
+  title: "Hello Structured Content",
   slug: "hello",
   author: "ho",
   publishedAt: "2026-07-30",
   body: "# Hello",
-  tagEntries: [{ slug: "mdx", label: "MDX" }],
+  bodyNodes: [{ type: "heading", depth: 1, text: "Hello" }],
+  tagEntries: [{ slug: "content-json", label: "Structured Content" }],
   toc: [{ depth: 1, text: "Hello", slug: "hello" }],
   readingTimeLabel: "1 min read",
 };
@@ -22,7 +23,7 @@ describe("postToSeoSubject", () => {
       siteForSeo({ siteName: "Blog", siteUrl: "https://example.com" }),
     );
     expect(subject.slug).toBe("hello");
-    expect(subject.tags[0]?.label).toBe("MDX");
+    expect(subject.tags[0]?.label).toBe("Structured Content");
     expect(subject.toc[0]?.slug).toBe("hello");
     expect(subject.readingTime?.label).toBe("1 min read");
     expect(subject.coverImage).toBeUndefined();

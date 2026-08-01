@@ -19,7 +19,7 @@ describe("github adapter errors", () => {
       fetchImpl: async () => new Response(JSON.stringify({ message: "error" }), { status }),
     });
     const result = await adapter.updateFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "mine",
       expectedSha: "old",
       intent: "save-draft",

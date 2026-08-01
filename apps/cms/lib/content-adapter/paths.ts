@@ -26,7 +26,7 @@ export function classifyRepositoryPath(input: string): RepositoryContentKind | n
   if (!repoPath) return null;
   const configKind = configKinds.get(repoPath);
   if (configKind) return configKind;
-  if (repoPath.startsWith("content/posts/") && repoPath.endsWith(".mdx")) return "post";
+  if (repoPath.startsWith("db/posts/")) return "post";
   if (repoPath.startsWith("content/authors/") && repoPath.endsWith(".md")) return "author";
   if (repoPath.startsWith("public/media/")) return "media";
   return null;
@@ -44,7 +44,7 @@ export function assertAllowedPath(
 export function listRootToPath(root: ListFilesRoot): string[] {
   switch (root) {
     case "posts":
-      return ["content/posts"];
+      return ["db/posts"];
     case "authors":
       return ["content/authors"];
     case "config":

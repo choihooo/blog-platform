@@ -1,5 +1,6 @@
-import { createHash, createHmac } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { serializePostContent } from "@blog-platform/editor";
 
 import { loadDraftPreview } from "./preview";
 
@@ -28,7 +29,10 @@ function draftRecord(overrides = {}) {
     id: "post_draft",
     slug: "draft",
     title: "Draft",
-    content: "# Draft",
+    content: serializePostContent({
+      version: 1,
+      nodes: [{ type: "heading", depth: 1, text: "Draft" }],
+    }),
     summary: "",
     categoryId: null,
     categoryPath: null,
@@ -43,29 +47,13 @@ function draftRecord(overrides = {}) {
   };
 }
 
-function sourceForDraft() {
-  return [
-    "---",
-    "title: Draft",
-    "status: draft",
-    "slug: draft",
-    "updatedAt: '2026-07-30T00:00:00.000Z'",
-    "excerpt: ''",
-    "---",
-    "",
-    "# Draft",
-    "",
-  ].join("\n");
-}
-
 beforeEach(() => {
   getPostBySlug.mockReset();
 });
 
 describe("draft preview loader", () => {
   it("loads a valid draft preview", async () => {
-    const source = sourceForDraft();
-    const contentSha = createHash("sha256").update(source).digest("hex");
+    const contentSha = "2026-07-30T00:00:00.000Z:draft";
     getPostBySlug.mockResolvedValueOnce({ ok: true, data: draftRecord() });
 
     const result = await loadDraftPreview({
@@ -74,13 +62,12 @@ describe("draft preview loader", () => {
       secret: "preview-secret",
     });
 
-    expect(result).toMatchObject({ ok: true, post: { title: "Draft", body: "# Draft" } });
+    expect(result).toMatchObject({ ok: true, post: { title: "Draft", body: "Draft" } });
     expect(getPostBySlug).toHaveBeenCalledWith("draft", { includeUnpublished: true });
   });
 
   it("rejects expired, slug mismatch, stale contentSha, and invalid signature states", async () => {
-    const source = sourceForDraft();
-    const contentSha = createHash("sha256").update(source).digest("hex");
+    const contentSha = "2026-07-30T00:00:00.000Z:draft";
     getPostBySlug.mockResolvedValue({ ok: true, data: draftRecord() });
 
     await expect(
@@ -114,9 +101,8 @@ describe("draft preview loader", () => {
     ).resolves.toMatchObject({ ok: false, reason: "invalid-token" });
   });
 
-  it("blocks unsafe MDX", async () => {
-    const source = sourceForDraft().replace("# Draft", "<script>x</script>");
-    const contentSha = createHash("sha256").update(source).digest("hex");
+  it("treats legacy markup as inert text", async () => {
+    const contentSha = "2026-07-30T00:00:00.000Z:draft";
     getPostBySlug.mockResolvedValueOnce({
       ok: true,
       data: draftRecord({ content: "<script>x</script>" }),
@@ -128,6 +114,6 @@ describe("draft preview loader", () => {
         token: issue({ contentSha }),
         secret: "preview-secret",
       }),
-    ).resolves.toMatchObject({ ok: false, reason: "unsafe-mdx" });
+    ).resolves.toMatchObject({ ok: true, post: { body: "<script>x</script>" } });
   });
 });

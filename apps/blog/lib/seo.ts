@@ -1,6 +1,6 @@
 import { createSeoSubject, type SeoSite, type SeoSubject } from "@blog-platform/seo-engine";
 
-import type { PublicPost } from "./content";
+import type { PublicPost } from "./content-source";
 
 export function siteForSeo(site: { siteName: string; siteUrl: string }): SeoSite {
   return { siteName: site.siteName, siteUrl: site.siteUrl };

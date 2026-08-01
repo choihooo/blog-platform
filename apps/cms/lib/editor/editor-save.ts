@@ -1,12 +1,17 @@
-import { type EditorDocument, editorDocumentToMdx } from "@blog-platform/editor";
+import { createHash } from "node:crypto";
+
+import {
+  editorDocumentToPostContent,
+  serializePostContent,
+  textFromEditorNodes,
+  type EditorDocument,
+} from "@blog-platform/editor";
 
 import type {
-  AdapterResult,
   ContentAdapter,
-  ContentChangeResult,
-  RepositoryFailureCode,
-  RepositoryFailureState,
-} from "../content-adapter/index";
+  ContentFailure,
+  PostRecord,
+} from "../content-adapter/content-adapter.interface";
 
 function normalizeSlug(value: string) {
   return value
@@ -16,13 +21,13 @@ function normalizeSlug(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function slugFromPath(path: string) {
-  return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
+export function slugFromPath(path: string) {
+  return path.replace(/^db\/posts\//, "");
 }
 
 type SaveErrorCode =
   | "validation-failure"
-  | "unsupported-mdx"
+  | "unsupported-content"
   | "auth-required"
   | "forbidden"
   | "session-expired"
@@ -49,22 +54,25 @@ export type SaveEditorDraftResult =
       submittedSource?: string;
     };
 
-function codeFromRepository(code: RepositoryFailureCode): SaveErrorCode {
-  if (code === "stale-file") return "stale-file";
-  if (code === "temporary-connectivity" || code === "rate-limit") return "temporary-connectivity";
-  if (code === "unauthorized") return "forbidden";
+function codeFromContentFailure(code: ContentFailure["code"]): SaveErrorCode {
+  if (code === "conflict") return "stale-file";
+  if (code === "retryable-failure" || code === "storage-failure" || code === "upstream-failure") {
+    return "temporary-connectivity";
+  }
+  if (code === "auth-required") return "auth-required";
+  if (code === "forbidden") return "forbidden";
   if (code === "validation-failure") return "validation-failure";
   return "unknown";
 }
 
 function failureResult(
   document: EditorDocument,
-  failure: RepositoryFailureState,
+  failure: ContentFailure,
   submittedSource?: string,
 ): SaveEditorDraftResult {
   return {
     ok: false,
-    code: codeFromRepository(failure.code),
+    code: codeFromContentFailure(failure.code),
     retryable: failure.retryable,
     message: failure.message,
     submittedDocument: document,
@@ -101,90 +109,95 @@ export function pathForDocument(document: EditorDocument) {
   return `db/posts/${slug}`;
 }
 
+function documentId(document: EditorDocument, slug: string) {
+  if (document.id && !document.id.startsWith("draft-")) return document.id;
+  return createHash("md5").update(slug).digest("hex");
+}
+
+function documentToPostRecord(
+  document: EditorDocument,
+  existing?: PostRecord | null,
+  now = new Date(),
+): PostRecord {
+  const slug =
+    normalizeSlug(document.frontmatter.slug ?? "") || slugFromPath(pathForDocument(document));
+  const content = serializePostContent(editorDocumentToPostContent(document));
+  const text = textFromEditorNodes(document.body);
+  const status = document.frontmatter.status;
+  const updatedAt = now.toISOString();
+  const publishedAt =
+    status === "published"
+      ? (document.frontmatter.publishedAt ?? existing?.publishedAt ?? updatedAt)
+      : null;
+
+  return {
+    id: existing?.id ?? documentId(document, slug),
+    slug,
+    title: document.frontmatter.title.trim(),
+    content,
+    summary: document.frontmatter.excerpt?.trim() || text.slice(0, 240),
+    categoryId: existing?.categoryId ?? null,
+    categoryPath: document.frontmatter.category ?? existing?.categoryPath ?? null,
+    heroImageKey: document.frontmatter.coverImage ?? existing?.heroImageKey ?? null,
+    publishedAt,
+    updatedAt,
+    isPublished: status === "published" ? 1 : 0,
+    viewCount: existing?.viewCount ?? 0,
+    tags: document.frontmatter.tags ?? existing?.tags ?? [],
+    mediaRefs: existing?.mediaRefs ?? [],
+  };
+}
+
 export async function saveEditorDraft(
   document: EditorDocument,
-  adapter: Pick<ContentAdapter, "createFile" | "updateFile"> & {
-    deleteFile?: ContentAdapter["deleteFile"];
-  },
+  adapter: Pick<ContentAdapter, "createPost" | "updatePost" | "getPostBySlug">,
+  now = new Date(),
 ): Promise<SaveEditorDraftResult> {
-  const serialized = editorDocumentToMdx(document);
-  if (!serialized.ok) {
+  if (!document.frontmatter.title.trim()) {
     return {
       ok: false,
-      code: serialized.code === "unsupported-format" ? "unsupported-mdx" : "validation-failure",
+      code: "validation-failure",
       retryable: false,
-      message: serialized.issues[0]?.message ?? "Editor document cannot be saved",
+      message: "Title is required before saving",
       submittedDocument: document,
     };
   }
 
-  const path = pathForDocument(document);
+  const previousSlug = document.path ? slugFromPath(document.path) : undefined;
+  const slug = slugFromPath(pathForDocument(document));
+  const existing = previousSlug
+    ? await adapter.getPostBySlug(previousSlug, { includeUnpublished: true })
+    : await adapter.getPostBySlug(slug, { includeUnpublished: true });
+  if (!existing.ok) return failureResult(document, existing.error);
+
   const nextDocument: EditorDocument = {
     ...document,
     frontmatter: {
       ...document.frontmatter,
-      slug: normalizeSlug(document.frontmatter.slug ?? ""),
+      slug,
+      status: document.frontmatter.status === "published" ? "published" : "draft",
     },
   };
-
-  if (document.sourceSha && document.path && slugFromPath(document.path) !== slugFromPath(path)) {
-    if (!adapter.deleteFile) {
-      return {
-        ok: false,
-        code: "forbidden",
-        retryable: false,
-        message: "Draft rename requires delete permission",
-        submittedDocument: nextDocument,
-      };
-    }
-    const createResult = await adapter.createFile({
-      path,
-      content: serialized.source,
-      intent: "create-draft",
-    });
-    if (!createResult.success)
-      return failureResult(nextDocument, createResult.error, serialized.source);
-    const deleteResult = await adapter.deleteFile({
-      path: document.path,
-      expectedSha: document.sourceSha,
-      intent: "delete-file",
-    });
-    if (!deleteResult.success)
-      return failureResult(nextDocument, deleteResult.error, serialized.source);
-    const updatedAt = new Date().toISOString();
-    return {
-      ok: true,
-      path: createResult.data.path,
-      sha: createResult.data.sha ?? "",
-      commitId: createResult.data.commitId,
-      backupCleared: true,
-      slug: slugFromPath(createResult.data.path),
-      updatedAt,
-    };
-  }
-
-  const result: AdapterResult<ContentChangeResult> = document.sourceSha
-    ? await adapter.updateFile({
-        path,
-        content: serialized.source,
-        expectedSha: document.sourceSha,
-        intent: "save-draft",
+  const post = documentToPostRecord(nextDocument, existing.data, now);
+  const submittedSource = post.content;
+  const result = existing.data
+    ? await adapter.updatePost({
+        slug: previousSlug ?? existing.data.slug,
+        post,
+        authorIdentity: "cms-editor",
       })
-    : await adapter.createFile({
-        path,
-        content: serialized.source,
-        intent: "create-draft",
-      });
+    : await adapter.createPost({ post, authorIdentity: "cms-editor" });
 
-  if (!result.success) return failureResult(nextDocument, result.error, serialized.source);
-  const updatedAt = new Date().toISOString();
+  if (!result.ok) return failureResult(nextDocument, result.error, submittedSource);
+
   return {
     ok: true,
-    path: result.data.path,
-    sha: result.data.sha ?? document.sourceSha ?? "",
-    commitId: result.data.commitId,
+    path: pathForDocument(nextDocument),
+    sha: `${result.data.updatedAt}:${result.data.slug}`,
     backupCleared: true,
-    slug: slugFromPath(result.data.path),
-    updatedAt,
+    slug: result.data.slug,
+    updatedAt: result.data.updatedAt,
   };
 }
+
+export { documentToPostRecord };

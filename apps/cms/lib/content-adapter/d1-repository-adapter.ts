@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 
-import { parsePostFile, serializeFrontmatter } from "@blog-platform/markdown";
+import { loadPostContent, textFromEditorNodes } from "@blog-platform/editor";
 
 import { createContentAdapter } from "./content-adapter";
 import type { ContentFailure, PostRecord } from "./content-adapter.interface";
@@ -15,10 +15,8 @@ import type {
 } from "./types";
 
 const AUTHOR_IDENTITY = "cms-editor";
-const DEFAULT_AUTHOR = "ho";
-
 function slugFromPath(path: string) {
-  return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
+  return path.replace(/^db\/posts\//, "");
 }
 
 function pathForSlug(slug: string) {
@@ -58,33 +56,8 @@ function unsupportedRoot(root: ListFilesRoot): AdapterResult<{ files: [] }> {
   return { success: true, data: { files: [] } };
 }
 
-function compactFrontmatter(metadata: Record<string, unknown>) {
-  return Object.fromEntries(
-    Object.entries(metadata).filter(([, value]) => {
-      if (value === undefined || value === null) return false;
-      if (Array.isArray(value)) return value.length > 0;
-      return true;
-    }),
-  );
-}
-
 function postToSource(post: PostRecord) {
-  const serialized = serializeFrontmatter(
-    compactFrontmatter({
-      title: post.title,
-      status: post.isPublished === 1 ? "published" : post.publishedAt ? "archived" : "draft",
-      slug: post.slug,
-      author: DEFAULT_AUTHOR,
-      publishedAt: post.publishedAt,
-      updatedAt: post.updatedAt,
-      excerpt: post.summary,
-      coverImage: post.heroImageKey,
-      category: post.categoryPath,
-      tags: post.tags,
-    }),
-  );
-  const frontmatter = serialized.success && serialized.data ? serialized.data : "---\n---";
-  return `${frontmatter}\n\n${post.content}\n`;
+  return post.content;
 }
 
 function postToFile(post: PostRecord): RepositoryContentFile {
@@ -104,13 +77,13 @@ function postFromChange(
   input: ContentChangeRequest,
   existing?: PostRecord,
 ): AdapterResult<PostRecord> {
-  const parsed = parsePostFile({ path: input.path, source: input.content });
-  if (!parsed.success || !parsed.data) {
+  const content = loadPostContent(input.content);
+  if (content.nodes.length === 0) {
     return {
       success: false,
       error: {
         code: "validation-failure",
-        message: parsed.issues[0]?.message ?? "Post frontmatter is invalid",
+        message: "Post content is empty",
         retryable: false,
         path: input.path,
         submittedContent: input.content,
@@ -119,9 +92,8 @@ function postFromChange(
   }
 
   const now = new Date().toISOString();
-  const post = parsed.data;
-  const slug = post.slug || slugFromPath(input.path);
-  const updatedAt = post.updatedAt ?? now;
+  const slug = slugFromPath(input.path);
+  const text = textFromEditorNodes(content.nodes);
   return {
     success: true,
     data: {
@@ -131,17 +103,17 @@ function postFromChange(
           .update(slug || randomUUID())
           .digest("hex"),
       slug,
-      title: post.title ?? "Untitled",
-      content: post.body,
-      summary: post.excerpt ?? "",
+      title: existing?.title ?? (slug || "Untitled"),
+      content: input.content,
+      summary: existing?.summary ?? text.slice(0, 240),
       categoryId: existing?.categoryId ?? null,
-      categoryPath: post.category ?? existing?.categoryPath ?? null,
-      heroImageKey: post.coverImage ?? existing?.heroImageKey ?? null,
-      publishedAt: post.status === "published" ? (post.publishedAt ?? null) : null,
-      updatedAt,
-      isPublished: post.status === "published" ? 1 : 0,
+      categoryPath: existing?.categoryPath ?? null,
+      heroImageKey: existing?.heroImageKey ?? null,
+      publishedAt: existing?.publishedAt ?? null,
+      updatedAt: now,
+      isPublished: existing?.isPublished ?? 0,
       viewCount: existing?.viewCount ?? 0,
-      tags: post.tags ?? existing?.tags ?? [],
+      tags: existing?.tags ?? [],
       mediaRefs: existing?.mediaRefs ?? [],
     },
   };

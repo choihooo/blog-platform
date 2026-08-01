@@ -3,9 +3,9 @@
 import { createHash } from "node:crypto";
 
 import type { EditorDocument } from "@blog-platform/editor";
-import { editorDocumentToMdx } from "@blog-platform/editor";
 import { revalidatePath } from "next/cache";
 
+import { createContentAdapter } from "../../lib/content-adapter/content-adapter";
 import { createRuntimeContentAdapter } from "../../lib/content-adapter/index";
 import {
   createProtectedContentOperations,
@@ -20,6 +20,7 @@ import {
   prepareMediaFile,
   publicPath,
   createConfiguredPublicRefresh,
+  mapAuthFailure,
   refreshPublicTargets,
   runPublicationOperation,
   repositoryToUploadCode,
@@ -47,12 +48,12 @@ function redact(message: string | undefined) {
 }
 
 function editorPathFromContentPath(path?: string) {
-  if (!path || !/^(?:content|db)\/posts\//.test(path)) return;
-  return `/posts/${path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "")}`;
+  if (!path || !path.startsWith("db/posts/")) return;
+  return `/posts/${path.replace(/^db\/posts\//, "")}`;
 }
 
 function slugCandidate(document: EditorDocument): string {
-  const pathSlug = document.path?.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
+  const pathSlug = document.path?.replace(/^db\/posts\//, "");
   return (
     document.frontmatter.slug ||
     slugForMedia(pathSlug ?? "") ||
@@ -70,57 +71,23 @@ function refreshCmsEditorPaths(path?: string) {
 
 export async function saveEditorDraftAction(document: EditorDocument) {
   const root = repositoryRoot();
-  const adapter = await createRuntimeContentAdapter(root);
-  const protectedOperations = createProtectedContentOperations(adapter, async () =>
-    evaluateAccess(await getCmsSession(), root),
-  );
+  const decision = await evaluateAccess(await getCmsSession(), root);
+  if (decision.status !== "authorized") {
+    return mapAuthFailure(document, {
+      code:
+        decision.status === "unauthenticated"
+          ? "auth-required"
+          : decision.status === "expired"
+            ? "session-expired"
+            : decision.status === "misconfigured"
+              ? "auth-misconfigured"
+              : "forbidden",
+      message: redact(decision.reason),
+      retryable: decision.status === "unauthenticated" || decision.status === "expired",
+    });
+  }
 
-  const guardedAdapter = {
-    async createFile(input: Parameters<typeof adapter.createFile>[0]) {
-      const result = await protectedOperations.createFile(input);
-      return result.ok
-        ? result.value
-        : {
-            success: false as const,
-            error: {
-              code: "unauthorized" as const,
-              message: redact(result.message),
-              retryable: result.retryable,
-              submittedContent: input.content,
-            },
-          };
-    },
-    async updateFile(input: Parameters<typeof adapter.updateFile>[0]) {
-      const result = await protectedOperations.updateFile(input);
-      return result.ok
-        ? result.value
-        : {
-            success: false as const,
-            error: {
-              code: "unauthorized" as const,
-              message: redact(result.message),
-              retryable: result.retryable,
-              submittedContent: input.content,
-            },
-          };
-    },
-    async deleteFile(input: Parameters<typeof adapter.deleteFile>[0]) {
-      const result = await protectedOperations.deleteFile(input);
-      return result.ok
-        ? result.value
-        : {
-            success: false as const,
-            error: {
-              code: "unauthorized" as const,
-              message: redact(result.message),
-              retryable: result.retryable,
-              submittedContent: "",
-            },
-          };
-    },
-  };
-
-  const result = await saveEditorDraft(document, guardedAdapter);
+  const result = await saveEditorDraft(document, createContentAdapter("d1r2"));
   if (result.ok) refreshCmsEditorPaths(result.path);
   return result;
 }
@@ -147,7 +114,7 @@ async function publicationAction(
     });
   }
 
-  const adapter = await createRuntimeContentAdapter(root);
+  const adapter = createContentAdapter("d1r2");
   const result = await runPublicationOperation({
     operation,
     document,
@@ -310,64 +277,17 @@ export async function createPreviewTokenAction(input: { document: EditorDocument
     };
   }
 
-  const serialized = editorDocumentToMdx(input.document);
-  if (!serialized.ok) {
+  const root = repositoryRoot();
+  const decision = await evaluateAccess(await getCmsSession(), root);
+  if (decision.status !== "authorized") {
     return {
       ok: false as const,
-      code: serialized.code,
-      message: "Preview is unavailable until the document is valid.",
+      code: decision.status === "unauthenticated" ? "auth-required" : "forbidden",
+      message: redact(decision.reason),
     };
   }
 
-  const root = repositoryRoot();
-  const adapter = await createRuntimeContentAdapter(root);
-  const protectedOperations = createProtectedContentOperations(adapter, async () =>
-    evaluateAccess(await getCmsSession(), root),
-  );
-  const guardedAdapter = {
-    async createFile(createInput: Parameters<typeof adapter.createFile>[0]) {
-      const result = await protectedOperations.createFile(createInput);
-      return result.ok
-        ? result.value
-        : {
-            success: false as const,
-            error: {
-              code: "unauthorized" as const,
-              message: redact(result.message),
-              retryable: result.retryable,
-              submittedContent: createInput.content,
-            },
-          };
-    },
-    async updateFile(updateInput: Parameters<typeof adapter.updateFile>[0]) {
-      const result = await protectedOperations.updateFile(updateInput);
-      return result.ok
-        ? result.value
-        : {
-            success: false as const,
-            error: {
-              code: "unauthorized" as const,
-              message: redact(result.message),
-              retryable: result.retryable,
-              submittedContent: updateInput.content,
-            },
-          };
-    },
-    async deleteFile(deleteInput: Parameters<NonNullable<typeof adapter.deleteFile>>[0]) {
-      const result = await protectedOperations.deleteFile(deleteInput);
-      return result.ok
-        ? result.value
-        : {
-            success: false as const,
-            error: {
-              code: "unauthorized" as const,
-              message: redact(result.message),
-              retryable: result.retryable,
-            },
-          };
-    },
-  };
-  const saved = await saveEditorDraft(input.document, guardedAdapter);
+  const saved = await saveEditorDraft(input.document, createContentAdapter("d1r2"));
   if (!saved.ok) {
     return {
       ok: false as const,
@@ -378,7 +298,8 @@ export async function createPreviewTokenAction(input: { document: EditorDocument
 
   refreshCmsEditorPaths(saved.path);
   const slug = saved.slug || slugCandidate(input.document);
-  const contentSha = saved.sha || createHash("sha256").update(serialized.source).digest("hex");
+  const contentSha =
+    saved.sha || createHash("sha256").update(JSON.stringify(input.document)).digest("hex");
   const token = issuePreviewToken({ slug, contentSha, secret });
   return {
     ok: true as const,

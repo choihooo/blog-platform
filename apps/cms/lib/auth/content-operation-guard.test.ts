@@ -32,18 +32,18 @@ describe("createProtectedContentOperations", () => {
     const protectedContent = createProtectedContentOperations(content, () => denied);
 
     await protectedContent.createFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "",
       intent: "create-draft",
     });
     await protectedContent.updateFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "",
       intent: "save-draft",
       expectedSha: "old",
     });
     await protectedContent.deleteFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       intent: "delete-file",
       expectedSha: "old",
     });

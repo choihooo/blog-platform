@@ -2,21 +2,25 @@ import type { SeoSubject } from "./types.js";
 
 export function seoSubject(overrides: Partial<SeoSubject> = {}): SeoSubject {
   return {
-    path: "posts/hello-world.mdx",
+    path: "db/posts/hello-world",
     status: "published",
     site: { siteName: "Ho's Blog", siteUrl: "https://example.com", description: "Tech notes" },
-    title: "A Practical Guide to MDX",
+    title: "A Practical Guide to Structured Content",
     slug: "hello-world",
-    excerpt: "A practical guide to repository backed MDX.",
+    excerpt: "A practical guide to database backed content.",
     author: { id: "ho", name: "Ho" },
     publishedAt: "2026-07-30T00:00:00.000Z",
     updatedAt: "2026-07-30T00:00:00.000Z",
     category: { slug: "engineering", label: "Engineering" },
-    tags: [{ slug: "mdx", label: "MDX" }],
+    tags: [{ slug: "content-json", label: "Content JSON" }],
     coverImage: "/media/cover.webp",
-    body: "# A Practical Guide to MDX\n\n## Intro\n\n![cover](/media/cover.webp)\n\n[Read more](/posts/other)\n\n## Details",
+    body: "A Practical Guide to Structured Content\n\n![cover](/media/cover.webp)\n\n[Read more](/posts/other)\n\nIntro\n\nDetails",
     headings: [
-      { depth: 1, text: "A Practical Guide to MDX", slug: "a-practical-guide-to-mdx" },
+      {
+        depth: 1,
+        text: "A Practical Guide to Structured Content",
+        slug: "a-practical-guide-to-structured-content",
+      },
       { depth: 2, text: "Intro", slug: "intro" },
       { depth: 2, text: "Details", slug: "details" },
     ],

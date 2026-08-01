@@ -1,6 +1,4 @@
-import { createHash } from "node:crypto";
-
-import { analyzeMdx, serializeFrontmatter } from "@blog-platform/markdown";
+import { analyzeEditorNodes, loadPostContent, textFromEditorNodes } from "@blog-platform/editor";
 import { createContentAdapter } from "../../cms/lib/content-adapter/content-adapter";
 import type { PostRecord } from "../../cms/lib/content-adapter/content-adapter.interface";
 
@@ -17,7 +15,7 @@ export type DraftPreviewResult =
         toc: Array<{ depth: number; text: string; slug: string }>;
       };
     }
-  | { ok: false; reason: "missing" | "invalid-token" | "published" | "unsafe-mdx" };
+  | { ok: false; reason: "missing" | "invalid-token" | "published" | "invalid-content" };
 
 export function previewCacheControl() {
   return "private, no-store";
@@ -28,37 +26,9 @@ function safeSlug(slug: string): string | undefined {
   return slug;
 }
 
-function compactFrontmatter(metadata: Record<string, unknown>) {
-  return Object.fromEntries(
-    Object.entries(metadata).filter(([, value]) => {
-      if (value === undefined || value === null) return false;
-      if (Array.isArray(value)) return value.length > 0;
-      return true;
-    }),
-  );
-}
-
 function postStatus(post: PostRecord) {
   if (post.isPublished === 1) return "published";
   return post.publishedAt ? "archived" : "draft";
-}
-
-function postToSource(post: PostRecord) {
-  const serialized = serializeFrontmatter(
-    compactFrontmatter({
-      title: post.title,
-      status: postStatus(post),
-      slug: post.slug,
-      publishedAt: post.publishedAt,
-      updatedAt: post.updatedAt,
-      excerpt: post.summary,
-      coverImage: post.heroImageKey,
-      category: post.categoryPath,
-      tags: post.tags,
-    }),
-  );
-  if (!serialized.success || !serialized.data) return;
-  return `${serialized.data}\n\n${post.content}\n`;
 }
 
 export async function loadDraftPreview(input: {
@@ -76,23 +46,21 @@ export async function loadDraftPreview(input: {
   if (!loaded.ok || !loaded.data) return { ok: false, reason: "missing" };
   if (postStatus(loaded.data) === "published") return { ok: false, reason: "published" };
 
-  const source = postToSource(loaded.data);
-  if (!source) return { ok: false, reason: "unsafe-mdx" };
-  const contentSha = createHash("sha256").update(source).digest("hex");
+  const contentSha = `${loaded.data.updatedAt}:${loaded.data.slug}`;
   const token = verifyPreviewToken(input.token, { slug, contentSha, secret, now: input.now });
   if (!token.ok) return { ok: false, reason: "invalid-token" };
 
-  const analysis = analyzeMdx({ path: `db/posts/${slug}.md`, source: loaded.data.content });
-  if (!analysis.success || !analysis.data) return { ok: false, reason: "unsafe-mdx" };
+  const content = loadPostContent(loaded.data.content);
+  const analysis = analyzeEditorNodes(content.nodes);
 
   return {
     ok: true,
     post: {
       title: loaded.data.title,
       slug,
-      body: analysis.data.body,
-      readingTimeLabel: analysis.data.readingTime.label,
-      toc: analysis.data.toc,
+      body: textFromEditorNodes(content.nodes),
+      readingTimeLabel: analysis.readingTime.label,
+      toc: analysis.headings,
     },
   };
 }

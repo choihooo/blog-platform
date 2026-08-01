@@ -17,7 +17,7 @@ describe("media commits", () => {
     expect(created.success && created.data.status).toBe("created");
 
     const invalid = await adapter.commitMedia({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       contentBase64: "aW1hZ2U=",
       intent: "save-media",
     });

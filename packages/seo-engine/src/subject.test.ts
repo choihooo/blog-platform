@@ -3,7 +3,7 @@ import { canonicalUrl, createSeoSubject, ogImageUrl, publicPostUrl } from "./sub
 import { seoSubject } from "./test-fixtures.js";
 
 describe("createSeoSubject", () => {
-  it("maps markdown analysis into a reusable subject", () => {
+  it("maps content analysis into a reusable subject", () => {
     const base = seoSubject();
     const subject = createSeoSubject({
       post: {

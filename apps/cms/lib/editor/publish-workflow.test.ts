@@ -1,7 +1,11 @@
-import { describe, expect, it } from "vitest";
-import { createEmptyEditorDocument, type EditorDocument } from "@blog-platform/editor";
+import { describe, expect, it, vi } from "vitest";
+import {
+  createEmptyEditorDocument,
+  serializePostContent,
+  type EditorDocument,
+} from "@blog-platform/editor";
 
-import type { ContentAdapter, ContentChangeRequest } from "../content-adapter";
+import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
 import { runPublicationOperation } from "./publish-workflow";
 
 function document(overrides: Partial<EditorDocument> = {}) {
@@ -11,66 +15,47 @@ function document(overrides: Partial<EditorDocument> = {}) {
   return { ...doc, ...overrides };
 }
 
-function adapter(existing: Array<{ path: string; source: string }> = []) {
-  const writes: ContentChangeRequest[] = [];
-  const api: Pick<ContentAdapter, "createFile" | "updateFile" | "listFiles" | "readFile"> & {
-    writes: ContentChangeRequest[];
-  } = {
+function post(overrides: Partial<PostRecord> = {}): PostRecord {
+  return {
+    id: "post_hello",
+    slug: "hello-world",
+    title: "Hello World",
+    content: serializePostContent({
+      version: 1,
+      nodes: [{ type: "paragraph", text: "Body" }],
+    }),
+    summary: "Body",
+    categoryId: null,
+    categoryPath: null,
+    heroImageKey: null,
+    publishedAt: null,
+    updatedAt: "2026-07-30T00:00:00.000Z",
+    isPublished: 0,
+    viewCount: 0,
+    tags: [],
+    mediaRefs: [],
+    ...overrides,
+  };
+}
+
+function adapter(existing: PostRecord[] = []) {
+  const writes: PostRecord[] = [];
+  const api = {
     writes,
-    async listFiles() {
-      return {
-        success: true,
-        data: {
-          files: existing.map((file) => ({
-            path: file.path,
-            kind: "post" as const,
-            sha: "sha",
-            sizeBytes: file.source.length,
-          })),
-        },
-      };
-    },
-    async readFile(input) {
-      const found = existing.find((file) => file.path === input.path);
-      if (!found) throw new Error("missing fixture");
-      return {
-        success: true,
-        data: {
-          file: {
-            path: found.path,
-            kind: "post" as const,
-            content: found.source,
-            encoding: "utf8" as const,
-            sha: "sha",
-            sizeBytes: found.source.length,
-          },
-        },
-      };
-    },
-    async createFile(input) {
-      writes.push(input);
-      return {
-        success: true,
-        data: {
-          path: input.path,
-          sha: "new-sha",
-          status: "created" as const,
-          summary: input.intent,
-        },
-      };
-    },
-    async updateFile(input) {
-      writes.push(input);
-      return {
-        success: true,
-        data: {
-          path: input.path,
-          sha: "new-sha",
-          status: "updated" as const,
-          summary: input.intent,
-        },
-      };
-    },
+    getPostBySlug: vi.fn(async (slug: string) => ({
+      ok: true as const,
+      data: existing.find((item) => item.slug === slug) ?? null,
+    })),
+    createPost: vi.fn(async ({ post }) => {
+      writes.push(post);
+      return { ok: true as const, data: { ...post, updatedAt: "2026-07-30T01:00:00.000Z" } };
+    }),
+    updatePost: vi.fn(async ({ post }) => {
+      writes.push(post as PostRecord);
+      return { ok: true as const, data: { ...post, updatedAt: "2026-07-30T01:00:00.000Z" } };
+    }),
+  } satisfies Pick<ContentAdapter, "createPost" | "updatePost" | "getPostBySlug"> & {
+    writes: PostRecord[];
   };
   return api;
 }
@@ -87,20 +72,17 @@ describe("publish workflow", () => {
     expect(result.ok).toBe(true);
     expect(result.slug).toBe("hello-world");
     expect(result.publishedAt).toBe("2026-07-30T01:00:00.000Z");
-    expect(api.writes[0]?.intent).toBe("prepare-publish");
+    expect(api.writes[0]).toMatchObject({ isPublished: 1, slug: "hello-world" });
   });
 
   it("blocks duplicate slugs without writing", async () => {
     const api = adapter([
-      {
-        path: "content/posts/other.mdx",
-        source:
-          "---\ntitle: Other\nstatus: published\nslug: hello-world\nauthor: ho\npublishedAt: 2026-07-30\n---\n\nBody\n",
-      },
+      post({ id: "post_current", slug: "draft", title: "Draft" }),
+      post({ id: "post_other", slug: "hello-world", title: "Other" }),
     ]);
     const result = await runPublicationOperation({
       operation: "publish",
-      document: document(),
+      document: document({ path: "db/posts/draft" }),
       adapter: api,
     });
     if (result.ok) throw new Error("expected duplicate slug failure");
@@ -108,8 +90,9 @@ describe("publish workflow", () => {
     expect(api.writes).toHaveLength(0);
   });
 
-  it("unpublishes and archives with matching intents", async () => {
+  it("unpublishes and archives with matching statuses", async () => {
     const published = document({
+      path: "db/posts/hello-world",
       sourceSha: "sha",
       frontmatter: {
         title: "Hello World",
@@ -119,20 +102,21 @@ describe("publish workflow", () => {
         publishedAt: "2026-07-30",
       },
     });
-    const unpublishAdapter = adapter();
+    const unpublishAdapter = adapter([post({ isPublished: 1, publishedAt: "2026-07-30" })]);
     await runPublicationOperation({
       operation: "unpublish",
       document: published,
       adapter: unpublishAdapter,
     });
-    expect(unpublishAdapter.writes[0]?.intent).toBe("prepare-unpublish");
+    expect(unpublishAdapter.writes[0]?.isPublished).toBe(0);
+    expect(unpublishAdapter.writes[0]?.publishedAt).toBeNull();
 
-    const archiveAdapter = adapter();
+    const archiveAdapter = adapter([post({ isPublished: 1, publishedAt: "2026-07-30" })]);
     await runPublicationOperation({
       operation: "archive",
       document: published,
       adapter: archiveAdapter,
     });
-    expect(archiveAdapter.writes[0]?.intent).toBe("prepare-archive");
+    expect(archiveAdapter.writes[0]?.isPublished).toBe(0);
   });
 });

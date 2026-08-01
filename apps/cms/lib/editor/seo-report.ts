@@ -1,5 +1,8 @@
-import { editorDocumentToMdx, type EditorDocument } from "@blog-platform/editor";
-import { analyzeMdx } from "@blog-platform/markdown";
+import {
+  analyzeEditorNodes,
+  textFromEditorNodes,
+  type EditorDocument,
+} from "@blog-platform/editor";
 import { createSeoSubject, evaluateSeo, type SeoReport } from "@blog-platform/seo-engine";
 
 type EditorSeoSite = {
@@ -17,14 +20,11 @@ export function seoReportForEditorDocument(
     siteName: siteConfig.siteName?.trim() || fallbackSite.siteName,
     siteUrl: siteConfig.siteUrl?.trim() || fallbackSite.siteUrl,
   };
-  const serialized = editorDocumentToMdx(document);
-  const body = serialized.ok
-    ? serialized.body
-    : document.body.map((node) => ("text" in node ? node.text : "")).join("\n");
-  const analysis = analyzeMdx({ path: document.path ?? `${document.id}.mdx`, source: body });
+  const body = textFromEditorNodes(document.body);
+  const analysis = analyzeEditorNodes(document.body);
   const subject = createSeoSubject({
     post: {
-      path: document.path ?? `${document.id}.mdx`,
+      path: document.path ?? `db/posts/${document.id}`,
       status: document.frontmatter.status,
       title: document.frontmatter.title,
       slug: document.frontmatter.slug || document.id,
@@ -38,13 +38,11 @@ export function seoReportForEditorDocument(
       body,
     },
     site,
-    analysis: analysis.success
-      ? {
-          headings: analysis.data?.headings,
-          toc: analysis.data?.toc,
-          readingTime: analysis.data?.readingTime,
-        }
-      : undefined,
+    analysis: {
+      headings: analysis.headings,
+      toc: analysis.headings,
+      readingTime: analysis.readingTime,
+    },
   });
   return evaluateSeo(subject);
 }

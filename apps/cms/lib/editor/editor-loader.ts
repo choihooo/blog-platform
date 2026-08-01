@@ -1,16 +1,12 @@
 import {
   createEmptyEditorDocument,
-  mdxToEditorDocument,
+  postRecordToEditorDocument,
   type EditorDocument,
 } from "@blog-platform/editor";
 
-import {
-  createRuntimeContentAdapter,
-  type ContentAdapter,
-  type RepositoryFileSummary,
-} from "../content-adapter/index";
 import { createContentAdapter } from "../content-adapter/content-adapter";
 import { loadSiteConfig } from "../site-config";
+import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
 import { repositoryRoot } from "./root";
 
 export type PostSummary = {
@@ -27,7 +23,7 @@ export type EditorLoadResult =
   | { ok: true; document: EditorDocument }
   | {
       ok: false;
-      code: "missing-file" | "unsupported-mdx" | "unsafe-mdx" | "invalid-frontmatter";
+      code: "missing-file" | "unsupported-content" | "unsafe-content" | "invalid-metadata";
       message: string;
       rawSource?: string;
     };
@@ -53,20 +49,8 @@ export type ListPostSummariesOptions = {
   sort?: "published" | "updated";
 };
 
-function slugFromPath(path: string) {
-  return path.replace(/^(?:content|db)\/posts\//, "").replace(/\.mdx$/, "");
-}
-
-function titleFromSource(source: string, fallback: string) {
-  return /^title:\s*"?([^"\n]+)"?/m.exec(source)?.[1]?.trim() ?? fallback;
-}
-
-function statusFromSource(source: string) {
-  return /^status:\s*"?([^"\n]+)"?/m.exec(source)?.[1]?.trim() ?? "draft";
-}
-
-function dateFromSource(source: string, field: "publishedAt" | "updatedAt") {
-  return new RegExp(`^${field}:\\s*"?([^"\\n]+)"?`, "m").exec(source)?.[1]?.trim() ?? null;
+export function slugFromPath(path: string) {
+  return path.replace(/^db\/posts\//, "");
 }
 
 function normalizeSearchQuery(query?: string) {
@@ -91,66 +75,40 @@ function sortPostSummaries(posts: PostSummary[], sort: ListPostSummariesOptions[
   });
 }
 
-function matchesSearchQuery(input: {
-  query?: string;
-  path: string;
-  slug: string;
-  title: string;
-  status: string;
-  source: string;
-}) {
-  if (!input.query) return true;
-  const haystack = [input.path, input.slug, input.title, input.status, input.source]
-    .join("\n")
-    .toLowerCase();
-  return haystack.includes(input.query);
+function statusFromPost(post: PostRecord) {
+  if (post.isPublished === 1) return "published";
+  return post.publishedAt ? "archived" : "draft";
+}
+
+function postToSummary(post: PostRecord): PostSummary {
+  return {
+    path: pathForSlug(post.slug),
+    slug: post.slug,
+    title: post.title,
+    status: statusFromPost(post),
+    sha: `${post.updatedAt}:${post.slug}`,
+    publishedAt: post.publishedAt ?? null,
+    updatedAt: post.updatedAt,
+  };
 }
 
 export async function listPostSummaries(
   adapter?: ContentAdapter,
   options: ListPostSummariesOptions = {},
 ) {
-  const contentAdapter = adapter ?? (await createRuntimeContentAdapter(repositoryRoot()));
+  const contentAdapter = adapter ?? createContentAdapter("d1r2");
   const query = normalizeSearchQuery(options.query);
   const sort = options.sort === "updated" ? "updated" : "published";
-  const listed = await contentAdapter.listFiles({ root: "posts" });
-  if (!listed.success) return [];
-  const posts = await Promise.all(
-    listed.data.files
-      .filter((file): file is RepositoryFileSummary & { kind: "post" } => file.kind === "post")
-      .map(async (file) => {
-        const read = await contentAdapter.readFile({ path: file.path });
-        if (!read.success) return null;
-        const slug = slugFromPath(file.path);
-        const title = titleFromSource(read.data.file.content, slug);
-        const status = statusFromSource(read.data.file.content);
-        const publishedAt = dateFromSource(read.data.file.content, "publishedAt");
-        const updatedAt = dateFromSource(read.data.file.content, "updatedAt");
-        if (
-          !matchesSearchQuery({
-            query,
-            path: file.path,
-            slug,
-            title,
-            status,
-            source: read.data.file.content,
-          })
-        ) {
-          return null;
-        }
-        return {
-          path: file.path,
-          slug,
-          title,
-          status,
-          sha: read.data.file.sha,
-          publishedAt,
-          updatedAt,
-        };
-      }),
-  );
-  const summaries = posts.filter((post): post is NonNullable<typeof post> => post !== null);
-  return sortPostSummaries(summaries, sort);
+  const listed = await contentAdapter.listPosts({
+    publishedOnly: false,
+    page: 1,
+    limit: 100,
+    query,
+    includeMedia: false,
+    includeTags: false,
+  });
+  if (!listed.ok) return [];
+  return sortPostSummaries(listed.data.items.map(postToSummary), sort);
 }
 
 export function createNewEditorDocument(now = new Date()) {
@@ -161,23 +119,13 @@ export async function loadEditorDocument(
   path: string,
   adapter?: ContentAdapter,
 ): Promise<EditorLoadResult> {
-  const contentAdapter = adapter ?? (await createRuntimeContentAdapter(repositoryRoot()));
-  const read = await contentAdapter.readFile({ path });
-  if (!read.success) return { ok: false, code: "missing-file", message: read.error.message };
-  const loaded = mdxToEditorDocument({
-    path: read.data.file.path,
-    source: read.data.file.content,
-    sha: read.data.file.sha,
+  const contentAdapter = adapter ?? createContentAdapter("d1r2");
+  const loaded = await contentAdapter.getPostBySlug(slugFromPath(path), {
+    includeUnpublished: true,
   });
-  if (!loaded.ok) {
-    return {
-      ok: false,
-      code: loaded.code,
-      message: loaded.issues[0]?.message ?? "This MDX file cannot be edited safely",
-      rawSource: loaded.rawSource,
-    };
-  }
-  return { ok: true, document: loaded.document };
+  if (!loaded.ok) return { ok: false, code: "missing-file", message: loaded.error.message };
+  if (!loaded.data) return { ok: false, code: "missing-file", message: "Post not found" };
+  return { ok: true, document: postRecordToEditorDocument(loaded.data) };
 }
 
 export function pathForSlug(slug: string) {

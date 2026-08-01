@@ -7,14 +7,15 @@ import type { PublicPost } from "../lib/content";
 describe("public SEO output", () => {
   it("can generate post metadata from public post data", () => {
     const post: PublicPost = {
-      path: "posts/hello.mdx",
+      path: "db/posts/hello",
       status: "published",
-      title: "Hello MDX",
+      title: "Hello Structured Content",
       slug: "hello",
       author: "ho",
       publishedAt: "2026-07-30",
       excerpt: "Hello description",
       body: "# Hello",
+      bodyNodes: [{ type: "heading", depth: 1, text: "Hello" }],
       toc: [],
       tagEntries: [],
       readingTimeLabel: "1 min read",
@@ -25,7 +26,7 @@ describe("public SEO output", () => {
     );
     const metadata = generatePageMetadata(subject);
     expect(metadata.canonical).toBe("https://example.com/posts/hello");
-    expect(metadata.openGraph.title).toBe("Hello MDX");
+    expect(metadata.openGraph.title).toBe("Hello Structured Content");
     expect(metadata.twitter.images[0]).toBe("https://example.com/og/hello");
     expect(generateJsonLd(subject)[0]).toMatchObject({ "@type": "BlogPosting" });
   });

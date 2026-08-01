@@ -62,7 +62,7 @@ function Cover({
   const className =
     size === "tile"
       ? "relative aspect-[1.91/1] w-full overflow-hidden"
-      : "relative aspect-[1.91/1] w-full overflow-hidden rounded-md";
+      : "relative h-40 w-full overflow-hidden rounded-md sm:h-full sm:min-h-40";
 
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
@@ -142,22 +142,22 @@ function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) 
 
 function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean }) {
   return (
-    <article className="border-b border-border py-6 last:border-b-0">
-      <div className="grid gap-5 sm:grid-cols-[11rem_minmax(0,1fr)]">
-        <Link href={`/posts/${post.slug}`}>
+    <article className="border-b border-border py-4 last:border-b-0">
+      <div className="grid gap-4 sm:min-h-40 sm:grid-cols-[13.5rem_minmax(0,1fr)] sm:items-stretch">
+        <Link className="block h-full" href={`/posts/${post.slug}`}>
           <Cover post={post} priority={priority} size="list" />
         </Link>
-        <div className="min-w-0">
+        <div className="flex min-w-0 flex-col py-1 sm:min-h-40">
           <PostMeta post={post} />
           <h3 className="mt-3 truncate text-2xl font-semibold tracking-normal">
             <Link href={`/posts/${post.slug}`}>{post.title}</Link>
           </h3>
           {post.excerpt ? (
-            <p className="mt-2 line-clamp-2 max-w-[64ch] text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 line-clamp-2 max-w-[64ch] text-sm leading-5 text-muted-foreground">
               {post.excerpt}
             </p>
           ) : null}
-          <div className="mt-4">
+          <div className="mt-auto pt-3">
             <PostTaxonomy post={post} />
           </div>
         </div>

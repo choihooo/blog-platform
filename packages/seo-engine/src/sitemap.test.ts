@@ -14,7 +14,7 @@ describe("generateSitemapOutput", () => {
     expect(urls).toContain("https://example.com");
     expect(urls).toContain("https://example.com/posts/hello-world");
     expect(urls).toContain("https://example.com/categories/engineering");
-    expect(urls).toContain("https://example.com/tags/mdx");
+    expect(urls).toContain("https://example.com/tags/content-json");
     expect(urls).not.toContain("https://example.com/posts/draft-post");
     expect(new Set(urls).size).toBe(urls.length);
     expect(serializeSitemap([{ loc: "https://example.com/?a=1&b=2" }])).toContain("&amp;");

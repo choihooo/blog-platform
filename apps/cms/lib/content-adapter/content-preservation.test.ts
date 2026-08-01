@@ -7,19 +7,19 @@ import { createLocalContentAdapter } from "./local-adapter.js";
 describe("failed write preservation", () => {
   it("keeps submitted content on failures", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "cms-adapter-"));
-    await mkdir(path.join(root, "content/posts"), { recursive: true });
-    await writeFile(path.join(root, "content/posts/a.mdx"), "a");
+    await mkdir(path.join(root, "db/posts"), { recursive: true });
+    await writeFile(path.join(root, "db/posts/a"), "a");
     const adapter = createLocalContentAdapter(root);
 
     const duplicate = await adapter.createFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "mine",
       intent: "create-draft",
     });
     expect(!duplicate.success && duplicate.error.submittedContent).toBe("mine");
 
     const media = await adapter.commitMedia({
-      path: "content/posts/nope.mdx",
+      path: "db/posts/nope",
       contentBase64: "bWluZQ==",
       intent: "save-media",
     });

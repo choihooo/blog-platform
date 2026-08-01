@@ -2,34 +2,34 @@ import { describe, expect, it, vi } from "vitest";
 import type { PublicPost } from "../lib/content";
 
 const publishedPost: PublicPost = {
-  path: "posts/hello.mdx",
+  path: "db/posts/hello",
   status: "published",
-  title: "Hello & MDX",
+  title: "Hello & Structured Content",
   slug: "hello",
   author: "ho",
   publishedAt: "2026-07-30T00:00:00.000Z",
   updatedAt: "2026-07-30T00:00:00.000Z",
   excerpt: "Hello description",
   body: "# Hello\n\n## Intro",
+  bodyNodes: [
+    { type: "heading", depth: 1, text: "Hello" },
+    { type: "heading", depth: 2, text: "Intro" },
+  ],
   category: "engineering",
-  tags: ["mdx"],
+  tags: ["content-json"],
   authorProfile: {
-    path: "authors/ho.md",
     id: "ho",
     name: "Ho",
-    body: "Bio",
-    githubLogin: "ho",
-    githubUserId: "1",
   },
   categoryEntry: { slug: "engineering", label: "Engineering" },
-  tagEntries: [{ slug: "mdx", label: "MDX" }],
+  tagEntries: [{ slug: "content-json", label: "Structured Content" }],
   toc: [{ depth: 2, text: "Intro", slug: "intro" }],
   readingTimeLabel: "1 min read",
 };
 
 const longPost: PublicPost = {
   ...publishedPost,
-  path: "posts/long.mdx",
+  path: "db/posts/long",
   slug: "long",
   title: "A Very Long Generated Output Title That Must Wrap Cleanly Inside The Social Image",
   coverImage: undefined,
@@ -54,7 +54,7 @@ describe("generated output routes", () => {
     const response = await GET();
     const body = await response.text();
     expect(response.headers.get("content-type")).toBe("application/rss+xml; charset=utf-8");
-    expect(body).toContain("Hello &amp; MDX");
+    expect(body).toContain("Hello &amp; Structured Content");
     expect(body).toContain("https://example.com/posts/hello");
     expect(body).not.toContain("draft");
   });
@@ -66,7 +66,7 @@ describe("generated output routes", () => {
     expect(response.headers.get("content-type")).toBe("application/xml; charset=utf-8");
     expect(body).toContain("https://example.com/posts/hello");
     expect(body).toContain("https://example.com/categories/engineering");
-    expect(body).toContain("https://example.com/tags/mdx");
+    expect(body).toContain("https://example.com/tags/content-json");
     expect(body).not.toContain("/cms");
     expect(body).not.toContain("/preview");
   });
@@ -108,6 +108,9 @@ describe("generated output routes", () => {
     expect(response.headers.get("content-type")).toContain("application/json");
     expect(body.query).toBe("hello");
     expect(body.total).toBe(1);
-    expect(body.items[0]).toMatchObject({ title: "Hello & MDX", url: "/posts/hello" });
+    expect(body.items[0]).toMatchObject({
+      title: "Hello & Structured Content",
+      url: "/posts/hello",
+    });
   });
 });

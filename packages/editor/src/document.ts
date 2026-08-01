@@ -61,9 +61,9 @@ export type EditorDocument = {
 };
 
 export type EditorFailureCode =
-  | "unsupported-mdx"
-  | "invalid-frontmatter"
-  | "unsafe-mdx"
+  | "unsupported-content"
+  | "invalid-metadata"
+  | "unsafe-content"
   | "validation-failure"
   | "unsupported-format"
   | "auth-required"
@@ -77,7 +77,7 @@ export type LoadEditorDocumentResult =
   | { ok: true; document: EditorDocument; warnings: EditorIssue[] }
   | {
       ok: false;
-      code: "unsupported-mdx" | "invalid-frontmatter" | "unsafe-mdx";
+      code: "unsupported-content" | "invalid-metadata" | "unsafe-content";
       issues: EditorIssue[];
       rawSource: string;
     };
@@ -127,9 +127,9 @@ export function createEmptyEditorDocument(now = new Date()): EditorDocument {
 
 export function isEditorFailureCode(value: string): value is EditorFailureCode {
   return [
-    "unsupported-mdx",
-    "invalid-frontmatter",
-    "unsafe-mdx",
+    "unsupported-content",
+    "invalid-metadata",
+    "unsafe-content",
     "validation-failure",
     "unsupported-format",
     "auth-required",

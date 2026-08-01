@@ -1,19 +1,7 @@
-import {
-  createSlugCandidate,
-  parsePostFile,
-  validateUniqueSlug,
-  type PostStatus,
-} from "@blog-platform/markdown";
-import { editorDocumentToMdx, type EditorDocument } from "@blog-platform/editor";
+import { type EditorDocument } from "@blog-platform/editor";
 
-import type {
-  AdapterResult,
-  ContentAdapter,
-  ContentChangeResult,
-  RepositoryFailureCode,
-  RepositoryFailureState,
-} from "../content-adapter/index";
-import { pathForDocument } from "./editor-save";
+import type { ContentAdapter, ContentFailure } from "../content-adapter/content-adapter.interface";
+import { documentToPostRecord, pathForDocument, slugFromPath } from "./editor-save";
 import {
   createPublicRefreshRetryToken,
   publicRefreshTargets,
@@ -27,7 +15,7 @@ export type PublicationOperation = "publish" | "unpublish" | "archive";
 export type PublishWorkflowCode =
   | "validation-failure"
   | "duplicate-slug"
-  | "unsupported-mdx"
+  | "unsupported-content"
   | "auth-required"
   | "forbidden"
   | "session-expired"
@@ -71,17 +59,15 @@ export type PublicationResult =
       document?: EditorDocument;
     };
 
-type PublishAdapter = Pick<
-  ContentAdapter,
-  "createFile" | "updateFile" | "listFiles" | "readFile"
-> & {
-  deleteFile?: ContentAdapter["deleteFile"];
-};
+type PublishAdapter = Pick<ContentAdapter, "createPost" | "updatePost" | "getPostBySlug">;
 
-function codeFromRepository(code: RepositoryFailureCode): PublishWorkflowCode {
-  if (code === "stale-file") return "stale-file";
-  if (code === "temporary-connectivity" || code === "rate-limit") return "temporary-connectivity";
-  if (code === "unauthorized") return "forbidden";
+function codeFromContentFailure(code: ContentFailure["code"]): PublishWorkflowCode {
+  if (code === "conflict") return "duplicate-slug";
+  if (code === "retryable-failure" || code === "storage-failure" || code === "upstream-failure") {
+    return "temporary-connectivity";
+  }
+  if (code === "auth-required") return "auth-required";
+  if (code === "forbidden") return "forbidden";
   if (code === "validation-failure") return "validation-failure";
   return "unknown";
 }
@@ -108,13 +94,13 @@ export function mapPublishAuthFailure(
 function repositoryFailure(
   operation: PublicationOperation,
   document: EditorDocument,
-  failure: RepositoryFailureState,
+  failure: ContentFailure,
   submittedSource?: string,
 ): PublicationResult {
   return {
     ok: false,
     operation,
-    code: codeFromRepository(failure.code),
+    code: codeFromContentFailure(failure.code),
     retryable: failure.retryable,
     message: failure.message,
     submittedDocument: document,
@@ -131,7 +117,17 @@ function metadata(document: EditorDocument) {
   };
 }
 
-function withStatus(document: EditorDocument, status: PostStatus, nowIso: string): EditorDocument {
+function slugCandidate(title: string) {
+  return title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function withStatus(document: EditorDocument, operation: PublicationOperation, nowIso: string) {
+  const status =
+    operation === "publish" ? "published" : operation === "archive" ? "archived" : "draft";
   const next: EditorDocument = {
     ...document,
     frontmatter: {
@@ -141,105 +137,10 @@ function withStatus(document: EditorDocument, status: PostStatus, nowIso: string
     },
   };
   if (status === "published") {
-    const slug = next.frontmatter.slug || createSlugCandidate(next.frontmatter.title).data;
-    next.frontmatter.slug = slug;
+    next.frontmatter.slug = next.frontmatter.slug || slugCandidate(next.frontmatter.title);
     next.frontmatter.publishedAt = next.frontmatter.publishedAt || nowIso;
   }
   return next;
-}
-
-async function existingPosts(adapter: Pick<ContentAdapter, "listFiles" | "readFile">) {
-  const listed = await adapter.listFiles({ root: "posts" });
-  if (!listed.success) return [];
-  const files = await Promise.all(
-    listed.data.files
-      .filter((file) => file.kind === "post")
-      .map(async (file) => {
-        const read = await adapter.readFile({ path: file.path });
-        if (!read.success) return { path: file.path };
-        const slug = /^slug:\s*"?([^"\n]+)"?/m.exec(read.data.file.content)?.[1]?.trim();
-        return { path: file.path, slug };
-      }),
-  );
-  return files;
-}
-
-async function preparePublication(
-  operation: PublicationOperation,
-  document: EditorDocument,
-  adapter: Pick<ContentAdapter, "listFiles" | "readFile">,
-  nowIso: string,
-) {
-  const status: PostStatus =
-    operation === "publish" ? "published" : operation === "archive" ? "archived" : "draft";
-  const next = withStatus(document, status, nowIso);
-
-  if (operation === "publish") {
-    if (!next.frontmatter.slug) {
-      return {
-        ok: false as const,
-        result: {
-          ok: false,
-          operation,
-          code: "validation-failure",
-          retryable: false,
-          message: "Title cannot produce a usable slug",
-          submittedDocument: document,
-        } satisfies PublicationResult,
-      };
-    }
-    const unique = validateUniqueSlug({
-      candidate: next.frontmatter.slug,
-      currentPath: next.path,
-      existingPosts: await existingPosts(adapter),
-    });
-    if (!unique.success) {
-      return {
-        ok: false as const,
-        result: {
-          ok: false,
-          operation,
-          code: "duplicate-slug",
-          retryable: false,
-          message: unique.issues[0]?.message ?? "Slug is already used by another post",
-          submittedDocument: next,
-        } satisfies PublicationResult,
-      };
-    }
-  }
-
-  const serialized = editorDocumentToMdx(next);
-  if (!serialized.ok) {
-    return {
-      ok: false as const,
-      result: {
-        ok: false,
-        operation,
-        code: serialized.code === "unsupported-format" ? "unsupported-mdx" : "validation-failure",
-        retryable: false,
-        message: serialized.issues[0]?.message ?? "Editor document cannot be published",
-        submittedDocument: next,
-      } satisfies PublicationResult,
-    };
-  }
-  if (operation === "publish") {
-    const parsed = parsePostFile({ path: pathForDocument(next), source: serialized.source });
-    if (!parsed.success) {
-      return {
-        ok: false as const,
-        result: {
-          ok: false,
-          operation,
-          code: "validation-failure",
-          retryable: false,
-          message: parsed.issues[0]?.message ?? "Published post is invalid",
-          submittedDocument: next,
-          submittedSource: serialized.source,
-        } satisfies PublicationResult,
-      };
-    }
-  }
-  return { ok: true as const, document: next, source: serialized.source };
 }
 
 export async function runPublicationOperation(input: {
@@ -250,98 +151,81 @@ export async function runPublicationOperation(input: {
   refresh?: (target: string) => Promise<void> | void;
 }): Promise<PublicationResult> {
   const now = input.now ?? new Date();
-  const prepared = await preparePublication(
-    input.operation,
-    input.document,
-    input.adapter,
-    now.toISOString(),
-  );
-  if (!prepared.ok) return prepared.result;
-
-  const path = pathForDocument(prepared.document);
-  const previousPath = prepared.document.path;
-  const previousSha = prepared.document.sourceSha;
-  const shouldRename = previousPath !== undefined && previousPath !== path && Boolean(previousSha);
-  const intent =
-    input.operation === "publish"
-      ? "prepare-publish"
-      : input.operation === "archive"
-        ? "prepare-archive"
-        : "prepare-unpublish";
-  const repositoryResult: AdapterResult<ContentChangeResult> = shouldRename
-    ? await (async () => {
-        if (!input.adapter.deleteFile) {
-          return {
-            success: false as const,
-            error: {
-              code: "unauthorized",
-              message: "Publication rename requires delete permission",
-              retryable: false,
-            },
-          };
-        }
-        if (!previousPath || !previousSha) {
-          return {
-            success: false as const,
-            error: {
-              code: "validation-failure",
-              message: "Publication rename requires an existing source path and SHA",
-              retryable: false,
-              path: previousPath,
-            },
-          };
-        }
-        const created = await input.adapter.createFile({
-          path,
-          content: prepared.source,
-          intent,
-        });
-        if (!created.success) return created;
-        const deleted = await input.adapter.deleteFile({
-          path: previousPath,
-          expectedSha: previousSha,
-          intent: "delete-file",
-        });
-        if (!deleted.success) {
-          return {
-            success: false as const,
-            error: deleted.error,
-          };
-        }
-        return created;
-      })()
-    : prepared.document.sourceSha
-      ? await input.adapter.updateFile({
-          path,
-          content: prepared.source,
-          expectedSha: prepared.document.sourceSha,
-          intent,
-        })
-      : await input.adapter.createFile({ path, content: prepared.source, intent });
-
-  if (!repositoryResult.success) {
-    return repositoryFailure(
-      input.operation,
-      prepared.document,
-      repositoryResult.error,
-      prepared.source,
-    );
+  const next = withStatus(input.document, input.operation, now.toISOString());
+  if (!next.frontmatter.title.trim()) {
+    return {
+      ok: false,
+      operation: input.operation,
+      code: "validation-failure",
+      retryable: false,
+      message: "Title is required before publishing",
+      submittedDocument: input.document,
+    };
+  }
+  if (input.operation === "publish" && !next.frontmatter.slug) {
+    return {
+      ok: false,
+      operation: input.operation,
+      code: "validation-failure",
+      retryable: false,
+      message: "Title cannot produce a usable slug",
+      submittedDocument: input.document,
+    };
   }
 
-  const sha = repositoryResult.data.sha ?? prepared.document.sourceSha ?? "";
+  const previousSlug = input.document.path ? slugFromPath(input.document.path) : undefined;
+  const targetSlug = slugFromPath(pathForDocument(next));
+  const [current, conflict] = await Promise.all([
+    previousSlug
+      ? input.adapter.getPostBySlug(previousSlug, { includeUnpublished: true })
+      : input.adapter.getPostBySlug(targetSlug, { includeUnpublished: true }),
+    input.adapter.getPostBySlug(targetSlug, { includeUnpublished: true }),
+  ]);
+  if (!current.ok) return repositoryFailure(input.operation, next, current.error);
+  if (!conflict.ok) return repositoryFailure(input.operation, next, conflict.error);
+  if (
+    input.operation === "publish" &&
+    conflict.data &&
+    current.data &&
+    conflict.data.id !== current.data.id
+  ) {
+    return {
+      ok: false,
+      operation: input.operation,
+      code: "duplicate-slug",
+      retryable: false,
+      message: "Slug is already used by another post",
+      submittedDocument: next,
+    };
+  }
+
+  const post = documentToPostRecord(next, current.data, now);
+  const repositoryResult = current.data
+    ? await input.adapter.updatePost({
+        slug: previousSlug ?? current.data.slug,
+        post,
+        authorIdentity: "cms-editor",
+      })
+    : await input.adapter.createPost({ post, authorIdentity: "cms-editor" });
+
+  if (!repositoryResult.ok) {
+    return repositoryFailure(input.operation, next, repositoryResult.error, post.content);
+  }
+
+  const savedDocument = {
+    ...next,
+    path: pathForDocument(next),
+    sourceSha: `${repositoryResult.data.updatedAt}:${repositoryResult.data.slug}`,
+    dirty: false,
+    lastSavedAt: repositoryResult.data.updatedAt,
+  };
   const targets = publicRefreshTargets({
     operation: input.operation,
     previous: metadata(input.document),
-    next: metadata(prepared.document),
+    next: metadata(savedDocument),
   });
   const publicRefresh = await refreshPublicTargets(targets, input.refresh, now);
-  const savedDocument = {
-    ...prepared.document,
-    path: repositoryResult.data.path,
-    sourceSha: sha,
-    dirty: false,
-    lastSavedAt: now.toISOString(),
-  };
+  const sha = savedDocument.sourceSha ?? "";
 
   if (!publicRefresh.ok) {
     return {
@@ -350,19 +234,17 @@ export async function runPublicationOperation(input: {
       code: "public-refresh-failed",
       retryable: true,
       message: publicRefresh.message,
-      path: repositoryResult.data.path,
+      path: savedDocument.path,
       sha,
-      commitId: repositoryResult.data.commitId,
       slug: savedDocument.frontmatter.slug,
       publishedAt: savedDocument.frontmatter.publishedAt,
-      updatedAt:
-        savedDocument.frontmatter.updatedAt ?? savedDocument.lastSavedAt ?? now.toISOString(),
-      repository: { ok: true, summary: repositoryResult.data.summary },
+      updatedAt: savedDocument.frontmatter.updatedAt ?? savedDocument.lastSavedAt,
+      repository: { ok: true, summary: `${input.operation} ${savedDocument.path}` },
       publicRefresh,
       retryToken: createPublicRefreshRetryToken({
         operation: input.operation,
         targets,
-        postPath: repositoryResult.data.path,
+        postPath: savedDocument.path,
         postSha: sha,
         now,
       }),
@@ -373,14 +255,12 @@ export async function runPublicationOperation(input: {
   return {
     ok: true,
     operation: input.operation,
-    path: repositoryResult.data.path,
+    path: savedDocument.path,
     sha,
-    commitId: repositoryResult.data.commitId,
     slug: savedDocument.frontmatter.slug,
     publishedAt: savedDocument.frontmatter.publishedAt,
-    updatedAt:
-      savedDocument.frontmatter.updatedAt ?? savedDocument.lastSavedAt ?? now.toISOString(),
-    repository: { ok: true, summary: repositoryResult.data.summary },
+    updatedAt: savedDocument.frontmatter.updatedAt ?? savedDocument.lastSavedAt,
+    repository: { ok: true, summary: `${input.operation} ${savedDocument.path}` },
     publicRefresh,
     backupCleared: true,
     document: savedDocument,

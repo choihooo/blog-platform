@@ -18,7 +18,7 @@ describe("CmsHomePageView", () => {
         decision,
         posts: [
           {
-            path: "content/posts/hello-world.mdx",
+            path: "db/posts/hello-world",
             slug: "hello-world",
             title: "Hello World",
             status: "published",

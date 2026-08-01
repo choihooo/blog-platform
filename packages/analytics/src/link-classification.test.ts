@@ -4,7 +4,7 @@ import { classifyLink } from "./link-classification.js";
 describe("classifyLink", () => {
   it("classifies internal, external, and ignored links", () => {
     expect(classifyLink("/posts/hello", "https://example.com").kind).toBe("internal");
-    expect(classifyLink("https://example.com/tags/mdx", "https://example.com").kind).toBe(
+    expect(classifyLink("https://example.com/tags/content-json", "https://example.com").kind).toBe(
       "internal",
     );
     expect(classifyLink("https://openai.com", "https://example.com").kind).toBe("external");

@@ -4,23 +4,23 @@ import { createEmptyEditorDocument } from "@blog-platform/editor";
 import { saveEditorDraft } from "./editor-save";
 
 describe("editor conflicts", () => {
-  it("keeps submitted document on stale SHA", async () => {
+  it("keeps submitted document on duplicate slug failures", async () => {
     const doc = createEmptyEditorDocument();
     doc.frontmatter.title = "Conflict";
-    doc.path = "content/posts/conflict.mdx";
-    doc.sourceSha = "old";
+    doc.body = [{ type: "paragraph", text: "Body" }];
     const result = await saveEditorDraft(doc, {
-      createFile: vi.fn(),
-      updateFile: vi.fn(async () => ({
-        success: false as const,
+      getPostBySlug: vi.fn(async () => ({ ok: true as const, data: null })),
+      createPost: vi.fn(async () => ({
+        ok: false as const,
         error: {
-          code: "stale-file" as const,
-          message: "stale",
+          code: "conflict" as const,
+          message: "duplicate",
           retryable: false,
-          submittedContent: "submitted",
         },
       })),
+      updatePost: vi.fn(),
     });
+
     expect(result).toMatchObject({ ok: false, code: "stale-file", submittedDocument: doc });
   });
 });

@@ -229,9 +229,7 @@ function CategoryRow({
           <span className="h-7 w-7 shrink-0" />
         )}
         <div className="min-w-0">
-          <div className={isChild ? "font-medium" : "text-base font-semibold"}>
-            {category.name}
-          </div>
+          <div className={isChild ? "font-medium" : "text-base font-semibold"}>{category.name}</div>
           {isChild ? (
             <div className="mt-0.5 text-xs text-muted-foreground">
               상위: {parentSlugFor(category)}

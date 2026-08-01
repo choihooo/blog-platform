@@ -5,7 +5,7 @@ import { normalizeForDualRunCompare } from "./content-source";
 describe("content source dual-run compare helper", () => {
   it("normalizes fields deterministically", () => {
     const sample: PublicPost = {
-      path: "posts/hello.mdx",
+      path: "db/posts/hello",
       status: "published",
       title: "Hello",
       slug: "hello",
@@ -15,6 +15,10 @@ describe("content source dual-run compare helper", () => {
       excerpt: "desc",
       coverImage: "hero.png",
       body: "# Hello\n\nbody",
+      bodyNodes: [
+        { type: "heading", depth: 1, text: "Hello" },
+        { type: "paragraph", text: "body" },
+      ],
       tagEntries: [],
       toc: [{ depth: 2, text: "A", slug: "a" }],
       tags: ["Tag-1", "tag-2", "tag-1"],
@@ -35,7 +39,7 @@ describe("content source dual-run compare helper", () => {
 
   it("drops render-only fields for stable comparison", () => {
     const first: PublicPost = {
-      path: "posts/a.mdx",
+      path: "db/posts/a",
       status: "published",
       title: "A",
       slug: "a",
@@ -43,6 +47,7 @@ describe("content source dual-run compare helper", () => {
       publishedAt: "2026-07-31T01:00:00.000Z",
       updatedAt: "2026-07-31T01:00:00.000Z",
       body: "# A",
+      bodyNodes: [{ type: "heading", depth: 1, text: "A" }],
       tagEntries: [],
       toc: [],
       tags: ["tag"],
@@ -51,7 +56,7 @@ describe("content source dual-run compare helper", () => {
 
     const second: PublicPost = {
       ...first,
-      path: "posts/different.mdx",
+      path: "db/posts/different",
       excerpt: first.excerpt,
       coverImage: first.coverImage,
     };

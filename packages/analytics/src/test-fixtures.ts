@@ -20,7 +20,7 @@ export const sampleEvent: BlogEvent = {
   title: "Hello World",
   url: "https://example.com/posts/hello-world",
   category: "engineering",
-  tags: ["mdx"],
+  tags: ["content-json"],
   target: "post",
   occurredAt: "2026-07-30T00:00:00.000Z",
   provider: "ga4",

@@ -162,7 +162,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
           id="editor-tags"
           value={(frontmatter.tags ?? []).join(", ")}
           onChange={(event) => updateTags(event.currentTarget.value)}
-          placeholder="blog, mdx"
+          placeholder="blog, nextjs"
         />
       </div>
       <dl className="space-y-2 text-sm">

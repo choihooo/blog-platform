@@ -24,7 +24,7 @@ describe("editor publish flow", () => {
     vi.mocked(publishPostAction).mockResolvedValue({
       ok: true,
       operation: "publish",
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       sha: "sha",
       slug: "a",
       publishedAt: "2026-07-30",
@@ -33,7 +33,7 @@ describe("editor publish flow", () => {
       backupCleared: true,
       document: {
         ...doc,
-        path: "content/posts/a.mdx",
+        path: "db/posts/a",
         sourceSha: "sha",
         frontmatter: { ...doc.frontmatter, status: "published", slug: "a" },
         dirty: false,

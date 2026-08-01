@@ -22,7 +22,7 @@ describe("github adapter write mapping", () => {
       fetchImpl: async (_url, init) => {
         bodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
         return jsonResponse({
-          path: "content/posts/a.mdx",
+          path: "db/posts/a",
           sha: "new",
           commit: { sha: "commit" },
           size: 1,
@@ -31,12 +31,12 @@ describe("github adapter write mapping", () => {
     });
 
     await adapter.createFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "hello",
       intent: "create-draft",
     });
     await adapter.updateFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "bye",
       expectedSha: "old",
       intent: "save-draft",
@@ -57,7 +57,7 @@ describe("github adapter write mapping", () => {
       fetchImpl: async (_url, init) => {
         authorization = new Headers(init?.headers).get("authorization") ?? undefined;
         return jsonResponse({
-          path: "content/posts/a.mdx",
+          path: "db/posts/a",
           sha: "new",
           commit: { sha: "commit" },
           size: 1,
@@ -68,7 +68,7 @@ describe("github adapter write mapping", () => {
     expect(result.success).toBe(true);
     if (!result.success) return;
     await result.data.createFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "hello",
       intent: "create-draft",
     });
@@ -87,7 +87,7 @@ describe("github adapter write mapping", () => {
     });
 
     const result = await adapter.updateFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "mine",
       expectedSha: "old",
       intent: "save-draft",

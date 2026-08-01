@@ -111,7 +111,10 @@ function executeRun(statement: D1Prepared, params: unknown[]) {
 function cloudflareD1Config() {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID ?? process.env.D1_DATABASE_ID;
-  const apiToken = process.env.CLOUDFLARE_D1_API_TOKEN ?? process.env.CLOUDFLARE_API_TOKEN;
+  const apiToken =
+    process.env.CLOUDFLARE_D1_API_TOKEN ??
+    process.env.CLOUDFLARE_API_TOKEN ??
+    process.env.D1_API_TOKEN;
   if (!accountId || !databaseId || !apiToken) return;
   return { accountId, databaseId, apiToken };
 }

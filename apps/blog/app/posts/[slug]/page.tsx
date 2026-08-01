@@ -2,12 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import type { ImgHTMLAttributes, ReactNode } from "react";
+import type { ReactNode } from "react";
+import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
 import { Badge, Card, CardContent } from "@blog-platform/design-system";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
 
 import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
 import { formatPostDateTime } from "../../../lib/date-format";
@@ -23,18 +21,6 @@ type PostPageProps = {
   }>;
 };
 
-function Callout({ children }: { children: ReactNode }) {
-  return (
-    <aside className="my-7 bg-secondary px-5 py-4 text-secondary-foreground shadow-sm">
-      {children}
-    </aside>
-  );
-}
-
-function MdxImage(props: ImgHTMLAttributes<HTMLImageElement>) {
-  return <img {...props} decoding={props.decoding ?? "async"} loading={props.loading ?? "lazy"} />;
-}
-
 function canUseOptimizedImage(src: string) {
   if (src.startsWith("/")) return true;
   try {
@@ -42,6 +28,118 @@ function canUseOptimizedImage(src: string) {
   } catch {
     return false;
   }
+}
+
+function slugify(value: string) {
+  return (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9가-힣ㄱ-ㅎㅏ-ㅣ]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "section"
+  );
+}
+
+function inlineContent(node: EditorTextNode) {
+  let content: ReactNode = node.text;
+  for (const mark of node.marks ?? []) {
+    if (mark === "bold") content = <strong>{content}</strong>;
+    if (mark === "italic") content = <em>{content}</em>;
+    if (mark === "inlineCode") content = <code>{content}</code>;
+  }
+  if (node.href) {
+    content = <a href={node.href}>{content}</a>;
+  }
+  return content;
+}
+
+function PostBodyRenderer({ nodes }: { nodes: EditorNode[] }) {
+  const seen = new Map<string, number>();
+  return (
+    <>
+      {nodes.map((node, index) => {
+        if (node.type === "horizontalRule") return <hr key={index} />;
+        if (node.type === "image") {
+          return (
+            <figure key={index}>
+              <img
+                alt={node.alt ?? ""}
+                decoding="async"
+                loading="lazy"
+                src={node.src}
+                title={node.title}
+              />
+              {node.caption ? <figcaption>{node.caption}</figcaption> : null}
+            </figure>
+          );
+        }
+        if (node.type === "heading") {
+          const base = slugify(node.text);
+          const count = seen.get(base) ?? 0;
+          seen.set(base, count + 1);
+          const id = count === 0 ? base : `${base}-${count + 1}`;
+          const content = inlineContent(node);
+          if (node.depth === 1)
+            return (
+              <h1 id={id} key={index}>
+                {content}
+              </h1>
+            );
+          if (node.depth === 3)
+            return (
+              <h3 id={id} key={index}>
+                {content}
+              </h3>
+            );
+          if (node.depth === 4)
+            return (
+              <h4 id={id} key={index}>
+                {content}
+              </h4>
+            );
+          if (node.depth === 5)
+            return (
+              <h5 id={id} key={index}>
+                {content}
+              </h5>
+            );
+          if (node.depth === 6)
+            return (
+              <h6 id={id} key={index}>
+                {content}
+              </h6>
+            );
+          return (
+            <h2 id={id} key={index}>
+              {content}
+            </h2>
+          );
+        }
+        if (node.type === "blockquote")
+          return <blockquote key={index}>{inlineContent(node)}</blockquote>;
+        if (node.type === "codeBlock") {
+          return (
+            <pre key={index}>
+              <code>{node.text}</code>
+            </pre>
+          );
+        }
+        if (node.type === "bulletList")
+          return (
+            <ul key={index}>
+              <li>{inlineContent(node)}</li>
+            </ul>
+          );
+        if (node.type === "orderedList")
+          return (
+            <ol key={index}>
+              <li>{inlineContent(node)}</li>
+            </ol>
+          );
+        return <p key={index}>{inlineContent(node)}</p>;
+      })}
+    </>
+  );
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
@@ -139,16 +237,7 @@ export default async function PostPage({ params }: PostPageProps) {
             data-analytics-category={post.category}
             data-analytics-slug={post.slug}
           >
-            <MDXRemote
-              source={post.body}
-              components={{ Callout, img: MdxImage }}
-              options={{
-                mdxOptions: {
-                  rehypePlugins: [rehypeSlug],
-                  remarkPlugins: [remarkGfm],
-                },
-              }}
-            />
+            <PostBodyRenderer nodes={post.bodyNodes} />
           </div>
           <RecommendedPosts posts={recommendedPosts} />
         </div>

@@ -1,77 +1,55 @@
 import { describe, expect, it, vi } from "vitest";
+import { serializePostContent } from "@blog-platform/editor";
 
-import type { ContentAdapter } from "../content-adapter/index";
+import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
 import { createNewEditorDocument, listPostSummaries, loadEditorDocument } from "./editor-loader";
 
-function adapter(source: string): ContentAdapter {
+function post(overrides: Partial<PostRecord> = {}): PostRecord {
   return {
-    listFiles: vi.fn(async () => ({
-      success: true as const,
-      data: {
-        files: [
-          {
-            path: "content/posts/a.mdx",
-            kind: "post" as const,
-            sha: "sha",
-            sizeBytes: source.length,
-          },
-        ],
-      },
-    })),
-    readFile: vi.fn(async () => ({
-      success: true as const,
-      data: {
-        file: {
-          path: "content/posts/a.mdx",
-          kind: "post" as const,
-          content: source,
-          encoding: "utf8" as const,
-          sha: "sha",
-          sizeBytes: source.length,
-        },
-      },
-    })),
-    createFile: vi.fn(),
-    updateFile: vi.fn(),
-    deleteFile: vi.fn(),
-    commitMedia: vi.fn(),
+    id: "post_a",
+    slug: "a",
+    title: "A",
+    content: serializePostContent({
+      version: 1,
+      nodes: [{ type: "paragraph", text: "Body" }],
+    }),
+    summary: "Body",
+    categoryId: null,
+    categoryPath: null,
+    heroImageKey: null,
+    publishedAt: null,
+    updatedAt: "2026-08-01T00:00:00.000Z",
+    isPublished: 0,
+    viewCount: 0,
+    tags: [],
+    mediaRefs: [],
+    ...overrides,
   };
 }
 
-function multiPostAdapter(sources: Record<string, string>): ContentAdapter {
+function adapter(posts: PostRecord[]): ContentAdapter {
   return {
-    listFiles: vi.fn(async () => ({
-      success: true as const,
-      data: {
-        files: Object.entries(sources).map(([slug, source]) => ({
-          path: `content/posts/${slug}.mdx`,
-          kind: "post" as const,
-          sha: `sha-${slug}`,
-          sizeBytes: source.length,
-        })),
-      },
+    listPosts: vi.fn(async () => ({
+      ok: true as const,
+      data: { items: posts, total: posts.length },
     })),
-    readFile: vi.fn(async ({ path }) => {
-      const slug = path.replace(/^content\/posts\//, "").replace(/\.mdx$/, "");
-      const source = sources[slug] ?? "";
-      return {
-        success: true as const,
-        data: {
-          file: {
-            path,
-            kind: "post" as const,
-            content: source,
-            encoding: "utf8" as const,
-            sha: `sha-${slug}`,
-            sizeBytes: source.length,
-          },
-        },
-      };
-    }),
-    createFile: vi.fn(),
-    updateFile: vi.fn(),
-    deleteFile: vi.fn(),
-    commitMedia: vi.fn(),
+    getPostBySlug: vi.fn(async (slug: string) => ({
+      ok: true as const,
+      data: posts.find((item) => item.slug === slug) ?? null,
+    })),
+    getPostsByTag: vi.fn(),
+    getPostsByCategoryPath: vi.fn(),
+    listCategories: vi.fn(),
+    listTags: vi.fn(),
+    createCategory: vi.fn(),
+    updateCategory: vi.fn(),
+    deleteCategory: vi.fn(),
+    createTag: vi.fn(),
+    createPost: vi.fn(),
+    updatePost: vi.fn(),
+    deletePost: vi.fn(),
+    upsertMediaRef: vi.fn(),
+    deleteMediaRef: vi.fn(),
   };
 }
 
@@ -80,26 +58,38 @@ describe("editor-loader", () => {
     expect(createNewEditorDocument().frontmatter.status).toBe("draft");
   });
 
-  it("lists post summaries", async () => {
-    const posts = await listPostSummaries(adapter("---\ntitle: A\nstatus: draft\n---\n\nBody"));
+  it("lists post summaries from DB records", async () => {
+    const posts = await listPostSummaries(adapter([post()]));
     expect(posts).toEqual([
       {
-        path: "content/posts/a.mdx",
+        path: "db/posts/a",
         slug: "a",
         title: "A",
         status: "draft",
-        sha: "sha",
+        sha: "2026-08-01T00:00:00.000Z:a",
         publishedAt: null,
-        updatedAt: null,
+        updatedAt: "2026-08-01T00:00:00.000Z",
       },
     ]);
   });
 
   it("sorts summaries by published or updated date", async () => {
-    const contentAdapter = multiPostAdapter({
-      old: "---\ntitle: Old\nstatus: published\npublishedAt: 2026-01-01T00:00:00.000Z\nupdatedAt: 2026-12-01T00:00:00.000Z\n---\n\nBody",
-      new: "---\ntitle: New\nstatus: published\npublishedAt: 2026-06-01T00:00:00.000Z\nupdatedAt: 2026-06-01T00:00:00.000Z\n---\n\nBody",
-    });
+    const contentAdapter = adapter([
+      post({
+        slug: "old",
+        title: "Old",
+        isPublished: 1,
+        publishedAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-12-01T00:00:00.000Z",
+      }),
+      post({
+        slug: "new",
+        title: "New",
+        isPublished: 1,
+        publishedAt: "2026-06-01T00:00:00.000Z",
+        updatedAt: "2026-06-01T00:00:00.000Z",
+      }),
+    ]);
 
     await expect(listPostSummaries(contentAdapter, { sort: "published" })).resolves.toMatchObject([
       { slug: "new" },
@@ -111,39 +101,13 @@ describe("editor-loader", () => {
     ]);
   });
 
-  it("filters post summaries by title, status, path, slug, or source body", async () => {
-    await expect(
-      listPostSummaries(adapter("---\ntitle: Alpha\nstatus: published\n---\n\n검증 가능한 본문"), {
-        query: "검증 가능",
-      }),
-    ).resolves.toHaveLength(1);
-    await expect(
-      listPostSummaries(adapter("---\ntitle: Alpha\nstatus: published\n---\n\nBody"), {
-        query: "published",
-      }),
-    ).resolves.toHaveLength(1);
-    await expect(
-      listPostSummaries(adapter("---\ntitle: Alpha\nstatus: published\n---\n\nBody"), {
-        query: "missing",
-      }),
-    ).resolves.toEqual([]);
-  });
-
-  it("loads supported documents and blocks unsupported MDX", async () => {
-    await expect(
-      loadEditorDocument(
-        "content/posts/a.mdx",
-        adapter("---\ntitle: A\nstatus: draft\n---\n\nBody"),
-      ),
-    ).resolves.toMatchObject({ ok: true });
-    await expect(
-      loadEditorDocument(
-        "content/posts/a.mdx",
-        adapter("---\ntitle: A\n---\n\nimport X from './x'"),
-      ),
-    ).resolves.toMatchObject({
-      ok: false,
-      code: "unsupported-mdx",
+  it("loads supported JSON documents", async () => {
+    await expect(loadEditorDocument("db/posts/a", adapter([post()]))).resolves.toMatchObject({
+      ok: true,
+      document: {
+        frontmatter: { title: "A", status: "draft", slug: "a" },
+        body: [{ type: "paragraph", text: "Body" }],
+      },
     });
   });
 });

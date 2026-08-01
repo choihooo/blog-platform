@@ -97,9 +97,7 @@ describe("PostsPageView", () => {
 
     expect(screen.getByText("2 / 3 페이지")).toBeTruthy();
     expect(screen.getByRole("link", { name: "이전" }).getAttribute("href")).toBe("/posts");
-    expect(screen.getByRole("link", { name: "다음" }).getAttribute("href")).toBe(
-      "/posts?page=3",
-    );
+    expect(screen.getByRole("link", { name: "다음" }).getAttribute("href")).toBe("/posts?page=3");
     expect(screen.getAllByRole("link", { name: /^Post \d+$/ })).toHaveLength(10);
   });
 

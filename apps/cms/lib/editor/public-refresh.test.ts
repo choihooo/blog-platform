@@ -40,7 +40,7 @@ describe("public refresh", () => {
       createPublicRefreshRetryToken({
         operation: "publish",
         targets: ["/"],
-        postPath: "content/posts/a.mdx",
+        postPath: "db/posts/a",
         postSha: "sha",
         now: new Date("2026-07-30T00:00:00.000Z"),
       }),

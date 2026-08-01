@@ -15,8 +15,8 @@ describe("slug policy", () => {
     const unique = validateUniqueSlug({
       candidate: "hello-world",
       existingPosts: [
-        { path: "content/posts/hello-world.mdx", slug: "hello-world" },
-        { path: "content/posts/other.mdx", slug: "other" },
+        { path: "db/posts/hello-world", slug: "hello-world" },
+        { path: "db/posts/other", slug: "other" },
       ],
     });
 
@@ -26,8 +26,8 @@ describe("slug policy", () => {
   it("allows currentPath when checking slug uniqueness", () => {
     const result = validateUniqueSlug({
       candidate: "hello-world",
-      currentPath: "content/posts/hello-world.mdx",
-      existingPosts: [{ path: "content/posts/hello-world.mdx", slug: "hello-world" }],
+      currentPath: "db/posts/hello-world",
+      existingPosts: [{ path: "db/posts/hello-world", slug: "hello-world" }],
     });
 
     expect(result.success).toBe(true);

@@ -11,15 +11,15 @@ describe("seoReportForEditorDocument", () => {
   it("scores complete editor documents", () => {
     const doc = createEmptyEditorDocument(new Date("2026-07-30"));
     doc.frontmatter = {
-      title: "A Practical Guide to MDX",
+      title: "A Practical Guide to Structured Content",
       status: "published",
       slug: "guide",
-      excerpt: "A practical guide to MDX content.",
+      excerpt: "A practical guide to Structured Content content.",
       author: "ho",
       publishedAt: "2026-07-30",
     };
     doc.body = [
-      createTextNode("heading", "A Practical Guide to MDX", { depth: 1 }),
+      createTextNode("heading", "A Practical Guide to Structured Content", { depth: 1 }),
       createTextNode("heading", "Intro", { depth: 2 }),
       createTextNode("heading", "Details", { depth: 2 }),
       { type: "image", src: "/media/cover.webp", alt: "cover" },

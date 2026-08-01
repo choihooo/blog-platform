@@ -8,7 +8,7 @@ describe("local adapter conflicts", () => {
   it("rejects stale updates and deletes", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "cms-adapter-"));
     const adapter = createLocalContentAdapter(root);
-    const repoPath = "content/posts/draft.mdx";
+    const repoPath = "db/posts/draft";
     await adapter.createFile({ path: repoPath, content: "old", intent: "create-draft" });
     const read = await adapter.readFile({ path: repoPath });
     if (!read.success) throw new Error("read failed");

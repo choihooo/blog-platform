@@ -20,7 +20,7 @@ export function SaveStatusBadge({ status }: { status: SaveStatus }) {
     published: "Published",
     refreshFailed: "Refresh failed",
     validation: "Needs title",
-    unsupported: "Unsupported MDX",
+    unsupported: "Unsupported content",
     failed: "Save failed",
   };
 

@@ -17,13 +17,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@blog-platform/markdown": "workspace:^",
     "@tiptap/core": "^3.29.2",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",
-    "@tiptap/starter-kit": "^3.29.2",
-    "lowlight": "^3.3.0",
-    "prosemirror-markdown": "^1.13.5"
+    "@tiptap/starter-kit": "^3.29.2"
   },
   "devDependencies": {
     "vitest": "^4.1.10"

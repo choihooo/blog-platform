@@ -3,7 +3,7 @@ import { commitSummary } from "./commit-intent.js";
 
 describe("commitSummary", () => {
   it("formats all content intents", () => {
-    const file = "content/posts/hello-world.mdx";
+    const file = "db/posts/hello-world";
     expect(commitSummary("create-draft", file)).toBe("post(hello-world): create draft");
     expect(commitSummary("save-draft", file)).toBe("post(hello-world): save draft");
     expect(commitSummary("prepare-publish", file)).toBe("post(hello-world): publish");

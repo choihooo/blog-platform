@@ -27,7 +27,7 @@ describe("editor publish failure flow", () => {
       code: "public-refresh-failed",
       retryable: true,
       message: "Public refresh failed",
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       sha: "sha",
       repository: { ok: true, summary: "post(a): publish" },
       publicRefresh: {
@@ -40,7 +40,7 @@ describe("editor publish failure flow", () => {
       retryToken: {
         operation: "publish",
         targets: ["/"],
-        postPath: "content/posts/a.mdx",
+        postPath: "db/posts/a",
         postSha: "sha",
         issuedAt: "2026-07-30",
       },

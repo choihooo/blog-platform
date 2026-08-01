@@ -16,7 +16,7 @@ describe("protected editor save", () => {
     }));
 
     await operations.createFile({
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       content: "x",
       intent: "create-draft",
     });

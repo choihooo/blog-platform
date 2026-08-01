@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
 
 import { PostList } from "../../components/post-list";
-import {
-  paginateItems,
-  parsePageParam,
-  PostPagination,
-} from "../../components/post-pagination";
+import { paginateItems, parsePageParam, PostPagination } from "../../components/post-pagination";
 import {
   getCategoryByPath,
   getPostsByCategoryPath,
@@ -62,9 +58,8 @@ function categoryHrefForPage(path: string, page: number) {
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { categoryPath } = await params;
-  const resolvedSearchParams: { page?: string | string[] } = await (
-    searchParams ?? Promise.resolve({})
-  );
+  const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
+    Promise.resolve({}));
   const path = toCanonicalPath(categoryPath);
   if (!path) notFound();
 

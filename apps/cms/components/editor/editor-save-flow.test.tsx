@@ -14,7 +14,7 @@ describe("editor save flow", () => {
   it("shows saved state after successful save", async () => {
     vi.mocked(saveEditorDraftAction).mockResolvedValue({
       ok: true,
-      path: "content/posts/a.mdx",
+      path: "db/posts/a",
       sha: "sha",
       backupCleared: true,
     });

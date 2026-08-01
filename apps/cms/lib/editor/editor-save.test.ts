@@ -1,65 +1,76 @@
 import { describe, expect, it, vi } from "vitest";
 import { createEmptyEditorDocument } from "@blog-platform/editor";
 
-import type { ContentAdapter } from "../content-adapter/index";
+import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
 import { mapAuthFailure, saveEditorDraft } from "./editor-save";
 
 function document() {
-  const doc = createEmptyEditorDocument();
+  const doc = createEmptyEditorDocument(new Date("2026-08-01T00:00:00.000Z"));
   doc.frontmatter.title = "Hello World";
   doc.body = [{ type: "paragraph", text: "Body" }];
   return doc;
 }
 
-describe("editor-save", () => {
-  it("creates new drafts and updates existing drafts with expected SHA", async () => {
-    const createFile = vi.fn(async () => ({
-      success: true as const,
-      data: {
-        path: "content/posts/hello-world.mdx",
-        sha: "new",
-        status: "created" as const,
-        summary: "ok",
-      },
-    }));
-    await expect(
-      saveEditorDraft(document(), { createFile, updateFile: vi.fn() }),
-    ).resolves.toMatchObject({
-      ok: true,
-      path: "content/posts/hello-world.mdx",
-    });
-    expect(createFile).toHaveBeenCalledWith(expect.objectContaining({ intent: "create-draft" }));
+function adapter(existing?: PostRecord | null) {
+  return {
+    getPostBySlug: vi.fn(async () => ({ ok: true as const, data: existing ?? null })),
+    createPost: vi.fn(async ({ post }) => ({
+      ok: true as const,
+      data: { ...post, updatedAt: "2026-08-01T01:00:00.000Z" },
+    })),
+    updatePost: vi.fn(async ({ post }) => ({
+      ok: true as const,
+      data: { ...(existing as PostRecord), ...post, updatedAt: "2026-08-01T01:00:00.000Z" },
+    })),
+  } satisfies Pick<ContentAdapter, "createPost" | "updatePost" | "getPostBySlug">;
+}
 
-    const existing = { ...document(), path: "content/posts/hello-world.mdx", sourceSha: "old" };
-    const updateFile: ContentAdapter["updateFile"] = vi.fn(async () => ({
-      success: true as const,
-      data: { path: existing.path, sha: "newer", status: "updated" as const, summary: "ok" },
-    }));
-    await saveEditorDraft(existing, { createFile: vi.fn(), updateFile });
-    expect(updateFile).toHaveBeenCalledWith(
-      expect.objectContaining({ expectedSha: "old", intent: "save-draft" }),
+describe("editor-save", () => {
+  it("creates new drafts as structured JSON posts", async () => {
+    const api = adapter();
+    await expect(saveEditorDraft(document(), api)).resolves.toMatchObject({
+      ok: true,
+      path: "db/posts/hello-world",
+      slug: "hello-world",
+    });
+    expect(api.createPost).toHaveBeenCalledWith(
+      expect.objectContaining({
+        post: expect.objectContaining({
+          slug: "hello-world",
+          content: expect.stringContaining('"version":1'),
+        }),
+      }),
     );
   });
 
-  it("preserves submitted content on failures", async () => {
-    await expect(
-      saveEditorDraft(document(), {
-        createFile: vi.fn(async () => ({
-          success: false as const,
-          error: {
-            code: "stale-file" as const,
-            message: "stale",
-            retryable: false,
-            submittedContent: "x",
-          },
-        })),
-        updateFile: vi.fn(),
+  it("updates existing drafts", async () => {
+    const existing: PostRecord = {
+      id: "post_hello",
+      slug: "hello-world",
+      title: "Hello World",
+      content: '{"version":1,"nodes":[]}',
+      summary: "",
+      categoryId: null,
+      categoryPath: null,
+      heroImageKey: null,
+      publishedAt: null,
+      updatedAt: "2026-08-01T00:00:00.000Z",
+      isPublished: 0,
+      viewCount: 0,
+      tags: [],
+      mediaRefs: [],
+    };
+    const api = adapter(existing);
+    const existingDocument = { ...document(), path: "db/posts/hello-world", sourceSha: "old" };
+
+    await saveEditorDraft(existingDocument, api);
+
+    expect(api.updatePost).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slug: "hello-world",
+        post: expect.objectContaining({ id: "post_hello" }),
       }),
-    ).resolves.toMatchObject({
-      ok: false,
-      code: "stale-file",
-      submittedDocument: expect.any(Object),
-    });
+    );
   });
 
   it("maps auth failures", () => {

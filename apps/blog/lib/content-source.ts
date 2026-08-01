@@ -1,15 +1,47 @@
-import type { Category, Tag } from "@blog-platform/markdown";
-import { analyzeMdx } from "@blog-platform/markdown";
-
-import type { PublicPost } from "./content";
-import { toDualRunComparable as toDualRunComparableContent } from "./content";
+import {
+  analyzeEditorNodes,
+  loadPostContent,
+  textFromEditorNodes,
+  type EditorNode,
+} from "@blog-platform/editor";
 import type { PostRecord } from "../../cms/lib/content-adapter/content-adapter.interface";
 import { createContentAdapter } from "../../cms/lib/content-adapter/content-adapter";
 import { loadSiteConfig } from "../../cms/lib/site-config";
 
-export type { PublicPost } from "./content";
-
 export type ContentSourceMode = "d1r2";
+
+export type Category = {
+  slug: string;
+  label: string;
+  description?: string;
+};
+
+export type Tag = {
+  slug: string;
+  label: string;
+  description?: string;
+};
+
+export type PublicPost = {
+  path: string;
+  status: "published" | "draft" | "archived";
+  title: string;
+  slug: string;
+  author: string;
+  publishedAt: string;
+  updatedAt?: string;
+  excerpt?: string;
+  coverImage?: string;
+  body: string;
+  bodyNodes: EditorNode[];
+  authorProfile?: { id: string; name: string; avatar?: string };
+  category?: string;
+  categoryEntry?: Category;
+  tagEntries: Tag[];
+  tags?: string[];
+  toc: Array<{ depth: number; text: string; slug: string }>;
+  readingTimeLabel: string;
+};
 
 export type ContentFailureCode =
   | "validation-failure"
@@ -104,22 +136,13 @@ function toPublicSourcePost(
   const categoryPath = post.categoryPath ?? null;
   const requestedTags = normalizeTagInput(post.tags ?? options?.tagSlugs);
   const isPublished = post.isPublished === 1;
-  const fallbackBody = post.content ?? "";
+  const content = loadPostContent(post.content ?? "");
   const shouldAnalyzeBody = options?.analyzeBody ?? true;
-  const analysis = shouldAnalyzeBody
-    ? analyzeMdx({ path: `db/posts/${normalizedSlug}.md`, source: fallbackBody })
-    : undefined;
-  const toc = analysis?.success && analysis.data ? analysis.data.toc : [];
+  const analysis = shouldAnalyzeBody ? analyzeEditorNodes(content.nodes) : undefined;
+  const textBody = textFromEditorNodes(content.nodes);
+  const toc = analysis?.headings ?? [];
   const readingTimeLabel =
-    analysis?.success && analysis.data
-      ? analysis.data.readingTime.label
-      : `${Math.max(1, Math.ceil(fallbackBody.length / 1000))} min read`;
-  const finalBody =
-    analysis?.success && analysis.data
-      ? analysis.data.body
-      : fallbackBody
-        ? fallbackBody
-        : `# ${post.title}`;
+    analysis?.readingTime.label ?? `${Math.max(1, Math.ceil(textBody.length / 1000))} min read`;
   const heroMedia =
     post.mediaRefs?.find((media) => media.kind === "hero") ??
     post.mediaRefs?.find((media) => media.kind === "og");
@@ -135,7 +158,8 @@ function toPublicSourcePost(
     updatedAt: post.updatedAt,
     excerpt: post.summary,
     coverImage,
-    body: finalBody,
+    body: textBody,
+    bodyNodes: content.nodes,
     toc,
     tags: requestedTags,
     tagEntries: requestedTags.map((tag) => ({ slug: tag, label: labelFromSlug(tag) })),
@@ -454,7 +478,22 @@ export async function getCategoryByPath(path: string): Promise<CategoryHierarchy
 }
 
 export function normalizeForDualRunCompare(post: PublicPost) {
-  return toDualRunComparableContent(post);
+  const normalizedBody = post.body ?? "";
+  const normalizedCoverImage = post.coverImage ?? "";
+  return {
+    slug: post.slug,
+    status: post.status,
+    title: post.title,
+    category: post.category ?? null,
+    tags: normalizeTagInput(post.tags),
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt ?? "",
+    excerpt: post.excerpt ?? "",
+    coverImage: normalizedCoverImage,
+    bodyFingerprint: normalizedBody.replace(/\r\n/g, "\n").replace(/\s+$/g, ""),
+    tocCount: post.toc.length,
+    tagCount: post.tags?.length ?? 0,
+  };
 }
 
 export { loadSiteConfig as getSiteConfig } from "../../cms/lib/site-config";

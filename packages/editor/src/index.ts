@@ -4,10 +4,18 @@ export {
   createTextNode,
   isEditorFailureCode,
 } from "./document.js";
-export { editorDocumentToMdx } from "./editor-to-mdx.js";
-export { mdxToEditorDocument } from "./mdx-to-editor.js";
+export {
+  analyzeEditorNodes,
+  editorDocumentToPostContent,
+  legacyMarkdownToPostContent,
+  loadPostContent,
+  parsePostContent,
+  postRecordToEditorDocument,
+  previewEditorDocumentFromNodes,
+  serializePostContent,
+  textFromEditorNodes,
+} from "./post-content.js";
 export { previewEditorDocument } from "./preview.js";
-export { roundTripEditorDocument } from "./roundtrip.js";
 export {
   SUPPORTED_BLOCKS,
   SUPPORTED_MARKS,
@@ -31,3 +39,4 @@ export type {
   PreviewResult,
   SerializeEditorDocumentResult,
 } from "./document.js";
+export type { PostRecordLike, StructuredPostContent } from "./post-content.js";

@@ -10,7 +10,7 @@ describe("local adapter createFile", () => {
       await mkdtemp(path.join(os.tmpdir(), "cms-adapter-")),
     );
     const input = {
-      path: "content/posts/draft.mdx",
+      path: "db/posts/draft",
       content: "---\nstatus: draft\n---\nDraft",
       intent: "create-draft" as const,
     };
