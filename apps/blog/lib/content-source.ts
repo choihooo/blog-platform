@@ -99,7 +99,10 @@ export interface BlogContentSource {
   getSiteConfig(): Promise<{
     siteName: string;
     siteUrl: string;
+    description: string;
     defaultAuthor: string;
+    defaultAuthorName: string;
+    defaultAuthorAvatar?: string;
     adminGithubLogin: string;
     adminGithubUserId: string;
     github: { owner: string; repo: string; branch: string };

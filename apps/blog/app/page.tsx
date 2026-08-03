@@ -1,18 +1,28 @@
 import { Grid2X2, List } from "lucide-react";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { paginateItems, parsePageParam, PostPagination } from "./components/post-pagination";
 import { PostList } from "./components/post-list";
-import { getPublishedPosts, listCategories, searchPosts } from "../lib/content-source";
+import {
+  getPublishedPosts,
+  getSiteConfig,
+  listCategories,
+  searchPosts,
+} from "../lib/content-source";
+import { homeListingMetadata } from "../lib/listing-metadata";
 
 export const revalidate = 300;
 
+type BlogSearchParams = {
+  category?: string | string[];
+  page?: string | string[];
+  q?: string | string[];
+  view?: string | string[];
+};
+
 type BlogHomePageProps = {
-  searchParams?: Promise<{
-    category?: string | string[];
-    page?: string | string[];
-    q?: string | string[];
-    view?: string | string[];
-  }>;
+  searchParams?: Promise<BlogSearchParams>;
 };
 
 function firstParam(value: string | string[] | undefined) {
@@ -20,6 +30,10 @@ function firstParam(value: string | string[] | undefined) {
 }
 
 function hrefFor(params: { category?: string; page?: number; q?: string; view?: "tile" | "list" }) {
+  if (params.category && !params.q) {
+    const page = params.page && params.page > 1 ? `?page=${params.page}` : "";
+    return `/categories/${params.category}${page}`;
+  }
   const search = new URLSearchParams();
   if (params.category) search.set("category", params.category);
   if (params.q) search.set("q", params.q);
@@ -29,6 +43,17 @@ function hrefFor(params: { category?: string; page?: number; q?: string; view?: 
   return query ? `/?${query}` : "/";
 }
 
+export async function generateMetadata({ searchParams }: BlogHomePageProps): Promise<Metadata> {
+  const [site, resolvedSearchParams]: [
+    Awaited<ReturnType<typeof getSiteConfig>>,
+    BlogSearchParams,
+  ] = await Promise.all([getSiteConfig(), searchParams ?? Promise.resolve({})]);
+  const query = firstParam(resolvedSearchParams.q)?.trim();
+  const category = firstParam(resolvedSearchParams.category)?.trim().toLowerCase();
+  const page = parsePageParam(resolvedSearchParams.page);
+  return homeListingMetadata({ siteUrl: site.siteUrl, query, category, page });
+}
+
 export default async function BlogHomePage({ searchParams }: BlogHomePageProps) {
   const defaultSearchParams: BlogHomePageProps["searchParams"] = Promise.resolve({});
   const resolvedSearchParams = await (searchParams ?? defaultSearchParams);
@@ -36,6 +61,9 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   const query = firstParam(resolvedSearchParams.q)?.trim() ?? "";
   const view = firstParam(resolvedSearchParams.view) === "list" ? "list" : "tile";
   const requestedPage = parsePageParam(resolvedSearchParams.page);
+  if (activeCategory && !query) {
+    redirect(`/categories/${activeCategory}${requestedPage > 1 ? `?page=${requestedPage}` : ""}`);
+  }
   const [allPosts, searchedPosts, parentCategories, childCategories] = await Promise.all([
     getPublishedPosts({ limit: 100, analyzeBody: false }),
     query ? searchPosts({ query, limit: 100 }) : Promise.resolve(null),
@@ -65,6 +93,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <section className="mx-auto mb-10 max-w-4xl text-center">
+        <h1 className="sr-only">기록하고 실험하는 개발 블로그</h1>
         <form action="/" className="relative mx-auto w-full max-w-xl">
           {activeCategory ? <input name="category" type="hidden" value={activeCategory} /> : null}
           {view === "list" ? <input name="view" type="hidden" value="list" /> : null}

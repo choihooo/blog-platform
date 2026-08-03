@@ -2,8 +2,26 @@ import { createSeoSubject, type SeoSite, type SeoSubject } from "@blog-platform/
 
 import type { PublicPost } from "./content-source";
 
-export function siteForSeo(site: { siteName: string; siteUrl: string }): SeoSite {
-  return { siteName: site.siteName, siteUrl: site.siteUrl };
+export function siteForSeo(site: {
+  siteName: string;
+  siteUrl: string;
+  description?: string;
+  defaultAuthor?: string;
+  defaultAuthorName?: string;
+  defaultAuthorAvatar?: string;
+}): SeoSite {
+  return {
+    siteName: site.siteName,
+    siteUrl: site.siteUrl,
+    description: site.description,
+    defaultAuthor: site.defaultAuthor
+      ? {
+          id: site.defaultAuthor,
+          name: site.defaultAuthorName || site.defaultAuthor,
+          avatar: site.defaultAuthorAvatar,
+        }
+      : undefined,
+  };
 }
 
 export function postToSeoSubject(post: PublicPost, site: SeoSite): SeoSubject {
@@ -29,7 +47,7 @@ export function postToSeoSubject(post: PublicPost, site: SeoSite): SeoSubject {
           name: post.authorProfile.name,
           avatar: post.authorProfile.avatar,
         }
-      : undefined,
+      : site.defaultAuthor,
     category: post.categoryEntry
       ? {
           slug: post.categoryEntry.slug,

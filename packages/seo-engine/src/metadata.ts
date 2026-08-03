@@ -17,7 +17,7 @@ export function generatePageMetadata(subject: SeoSubject): PageMetadata {
   const canonical = canonicalUrl(subject);
   const image = subject.slug
     ? ogImageUrl(subject.site, subject.slug)
-    : `${subject.site.siteUrl}/og`;
+    : `${subject.site.siteUrl.replace(/\/+$/g, "")}/brand/hozorica-card.webp`;
   return {
     title,
     description,

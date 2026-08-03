@@ -8,32 +8,39 @@ import { AnalyticsProvider } from "./components/analytics-provider";
 import { SiteShell } from "./components/site-shell";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://blog.hozorica.com"),
-  title: {
-    default: "Hozorica",
-    template: "%s | Hozorica",
-  },
-  description: "기록하고 실험하는 개발 블로그",
-  icons: {
-    icon: "/icon.png",
-    apple: "/apple-icon.png",
-  },
-  openGraph: {
-    title: "Hozorica",
-    description: "기록하고 실험하는 개발 블로그",
-    url: "https://blog.hozorica.com",
-    siteName: "Hozorica",
-    images: ["/brand/hozorica-card.webp"],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Hozorica",
-    description: "기록하고 실험하는 개발 블로그",
-    images: ["/brand/hozorica-card.webp"],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteConfig();
+  return {
+    metadataBase: new URL(site.siteUrl),
+    title: {
+      default: site.siteName,
+      template: `%s | ${site.siteName}`,
+    },
+    description: site.description,
+    alternates: {
+      canonical: site.siteUrl,
+      types: { "application/rss+xml": `${site.siteUrl.replace(/\/+$/, "")}/rss.xml` },
+    },
+    icons: {
+      icon: "/icon.png",
+      apple: "/apple-icon.png",
+    },
+    openGraph: {
+      title: site.siteName,
+      description: site.description,
+      url: site.siteUrl,
+      siteName: site.siteName,
+      images: [{ url: "/brand/hozorica-card.webp", width: 1200, height: 630 }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: site.siteName,
+      description: site.description,
+      images: ["/brand/hozorica-card.webp"],
+    },
+  };
+}
 
 type RootLayoutProps = {
   children: ReactNode;

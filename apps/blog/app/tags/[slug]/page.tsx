@@ -22,14 +22,19 @@ export async function generateStaticParams() {
   return tags.map((tag) => ({ slug: tag.slug }));
 }
 
-export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: TagPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
+    Promise.resolve({}));
+  const page = parsePageParam(resolvedSearchParams.page);
   const [tag, site] = await Promise.all([getTag(slug), getSiteConfig()]);
   return tag
     ? {
-        title: tag.label,
+        title: page > 1 ? `${tag.label} - ${page}페이지` : tag.label,
         description: tag.description,
-        alternates: { canonical: `${trimSlash(site.siteUrl)}/tags/${tag.slug}` },
+        alternates: {
+          canonical: `${trimSlash(site.siteUrl)}/tags/${tag.slug}${page > 1 ? `?page=${page}` : ""}`,
+        },
       }
     : {};
 }
