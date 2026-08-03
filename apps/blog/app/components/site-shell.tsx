@@ -27,8 +27,8 @@ export function SiteShell({ children, siteName }: SiteShellProps) {
             <Link className="text-foreground hover:text-primary" href="/#posts">
               글
             </Link>
-            <Link className="text-muted-foreground hover:text-primary" href="/#categories">
-              카테고리
+            <Link className="text-muted-foreground hover:text-primary" href="/tags">
+              태그
             </Link>
           </nav>
         </div>
