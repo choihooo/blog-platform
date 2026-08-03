@@ -1,11 +1,15 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+
+import bundledSiteConfig from "../../../content/site.json";
 
 export type SiteConfig = {
   siteName: string;
   siteUrl: string;
+  description: string;
   defaultAuthor: string;
+  defaultAuthorName: string;
+  defaultAuthorAvatar?: string;
   adminGithubLogin: string;
   adminGithubUserId: string;
   github: {
@@ -25,9 +29,6 @@ export type SiteConfig = {
 };
 
 export const siteConfigPath = "content/site.json";
-
-const cmsSourceDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const repositoryRoot = path.resolve(cmsSourceDirectory, "../..");
 
 type SiteConfigInput = Partial<
   Omit<SiteConfig, "github" | "analytics" | "features"> & {
@@ -69,7 +70,11 @@ export function defaultSiteConfig(): SiteConfig {
     siteName: clean(process.env.SITE_NAME) || "Blog",
     siteUrl:
       clean(process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL) || "http://localhost:3000",
+    description: clean(process.env.SITE_DESCRIPTION) || "기록하고 실험하는 개발 블로그",
     defaultAuthor: clean(process.env.DEFAULT_AUTHOR) || "admin",
+    defaultAuthorName:
+      clean(process.env.DEFAULT_AUTHOR_NAME) || clean(process.env.DEFAULT_AUTHOR) || "Admin",
+    defaultAuthorAvatar: clean(process.env.DEFAULT_AUTHOR_AVATAR) || undefined,
     adminGithubLogin: clean(process.env.ADMIN_GITHUB_LOGIN) || "replace-me",
     adminGithubUserId: clean(process.env.ADMIN_GITHUB_USER_ID) || "0",
     github: {
@@ -100,7 +105,10 @@ export function normalizeSiteConfig(input: SiteConfigInput = {}): SiteConfig {
   return {
     siteName: clean(input.siteName) || fallback.siteName,
     siteUrl: clean(input.siteUrl) || fallback.siteUrl,
+    description: clean(input.description) || fallback.description,
     defaultAuthor: clean(input.defaultAuthor) || fallback.defaultAuthor,
+    defaultAuthorName: clean(input.defaultAuthorName) || fallback.defaultAuthorName,
+    defaultAuthorAvatar: clean(input.defaultAuthorAvatar) || fallback.defaultAuthorAvatar,
     adminGithubLogin: clean(input.adminGithubLogin) || fallback.adminGithubLogin,
     adminGithubUserId: clean(input.adminGithubUserId) || fallback.adminGithubUserId,
     github: {
@@ -123,18 +131,25 @@ export function normalizeSiteConfig(input: SiteConfigInput = {}): SiteConfig {
 }
 
 function resolveSiteConfigRoot() {
-  if (process.env.NODE_ENV === "test") {
-    const cwd = process.cwd();
-    return cwd.endsWith(path.join("apps", "cms")) ? path.resolve(cwd, "../..") : cwd;
-  }
-  return repositoryRoot;
+  const cwd = process.cwd();
+  return cwd.endsWith(path.join("apps", "cms")) || cwd.endsWith(path.join("apps", "blog"))
+    ? path.resolve(cwd, "../..")
+    : cwd;
 }
 
-export async function loadSiteConfig(root = resolveSiteConfigRoot()): Promise<SiteConfig> {
+export function bundledSiteConfigFallback(): SiteConfig {
+  return normalizeSiteConfig(bundledSiteConfig as SiteConfigInput);
+}
+
+export async function loadSiteConfig(root?: string): Promise<SiteConfig> {
+  const configRoot = root ?? resolveSiteConfigRoot();
   try {
-    const raw = await readFile(path.join(root, siteConfigPath), "utf8");
+    const raw = await readFile(path.join(configRoot, siteConfigPath), "utf8");
     return normalizeSiteConfig(JSON.parse(raw) as SiteConfigInput);
   } catch {
-    return defaultSiteConfig();
+    if (root) return defaultSiteConfig();
+    // Next.js server bundles do not preserve this module's source-file location.
+    // Keep a statically bundled copy so production cannot fall back to a stale SITE_URL.
+    return bundledSiteConfigFallback();
   }
 }

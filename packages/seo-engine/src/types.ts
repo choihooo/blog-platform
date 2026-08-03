@@ -13,6 +13,7 @@ export type SeoSite = {
   siteName: string;
   siteUrl: string;
   description?: string;
+  defaultAuthor?: SeoAuthor;
 };
 
 export type SeoAuthor = {

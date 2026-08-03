@@ -28,4 +28,20 @@ describe("postToSeoSubject", () => {
     expect(subject.readingTime?.label).toBe("1 min read");
     expect(subject.coverImage).toBeUndefined();
   });
+
+  it("uses the configured default author when a database post has no author profile", () => {
+    const subject = postToSeoSubject(
+      post,
+      siteForSeo({
+        siteName: "Blog",
+        siteUrl: "https://example.com",
+        description: "Notes",
+        defaultAuthor: "ho",
+        defaultAuthorName: "Ho Choi",
+      }),
+    );
+
+    expect(subject.author).toEqual({ id: "ho", name: "Ho Choi", avatar: undefined });
+    expect(subject.site.description).toBe("Notes");
+  });
 });

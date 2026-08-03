@@ -49,6 +49,20 @@ vi.mock("../lib/content-source", () => ({
 }));
 
 describe("generated output routes", () => {
+  it("keeps listing pages self-canonical and prevents search result indexing", async () => {
+    const { homeListingMetadata } = await import("../lib/listing-metadata");
+    const listing = homeListingMetadata({ siteUrl: "https://example.com", page: 2 });
+    const search = homeListingMetadata({
+      siteUrl: "https://example.com",
+      page: 1,
+      query: "hello",
+    });
+
+    expect(listing.alternates?.canonical).toBe("https://example.com/?page=2");
+    expect(search.alternates?.canonical).toBe("https://example.com");
+    expect(search.robots).toEqual({ index: false, follow: true });
+  });
+
   it("serves RSS with published posts only", async () => {
     const { GET } = await import("./rss.xml/route");
     const response = await GET();
@@ -81,7 +95,7 @@ describe("generated output routes", () => {
     expect(body).toContain("Disallow: /preview");
   });
 
-  it("serves OG SVG for published posts and 404s unknown/private slugs", async () => {
+  it("serves OG PNG for published posts and 404s unknown/private slugs", async () => {
     const { GET } = await import("./og/[slug]/route");
     const ok = await GET(new Request("https://example.com"), {
       params: Promise.resolve({ slug: "long" }),
@@ -89,10 +103,8 @@ describe("generated output routes", () => {
     const missing = await GET(new Request("https://example.com"), {
       params: Promise.resolve({ slug: "draft" }),
     });
-    const body = await ok.text();
-    expect(ok.headers.get("content-type")).toBe("image/svg+xml; charset=utf-8");
-    expect(body).toContain("<tspan");
-    expect(body).toContain("Blog");
+    expect(ok.headers.get("content-type")).toBe("image/png");
+    expect((await ok.arrayBuffer()).byteLength).toBeGreaterThan(1000);
     expect(missing.status).toBe(404);
   });
 

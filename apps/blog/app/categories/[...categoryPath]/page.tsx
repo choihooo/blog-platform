@@ -39,15 +39,23 @@ function toCanonicalPath(parts: string[]) {
     .replace(/^\/+|\/+$/g, "");
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: CategoryPageProps): Promise<Metadata> {
   const { categoryPath } = await params;
+  const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
+    Promise.resolve({}));
   const path = toCanonicalPath(categoryPath);
+  const page = parsePageParam(resolvedSearchParams.page);
   const [category, site] = await Promise.all([getCategoryByPath(path), getSiteConfig()]);
   return category
     ? {
-        title: category.label,
+        title: page > 1 ? `${category.label} - ${page}페이지` : category.label,
         description: category.description,
-        alternates: { canonical: `${trimSlash(site.siteUrl)}/categories/${category.slug}` },
+        alternates: {
+          canonical: `${trimSlash(site.siteUrl)}/categories/${category.slug}${page > 1 ? `?page=${page}` : ""}`,
+        },
       }
     : {};
 }

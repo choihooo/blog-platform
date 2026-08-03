@@ -4,6 +4,9 @@ import type { SeoSubject } from "./types.js";
 export function generateJsonLd(subject: SeoSubject) {
   if (subject.status !== "published" || !subject.slug || !subject.title) return [];
   const url = canonicalUrl(subject);
+  const image = subject.coverImage
+    ? new URL(subject.coverImage, `${subject.site.siteUrl}/`).toString()
+    : `${subject.site.siteUrl.replace(/\/+$/g, "")}/og/${subject.slug}`;
   const data: unknown[] = [
     {
       "@context": "https://schema.org",
@@ -11,10 +14,24 @@ export function generateJsonLd(subject: SeoSubject) {
       headline: subject.title,
       description: subject.excerpt,
       url,
+      mainEntityOfPage: { "@type": "WebPage", "@id": url },
       datePublished: subject.publishedAt,
       dateModified: subject.updatedAt ?? subject.publishedAt,
-      author: subject.author ? { "@type": "Person", name: subject.author.name } : undefined,
-      image: subject.coverImage,
+      author: subject.author
+        ? {
+            "@type": "Person",
+            name: subject.author.name,
+            image: subject.author.avatar
+              ? new URL(subject.author.avatar, `${subject.site.siteUrl}/`).toString()
+              : undefined,
+          }
+        : undefined,
+      publisher: {
+        "@type": "Organization",
+        name: subject.site.siteName,
+        url: subject.site.siteUrl,
+      },
+      image,
       keywords: subject.tags.map((tag) => tag.label).join(", "),
       articleSection: subject.category?.label,
     },
