@@ -16,21 +16,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   if (!post) return new Response("Not found", { status: 404 });
 
   const payload = createOgImagePayload(postToSeoSubject(post, siteForSeo(site)));
-  const cover = payload.coverImage
-    ? createElement("img", {
-        alt: "",
-        src: new URL(payload.coverImage, `${site.siteUrl.replace(/\/+$/, "")}/`).toString(),
-        style: {
-          height: "100%",
-          objectFit: "cover",
-          opacity: 0.42,
-          position: "absolute",
-          right: 0,
-          top: 0,
-          width: 440,
-        },
-      })
-    : null;
   const image = createElement(
     "div",
     {
@@ -44,7 +29,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
         width: "100%",
       },
     },
-    cover,
     createElement(
       "div",
       {
@@ -53,7 +37,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
           flexDirection: "column",
           padding: "76px 80px 66px",
           position: "relative",
-          width: 790,
+          width: "100%",
         },
       },
       createElement(
