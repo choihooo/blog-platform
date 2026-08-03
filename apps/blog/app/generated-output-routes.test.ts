@@ -10,6 +10,7 @@ const publishedPost: PublicPost = {
   publishedAt: "2026-07-30T00:00:00.000Z",
   updatedAt: "2026-07-30T00:00:00.000Z",
   excerpt: "Hello description",
+  coverImage: "https://pub-2eadf17a82cb46679204775b78a2c16a.r2.dev/blog/tistory/test-cover.webp",
   body: "# Hello\n\n## Intro",
   bodyNodes: [
     { type: "heading", depth: 1, text: "Hello" },
@@ -32,7 +33,6 @@ const longPost: PublicPost = {
   path: "db/posts/long",
   slug: "long",
   title: "A Very Long Generated Output Title That Must Wrap Cleanly Inside The Social Image",
-  coverImage: undefined,
 };
 
 vi.mock("../lib/content-source", () => ({
