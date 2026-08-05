@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { AspectRatio, Chip, ChipGroup, EmptyState } from "@hozui/react";
+import { Chip, ChipGroup, EmptyState } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
@@ -9,9 +9,6 @@ type PostListProps = {
   posts: PublicPost[];
   view?: "tile" | "list";
 };
-
-const coverAspectClass =
-  "[--hods-aspect-ratio-width:100%] [&_.hods-aspect-ratio__viewport]:border-0 [&_.hods-aspect-ratio__viewport]:rounded-none";
 
 function canUseOptimizedImage(src: string) {
   if (src.startsWith("/")) return true;
@@ -59,26 +56,26 @@ function Cover({
   size: "tile" | "list";
 }) {
   const className =
-    size === "tile" ? coverAspectClass : `${coverAspectClass} w-full sm:h-full sm:min-h-40`;
+    size === "tile"
+      ? "relative aspect-[1.91/1] w-full overflow-hidden"
+      : "relative h-40 w-full overflow-hidden rounded-md sm:h-full sm:min-h-40";
 
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
       return (
-        <AspectRatio className={className} ratio={1.91}>
-          <img
-            alt={`${post.title} cover`}
-            className="h-full w-full object-cover"
-            decoding="async"
-            fetchPriority={priority ? "high" : "auto"}
-            loading={priority ? "eager" : "lazy"}
-            src={post.coverImage}
-          />
-        </AspectRatio>
+        <img
+          alt={`${post.title} cover`}
+          className={`${className} object-cover`}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
+          loading={priority ? "eager" : "lazy"}
+          src={post.coverImage}
+        />
       );
     }
 
     return (
-      <AspectRatio className={className} ratio={1.91}>
+      <div className={className}>
         <Image
           alt={`${post.title} cover`}
           className="object-cover"
@@ -92,12 +89,12 @@ function Cover({
           }
           src={post.coverImage}
         />
-      </AspectRatio>
+      </div>
     );
   }
 
   return (
-    <AspectRatio className={className} ratio={1.91}>
+    <div className={className}>
       <Image
         alt=""
         className="object-cover"
@@ -111,7 +108,7 @@ function Cover({
         }
         src="/brand/no-thumbnail.webp"
       />
-    </AspectRatio>
+    </div>
   );
 }
 

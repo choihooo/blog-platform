@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
-import { AspectRatio, Chip, ChipGroup } from "@hozui/react";
+import { Chip, ChipGroup } from "@hozui/react";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 
 import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
@@ -16,9 +16,6 @@ import { PostAuthorMeta } from "../../components/post-author-meta";
 import { RecommendedPosts } from "../../components/recommended-posts";
 
 export const revalidate = 900;
-
-const heroAspectClass =
-  "[--hods-aspect-ratio-width:100%] [&_.hods-aspect-ratio__viewport]:border-0 [&_.hods-aspect-ratio__viewport]:rounded-none";
 
 type PostPageProps = {
   params: Promise<{
@@ -217,7 +214,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <header className="mb-12 grid gap-5 bg-card pb-10">
             {post.coverImage ? (
               canUseOptimizedImage(post.coverImage) ? (
-                <AspectRatio className={heroAspectClass} ratio="16:9">
+                <div className="relative aspect-[16/9] w-full overflow-hidden">
                   <Image
                     alt=""
                     className="object-cover"
@@ -227,18 +224,16 @@ export default async function PostPage({ params }: PostPageProps) {
                     sizes="(min-width: 1024px) 68ch, calc(100vw - 40px)"
                     src={post.coverImage}
                   />
-                </AspectRatio>
+                </div>
               ) : (
-                <AspectRatio className={heroAspectClass} ratio="16:9">
-                  <img
-                    alt=""
-                    className="h-full w-full object-cover"
-                    decoding="async"
-                    fetchPriority="high"
-                    loading="eager"
-                    src={post.coverImage}
-                  />
-                </AspectRatio>
+                <img
+                  alt=""
+                  className="aspect-[16/9] w-full object-cover"
+                  decoding="async"
+                  fetchPriority="high"
+                  loading="eager"
+                  src={post.coverImage}
+                />
               )
             ) : null}
             <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">

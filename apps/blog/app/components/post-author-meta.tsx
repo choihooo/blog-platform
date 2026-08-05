@@ -28,7 +28,7 @@ export function PostAuthorMeta({ author, className, size = "sm" }: PostAuthorMet
   return (
     <span className={["inline-flex items-center gap-2", className].filter(Boolean).join(" ")}>
       <Avatar decorative size={size}>
-        {author.avatar ? <AvatarImage src={author.avatar} /> : null}
+        {author.avatar ? <AvatarImage className="scale-125" src={author.avatar} /> : null}
         <AvatarFallback>{initialsFromName(author.name)}</AvatarFallback>
       </Avatar>
       <span>{author.name}</span>

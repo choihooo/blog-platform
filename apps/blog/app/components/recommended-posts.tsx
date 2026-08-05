@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { AspectRatio, Chip, ChipGroup } from "@hozui/react";
+import { Chip, ChipGroup } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
@@ -8,9 +8,6 @@ import { formatPostDate } from "../../lib/date-format";
 type RecommendedPostsProps = {
   posts: PublicPost[];
 };
-
-const coverAspectClass =
-  "[--hods-aspect-ratio-width:100%] [&_.hods-aspect-ratio__viewport]:border-0 [&_.hods-aspect-ratio__viewport]:rounded-none";
 
 function canUseOptimizedImage(src: string) {
   if (src.startsWith("/")) return true;
@@ -22,17 +19,15 @@ function canUseOptimizedImage(src: string) {
 }
 
 function RecommendedPostCover({ post }: { post: PublicPost }) {
+  const className = "relative aspect-[1.91/1] w-full overflow-hidden";
+
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
-      return (
-        <AspectRatio className={coverAspectClass} ratio={1.91}>
-          <img alt="" className="h-full w-full object-cover" src={post.coverImage} />
-        </AspectRatio>
-      );
+      return <img alt="" className={`${className} object-cover`} src={post.coverImage} />;
     }
 
     return (
-      <AspectRatio className={coverAspectClass} ratio={1.91}>
+      <div className={className}>
         <Image
           alt=""
           className="object-cover"
@@ -40,12 +35,12 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, calc(100vw - 40px)"
           src={post.coverImage}
         />
-      </AspectRatio>
+      </div>
     );
   }
 
   return (
-    <AspectRatio className={coverAspectClass} ratio={1.91}>
+    <div className={className}>
       <Image
         alt=""
         className="object-cover"
@@ -53,7 +48,7 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, calc(100vw - 40px)"
         src="/brand/no-thumbnail.webp"
       />
-    </AspectRatio>
+    </div>
   );
 }
 
