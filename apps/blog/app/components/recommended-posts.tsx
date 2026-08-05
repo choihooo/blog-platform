@@ -9,6 +9,9 @@ type RecommendedPostsProps = {
   posts: PublicPost[];
 };
 
+const coverAspectClass =
+  "[--hods-aspect-ratio-width:100%] [&_.hods-aspect-ratio__viewport]:border-0 [&_.hods-aspect-ratio__viewport]:rounded-none";
+
 function canUseOptimizedImage(src: string) {
   if (src.startsWith("/")) return true;
   try {
@@ -22,14 +25,14 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
       return (
-        <AspectRatio ratio={1.91}>
+        <AspectRatio className={coverAspectClass} ratio={1.91}>
           <img alt="" className="h-full w-full object-cover" src={post.coverImage} />
         </AspectRatio>
       );
     }
 
     return (
-      <AspectRatio ratio={1.91}>
+      <AspectRatio className={coverAspectClass} ratio={1.91}>
         <Image
           alt=""
           className="object-cover"
@@ -42,7 +45,7 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
   }
 
   return (
-    <AspectRatio ratio={1.91}>
+    <AspectRatio className={coverAspectClass} ratio={1.91}>
       <Image
         alt=""
         className="object-cover"

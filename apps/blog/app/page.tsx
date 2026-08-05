@@ -1,7 +1,6 @@
 import { Grid2X2, List } from "lucide-react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Chip, ChipGroup } from "@hozui/react";
 
 import { paginateItems, parsePageParam, PostPagination } from "./components/post-pagination";
 import { PostList } from "./components/post-list";
@@ -65,17 +64,12 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   if (activeCategory && !query) {
     redirect(`/categories/${activeCategory}${requestedPage > 1 ? `?page=${requestedPage}` : ""}`);
   }
-  const [site, allPosts, searchedPosts, parentCategories, childCategories] = await Promise.all([
-    getSiteConfig(),
+  const [allPosts, searchedPosts, parentCategories, childCategories] = await Promise.all([
     getPublishedPosts({ limit: 100, analyzeBody: false }),
     query ? searchPosts({ query, limit: 100 }) : Promise.resolve(null),
     listCategories({ depth: 1 }),
     listCategories({ depth: 2 }),
   ]);
-  const authorFallback = {
-    avatar: site.defaultAuthorAvatar,
-    name: site.defaultAuthorName || site.defaultAuthor,
-  };
   const sourcePosts = searchedPosts ?? allPosts;
   const posts = activeCategory
     ? sourcePosts.filter(
@@ -118,20 +112,17 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
         <aside aria-label="카테고리 목록" className="lg:pt-11" id="categories">
           <h2 className="text-base font-semibold">카테고리</h2>
           <div className="mt-3 h-px bg-border" />
-          <ChipGroup
-            aria-label="카테고리 목록"
-            className="mt-4 flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
-            role="nav"
-          >
+          <nav className="mt-4 flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
             <a
               aria-current={!activeCategory ? "page" : undefined}
+              className={`whitespace-nowrap text-sm ${
+                !activeCategory
+                  ? "font-semibold text-primary"
+                  : "text-foreground hover:text-primary"
+              }`}
               href={hrefFor({ q: query, view })}
             >
-              <Chip
-                label={`전체보기 · ${allPosts.length}`}
-                size="sm"
-                tone={!activeCategory ? "accent" : "neutral"}
-              />
+              전체보기 <span className="text-muted-foreground">({allPosts.length})</span>
             </a>
             {parentCategories.map((category) => {
               const children = childCategories.filter(
@@ -141,27 +132,35 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
                 <div className="grid gap-2" key={category.slug}>
                   <a
                     aria-current={activeCategory === category.slug ? "page" : undefined}
+                    className={`whitespace-nowrap text-sm ${
+                      activeCategory === category.slug
+                        ? "font-semibold text-primary"
+                        : "text-foreground hover:text-primary"
+                    }`}
                     href={hrefFor({ category: category.slug, q: query, view })}
                   >
-                    <Chip
-                      label={`${category.label} · ${categoryCounts.get(category.slug) ?? 0}`}
-                      size="sm"
-                      tone={activeCategory === category.slug ? "accent" : "neutral"}
-                    />
+                    {category.label}{" "}
+                    <span className="text-muted-foreground">
+                      ({categoryCounts.get(category.slug) ?? 0})
+                    </span>
                   </a>
                   {children.length > 0 ? (
                     <div className="grid gap-2 border-l border-border pl-3">
                       {children.map((child) => (
                         <a
                           aria-current={activeCategory === child.slug ? "page" : undefined}
+                          className={`whitespace-nowrap text-sm ${
+                            activeCategory === child.slug
+                              ? "font-semibold text-primary"
+                              : "text-muted-foreground hover:text-primary"
+                          }`}
                           href={hrefFor({ category: child.slug, q: query, view })}
                           key={child.slug}
                         >
-                          <Chip
-                            label={`${child.label} · ${categoryCounts.get(child.slug) ?? 0}`}
-                            size="sm"
-                            tone={activeCategory === child.slug ? "accent" : "neutral"}
-                          />
+                          {child.label}{" "}
+                          <span className="text-muted-foreground">
+                            ({categoryCounts.get(child.slug) ?? 0})
+                          </span>
                         </a>
                       ))}
                     </div>
@@ -169,7 +168,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
                 </div>
               );
             })}
-          </ChipGroup>
+          </nav>
         </aside>
 
         <section className="min-w-0 space-y-5" aria-label="글 목록" id="posts">
@@ -214,7 +213,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
               </a>
             </div>
           </div>
-          <PostList authorFallback={authorFallback} posts={pagination.items} view={view} />
+          <PostList posts={pagination.items} view={view} />
           <PostPagination
             currentPage={pagination.currentPage}
             hrefForPage={(page) => hrefFor({ category: activeCategory, page, q: query, view })}

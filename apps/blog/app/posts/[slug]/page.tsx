@@ -17,6 +17,9 @@ import { RecommendedPosts } from "../../components/recommended-posts";
 
 export const revalidate = 900;
 
+const heroAspectClass =
+  "[--hods-aspect-ratio-width:100%] [&_.hods-aspect-ratio__viewport]:border-0 [&_.hods-aspect-ratio__viewport]:rounded-none";
+
 type PostPageProps = {
   params: Promise<{
     slug: string;
@@ -214,7 +217,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <header className="mb-12 grid gap-5 bg-card pb-10">
             {post.coverImage ? (
               canUseOptimizedImage(post.coverImage) ? (
-                <AspectRatio ratio="16:9">
+                <AspectRatio className={heroAspectClass} ratio="16:9">
                   <Image
                     alt=""
                     className="object-cover"
@@ -226,7 +229,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   />
                 </AspectRatio>
               ) : (
-                <AspectRatio ratio="16:9">
+                <AspectRatio className={heroAspectClass} ratio="16:9">
                   <img
                     alt=""
                     className="h-full w-full object-cover"

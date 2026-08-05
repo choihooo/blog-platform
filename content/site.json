@@ -4,6 +4,7 @@
   "description": "기록하고 실험하는 개발 블로그",
   "defaultAuthor": "ho",
   "defaultAuthorName": "Ho Choi",
+  "defaultAuthorAvatar": "/brand/hozorica-logo.webp",
   "adminGithubLogin": "choihooo",
   "adminGithubUserId": "67588757",
   "github": {

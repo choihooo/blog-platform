@@ -4,13 +4,14 @@ import { AspectRatio, Chip, ChipGroup, EmptyState } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
-import { PostAuthorMeta, type PostAuthorMetaValue } from "./post-author-meta";
 
 type PostListProps = {
-  authorFallback?: PostAuthorMetaValue;
   posts: PublicPost[];
   view?: "tile" | "list";
 };
+
+const coverAspectClass =
+  "[--hods-aspect-ratio-width:100%] [&_.hods-aspect-ratio__viewport]:border-0 [&_.hods-aspect-ratio__viewport]:rounded-none";
 
 function canUseOptimizedImage(src: string) {
   if (src.startsWith("/")) return true;
@@ -21,29 +22,12 @@ function canUseOptimizedImage(src: string) {
   }
 }
 
-function resolvePostAuthor(post: PublicPost, authorFallback?: PostAuthorMetaValue) {
-  if (post.authorProfile) {
-    return {
-      avatar: post.authorProfile.avatar,
-      name: post.authorProfile.name,
-    };
-  }
-  return authorFallback ?? (post.author ? { name: post.author } : undefined);
-}
-
-function PostMeta({
-  authorFallback,
-  post,
-}: {
-  authorFallback?: PostAuthorMetaValue;
-  post: PublicPost;
-}) {
-  const author = resolvePostAuthor(post, authorFallback);
+function PostMeta({ post }: { post: PublicPost }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+    <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
       <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
       <span>{post.readingTimeLabel}</span>
-      <PostAuthorMeta author={author} />
+      {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
     </div>
   );
 }
@@ -74,7 +58,8 @@ function Cover({
   priority?: boolean;
   size: "tile" | "list";
 }) {
-  const className = size === "tile" ? "w-full" : "w-full sm:h-full sm:min-h-40";
+  const className =
+    size === "tile" ? coverAspectClass : `${coverAspectClass} w-full sm:h-full sm:min-h-40`;
 
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
@@ -130,21 +115,13 @@ function Cover({
   );
 }
 
-function PostTile({
-  authorFallback,
-  post,
-  priority,
-}: {
-  authorFallback?: PostAuthorMetaValue;
-  post: PublicPost;
-  priority?: boolean;
-}) {
+function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) {
   return (
     <article className="flex h-full flex-col overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
       <Link className="block flex-1" href={`/posts/${post.slug}`}>
         <Cover post={post} priority={priority} size="tile" />
         <div className="grid gap-4 p-5">
-          <PostMeta authorFallback={authorFallback} post={post} />
+          <PostMeta post={post} />
           <div>
             <h3 className="line-clamp-2 text-2xl font-semibold tracking-normal">{post.title}</h3>
             {post.excerpt ? (
@@ -162,15 +139,7 @@ function PostTile({
   );
 }
 
-function PostListItem({
-  authorFallback,
-  post,
-  priority,
-}: {
-  authorFallback?: PostAuthorMetaValue;
-  post: PublicPost;
-  priority?: boolean;
-}) {
+function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean }) {
   return (
     <article className="border-b border-border py-4 last:border-b-0">
       <div className="grid gap-4 sm:min-h-40 sm:grid-cols-[13.5rem_minmax(0,1fr)] sm:items-stretch">
@@ -178,7 +147,7 @@ function PostListItem({
           <Cover post={post} priority={priority} size="list" />
         </Link>
         <div className="flex min-w-0 flex-col py-1 sm:min-h-40">
-          <PostMeta authorFallback={authorFallback} post={post} />
+          <PostMeta post={post} />
           <h3 className="mt-3 truncate text-2xl font-semibold tracking-normal">
             <Link href={`/posts/${post.slug}`}>{post.title}</Link>
           </h3>
@@ -196,7 +165,7 @@ function PostListItem({
   );
 }
 
-export function PostList({ authorFallback, posts, view = "list" }: PostListProps) {
+export function PostList({ posts, view = "list" }: PostListProps) {
   if (posts.length === 0) {
     return (
       <EmptyState
@@ -213,12 +182,7 @@ export function PostList({ authorFallback, posts, view = "list" }: PostListProps
     return (
       <div className="grid gap-6 sm:grid-cols-2">
         {posts.map((post, index) => (
-          <PostTile
-            authorFallback={authorFallback}
-            key={post.path}
-            post={post}
-            priority={index === 0}
-          />
+          <PostTile key={post.path} post={post} priority={index === 0} />
         ))}
       </div>
     );
@@ -227,12 +191,7 @@ export function PostList({ authorFallback, posts, view = "list" }: PostListProps
   return (
     <div className="bg-card shadow-sm">
       {posts.map((post, index) => (
-        <PostListItem
-          authorFallback={authorFallback}
-          key={post.path}
-          post={post}
-          priority={index === 0}
-        />
+        <PostListItem key={post.path} post={post} priority={index === 0} />
       ))}
     </div>
   );
