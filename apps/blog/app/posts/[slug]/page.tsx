@@ -4,13 +4,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
-import { Chip, ChipGroup } from "@hozui/react";
+import { AspectRatio, Chip, ChipGroup } from "@hozui/react";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 
 import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
 import { formatPostDateTime } from "../../../lib/date-format";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
+import { CodeCopyButton } from "../../components/code-copy-button";
 import { RecommendedPosts } from "../../components/recommended-posts";
 
 export const revalidate = 900;
@@ -53,7 +54,13 @@ function inlineContent(node: EditorTextNode) {
   return content;
 }
 
-function PostBodyRenderer({ nodes }: { nodes: EditorNode[] }) {
+function PostBodyRenderer({
+  analyticsContext,
+  nodes,
+}: {
+  analyticsContext: Parameters<typeof CodeCopyButton>[0]["context"];
+  nodes: EditorNode[];
+}) {
   const seen = new Map<string, number>();
   return (
     <>
@@ -119,9 +126,18 @@ function PostBodyRenderer({ nodes }: { nodes: EditorNode[] }) {
           return <blockquote key={index}>{inlineContent(node)}</blockquote>;
         if (node.type === "codeBlock") {
           return (
-            <pre key={index}>
-              <code>{node.text}</code>
-            </pre>
+            <div className="group relative" key={index}>
+              <div className="absolute right-3 top-3 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+                <CodeCopyButton
+                  context={analyticsContext}
+                  target={`code-${index}`}
+                  text={node.text}
+                />
+              </div>
+              <pre>
+                <code>{node.text}</code>
+              </pre>
+            </div>
           );
         }
         if (node.type === "bulletList")
@@ -166,20 +182,19 @@ export default async function PostPage({ params }: PostPageProps) {
     getRecommendedPosts(post, 3),
   ]);
   const postUrl = `${site.siteUrl.replace(/\/$/, "")}/posts/${post.slug}`;
+  const analyticsContext = {
+    provider: site.analytics.provider,
+    slug: post.slug,
+    title: post.title,
+    url: postUrl,
+    siteUrl: site.siteUrl,
+    category: post.category,
+    tags: post.tags,
+  };
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
-      <PostAnalyticsEvents
-        context={{
-          provider: site.analytics.provider,
-          slug: post.slug,
-          title: post.title,
-          url: postUrl,
-          siteUrl: site.siteUrl,
-          category: post.category,
-          tags: post.tags,
-        }}
-      />
+      <PostAnalyticsEvents context={analyticsContext} />
       <script
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         type="application/ld+json"
@@ -189,7 +204,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <header className="mb-12 grid gap-5 bg-card pb-10">
             {post.coverImage ? (
               canUseOptimizedImage(post.coverImage) ? (
-                <div className="relative aspect-[16/9] w-full overflow-hidden">
+                <AspectRatio ratio="16:9">
                   <Image
                     alt=""
                     className="object-cover"
@@ -199,16 +214,18 @@ export default async function PostPage({ params }: PostPageProps) {
                     sizes="(min-width: 1024px) 68ch, calc(100vw - 40px)"
                     src={post.coverImage}
                   />
-                </div>
+                </AspectRatio>
               ) : (
-                <img
-                  alt=""
-                  className="aspect-[16/9] w-full object-cover"
-                  decoding="async"
-                  fetchPriority="high"
-                  loading="eager"
-                  src={post.coverImage}
-                />
+                <AspectRatio ratio="16:9">
+                  <img
+                    alt=""
+                    className="h-full w-full object-cover"
+                    decoding="async"
+                    fetchPriority="high"
+                    loading="eager"
+                    src={post.coverImage}
+                  />
+                </AspectRatio>
               )
             ) : null}
             <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
@@ -237,7 +254,7 @@ export default async function PostPage({ params }: PostPageProps) {
             data-analytics-category={post.category}
             data-analytics-slug={post.slug}
           >
-            <PostBodyRenderer nodes={post.bodyNodes} />
+            <PostBodyRenderer analyticsContext={analyticsContext} nodes={post.bodyNodes} />
           </div>
           <RecommendedPosts posts={recommendedPosts} />
         </div>

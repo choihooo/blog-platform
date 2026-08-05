@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@hozui/react";
 import { createElement } from "react";
 import { trackPostEvent, type PostAnalyticsContext } from "./post-analytics-events";
 
@@ -17,9 +18,11 @@ export function CodeCopyButton({
   target: string;
   context: PostAnalyticsContext;
 }) {
-  return createElement(
-    "button",
-    { onClick: () => void copyCode(text, context, target), type: "button" },
-    "Copy",
-  );
+  return createElement(Button, {
+    label: "Copy",
+    onClick: () => void copyCode(text, context, target),
+    size: "sm",
+    type: "button",
+    variant: "secondary",
+  });
 }

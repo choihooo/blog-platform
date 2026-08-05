@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Chip, ChipGroup, EmptyState } from "@hozui/react";
+import { AspectRatio, Chip, ChipGroup, EmptyState } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
@@ -55,27 +55,26 @@ function Cover({
   priority?: boolean;
   size: "tile" | "list";
 }) {
-  const className =
-    size === "tile"
-      ? "relative aspect-[1.91/1] w-full overflow-hidden"
-      : "relative h-40 w-full overflow-hidden rounded-md sm:h-full sm:min-h-40";
+  const className = size === "tile" ? "w-full" : "w-full sm:h-full sm:min-h-40";
 
   if (post.coverImage) {
     if (!canUseOptimizedImage(post.coverImage)) {
       return (
-        <img
-          alt={`${post.title} cover`}
-          className={`${className} object-cover`}
-          decoding="async"
-          fetchPriority={priority ? "high" : "auto"}
-          loading={priority ? "eager" : "lazy"}
-          src={post.coverImage}
-        />
+        <AspectRatio className={className} ratio={1.91}>
+          <img
+            alt={`${post.title} cover`}
+            className="h-full w-full object-cover"
+            decoding="async"
+            fetchPriority={priority ? "high" : "auto"}
+            loading={priority ? "eager" : "lazy"}
+            src={post.coverImage}
+          />
+        </AspectRatio>
       );
     }
 
     return (
-      <div className={className}>
+      <AspectRatio className={className} ratio={1.91}>
         <Image
           alt={`${post.title} cover`}
           className="object-cover"
@@ -89,12 +88,12 @@ function Cover({
           }
           src={post.coverImage}
         />
-      </div>
+      </AspectRatio>
     );
   }
 
   return (
-    <div className={className}>
+    <AspectRatio className={className} ratio={1.91}>
       <Image
         alt=""
         className="object-cover"
@@ -108,7 +107,7 @@ function Cover({
         }
         src="/brand/no-thumbnail.webp"
       />
-    </div>
+    </AspectRatio>
   );
 }
 
