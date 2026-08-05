@@ -1,4 +1,4 @@
-import { Badge } from "@blog-platform/design-system";
+import { Badge, Button, Chip, ChipGroup, EmptyState, TextField } from "@hozui/react";
 import { ExternalLink, GitBranch, Globe2, ShieldCheck, Tags } from "lucide-react";
 
 import { createTagAction } from "../actions/taxonomy-actions";
@@ -84,7 +84,7 @@ export function SettingsPageView({
               {siteConfig.github.owner}/{siteConfig.github.repo}
             </p>
             <div className="mt-2">
-              <Badge variant="secondary">{siteConfig.github.branch}</Badge>
+              <Badge label={siteConfig.github.branch} tone="neutral" variant="weak" />
             </div>
           </div>
           <div className="rounded-lg border border-border bg-card p-5">
@@ -116,40 +116,23 @@ export function SettingsPageView({
               Tags
             </div>
             <form action={createTagAction} className="mt-5 grid gap-3">
-              <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-                Name
-                <input
-                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  name="name"
-                  placeholder="Next.js"
-                />
-              </label>
-              <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-                Slug
-                <input
-                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  name="slug"
-                  placeholder="nextjs"
-                />
-              </label>
-              <button
-                className="w-fit rounded-md bg-foreground px-3 py-2 text-sm font-semibold text-background"
-                type="submit"
-              >
-                Add tag
-              </button>
+              <TextField label="Name" name="name" placeholder="Next.js" />
+              <TextField label="Slug" name="slug" placeholder="nextjs" />
+              <Button className="w-fit" label="Add tag" type="submit" />
             </form>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <ChipGroup aria-label="Tags" className="mt-5 flex flex-wrap gap-2">
               {taxonomy.tags.length > 0 ? (
                 taxonomy.tags.map((tag) => (
-                  <Badge key={tag.id} variant="outline">
-                    {tag.name} / {tag.slug}
-                  </Badge>
+                  <Chip key={tag.id} label={`${tag.name} / ${tag.slug}`} tone="neutral" />
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No tags yet.</p>
+                <EmptyState
+                  density="compact"
+                  description="Tags added to the repository will appear here."
+                  title="No tags yet."
+                />
               )}
-            </div>
+            </ChipGroup>
           </div>
         </section>
       </div>

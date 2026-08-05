@@ -1,4 +1,4 @@
-import { Badge } from "@blog-platform/design-system";
+import { Badge } from "@hozui/react";
 
 export type SaveStatus =
   | "clean"
@@ -26,13 +26,19 @@ export function SaveStatusBadge({ status }: { status: SaveStatus }) {
 
   return (
     <Badge
+      label={label[status]}
+      tone={
+        status === "failed" || status === "unsupported" || status === "refreshFailed"
+          ? "critical"
+          : status === "published" || status === "saved" || status === "clean"
+            ? "positive"
+            : "neutral"
+      }
       variant={
         status === "failed" || status === "unsupported" || status === "refreshFailed"
           ? "outline"
-          : "secondary"
+          : "weak"
       }
-    >
-      {label[status]}
-    </Badge>
+    />
   );
 }

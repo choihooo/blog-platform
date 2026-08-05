@@ -1,4 +1,4 @@
-import { Badge } from "@blog-platform/design-system";
+import { Badge, EmptyState } from "@hozui/react";
 import { ArrowUpRight, FilePenLine, Files, Settings2 } from "lucide-react";
 
 import { AccessState, CmsShell } from "../components/shell/index";
@@ -68,7 +68,7 @@ export function CmsHomePageView({
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-3">
-                    <Badge variant="outline">{post.status}</Badge>
+                    <Badge label={post.status} tone="neutral" variant="outline" />
                     <ArrowUpRight
                       aria-hidden="true"
                       className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -78,15 +78,21 @@ export function CmsHomePageView({
                 </a>
               ))}
               {recentPosts.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="font-medium">아직 작성된 글이 없습니다.</p>
-                  <a
-                    className="mt-2 inline-block text-sm text-muted-foreground underline underline-offset-4"
-                    href="/posts/new"
-                  >
-                    첫 초안 만들기
-                  </a>
-                </div>
+                <EmptyState
+                  className="px-5 py-10"
+                  density="compact"
+                  description="첫 초안을 만들면 최근 글 목록에 표시됩니다."
+                  media="icon"
+                  title="아직 작성된 글이 없습니다."
+                  actions={
+                    <a
+                      className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground"
+                      href="/posts/new"
+                    >
+                      첫 초안 만들기
+                    </a>
+                  }
+                />
               ) : null}
             </div>
           </section>

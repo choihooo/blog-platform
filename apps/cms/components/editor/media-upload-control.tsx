@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { Image } from "lucide-react";
 
-import { Button, Input } from "@blog-platform/design-system";
+import { Button, IconButton, TextField, Tooltip } from "@hozui/react";
 
 import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
 import type { UploadEditorMediaResult } from "../../lib/editor";
@@ -44,36 +44,43 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
 
   return (
     <div className="flex items-center gap-1">
-      <Button
-        aria-label="Upload image"
-        disabled={isPending}
-        onClick={() => setDetailsOpen((value) => !value)}
-        size="icon"
-        type="button"
-        variant="ghost"
-      >
-        <Image className="h-4 w-4" />
-      </Button>
+      <Tooltip content="Upload image">
+        <IconButton
+          aria-label="Upload image"
+          disabled={isPending}
+          icon={<Image aria-hidden="true" size={16} />}
+          onClick={() => setDetailsOpen((value) => !value)}
+          size="sm"
+          type="button"
+          variant="ghost"
+        />
+      </Tooltip>
       {detailsOpen ? (
         <div className="flex flex-wrap items-center gap-1">
-          <Input
+          <TextField
             aria-label="Image alt text"
             className="h-8 w-32"
+            label="Alt"
             onChange={(event) => setAlt(event.currentTarget.value)}
+            onValueChange={setAlt}
             placeholder="Alt"
             value={alt}
           />
-          <Input
+          <TextField
             aria-label="Image title"
             className="h-8 w-32"
+            label="Title"
             onChange={(event) => setTitle(event.currentTarget.value)}
+            onValueChange={setTitle}
             placeholder="Title"
             value={title}
           />
-          <Input
+          <TextField
             aria-label="Image caption"
             className="h-8 w-32"
+            label="Caption"
             onChange={(event) => setCaption(event.currentTarget.value)}
+            onValueChange={setCaption}
             placeholder="Caption"
             value={caption}
           />
@@ -89,9 +96,12 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
             }}
             type="file"
           />
-          <Button disabled={isPending} onClick={() => inputRef.current?.click()} type="button">
-            Choose
-          </Button>
+          <Button
+            disabled={isPending}
+            label="Choose"
+            onClick={() => inputRef.current?.click()}
+            type="button"
+          />
           <MediaUploadStatus pending={isPending} result={result} />
         </div>
       ) : null}

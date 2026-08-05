@@ -1,14 +1,4 @@
-import {
-  Badge,
-  Button,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@blog-platform/design-system";
+import { Badge, Button, EmptyState } from "@hozui/react";
 import { ArrowUpRight, Plus } from "lucide-react";
 
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
@@ -114,9 +104,9 @@ export function PostsPageView({
           </a>
         </div>
         <form action="/posts" className="flex max-w-3xl flex-wrap gap-2">
-          <Input
+          <input
             aria-label="Search posts"
-            className="h-10"
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
             defaultValue={query}
             name="q"
             placeholder="제목, slug, 상태, 본문 검색"
@@ -131,52 +121,56 @@ export function PostsPageView({
             <option value="published">최신순</option>
             <option value="updated">최근 수정순</option>
           </select>
-          <Button type="submit" variant="secondary">
-            검색
-          </Button>
+          <Button label="검색" type="submit" variant="secondary" />
           {query ? (
-            <Button asChild type="button" variant="ghost">
-              <a href="/posts">초기화</a>
-            </Button>
+            <a
+              className="inline-flex h-10 items-center rounded-md px-3 text-sm font-medium text-muted-foreground hover:text-foreground"
+              href="/posts"
+            >
+              초기화
+            </a>
           ) : null}
         </form>
         <div className="rounded-lg border border-border bg-card">
           {posts.length > 0 ? (
-            <Table className="min-w-[46rem]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[16rem] whitespace-nowrap">제목</TableHead>
-                  <TableHead className="whitespace-nowrap">상태</TableHead>
-                  <TableHead className="whitespace-nowrap">발행일</TableHead>
-                  <TableHead className="whitespace-nowrap">수정일</TableHead>
-                  <TableHead className="whitespace-nowrap">경로</TableHead>
-                  <TableHead className="whitespace-nowrap">바로가기</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <table className="w-full min-w-[46rem] text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-xs font-semibold text-muted-foreground">
+                  <th className="min-w-[16rem] whitespace-nowrap px-4 py-3">제목</th>
+                  <th className="whitespace-nowrap px-4 py-3">상태</th>
+                  <th className="whitespace-nowrap px-4 py-3">발행일</th>
+                  <th className="whitespace-nowrap px-4 py-3">수정일</th>
+                  <th className="whitespace-nowrap px-4 py-3">경로</th>
+                  <th className="whitespace-nowrap px-4 py-3">바로가기</th>
+                </tr>
+              </thead>
+              <tbody>
                 {posts.map((post) => (
-                  <TableRow key={post.path} className="hover:bg-muted/60">
-                    <TableCell className="min-w-[16rem]">
+                  <tr
+                    key={post.path}
+                    className="border-b border-border last:border-b-0 hover:bg-muted/60"
+                  >
+                    <td className="min-w-[16rem] px-4 py-3">
                       <a
                         className="block min-w-0 truncate font-medium"
                         href={`/posts/${post.slug}`}
                       >
                         {post.title}
                       </a>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{post.status}</Badge>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge label={post.status} tone="neutral" variant="outline" />
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-muted-foreground">
                       {formatDate(post.publishedAt)}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-muted-foreground">
                       {formatDate(post.updatedAt)}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
                       {post.path}
-                    </TableCell>
-                    <TableCell>
+                    </td>
+                    <td className="px-4 py-3">
                       <a
                         className="inline-flex items-center gap-2 text-muted-foreground transition-transform hover:-translate-y-0.5 hover:translate-x-0.5"
                         href={`/posts/${post.slug}`}
@@ -185,20 +179,23 @@ export function PostsPageView({
                         열기
                         <ArrowUpRight aria-hidden="true" size={16} />
                       </a>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           ) : (
-            <div className="px-5 py-14 text-center">
-              <p className="font-medium">표시할 글이 없습니다.</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {query
+            <EmptyState
+              className="px-5 py-14"
+              density="compact"
+              description={
+                query
                   ? "검색어를 바꾸거나 초기화해보세요."
-                  : "D1 연결을 확인하거나 첫 초안을 만들어보세요."}
-              </p>
-            </div>
+                  : "D1 연결을 확인하거나 첫 초안을 만들어보세요."
+              }
+              media="icon"
+              title="표시할 글이 없습니다."
+            />
           )}
         </div>
         {totalCount > POSTS_PER_PAGE ? (
@@ -211,22 +208,24 @@ export function PostsPageView({
             </p>
             <div className="flex items-center gap-2">
               {hasPreviousPage ? (
-                <Button asChild variant="secondary">
-                  <a href={postsHref({ query, page: currentPage - 1, sort })}>이전</a>
-                </Button>
-              ) : (
-                <Button disabled variant="secondary">
+                <a
+                  className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
+                  href={postsHref({ query, page: currentPage - 1, sort })}
+                >
                   이전
-                </Button>
+                </a>
+              ) : (
+                <Button disabled label="이전" variant="secondary" />
               )}
               {hasNextPage ? (
-                <Button asChild variant="secondary">
-                  <a href={postsHref({ query, page: currentPage + 1, sort })}>다음</a>
-                </Button>
-              ) : (
-                <Button disabled variant="secondary">
+                <a
+                  className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
+                  href={postsHref({ query, page: currentPage + 1, sort })}
+                >
                   다음
-                </Button>
+                </a>
+              ) : (
+                <Button disabled label="다음" variant="secondary" />
               )}
             </div>
           </nav>

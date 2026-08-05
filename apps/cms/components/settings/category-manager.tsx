@@ -1,16 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Badge,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  Input,
-} from "@blog-platform/design-system";
+import { Badge, Button, EmptyState, IconButton, Modal, TextField } from "@hozui/react";
 import { ChevronDown, Edit3, FolderTree, Trash2 } from "lucide-react";
 
 import {
@@ -70,19 +61,17 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
           <FolderTree aria-hidden="true" size={17} />
           Categories
         </div>
-        <Badge variant="secondary">{parentCategories.length} parents</Badge>
+        <Badge label={`${parentCategories.length} parents`} tone="neutral" variant="weak" />
       </div>
 
       <div className="mt-5 grid gap-3 border-b border-border pb-5 lg:grid-cols-2">
         <form action={createCategoryAction} className="grid gap-3">
           <p className="text-xs font-semibold text-muted-foreground">1차 카테고리 추가</p>
           <div className="grid gap-2 sm:grid-cols-2">
-            <Input name="name" placeholder="이름" />
-            <Input name="slug" placeholder="slug" />
+            <TextField label="이름" name="name" placeholder="이름" />
+            <TextField label="slug" name="slug" placeholder="slug" />
           </div>
-          <Button className="w-fit" type="submit">
-            Add parent
-          </Button>
+          <Button className="w-fit" label="Add parent" type="submit" />
         </form>
         <form action={createCategoryAction} className="grid gap-3">
           <p className="text-xs font-semibold text-muted-foreground">2차 카테고리 추가</p>
@@ -98,12 +87,10 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
                 </option>
               ))}
             </select>
-            <Input name="name" placeholder="이름" />
-            <Input name="childSlug" placeholder="child-slug" />
+            <TextField label="이름" name="name" placeholder="이름" />
+            <TextField label="child slug" name="childSlug" placeholder="child-slug" />
           </div>
-          <Button className="w-fit" type="submit">
-            Add child
-          </Button>
+          <Button className="w-fit" label="Add child" type="submit" />
         </form>
       </div>
 
@@ -146,11 +133,21 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
             </div>
           ))
         ) : (
-          <p className="px-3 py-8 text-center text-sm text-muted-foreground">No categories yet.</p>
+          <EmptyState
+            className="px-3 py-8"
+            density="compact"
+            description="Add parent and child categories to organize published posts."
+            title="No categories yet."
+          />
         )}
       </div>
 
-      <Dialog open={dialog?.mode === "edit"} onOpenChange={(open) => !open && setDialog(null)}>
+      <Modal
+        open={dialog?.mode === "edit"}
+        title="카테고리 수정"
+        description="이름, slug, 상위 카테고리를 한 번에 수정합니다."
+        onRequestClose={() => setDialog(null)}
+      >
         {dialog?.mode === "edit" ? (
           <EditCategoryDialog
             category={dialog.category}
@@ -158,9 +155,15 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
             onDone={() => setDialog(null)}
           />
         ) : null}
-      </Dialog>
+      </Modal>
 
-      <Dialog open={dialog?.mode === "delete"} onOpenChange={(open) => !open && setDialog(null)}>
+      <Modal
+        open={dialog?.mode === "delete"}
+        title="카테고리 삭제"
+        description="삭제한 카테고리는 되돌릴 수 없습니다. 연결된 글이나 하위 카테고리가 있으면 삭제할 수 없습니다."
+        variant="destructive"
+        onRequestClose={() => setDialog(null)}
+      >
         {dialog?.mode === "delete" ? (
           <DeleteCategoryDialog
             category={dialog.category}
@@ -168,7 +171,7 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
             onDone={() => setDialog(null)}
           />
         ) : null}
-      </Dialog>
+      </Modal>
     </div>
   );
 }
@@ -211,20 +214,21 @@ function CategoryRow({
           {isChild ? <span className="h-px w-3 bg-border" /> : null}
         </span>
         {!isChild && childCount > 0 ? (
-          <Button
+          <IconButton
             aria-label={`${category.name} ${collapsed ? "펼치기" : "접기"}`}
             className="h-7 w-7 shrink-0"
+            icon={
+              <ChevronDown
+                aria-hidden="true"
+                className={collapsed ? "-rotate-90 transition-transform" : "transition-transform"}
+                size={15}
+              />
+            }
             onClick={onToggle}
-            size="icon"
+            size="sm"
             type="button"
             variant="ghost"
-          >
-            <ChevronDown
-              aria-hidden="true"
-              className={collapsed ? "-rotate-90 transition-transform" : "transition-transform"}
-              size={15}
-            />
-          </Button>
+          />
         ) : (
           <span className="h-7 w-7 shrink-0" />
         )}
@@ -239,30 +243,30 @@ function CategoryRow({
       </div>
       <code className="truncate text-xs text-muted-foreground">{displaySlug}</code>
       <div className="text-right">
-        <Badge variant={(category.postCount ?? 0) > 0 ? "secondary" : "outline"}>
-          {category.postCount ?? 0}
-        </Badge>
+        <Badge
+          label={String(category.postCount ?? 0)}
+          tone="neutral"
+          variant={(category.postCount ?? 0) > 0 ? "weak" : "outline"}
+        />
       </div>
       <div className="flex justify-end gap-1">
-        <Button
+        <IconButton
           aria-label={`${category.name} 수정`}
+          icon={<Edit3 aria-hidden="true" size={15} />}
           onClick={() => onEdit(category)}
-          size="icon"
+          size="sm"
           type="button"
           variant="ghost"
-        >
-          <Edit3 aria-hidden="true" size={15} />
-        </Button>
-        <Button
+        />
+        <IconButton
           aria-label={`${category.name} 삭제`}
+          icon={<Trash2 aria-hidden="true" size={15} />}
           onClick={() => onDelete(category)}
-          size="icon"
+          size="sm"
           title={deleteReason}
           type="button"
           variant="ghost"
-        >
-          <Trash2 aria-hidden="true" size={15} />
-        </Button>
+        />
       </div>
     </div>
   );
@@ -280,17 +284,13 @@ function EditCategoryDialog({
   const isChild = category.depth === 2;
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>카테고리 수정</DialogTitle>
-        <DialogDescription>이름, slug, 상위 카테고리를 한 번에 수정합니다.</DialogDescription>
-      </DialogHeader>
+    <>
       <form action={updateCategoryAction} className="grid gap-4" onSubmit={onDone}>
         <input name="categoryId" type="hidden" value={category.id} />
         <input name="depth" type="hidden" value={category.depth} />
         <label className="grid gap-1 text-xs font-medium text-muted-foreground">
           이름
-          <Input defaultValue={category.name} name="name" />
+          <TextField defaultValue={category.name} label="이름" name="name" />
         </label>
         {isChild ? (
           <>
@@ -310,23 +310,21 @@ function EditCategoryDialog({
             </label>
             <label className="grid gap-1 text-xs font-medium text-muted-foreground">
               Slug
-              <Input defaultValue={childSlugFor(category)} name="childSlug" />
+              <TextField defaultValue={childSlugFor(category)} label="Slug" name="childSlug" />
             </label>
           </>
         ) : (
           <label className="grid gap-1 text-xs font-medium text-muted-foreground">
             Slug
-            <Input defaultValue={category.slug} name="slug" />
+            <TextField defaultValue={category.slug} label="Slug" name="slug" />
           </label>
         )}
         <div className="flex justify-end gap-2 pt-2">
-          <Button onClick={onDone} type="button" variant="outline">
-            취소
-          </Button>
-          <Button type="submit">저장</Button>
+          <Button label="취소" onClick={onDone} type="button" variant="secondary" />
+          <Button label="저장" type="submit" />
         </div>
       </form>
-    </DialogContent>
+    </>
   );
 }
 
@@ -342,14 +340,7 @@ function DeleteCategoryDialog({
   const reason = deleteBlockReason({ category, childCount });
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>카테고리 삭제</DialogTitle>
-        <DialogDescription>
-          삭제한 카테고리는 되돌릴 수 없습니다. 연결된 글이나 하위 카테고리가 있으면 삭제할 수
-          없습니다.
-        </DialogDescription>
-      </DialogHeader>
+    <>
       <div className="rounded-md border border-border bg-muted/40 p-3 text-sm">
         <div className="font-semibold">{category.name}</div>
         <code className="mt-1 block text-xs text-muted-foreground">{category.slug}</code>
@@ -361,13 +352,9 @@ function DeleteCategoryDialog({
       <form action={deleteCategoryAction} className="flex justify-end gap-2" onSubmit={onDone}>
         <input name="categoryId" type="hidden" value={category.id} />
         <input name="slug" type="hidden" value={category.slug} />
-        <Button onClick={onDone} type="button" variant="outline">
-          취소
-        </Button>
-        <Button disabled={Boolean(reason)} type="submit" variant="destructive">
-          삭제
-        </Button>
+        <Button label="취소" onClick={onDone} type="button" variant="secondary" />
+        <Button disabled={Boolean(reason)} label="삭제" type="submit" variant="danger" />
       </form>
-    </DialogContent>
+    </>
   );
 }

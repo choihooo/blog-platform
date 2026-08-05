@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import type { EditorFrontmatter } from "@blog-platform/editor";
-import { Button, Input } from "@blog-platform/design-system";
+import { Button, TextField } from "@hozui/react";
 
 import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
 import type { UploadEditorMediaResult } from "../../lib/editor";
@@ -82,33 +82,30 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
   return (
     <aside className="space-y-4 border-l border-border p-4">
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-title">
-          Title
-        </label>
-        <Input
+        <TextField
           id="editor-title"
+          label="Title"
           value={frontmatter.title}
           onChange={(event) => update("title", event.currentTarget.value)}
+          onValueChange={(value) => update("title", value)}
         />
       </div>
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-excerpt">
-          Excerpt
-        </label>
-        <Input
+        <TextField
           id="editor-excerpt"
+          label="Excerpt"
           value={frontmatter.excerpt ?? ""}
           onChange={(event) => update("excerpt", event.currentTarget.value)}
+          onValueChange={(value) => update("excerpt", value)}
         />
       </div>
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-slug">
-          Slug
-        </label>
-        <Input
+        <TextField
           id="editor-slug"
+          label="Slug"
           value={normalizedPostSlug}
           onChange={(event) => update("slug", normalizeSlug(event.currentTarget.value))}
+          onValueChange={(value) => update("slug", normalizeSlug(value))}
           placeholder="created on save"
         />
         {isSlugMutated ? (
@@ -155,13 +152,12 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         </select>
       </div>
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-tags">
-          Tags
-        </label>
-        <Input
+        <TextField
           id="editor-tags"
+          label="Tags"
           value={(frontmatter.tags ?? []).join(", ")}
           onChange={(event) => updateTags(event.currentTarget.value)}
+          onValueChange={updateTags}
           placeholder="blog, nextjs"
         />
       </div>
@@ -198,9 +194,12 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
           }}
           type="file"
         />
-        <Button disabled={isPending} onClick={() => inputRef.current?.click()} type="button">
-          Upload cover
-        </Button>
+        <Button
+          disabled={isPending}
+          label="Upload cover"
+          onClick={() => inputRef.current?.click()}
+          type="button"
+        />
         <MediaUploadStatus pending={isPending} result={result} />
       </div>
     </aside>

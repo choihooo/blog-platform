@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const site = await getSiteConfig();
   const analytics = analyticsInit(site);
   return (
-    <html lang="ko">
+    <html lang="ko" data-theme="light">
       <body>
         {analytics.ok ? (
           <>

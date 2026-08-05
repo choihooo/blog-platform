@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Badge, Card, CardContent } from "@blog-platform/design-system";
+import { Chip, ChipGroup, EmptyState } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
@@ -31,22 +31,18 @@ function PostMeta({ post }: { post: PublicPost }) {
 
 function PostTaxonomy({ post }: { post: PublicPost }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <ChipGroup aria-label={`${post.title} taxonomy`} className="flex flex-wrap gap-2">
       {post.categoryEntry ? (
         <Link href={`/categories/${post.categoryEntry.slug}`}>
-          <Badge className="h-7" variant="secondary">
-            {post.categoryEntry.label}
-          </Badge>
+          <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
         </Link>
       ) : null}
       {post.tagEntries.map((tag) => (
         <Link href={`/tags/${tag.slug}`} key={tag.slug}>
-          <Badge className="h-7" variant="outline">
-            {tag.label}
-          </Badge>
+          <Chip label={tag.label} size="sm" tone="neutral" />
         </Link>
       ))}
-    </div>
+    </ChipGroup>
   );
 }
 
@@ -118,10 +114,10 @@ function Cover({
 
 function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden border-0 bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
+    <article className="flex h-full flex-col overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
       <Link className="block flex-1" href={`/posts/${post.slug}`}>
         <Cover post={post} priority={priority} size="tile" />
-        <CardContent className="grid gap-4 p-5">
+        <div className="grid gap-4 p-5">
           <PostMeta post={post} />
           <div>
             <h3 className="line-clamp-2 text-2xl font-semibold tracking-normal">{post.title}</h3>
@@ -131,12 +127,12 @@ function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) 
               </p>
             ) : null}
           </div>
-        </CardContent>
+        </div>
       </Link>
-      <CardContent className="mt-auto px-5 pb-5 pt-0">
+      <div className="mt-auto px-5 pb-5 pt-0">
         <PostTaxonomy post={post} />
-      </CardContent>
-    </Card>
+      </div>
+    </article>
   );
 }
 
@@ -169,11 +165,13 @@ function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean
 export function PostList({ posts, view = "list" }: PostListProps) {
   if (posts.length === 0) {
     return (
-      <Card className="border-0 bg-card shadow-sm">
-        <CardContent className="p-6 text-sm text-muted-foreground">
-          공개된 글이 없습니다.
-        </CardContent>
-      </Card>
+      <EmptyState
+        className="bg-card shadow-sm"
+        density="compact"
+        description="발행된 글이 생기면 이 목록에 표시됩니다."
+        media="icon"
+        title="공개된 글이 없습니다."
+      />
     );
   }
 

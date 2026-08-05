@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Chip, ChipGroup, EmptyState } from "@hozui/react";
 import { trimSlash } from "@blog-platform/seo-engine";
 
 import { getPublishedPosts, getSiteConfig, getTags } from "../../lib/content-source";
@@ -47,27 +48,20 @@ export default async function TagsPage() {
       </section>
 
       {sortedTags.length > 0 ? (
-        <nav aria-label="태그 목록" className="flex flex-wrap gap-2.5 sm:gap-3">
+        <ChipGroup aria-label="태그 목록" className="flex flex-wrap gap-2.5 sm:gap-3" role="nav">
           {sortedTags.map((tag) => (
-            <Link
-              className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-semibold transition-[color,background-color,border-color,transform] duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:translate-y-px sm:text-base"
-              href={`/tags/${tag.slug}`}
-              key={tag.slug}
-            >
-              <span>{tag.label}</span>
-              <span className="text-xs font-medium text-muted-foreground transition-colors group-hover:text-primary-foreground/70 sm:text-sm">
-                {tagCounts.get(tag.slug) ?? 0}
-              </span>
+            <Link href={`/tags/${tag.slug}`} key={tag.slug}>
+              <Chip label={`${tag.label} · ${tagCounts.get(tag.slug) ?? 0}`} tone="accent" />
             </Link>
           ))}
-        </nav>
+        </ChipGroup>
       ) : (
-        <div className="border-y border-border py-10">
-          <p className="text-base font-semibold">아직 등록된 태그가 없습니다.</p>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            글에 태그가 추가되면 이곳에서 바로 찾아볼 수 있습니다.
-          </p>
-        </div>
+        <EmptyState
+          className="border-y border-border"
+          description="글에 태그가 추가되면 이곳에서 바로 찾아볼 수 있습니다."
+          media="icon"
+          title="아직 등록된 태그가 없습니다."
+        />
       )}
     </main>
   );

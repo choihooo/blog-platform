@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
-import { Badge, Card, CardContent } from "@blog-platform/design-system";
+import { Chip, ChipGroup } from "@hozui/react";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 
 import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
@@ -219,18 +219,18 @@ export default async function PostPage({ params }: PostPageProps) {
               <span>{post.readingTimeLabel}</span>
               {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <ChipGroup aria-label="글 분류" className="flex flex-wrap gap-2">
               {post.categoryEntry ? (
                 <Link href={`/categories/${post.categoryEntry.slug}`}>
-                  <Badge variant="secondary">{post.categoryEntry.label}</Badge>
+                  <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
                 </Link>
               ) : null}
               {post.tagEntries.map((tag) => (
                 <Link href={`/tags/${tag.slug}`} key={tag.slug}>
-                  <Badge variant="outline">{tag.label}</Badge>
+                  <Chip label={tag.label} size="sm" tone="neutral" />
                 </Link>
               ))}
-            </div>
+            </ChipGroup>
           </header>
           <div
             className="prose"
@@ -242,11 +242,11 @@ export default async function PostPage({ params }: PostPageProps) {
           <RecommendedPosts posts={recommendedPosts} />
         </div>
         {post.toc.length > 0 ? (
-          <Card
+          <aside
             className="h-fit border-0 bg-card shadow-sm lg:sticky lg:top-6"
             aria-label="Table of contents"
           >
-            <CardContent className="grid gap-3 p-4 text-sm leading-6">
+            <div className="grid gap-3 p-4 text-sm leading-6">
               <strong className="text-foreground">On this page</strong>
               {post.toc.map((item) => (
                 <a
@@ -258,8 +258,8 @@ export default async function PostPage({ params }: PostPageProps) {
                   {item.text}
                 </a>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </aside>
         ) : null}
       </article>
     </main>

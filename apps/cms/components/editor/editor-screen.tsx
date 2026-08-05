@@ -6,15 +6,7 @@ import Link from "@tiptap/extension-link";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
 import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  Input,
-} from "@blog-platform/design-system";
+import { Button, Modal, TextField } from "@hozui/react";
 
 import {
   archivePostAction,
@@ -591,81 +583,72 @@ export function EditorScreen({
           <SeoPanel links={analyticsLinks} report={seoReport} />
         </aside>
       </div>
-      <Dialog open={imageAttributesOpen} onOpenChange={setImageAttributesOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Image attributes</DialogTitle>
-            <DialogDescription>
-              Set alt text and title for the selected body image.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedImage ? (
-            <div className="space-y-4">
-              <img
-                alt={selectedImage.alt || "Selected body image"}
-                className="aspect-video w-full rounded-md border border-border object-contain"
-                src={selectedImage.src}
+      <Modal
+        open={imageAttributesOpen}
+        title="Image attributes"
+        description="Set alt text and title for the selected body image."
+        onRequestClose={() => setImageAttributesOpen(false)}
+      >
+        {selectedImage ? (
+          <div className="space-y-4">
+            <img
+              alt={selectedImage.alt || "Selected body image"}
+              className="aspect-video w-full rounded-md border border-border object-contain"
+              src={selectedImage.src}
+            />
+            <div className="space-y-2">
+              <TextField
+                id="selected-image-alt"
+                label="Alt text"
+                onChange={(event) =>
+                  setSelectedImage((current) =>
+                    current ? { ...current, alt: event.currentTarget.value } : current,
+                  )
+                }
+                onValueChange={(value) =>
+                  setSelectedImage((current) => (current ? { ...current, alt: value } : current))
+                }
+                placeholder="Describe the image"
+                value={selectedImage.alt}
               />
-              <div className="space-y-2">
-                <label
-                  className="text-xs font-medium text-muted-foreground"
-                  htmlFor="selected-image-alt"
-                >
-                  Alt text
-                </label>
-                <Input
-                  id="selected-image-alt"
-                  onChange={(event) =>
-                    setSelectedImage((current) =>
-                      current ? { ...current, alt: event.currentTarget.value } : current,
-                    )
-                  }
-                  placeholder="Describe the image"
-                  value={selectedImage.alt}
-                />
-              </div>
-              <div className="space-y-2">
-                <label
-                  className="text-xs font-medium text-muted-foreground"
-                  htmlFor="selected-image-title"
-                >
-                  Title
-                </label>
-                <Input
-                  id="selected-image-title"
-                  onChange={(event) =>
-                    setSelectedImage((current) =>
-                      current ? { ...current, title: event.currentTarget.value } : current,
-                    )
-                  }
-                  placeholder="Optional title"
-                  value={selectedImage.title}
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button
-                  onClick={() => setImageAttributesOpen(false)}
-                  type="button"
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() =>
-                    applySelectedImageAttributes({
-                      alt: selectedImage.alt,
-                      title: selectedImage.title,
-                    })
-                  }
-                  type="button"
-                >
-                  Apply
-                </Button>
-              </div>
             </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+            <div className="space-y-2">
+              <TextField
+                id="selected-image-title"
+                label="Title"
+                onChange={(event) =>
+                  setSelectedImage((current) =>
+                    current ? { ...current, title: event.currentTarget.value } : current,
+                  )
+                }
+                onValueChange={(value) =>
+                  setSelectedImage((current) => (current ? { ...current, title: value } : current))
+                }
+                placeholder="Optional title"
+                value={selectedImage.title}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                label="Cancel"
+                onClick={() => setImageAttributesOpen(false)}
+                type="button"
+                variant="secondary"
+              />
+              <Button
+                label="Apply"
+                onClick={() =>
+                  applySelectedImageAttributes({
+                    alt: selectedImage.alt,
+                    title: selectedImage.title,
+                  })
+                }
+                type="button"
+              />
+            </div>
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 }

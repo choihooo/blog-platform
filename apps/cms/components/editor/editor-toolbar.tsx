@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { Editor } from "@tiptap/react";
 
-import { Button } from "@blog-platform/design-system";
+import { Button, IconButton } from "@hozui/react";
 import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadControl } from "./media-upload-control";
 
@@ -90,52 +90,70 @@ export function EditorToolbar({
       {tools.map((tool) => {
         const Icon = tool.icon;
         return (
-          <Button
-            key={tool.label}
+          <IconButton
             aria-label={tool.label}
             disabled={!editor}
+            icon={<Icon aria-hidden="true" size={16} />}
+            key={tool.label}
             onClick={() => {
               if (editor) tool.run(editor);
             }}
-            size="icon"
+            size="sm"
             type="button"
             variant="ghost"
-          >
-            <Icon className="h-4 w-4" />
-          </Button>
+          />
         );
       })}
       {onMediaUploaded ? (
         <MediaUploadControl onUploaded={onMediaUploaded} postSlug={postSlug} />
       ) : null}
       <div className="ml-auto flex flex-wrap items-center gap-2">
-        <Button disabled={saveDisabled} onClick={onSave} type="button" variant="secondary">
-          <Save className="h-4 w-4" />
-          Save
-        </Button>
+        <Button
+          disabled={saveDisabled}
+          label="Save"
+          leadingIcon={<Save aria-hidden="true" size={16} />}
+          onClick={onSave}
+          type="button"
+          variant="secondary"
+        />
         {onPublish ? (
-          <Button disabled={publishDisabled} onClick={onPublish} type="button">
-            <Send className="h-4 w-4" />
-            Publish
-          </Button>
+          <Button
+            disabled={publishDisabled}
+            label="Publish"
+            leadingIcon={<Send aria-hidden="true" size={16} />}
+            onClick={onPublish}
+            type="button"
+          />
         ) : null}
         {onPreview ? (
-          <Button disabled={publishDisabled} onClick={onPreview} type="button" variant="outline">
-            <Eye className="h-4 w-4" />
-            Preview
-          </Button>
+          <Button
+            disabled={publishDisabled}
+            label="Preview"
+            leadingIcon={<Eye aria-hidden="true" size={16} />}
+            onClick={onPreview}
+            type="button"
+            variant="secondary"
+          />
         ) : null}
         {onUnpublish ? (
-          <Button disabled={publishDisabled} onClick={onUnpublish} type="button" variant="outline">
-            <Undo2 className="h-4 w-4" />
-            Unpublish
-          </Button>
+          <Button
+            disabled={publishDisabled}
+            label="Unpublish"
+            leadingIcon={<Undo2 aria-hidden="true" size={16} />}
+            onClick={onUnpublish}
+            type="button"
+            variant="secondary"
+          />
         ) : null}
         {onArchive ? (
-          <Button disabled={publishDisabled} onClick={onArchive} type="button" variant="outline">
-            <Archive className="h-4 w-4" />
-            Archive
-          </Button>
+          <Button
+            disabled={publishDisabled}
+            label="Archive"
+            leadingIcon={<Archive aria-hidden="true" size={16} />}
+            onClick={onArchive}
+            type="button"
+            variant="secondary"
+          />
         ) : null}
       </div>
     </div>

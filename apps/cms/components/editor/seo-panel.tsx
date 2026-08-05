@@ -2,7 +2,7 @@
 
 import type { SeoReport } from "@blog-platform/seo-engine";
 import type { ExternalConsoleLinks } from "@blog-platform/analytics";
-import { Badge, Card, CardContent } from "@blog-platform/design-system";
+import { Badge } from "@hozui/react";
 
 type Props = {
   report: SeoReport;
@@ -10,13 +10,13 @@ type Props = {
 };
 
 export function SeoPanel({ report, links }: Props) {
-  const tone = report.status === "pass" ? "default" : "secondary";
+  const tone = report.status === "pass" ? "positive" : "warning";
   return (
-    <Card className="m-4">
-      <CardContent className="space-y-4 p-4 text-sm">
+    <section className="m-4 rounded-lg border border-border bg-card">
+      <div className="space-y-4 p-4 text-sm">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">SEO</h3>
-          <Badge variant={tone}>{report.score}/100</Badge>
+          <Badge label={`${report.score}/100`} tone={tone} variant="weak" />
         </div>
         <section className="space-y-2 rounded-md border border-border/60 bg-muted/25 p-3">
           <h4 className="text-xs font-semibold tracking-wide text-foreground">Issues</h4>
@@ -72,7 +72,7 @@ export function SeoPanel({ report, links }: Props) {
             ))}
           </div>
         </section>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

@@ -1,5 +1,3 @@
-import { Button } from "@blog-platform/design-system";
-
 import type { AccessDecision } from "../../lib/auth/index";
 import { GitHubSignInButton } from "../auth/index";
 
@@ -46,9 +44,12 @@ export function AccessState({ decision }: AccessStateProps) {
         {shouldSignIn ? (
           <GitHubSignInButton>{state.action}</GitHubSignInButton>
         ) : (
-          <Button asChild className="mt-6">
-            <a href={href}>{state.action}</a>
-          </Button>
+          <a
+            className="mt-6 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5"
+            href={href}
+          >
+            {state.action}
+          </a>
         )}
       </section>
     </main>

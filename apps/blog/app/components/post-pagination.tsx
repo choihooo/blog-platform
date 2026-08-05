@@ -1,4 +1,4 @@
-import { Button } from "@blog-platform/design-system";
+import { Button } from "@hozui/react";
 
 type PostPaginationProps = {
   currentPage: number;
@@ -44,22 +44,24 @@ export function PostPagination({ currentPage, totalPages, hrefForPage }: PostPag
       </p>
       <div className="flex items-center gap-2">
         {hasPreviousPage ? (
-          <Button asChild variant="secondary">
-            <a href={hrefForPage(currentPage - 1)}>이전</a>
-          </Button>
-        ) : (
-          <Button disabled variant="secondary">
+          <a
+            className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
+            href={hrefForPage(currentPage - 1)}
+          >
             이전
-          </Button>
+          </a>
+        ) : (
+          <Button disabled label="이전" variant="secondary" />
         )}
         {hasNextPage ? (
-          <Button asChild variant="secondary">
-            <a href={hrefForPage(currentPage + 1)}>다음</a>
-          </Button>
-        ) : (
-          <Button disabled variant="secondary">
+          <a
+            className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
+            href={hrefForPage(currentPage + 1)}
+          >
             다음
-          </Button>
+          </a>
+        ) : (
+          <Button disabled label="다음" variant="secondary" />
         )}
       </div>
     </nav>

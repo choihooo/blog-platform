@@ -1,4 +1,4 @@
-import { Button } from "@blog-platform/design-system";
+import { Button } from "@hozui/react";
 
 type Props = {
   message?: string;
@@ -13,19 +13,13 @@ export function RecoveryBanner({ message, onDiscard, onRestore, onRetry }: Props
     <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted px-4 py-3 text-sm">
       <span className="mr-auto">{message}</span>
       {onRestore ? (
-        <Button onClick={onRestore} type="button" variant="secondary">
-          Restore
-        </Button>
+        <Button label="Restore" onClick={onRestore} type="button" variant="secondary" />
       ) : null}
       {onRetry ? (
-        <Button onClick={onRetry} type="button" variant="secondary">
-          Retry
-        </Button>
+        <Button label="Retry" onClick={onRetry} type="button" variant="secondary" />
       ) : null}
       {onDiscard ? (
-        <Button onClick={onDiscard} type="button" variant="ghost">
-          Discard
-        </Button>
+        <Button label="Discard" onClick={onDiscard} type="button" variant="ghost" />
       ) : null}
     </div>
   );
