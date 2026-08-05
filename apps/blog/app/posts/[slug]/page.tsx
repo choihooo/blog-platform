@@ -12,6 +12,7 @@ import { formatPostDateTime } from "../../../lib/date-format";
 import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
 import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 import { CodeCopyButton } from "../../components/code-copy-button";
+import { PostAuthorMeta } from "../../components/post-author-meta";
 import { RecommendedPosts } from "../../components/recommended-posts";
 
 export const revalidate = 900;
@@ -191,6 +192,15 @@ export default async function PostPage({ params }: PostPageProps) {
     category: post.category,
     tags: post.tags,
   };
+  const author = post.authorProfile
+    ? {
+        avatar: post.authorProfile.avatar,
+        name: post.authorProfile.name,
+      }
+    : {
+        avatar: site.defaultAuthorAvatar,
+        name: site.defaultAuthorName || site.defaultAuthor,
+      };
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
@@ -231,10 +241,10 @@ export default async function PostPage({ params }: PostPageProps) {
             <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
               {post.title}
             </h1>
-            <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
               <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
               <span>{post.readingTimeLabel}</span>
-              {post.authorProfile ? <span>{post.authorProfile.name}</span> : null}
+              <PostAuthorMeta author={author} size="md" />
             </div>
             <ChipGroup aria-label="글 분류" className="flex flex-wrap gap-2">
               {post.categoryEntry ? (

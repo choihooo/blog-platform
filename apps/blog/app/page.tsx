@@ -65,12 +65,17 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
   if (activeCategory && !query) {
     redirect(`/categories/${activeCategory}${requestedPage > 1 ? `?page=${requestedPage}` : ""}`);
   }
-  const [allPosts, searchedPosts, parentCategories, childCategories] = await Promise.all([
+  const [site, allPosts, searchedPosts, parentCategories, childCategories] = await Promise.all([
+    getSiteConfig(),
     getPublishedPosts({ limit: 100, analyzeBody: false }),
     query ? searchPosts({ query, limit: 100 }) : Promise.resolve(null),
     listCategories({ depth: 1 }),
     listCategories({ depth: 2 }),
   ]);
+  const authorFallback = {
+    avatar: site.defaultAuthorAvatar,
+    name: site.defaultAuthorName || site.defaultAuthor,
+  };
   const sourcePosts = searchedPosts ?? allPosts;
   const posts = activeCategory
     ? sourcePosts.filter(
@@ -209,7 +214,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
               </a>
             </div>
           </div>
-          <PostList posts={pagination.items} view={view} />
+          <PostList authorFallback={authorFallback} posts={pagination.items} view={view} />
           <PostPagination
             currentPage={pagination.currentPage}
             hrefForPage={(page) => hrefFor({ category: activeCategory, page, q: query, view })}

@@ -71,12 +71,17 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const path = toCanonicalPath(categoryPath);
   if (!path) notFound();
 
-  const [category, posts] = await Promise.all([
+  const [category, posts, site] = await Promise.all([
     getCategoryByPath(path),
     getPostsByCategoryPath(path, { limit: 100, publishedOnly: true }),
+    getSiteConfig(),
   ]);
   if (!category) notFound();
   const pagination = paginateItems(posts, parsePageParam(resolvedSearchParams.page));
+  const authorFallback = {
+    avatar: site.defaultAuthorAvatar,
+    name: site.defaultAuthorName || site.defaultAuthor,
+  };
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
@@ -92,7 +97,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         ) : null}
       </section>
       <section className="space-y-5">
-        <PostList posts={pagination.items} />
+        <PostList authorFallback={authorFallback} posts={pagination.items} />
         <PostPagination
           currentPage={pagination.currentPage}
           hrefForPage={(page) => categoryHrefForPage(path, page)}
