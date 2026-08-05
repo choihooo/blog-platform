@@ -43,7 +43,8 @@ function slugify(value: string) {
 }
 
 function inlineContent(node: EditorTextNode) {
-  let content: ReactNode = node.text;
+  let content: ReactNode =
+    node.marks?.length || node.href ? node.text : renderInlineMarkdown(node.text);
   for (const mark of node.marks ?? []) {
     if (mark === "bold") content = <strong>{content}</strong>;
     if (mark === "italic") content = <em>{content}</em>;
@@ -53,6 +54,34 @@ function inlineContent(node: EditorTextNode) {
     content = <a href={node.href}>{content}</a>;
   }
   return content;
+}
+
+function renderInlineMarkdown(text: string) {
+  const parts: ReactNode[] = [];
+  const inlineMarkdown = /(\*\*([^*]+)\*\*|_([^_]+)_|`([^`]+)`|\[([^\]]+)\]\(([^)]+)\))/g;
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = inlineMarkdown.exec(text))) {
+    const [raw, , bold, italic, code, label, href] = match;
+    if (match.index > cursor) parts.push(text.slice(cursor, match.index));
+    const key = `${match.index}-${raw}`;
+
+    if (bold) parts.push(<strong key={key}>{bold}</strong>);
+    else if (italic) parts.push(<em key={key}>{italic}</em>);
+    else if (code) parts.push(<code key={key}>{code}</code>);
+    else if (label && href)
+      parts.push(
+        <a href={href} key={key}>
+          {label}
+        </a>,
+      );
+
+    cursor = match.index + raw.length;
+  }
+
+  if (cursor < text.length) parts.push(text.slice(cursor));
+  return parts.length > 0 ? parts : text;
 }
 
 function PostBodyRenderer({
