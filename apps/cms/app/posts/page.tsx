@@ -37,6 +37,12 @@ function formatDate(value?: string | null) {
   }).format(date);
 }
 
+function postStatusTone(status: PostSummary["status"]) {
+  if (status === "published") return "positive";
+  if (status === "draft") return "warning";
+  return "neutral";
+}
+
 function paginatePosts(posts: PostSummary[], page: number) {
   const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -159,7 +165,11 @@ export function PostsPageView({
                       </a>
                     </td>
                     <td className="px-4 py-3">
-                      <Badge label={post.status} tone="neutral" variant="outline" />
+                      <Badge
+                        label={post.status}
+                        tone={postStatusTone(post.status)}
+                        variant="weak"
+                      />
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm text-muted-foreground">
                       {formatDate(post.publishedAt)}

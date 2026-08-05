@@ -5,6 +5,12 @@ import { AccessState, CmsShell } from "../components/shell/index";
 import { requireCmsAccess, type AccessDecision } from "../lib/auth/index";
 import { listPostSummaries, type PostSummary } from "../lib/editor/editor-loader";
 
+function postStatusTone(status: PostSummary["status"]) {
+  if (status === "published") return "positive";
+  if (status === "draft") return "warning";
+  return "neutral";
+}
+
 export function CmsHomePageView({
   decision,
   posts = [],
@@ -68,7 +74,7 @@ export function CmsHomePageView({
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-3">
-                    <Badge label={post.status} tone="neutral" variant="outline" />
+                    <Badge label={post.status} tone={postStatusTone(post.status)} variant="weak" />
                     <ArrowUpRight
                       aria-hidden="true"
                       className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"

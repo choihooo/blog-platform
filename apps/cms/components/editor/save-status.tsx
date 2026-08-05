@@ -24,21 +24,14 @@ export function SaveStatusBadge({ status }: { status: SaveStatus }) {
     failed: "Save failed",
   };
 
-  return (
-    <Badge
-      label={label[status]}
-      tone={
-        status === "failed" || status === "unsupported" || status === "refreshFailed"
-          ? "critical"
-          : status === "published" || status === "saved" || status === "clean"
-            ? "positive"
-            : "neutral"
-      }
-      variant={
-        status === "failed" || status === "unsupported" || status === "refreshFailed"
-          ? "outline"
-          : "weak"
-      }
-    />
-  );
+  const tone =
+    status === "failed" || status === "unsupported" || status === "refreshFailed"
+      ? "critical"
+      : status === "validation" || status === "dirty"
+        ? "warning"
+        : status === "pending"
+          ? "informative"
+          : "positive";
+
+  return <Badge label={label[status]} tone={tone} variant="weak" />;
 }
