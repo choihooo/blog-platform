@@ -88,6 +88,10 @@ function failure(code: ContentFailureCode, message: string): ContractResult<neve
   };
 }
 
+function errorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
 function isObjectValue(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -663,9 +667,13 @@ export function createD1R2ContentAdapter(): ContentAdapter {
     async listPosts(
       input: ContentListInput,
     ): Promise<ContractResult<{ items: PostRecord[]; total: number }>> {
-      const normalized = normalizeListInput(input);
-      const result = await listPostsInternal(normalized);
-      return { ok: true, data: { items: result.posts, total: result.total } };
+      try {
+        const normalized = normalizeListInput(input);
+        const result = await listPostsInternal(normalized);
+        return { ok: true, data: { items: result.posts, total: result.total } };
+      } catch (error) {
+        return failure("storage-failure", errorMessage(error, "D1 posts query failed"));
+      }
     },
 
     async getPostBySlug(
@@ -677,8 +685,12 @@ export function createD1R2ContentAdapter(): ContentAdapter {
 
       if (!binding) return { ok: true, data: null };
 
-      const post = await runD1PostBySlug(binding, normalized, options?.includeUnpublished);
-      return { ok: true, data: post ?? null };
+      try {
+        const post = await runD1PostBySlug(binding, normalized, options?.includeUnpublished);
+        return { ok: true, data: post ?? null };
+      } catch (error) {
+        return failure("storage-failure", errorMessage(error, "D1 post query failed"));
+      }
     },
 
     async getPostsByTag(input: {
@@ -690,13 +702,17 @@ export function createD1R2ContentAdapter(): ContentAdapter {
       const tagSlug = normalizeSlug(input.tagSlug);
       if (!tagSlug) return failure("validation-failure", "tag slug is required");
 
-      const result = await listPostsInternal({
-        publishedOnly: Boolean(input.publishedOnly),
-        page: normalizePage(input.page),
-        limit: normalizeLimit(input.limit),
-        tagSlug,
-      });
-      return { ok: true, data: { items: result.posts, total: result.total } };
+      try {
+        const result = await listPostsInternal({
+          publishedOnly: Boolean(input.publishedOnly),
+          page: normalizePage(input.page),
+          limit: normalizeLimit(input.limit),
+          tagSlug,
+        });
+        return { ok: true, data: { items: result.posts, total: result.total } };
+      } catch (error) {
+        return failure("storage-failure", errorMessage(error, "D1 tag posts query failed"));
+      }
     },
 
     async getPostsByCategoryPath(input: {
@@ -710,29 +726,41 @@ export function createD1R2ContentAdapter(): ContentAdapter {
         return failure("validation-failure", "categoryPath must be depth 1 or 2");
       }
 
-      const result = await listPostsInternal({
-        publishedOnly: Boolean(input.publishedOnly),
-        page: normalizePage(input.page),
-        limit: normalizeLimit(input.limit),
-        categoryPath,
-      });
-      return { ok: true, data: { items: result.posts, total: result.total } };
+      try {
+        const result = await listPostsInternal({
+          publishedOnly: Boolean(input.publishedOnly),
+          page: normalizePage(input.page),
+          limit: normalizeLimit(input.limit),
+          categoryPath,
+        });
+        return { ok: true, data: { items: result.posts, total: result.total } };
+      } catch (error) {
+        return failure("storage-failure", errorMessage(error, "D1 category posts query failed"));
+      }
     },
 
     async listCategories(
       input: CategoryListInput,
     ): Promise<ContractResult<{ items: CategoryRecord[] }>> {
-      const items = await listCategoriesInternal(input);
-      return { ok: true, data: items };
+      try {
+        const items = await listCategoriesInternal(input);
+        return { ok: true, data: items };
+      } catch (error) {
+        return failure("storage-failure", errorMessage(error, "D1 categories query failed"));
+      }
     },
 
     async listTags(): Promise<ContractResult<{ items: TagRecord[] }>> {
       if (!binding) return { ok: true, data: { items: [] } };
-      const rows = await executeAll<DbTagRow>(
-        binding.prepare("SELECT id, name, slug FROM tags ORDER BY slug ASC"),
-        [],
-      );
-      return { ok: true, data: { items: rows.results.map(mapTagRecord) } };
+      try {
+        const rows = await executeAll<DbTagRow>(
+          binding.prepare("SELECT id, name, slug FROM tags ORDER BY slug ASC"),
+          [],
+        );
+        return { ok: true, data: { items: rows.results.map(mapTagRecord) } };
+      } catch (error) {
+        return failure("storage-failure", errorMessage(error, "D1 tags query failed"));
+      }
     },
 
     async createCategory(input: {
