@@ -3,9 +3,10 @@
 import { useRef, useState, useTransition } from "react";
 import { Image } from "lucide-react";
 
-import { Button, IconButton, TextField, Tooltip } from "@hozui/react";
+import { Button, IconButton, Tooltip } from "@hozui/react";
 
 import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
+import { CmsTextField } from "../ui/text-field";
 import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadStatus } from "./media-upload-status";
 
@@ -57,7 +58,7 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
       </Tooltip>
       {detailsOpen ? (
         <div className="flex flex-wrap items-center gap-1">
-          <TextField
+          <CmsTextField
             aria-label="Image alt text"
             className="h-8 w-32"
             label="Alt"
@@ -66,7 +67,7 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
             placeholder="Alt"
             value={alt}
           />
-          <TextField
+          <CmsTextField
             aria-label="Image title"
             className="h-8 w-32"
             label="Title"
@@ -75,7 +76,7 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
             placeholder="Title"
             value={title}
           />
-          <TextField
+          <CmsTextField
             aria-label="Image caption"
             className="h-8 w-32"
             label="Caption"

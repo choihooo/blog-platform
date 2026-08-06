@@ -2,9 +2,10 @@
 
 import { useRef, useState, useTransition } from "react";
 import type { EditorFrontmatter } from "@blog-platform/editor";
-import { Button, TextField } from "@hozui/react";
+import { Button } from "@hozui/react";
 
 import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
+import { CmsTextField } from "../ui/text-field";
 import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadStatus } from "./media-upload-status";
 
@@ -82,7 +83,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
   return (
     <aside className="space-y-4 border-l border-border p-4">
       <div>
-        <TextField
+        <CmsTextField
           id="editor-title"
           label="Title"
           value={frontmatter.title}
@@ -91,7 +92,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         />
       </div>
       <div>
-        <TextField
+        <CmsTextField
           id="editor-excerpt"
           label="Excerpt"
           value={frontmatter.excerpt ?? ""}
@@ -100,7 +101,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         />
       </div>
       <div>
-        <TextField
+        <CmsTextField
           id="editor-slug"
           label="Slug"
           value={normalizedPostSlug}
@@ -152,7 +153,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         </select>
       </div>
       <div>
-        <TextField
+        <CmsTextField
           id="editor-tags"
           label="Tags"
           value={(frontmatter.tags ?? []).join(", ")}

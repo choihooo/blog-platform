@@ -1,7 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, EmptyState, IconButton, Modal, TextField } from "@hozui/react";
+import {
+  Badge,
+  Button,
+  EmptyState,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalDescription,
+  ModalHeader,
+  ModalOverlay,
+  ModalPortal,
+  ModalTitle,
+  ModalTitleStack,
+} from "@hozui/react";
 import { ChevronDown, Edit3, FolderTree, Trash2 } from "lucide-react";
 
 import {
@@ -10,6 +24,7 @@ import {
   updateCategoryAction,
 } from "../../app/actions/taxonomy-actions";
 import type { CategoryRecord } from "../../lib/content-adapter/content-adapter.interface";
+import { CmsTextField } from "../ui/text-field";
 
 type CategoryWithCount = CategoryRecord & { postCount?: number };
 
@@ -68,8 +83,8 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
         <form action={createCategoryAction} className="grid gap-3">
           <p className="text-xs font-semibold text-muted-foreground">1차 카테고리 추가</p>
           <div className="grid gap-2 sm:grid-cols-2">
-            <TextField label="이름" name="name" placeholder="이름" />
-            <TextField label="slug" name="slug" placeholder="slug" />
+            <CmsTextField label="이름" name="name" placeholder="이름" />
+            <CmsTextField label="slug" name="slug" placeholder="slug" />
           </div>
           <Button className="w-fit" label="Add parent" type="submit" />
         </form>
@@ -87,8 +102,8 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
                 </option>
               ))}
             </select>
-            <TextField label="이름" name="name" placeholder="이름" />
-            <TextField label="child slug" name="childSlug" placeholder="child-slug" />
+            <CmsTextField label="이름" name="name" placeholder="이름" />
+            <CmsTextField label="child slug" name="childSlug" placeholder="child-slug" />
           </div>
           <Button className="w-fit" label="Add child" type="submit" />
         </form>
@@ -142,35 +157,53 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
         )}
       </div>
 
-      <Modal
-        open={dialog?.mode === "edit"}
-        title="카테고리 수정"
-        description="이름, slug, 상위 카테고리를 한 번에 수정합니다."
-        onRequestClose={() => setDialog(null)}
-      >
-        {dialog?.mode === "edit" ? (
-          <EditCategoryDialog
-            category={dialog.category}
-            parentCategories={parentCategories}
-            onDone={() => setDialog(null)}
-          />
-        ) : null}
+      <Modal open={dialog?.mode === "edit"} onOpenChange={(open) => !open && setDialog(null)}>
+        <ModalPortal>
+          <ModalOverlay />
+          <ModalContent variant="form">
+            <ModalHeader>
+              <ModalTitleStack>
+                <ModalTitle>카테고리 수정</ModalTitle>
+                <ModalDescription>이름, slug, 상위 카테고리를 한 번에 수정합니다.</ModalDescription>
+              </ModalTitleStack>
+            </ModalHeader>
+            <ModalBody>
+              {dialog?.mode === "edit" ? (
+                <EditCategoryDialog
+                  category={dialog.category}
+                  parentCategories={parentCategories}
+                  onDone={() => setDialog(null)}
+                />
+              ) : null}
+            </ModalBody>
+          </ModalContent>
+        </ModalPortal>
       </Modal>
 
-      <Modal
-        open={dialog?.mode === "delete"}
-        title="카테고리 삭제"
-        description="삭제한 카테고리는 되돌릴 수 없습니다. 연결된 글이나 하위 카테고리가 있으면 삭제할 수 없습니다."
-        variant="destructive"
-        onRequestClose={() => setDialog(null)}
-      >
-        {dialog?.mode === "delete" ? (
-          <DeleteCategoryDialog
-            category={dialog.category}
-            childCount={dialog.childCount}
-            onDone={() => setDialog(null)}
-          />
-        ) : null}
+      <Modal open={dialog?.mode === "delete"} onOpenChange={(open) => !open && setDialog(null)}>
+        <ModalPortal>
+          <ModalOverlay />
+          <ModalContent variant="destructive">
+            <ModalHeader>
+              <ModalTitleStack>
+                <ModalTitle>카테고리 삭제</ModalTitle>
+                <ModalDescription>
+                  삭제한 카테고리는 되돌릴 수 없습니다. 연결된 글이나 하위 카테고리가 있으면 삭제할
+                  수 없습니다.
+                </ModalDescription>
+              </ModalTitleStack>
+            </ModalHeader>
+            <ModalBody>
+              {dialog?.mode === "delete" ? (
+                <DeleteCategoryDialog
+                  category={dialog.category}
+                  childCount={dialog.childCount}
+                  onDone={() => setDialog(null)}
+                />
+              ) : null}
+            </ModalBody>
+          </ModalContent>
+        </ModalPortal>
       </Modal>
     </div>
   );
@@ -290,7 +323,7 @@ function EditCategoryDialog({
         <input name="depth" type="hidden" value={category.depth} />
         <label className="grid gap-1 text-xs font-medium text-muted-foreground">
           이름
-          <TextField defaultValue={category.name} label="이름" name="name" />
+          <CmsTextField defaultValue={category.name} label="이름" name="name" />
         </label>
         {isChild ? (
           <>
@@ -310,13 +343,13 @@ function EditCategoryDialog({
             </label>
             <label className="grid gap-1 text-xs font-medium text-muted-foreground">
               Slug
-              <TextField defaultValue={childSlugFor(category)} label="Slug" name="childSlug" />
+              <CmsTextField defaultValue={childSlugFor(category)} label="Slug" name="childSlug" />
             </label>
           </>
         ) : (
           <label className="grid gap-1 text-xs font-medium text-muted-foreground">
             Slug
-            <TextField defaultValue={category.slug} label="Slug" name="slug" />
+            <CmsTextField defaultValue={category.slug} label="Slug" name="slug" />
           </label>
         )}
         <div className="flex justify-end gap-2 pt-2">

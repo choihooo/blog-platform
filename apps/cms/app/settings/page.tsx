@@ -1,9 +1,10 @@
-import { Badge, Button, Chip, ChipGroup, EmptyState, TextField } from "@hozui/react";
+import { Badge, Button, Chip, ChipGroup, EmptyState } from "@hozui/react";
 import { ExternalLink, GitBranch, Globe2, ShieldCheck, Tags } from "lucide-react";
 
 import { createTagAction } from "../actions/taxonomy-actions";
 import { AccessState, CmsShell } from "../../components/shell/index";
 import { CategoryManager } from "../../components/settings/category-manager";
+import { CmsTextField } from "../../components/ui/text-field";
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 import { createContentAdapter } from "../../lib/content-adapter/content-adapter";
 import type {
@@ -30,6 +31,42 @@ function categoryTree(categories: CategoryWithCount[]) {
     parent,
     children: children.filter((child) => child.parentSlug === parent.slug),
   }));
+}
+
+async function loadSettingsTaxonomy(): Promise<TaxonomyData> {
+  const adapter = createContentAdapter("d1r2");
+  const [depth1Result, depth2Result, tagsResult, postsResult] = await Promise.allSettled([
+    adapter.listCategories({ depth: 1 }),
+    adapter.listCategories({ depth: 2 }),
+    adapter.listTags(),
+    adapter.listPosts({ publishedOnly: true, page: 1, limit: 100 }),
+  ]);
+
+  const depth1 = depth1Result.status === "fulfilled" ? depth1Result.value : undefined;
+  const depth2 = depth2Result.status === "fulfilled" ? depth2Result.value : undefined;
+  const tags = tagsResult.status === "fulfilled" ? tagsResult.value : undefined;
+  const posts = postsResult.status === "fulfilled" ? postsResult.value : undefined;
+
+  const categoryCounts = new Map<string, number>();
+  if (posts?.ok) {
+    for (const post of posts.data.items) {
+      if (!post.categoryPath) continue;
+      categoryCounts.set(post.categoryPath, (categoryCounts.get(post.categoryPath) ?? 0) + 1);
+    }
+  }
+
+  const categories = [
+    ...(depth1?.ok ? depth1.data.items : []),
+    ...(depth2?.ok ? depth2.data.items : []),
+  ].map((category) => ({
+    ...category,
+    postCount: categoryCounts.get(category.slug) ?? 0,
+  }));
+
+  return {
+    categories,
+    tags: tags?.ok ? tags.data.items : [],
+  };
 }
 
 export function SettingsPageView({
@@ -116,8 +153,8 @@ export function SettingsPageView({
               Tags
             </div>
             <form action={createTagAction} className="mt-5 grid gap-3">
-              <TextField label="Name" name="name" placeholder="Next.js" />
-              <TextField label="Slug" name="slug" placeholder="nextjs" />
+              <CmsTextField label="Name" name="name" placeholder="Next.js" />
+              <CmsTextField label="Slug" name="slug" placeholder="nextjs" />
               <Button className="w-fit" label="Add tag" type="submit" />
             </form>
             <ChipGroup aria-label="Tags" className="mt-5 flex flex-wrap gap-2">
@@ -146,35 +183,11 @@ export default function SettingsPage() {
     if (decision.status !== "authorized") {
       return <SettingsPageView decision={decision} siteConfig={siteConfig} />;
     }
-    const adapter = createContentAdapter("d1r2");
-    const [depth1, depth2, tags, posts] = await Promise.all([
-      adapter.listCategories({ depth: 1 }),
-      adapter.listCategories({ depth: 2 }),
-      adapter.listTags(),
-      adapter.listPosts({ publishedOnly: true, page: 1, limit: 100 }),
-    ]);
-    const categoryCounts = new Map<string, number>();
-    if (posts.ok) {
-      for (const post of posts.data.items) {
-        if (!post.categoryPath) continue;
-        categoryCounts.set(post.categoryPath, (categoryCounts.get(post.categoryPath) ?? 0) + 1);
-      }
-    }
-    const categories = [
-      ...(depth1.ok ? depth1.data.items : []),
-      ...(depth2.ok ? depth2.data.items : []),
-    ].map((category) => ({
-      ...category,
-      postCount: categoryCounts.get(category.slug) ?? 0,
-    }));
     return (
       <SettingsPageView
         decision={decision}
         siteConfig={siteConfig}
-        taxonomy={{
-          categories,
-          tags: tags.ok ? tags.data.items : [],
-        }}
+        taxonomy={await loadSettingsTaxonomy()}
       />
     );
   });

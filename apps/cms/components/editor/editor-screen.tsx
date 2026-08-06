@@ -6,7 +6,18 @@ import Link from "@tiptap/extension-link";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
 import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
-import { Button, Modal, TextField } from "@hozui/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalDescription,
+  ModalHeader,
+  ModalOverlay,
+  ModalPortal,
+  ModalTitle,
+  ModalTitleStack,
+} from "@hozui/react";
 
 import {
   archivePostAction,
@@ -25,6 +36,7 @@ import { FrontmatterPanel, type CategoryOption } from "./frontmatter-panel";
 import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 import { SeoPanel } from "./seo-panel";
+import { CmsTextField } from "../ui/text-field";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
 import type { EditorSiteAnalyticsConfig } from "../../lib/editor";
 
@@ -583,71 +595,85 @@ export function EditorScreen({
           <SeoPanel links={analyticsLinks} report={seoReport} />
         </aside>
       </div>
-      <Modal
-        open={imageAttributesOpen}
-        title="Image attributes"
-        description="Set alt text and title for the selected body image."
-        onRequestClose={() => setImageAttributesOpen(false)}
-      >
-        {selectedImage ? (
-          <div className="space-y-4">
-            <img
-              alt={selectedImage.alt || "Selected body image"}
-              className="aspect-video w-full rounded-md border border-border object-contain"
-              src={selectedImage.src}
-            />
-            <div className="space-y-2">
-              <TextField
-                id="selected-image-alt"
-                label="Alt text"
-                onChange={(event) =>
-                  setSelectedImage((current) =>
-                    current ? { ...current, alt: event.currentTarget.value } : current,
-                  )
-                }
-                onValueChange={(value) =>
-                  setSelectedImage((current) => (current ? { ...current, alt: value } : current))
-                }
-                placeholder="Describe the image"
-                value={selectedImage.alt}
-              />
-            </div>
-            <div className="space-y-2">
-              <TextField
-                id="selected-image-title"
-                label="Title"
-                onChange={(event) =>
-                  setSelectedImage((current) =>
-                    current ? { ...current, title: event.currentTarget.value } : current,
-                  )
-                }
-                onValueChange={(value) =>
-                  setSelectedImage((current) => (current ? { ...current, title: value } : current))
-                }
-                placeholder="Optional title"
-                value={selectedImage.title}
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button
-                label="Cancel"
-                onClick={() => setImageAttributesOpen(false)}
-                type="button"
-                variant="secondary"
-              />
-              <Button
-                label="Apply"
-                onClick={() =>
-                  applySelectedImageAttributes({
-                    alt: selectedImage.alt,
-                    title: selectedImage.title,
-                  })
-                }
-                type="button"
-              />
-            </div>
-          </div>
-        ) : null}
+      <Modal open={imageAttributesOpen} onOpenChange={(open) => setImageAttributesOpen(open)}>
+        <ModalPortal>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitleStack>
+                <ModalTitle>Image attributes</ModalTitle>
+                <ModalDescription>
+                  Set alt text and title for the selected body image.
+                </ModalDescription>
+              </ModalTitleStack>
+            </ModalHeader>
+            <ModalBody>
+              {selectedImage ? (
+                <div className="space-y-4">
+                  <img
+                    alt={selectedImage.alt || "Selected body image"}
+                    className="aspect-video w-full rounded-md border border-border object-contain"
+                    src={selectedImage.src}
+                  />
+                  <div className="space-y-2">
+                    <CmsTextField
+                      id="selected-image-alt"
+                      label="Alt text"
+                      onChange={(event) =>
+                        setSelectedImage((current) =>
+                          current ? { ...current, alt: event.currentTarget.value } : current,
+                        )
+                      }
+                      onValueChange={(value) =>
+                        setSelectedImage((current) =>
+                          current ? { ...current, alt: value } : current,
+                        )
+                      }
+                      placeholder="Describe the image"
+                      value={selectedImage.alt}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <CmsTextField
+                      id="selected-image-title"
+                      label="Title"
+                      onChange={(event) =>
+                        setSelectedImage((current) =>
+                          current ? { ...current, title: event.currentTarget.value } : current,
+                        )
+                      }
+                      onValueChange={(value) =>
+                        setSelectedImage((current) =>
+                          current ? { ...current, title: value } : current,
+                        )
+                      }
+                      placeholder="Optional title"
+                      value={selectedImage.title}
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      label="Cancel"
+                      onClick={() => setImageAttributesOpen(false)}
+                      type="button"
+                      variant="secondary"
+                    />
+                    <Button
+                      label="Apply"
+                      onClick={() =>
+                        applySelectedImageAttributes({
+                          alt: selectedImage.alt,
+                          title: selectedImage.title,
+                        })
+                      }
+                      type="button"
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </ModalBody>
+          </ModalContent>
+        </ModalPortal>
       </Modal>
     </div>
   );

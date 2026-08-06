@@ -15,7 +15,7 @@
     "@blog-platform/analytics": "workspace:^",
     "@blog-platform/editor": "workspace:^",
     "@blog-platform/seo-engine": "workspace:^",
-    "@hozui/react": "^0.1.0",
+    "@hozui/react": "^0.2.0",
     "@hozui/tokens": "^0.1.0",
     "lucide-react": "^1.27.0",
     "next": "^16.2.12",

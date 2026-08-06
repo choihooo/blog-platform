@@ -1,6 +1,14 @@
 "use client";
 
-import { Avatar, AvatarFallback, Button, Menu } from "@hozui/react";
+import {
+  Avatar,
+  AvatarFallback,
+  Button,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuTrigger,
+} from "@hozui/react";
 import { LogOut } from "lucide-react";
 
 import type { CmsSession } from "../../lib/auth/index";
@@ -17,19 +25,8 @@ export function TopBar({ session, title }: TopBarProps) {
         <p className="cms-eyebrow">Workspace</p>
         <h1>{title}</h1>
       </div>
-      <Menu
-        align="end"
-        items={[
-          {
-            id: "sign-out",
-            icon: <LogOut aria-hidden="true" size={14} />,
-            label: "Sign out",
-            onSelect: () => {
-              window.location.href = "/api/auth/signout";
-            },
-          },
-        ]}
-        trigger={
+      <Menu>
+        <MenuTrigger asChild>
           <Button
             aria-label="Account menu"
             className="cms-account"
@@ -44,8 +41,18 @@ export function TopBar({ session, title }: TopBarProps) {
             type="button"
             variant="ghost"
           />
-        }
-      />
+        </MenuTrigger>
+        <MenuContent align="end">
+          <MenuItem
+            icon={<LogOut aria-hidden="true" size={14} />}
+            onSelect={() => {
+              window.location.href = "/api/auth/signout";
+            }}
+          >
+            Sign out
+          </MenuItem>
+        </MenuContent>
+      </Menu>
     </header>
   );
 }
