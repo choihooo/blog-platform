@@ -8,8 +8,15 @@ describe("getShellNavigation", () => {
   });
 
   it("marks settings active", () => {
-    expect(getShellNavigation("/settings")[2]).toMatchObject({
+    expect(getShellNavigation("/settings")[3]).toMatchObject({
       id: "settings",
+      state: "active",
+    });
+  });
+
+  it("marks analytics active", () => {
+    expect(getShellNavigation("/analytics")[2]).toMatchObject({
+      id: "analytics",
       state: "active",
     });
   });
@@ -17,5 +24,6 @@ describe("getShellNavigation", () => {
   it("keeps inactive items available", () => {
     expect(getShellNavigation("/")[0]).toMatchObject({ id: "dashboard", state: "active" });
     expect(getShellNavigation("/")[1]).toMatchObject({ id: "posts", state: "available" });
+    expect(getShellNavigation("/")[2]).toMatchObject({ id: "analytics", state: "available" });
   });
 });

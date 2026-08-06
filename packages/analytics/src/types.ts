@@ -48,5 +48,11 @@ export type ExternalConsoleLinks = {
   disabledReasons: string[];
 };
 
+export type DashboardConsoleLinks = {
+  ga4Url?: string;
+  searchConsoleUrl?: string;
+  disabledReasons: string[];
+};
+
 export type LinkClassification =
   { kind: "internal" | "external"; url: string } | { kind: "ignored"; url: string; reason: string };

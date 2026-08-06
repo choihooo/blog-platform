@@ -1,4 +1,13 @@
-import { Badge, Button, EmptyState } from "@hozui/react";
+import {
+  Badge,
+  Button,
+  EmptyState,
+  Pagination,
+  PaginationControl,
+  PaginationItem,
+  PaginationList,
+  PaginationStatus,
+} from "@hozui/react";
 import { ArrowUpRight, Plus } from "lucide-react";
 
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
@@ -63,6 +72,38 @@ function postsHref(params: { query?: string; page?: number; sort?: "published" |
   if (params.page && params.page > 1) search.set("page", String(params.page));
   const query = search.toString();
   return query ? `/posts?${query}` : "/posts";
+}
+
+function paginationTarget(href: string) {
+  const url = new URL(href, "https://local.cms");
+
+  return {
+    action: url.pathname,
+    fields: Array.from(url.searchParams.entries()),
+  };
+}
+
+function PaginationSubmitControl({
+  control,
+  disabled,
+  href,
+  label,
+}: {
+  control: "previous" | "next";
+  disabled: boolean;
+  href: string;
+  label: string;
+}) {
+  const target = paginationTarget(href);
+
+  return (
+    <form action={target.action} method="get">
+      {target.fields.map(([name, value]) => (
+        <input key={`${name}:${value}`} name={name} type="hidden" value={value} />
+      ))}
+      <PaginationControl aria-label={label} control={control} disabled={disabled} />
+    </form>
+  );
 }
 
 export function PostsPageView({
@@ -209,36 +250,33 @@ export function PostsPageView({
           )}
         </div>
         {totalCount > POSTS_PER_PAGE ? (
-          <nav
+          <Pagination
             aria-label="글 목록 페이지"
             className="flex flex-wrap items-center justify-between gap-3"
+            variant="simple"
           >
-            <p className="text-sm text-muted-foreground">
+            <PaginationStatus className="text-sm text-muted-foreground">
               {currentPage} / {totalPages} 페이지
-            </p>
-            <div className="flex items-center gap-2">
-              {hasPreviousPage ? (
-                <a
-                  className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
+            </PaginationStatus>
+            <PaginationList>
+              <PaginationItem>
+                <PaginationSubmitControl
+                  control="previous"
+                  disabled={!hasPreviousPage}
                   href={postsHref({ query, page: currentPage - 1, sort })}
-                >
-                  이전
-                </a>
-              ) : (
-                <Button disabled label="이전" variant="secondary" />
-              )}
-              {hasNextPage ? (
-                <a
-                  className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
+                  label="이전"
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationSubmitControl
+                  control="next"
+                  disabled={!hasNextPage}
                   href={postsHref({ query, page: currentPage + 1, sort })}
-                >
-                  다음
-                </a>
-              ) : (
-                <Button disabled label="다음" variant="secondary" />
-              )}
-            </div>
-          </nav>
+                  label="다음"
+                />
+              </PaginationItem>
+            </PaginationList>
+          </Pagination>
         ) : null}
       </section>
     </CmsShell>

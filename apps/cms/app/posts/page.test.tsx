@@ -96,8 +96,13 @@ describe("PostsPageView", () => {
     );
 
     expect(screen.getByText("2 / 3 페이지")).toBeTruthy();
-    expect(screen.getByRole("link", { name: "이전" }).getAttribute("href")).toBe("/posts");
-    expect(screen.getByRole("link", { name: "다음" }).getAttribute("href")).toBe("/posts?page=3");
+    const previous = screen.getAllByRole("button", { name: "이전" }).at(-1);
+    const next = screen.getAllByRole("button", { name: "다음" }).at(-1);
+    expect(previous?.closest("form")?.getAttribute("action")).toBe("/posts");
+    expect(next?.closest("form")?.getAttribute("action")).toBe("/posts");
+    expect(next?.closest("form")?.querySelector('input[name="page"]')?.getAttribute("value")).toBe(
+      "3",
+    );
     expect(screen.getAllByRole("link", { name: /^Post \d+$/ })).toHaveLength(10);
   });
 
@@ -114,11 +119,16 @@ describe("PostsPageView", () => {
     );
 
     expect(screen.getAllByDisplayValue("최근 수정순").at(-1)).toBeTruthy();
-    expect(screen.getAllByRole("link", { name: "이전" }).at(-1)?.getAttribute("href")).toBe(
-      "/posts?sort=updated",
-    );
-    expect(screen.getAllByRole("link", { name: "다음" }).at(-1)?.getAttribute("href")).toBe(
-      "/posts?sort=updated&page=3",
+    const previous = screen.getAllByRole("button", { name: "이전" }).at(-1);
+    const next = screen.getAllByRole("button", { name: "다음" }).at(-1);
+    expect(
+      previous?.closest("form")?.querySelector('input[name="sort"]')?.getAttribute("value"),
+    ).toBe("updated");
+    expect(
+      next?.closest("form")?.querySelector('input[name="sort"]')?.getAttribute("value"),
+    ).toBe("updated");
+    expect(next?.closest("form")?.querySelector('input[name="page"]')?.getAttribute("value")).toBe(
+      "3",
     );
   });
 

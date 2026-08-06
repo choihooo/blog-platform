@@ -14,6 +14,7 @@ import { PostAnalyticsEvents } from "../../components/post-analytics-events";
 import { CodeCopyButton } from "../../components/code-copy-button";
 import { PostAuthorMeta } from "../../components/post-author-meta";
 import { RecommendedPosts } from "../../components/recommended-posts";
+import { PostShareActions } from "../../components/post-share-actions";
 
 export const revalidate = 900;
 
@@ -294,6 +295,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <PostBodyRenderer analyticsContext={analyticsContext} nodes={post.bodyNodes} />
           </div>
           <RecommendedPosts posts={recommendedPosts} />
+          <PostShareActions context={analyticsContext} />
         </div>
         {post.toc.length > 0 ? (
           <aside

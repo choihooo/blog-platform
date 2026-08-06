@@ -1,4 +1,4 @@
-import { FileText, LayoutDashboard, Settings } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, FileText, LayoutDashboard, Settings } from "lucide-react";
 import Link from "next/link";
 
 import type { ShellNavigationItem } from "./navigation";
@@ -11,6 +11,7 @@ export function Sidebar({ items }: SidebarProps) {
   const icons = {
     dashboard: LayoutDashboard,
     posts: FileText,
+    analytics: ChartNoAxesColumnIncreasing,
     settings: Settings,
   };
 

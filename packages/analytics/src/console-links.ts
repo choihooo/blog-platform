@@ -1,4 +1,4 @@
-import type { AnalyticsConfig, ExternalConsoleLinks } from "./types.js";
+import type { AnalyticsConfig, DashboardConsoleLinks, ExternalConsoleLinks } from "./types.js";
 
 function cleanSiteUrl(siteUrl: string) {
   try {
@@ -36,6 +36,28 @@ export function createExternalConsoleLinks(input: {
     links.searchConsoleUrl = `https://search.google.com/search-console/performance/search-analytics?resource_id=${encodeURIComponent(input.config.searchConsoleProperty)}&page=${encodeURIComponent(publicPostUrl)}`;
   } else {
     disabledReasons.push("Search Console property is not configured");
+  }
+
+  return links;
+}
+
+export function createDashboardConsoleLinks(config: AnalyticsConfig): DashboardConsoleLinks {
+  const links: DashboardConsoleLinks = { disabledReasons: [] };
+
+  if (config.provider === "ga4" && config.ga4PropertyId) {
+    links.ga4Url = `https://analytics.google.com/analytics/web/#/p${encodeURIComponent(
+      config.ga4PropertyId,
+    )}/reports/intelligenthome`;
+  } else {
+    links.disabledReasons.push("GA4 property is not configured");
+  }
+
+  if (config.searchConsoleProperty) {
+    links.searchConsoleUrl = `https://search.google.com/search-console?resource_id=${encodeURIComponent(
+      config.searchConsoleProperty,
+    )}`;
+  } else {
+    links.disabledReasons.push("Search Console property is not configured");
   }
 
   return links;

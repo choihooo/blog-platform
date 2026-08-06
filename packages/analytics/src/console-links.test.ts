@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createExternalConsoleLinks } from "./console-links.js";
+import { createDashboardConsoleLinks, createExternalConsoleLinks } from "./console-links.js";
 import { ga4Config } from "./test-fixtures.js";
 
 describe("createExternalConsoleLinks", () => {
@@ -31,5 +31,19 @@ describe("createExternalConsoleLinks", () => {
         config: { provider: "disabled" },
       }).disabledReasons.length,
     ).toBeGreaterThan(0);
+  });
+});
+
+describe("createDashboardConsoleLinks", () => {
+  it("creates property-level GA4 and Search Console links", () => {
+    const links = createDashboardConsoleLinks({
+      provider: "ga4",
+      ga4PropertyId: "123456",
+      searchConsoleProperty: "sc-domain:example.com",
+    });
+
+    expect(links.ga4Url).toContain("/p123456/");
+    expect(links.searchConsoleUrl).toContain("resource_id=sc-domain%3Aexample.com");
+    expect(links.disabledReasons).toEqual([]);
   });
 });

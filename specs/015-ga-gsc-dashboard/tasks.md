@@ -19,17 +19,17 @@ task를 구현 전에 배치한다.
 
 **Purpose**: 분석 대시보드 feature가 들어갈 파일 구조와 의존성 경계를 준비한다.
 
-- [ ] T001 `apps/cms/components/shell/navigation.ts`에 Analytics navigation 항목 타입과 `/analytics`
+- [x] T001 `apps/cms/components/shell/navigation.ts`에 Analytics navigation 항목 타입과 `/analytics`
       active state 추가
-- [ ] T002 `apps/cms/components/shell/navigation.test.ts`에 Analytics navigation 표시 및 active
+- [x] T002 `apps/cms/components/shell/navigation.test.ts`에 Analytics navigation 표시 및 active
       state 검증 추가
-- [ ] T003 [P] `packages/analytics/src/dashboard-types.ts`에 AnalyticsConnection, AnalyticsSnapshot,
+- [x] T003 [P] `packages/analytics/src/dashboard-types.ts`에 AnalyticsConnection, AnalyticsSnapshot,
       SitePerformanceSummary, PostPerformance, SearchQueryPerformance, PublicationPerformanceWindow
       타입 정의
-- [ ] T004 [P] `packages/analytics/src/index.ts`에서 dashboard analytics 타입과 helper export 추가
-- [ ] T005 [P] `apps/cms/lib/analytics/` 디렉터리와 barrel export `apps/cms/lib/analytics/index.ts`
+- [x] T004 [P] `packages/analytics/src/index.ts`에서 dashboard analytics 타입과 helper export 추가
+- [x] T005 [P] `apps/cms/lib/analytics/` 디렉터리와 barrel export `apps/cms/lib/analytics/index.ts`
       생성
-- [ ] T006 [P] `apps/cms/components/analytics/` 디렉터리와 barrel export
+- [x] T006 [P] `apps/cms/components/analytics/` 디렉터리와 barrel export
       `apps/cms/components/analytics/index.ts` 생성
 
 ---
@@ -40,21 +40,21 @@ task를 구현 전에 배치한다.
 
 **CRITICAL**: 이 phase가 끝나기 전에는 user story 구현을 시작하지 않는다.
 
-- [ ] T007 `packages/analytics/src/performance-normalization.ts`에 기간 비교, CTR/position 정규화,
+- [x] T007 `packages/analytics/src/performance-normalization.ts`에 기간 비교, CTR/position 정규화,
       0/데이터 없음 구분 helper 구현
-- [ ] T008 [P] `packages/analytics/src/performance-normalization.test.ts`에 기간 비교와 누락 지표
+- [x] T008 [P] `packages/analytics/src/performance-normalization.test.ts`에 기간 비교와 누락 지표
       정규화 test 추가
-- [ ] T009 `packages/analytics/src/ga4-reporting.ts`에 GA4 page performance provider contract와
+- [x] T009 `packages/analytics/src/ga4-reporting.ts`에 GA4 page performance provider contract와
       mocked response normalization 구현
-- [ ] T010 [P] `packages/analytics/src/ga4-reporting.test.ts`에 pageViews/activeUsers와 이전 기간
+- [x] T010 [P] `packages/analytics/src/ga4-reporting.test.ts`에 pageViews/activeUsers와 이전 기간
       비교 normalization test 추가
-- [ ] T011 `packages/analytics/src/gsc-reporting.ts`에 GSC page/query performance provider
+- [x] T011 `packages/analytics/src/gsc-reporting.ts`에 GSC page/query performance provider
       contract와 mocked response normalization 구현
-- [ ] T012 [P] `packages/analytics/src/gsc-reporting.test.ts`에 clicks/impressions/CTR/position 및
+- [x] T012 [P] `packages/analytics/src/gsc-reporting.test.ts`에 clicks/impressions/CTR/position 및
       query normalization test 추가
-- [ ] T013 `apps/cms/lib/analytics/google-analytics-provider.ts`에 service account 설정 검증,
+- [x] T013 `apps/cms/lib/analytics/google-analytics-provider.ts`에 service account 설정 검증,
       provider error mapping, GA4/GSC provider composition 구현
-- [ ] T014 [P] `apps/cms/lib/analytics/google-analytics-provider.test.ts`에 missing-config,
+- [x] T014 [P] `apps/cms/lib/analytics/google-analytics-provider.test.ts`에 missing-config,
       unauthorized, quota-limited, temporary-failure 매핑 test 추가
 - [ ] T015 `apps/cms/lib/analytics/analytics-match.ts`에 canonical URL/slug 기반 글 매칭 및
       unmatched/partial 상태 계산 구현
@@ -68,7 +68,7 @@ task를 구현 전에 배치한다.
       helper 또는 migration-safe adapter method 추가
 - [ ] T020 `scripts/migration/d1-schema.sql`에 analytics_snapshots 테이블과 range/generated_at index
       추가
-- [ ] T021 `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 site config, published posts,
+- [x] T021 `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 site config, published posts,
       provider, cache를 조합하는 dashboard loader skeleton 구현
 
 **Checkpoint**: provider normalization, URL matching, cache, loader skeleton이 준비되어 user story
@@ -87,7 +87,7 @@ task를 구현 전에 배치한다.
 
 ### Tests for User Story 1
 
-- [ ] T022 [P] [US1] `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 connected,
+- [x] T022 [P] [US1] `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 connected,
       missing-config, empty data, last snapshot fallback loader test 추가
 - [ ] T023 [P] [US1] `apps/cms/components/analytics/metric-summary.test.tsx`에 7일/28일 요약 지표와
       변화 방향 렌더링 test 추가
@@ -98,17 +98,17 @@ task를 구현 전에 배치한다.
 
 ### Implementation for User Story 1
 
-- [ ] T026 [US1] `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 최근 7일/28일 date range
+- [x] T026 [US1] `apps/cms/lib/analytics/analytics-dashboard-loader.ts`에 최근 7일/28일 date range
       계산, connection 상태, SitePerformanceSummary 생성 구현
-- [ ] T027 [P] [US1] `apps/cms/components/analytics/metric-summary.tsx`에 pageViews, activeUsers,
+- [x] T027 [P] [US1] `apps/cms/components/analytics/metric-summary.tsx`에 pageViews, activeUsers,
       searchClicks, searchImpressions, searchCtr, averagePosition summary UI 구현
-- [ ] T028 [P] [US1] `apps/cms/components/analytics/analytics-empty-state.tsx`에 missing-config,
+- [x] T028 [P] [US1] `apps/cms/components/analytics/analytics-empty-state.tsx`에 missing-config,
       unauthorized, error, no-data 상태 UI 구현
-- [ ] T029 [US1] `apps/cms/components/analytics/analytics-dashboard.tsx`에 range 선택, summary,
+- [x] T029 [US1] `apps/cms/components/analytics/analytics-dashboard.tsx`에 range 선택, summary,
       connection status, external links 배치 구현
-- [ ] T030 [US1] `apps/cms/app/analytics/page.tsx`에 CMS 인증 guard, CmsShell, analytics dashboard
+- [x] T030 [US1] `apps/cms/app/analytics/page.tsx`에 CMS 인증 guard, CmsShell, analytics dashboard
       loader 연결 구현
-- [ ] T031 [US1] `packages/analytics/src/console-links.ts`에 dashboard에서 사용할 GA4/GSC
+- [x] T031 [US1] `packages/analytics/src/console-links.ts`에 dashboard에서 사용할 GA4/GSC
       property-level 링크 생성 보강
 
 **Checkpoint**: User Story 1은 사이트 요약 대시보드 MVP로 독립 사용 가능해야 한다.
@@ -203,7 +203,7 @@ pending/complete/insufficient-data 상태와 needsReview를 표시한다.
       checklist 실행 결과 확인
 - [ ] T056 `apps/cms/README.md`에 analytics dashboard 검증 명령(`pnpm typecheck`, analytics/cms
       tests) 안내 정리
-- [ ] T057 `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 개인 식별 데이터가 view
+- [x] T057 `apps/cms/lib/analytics/analytics-dashboard-loader.test.ts`에 개인 식별 데이터가 view
       model로 전달되지 않는 privacy regression test 추가
 - [ ] T058 `specs/015-ga-gsc-dashboard/quickstart.md`에 운영자 사용성 체크 결과 기록 섹션 추가
 - [ ] T059 `pnpm typecheck` 실행
