@@ -76,7 +76,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     getPostsByCategoryPath(path, { limit: 100, publishedOnly: true }),
   ]);
   if (!category) notFound();
+  const site = await getSiteConfig();
   const pagination = paginateItems(posts, parsePageParam(resolvedSearchParams.page));
+  const analyticsContext = {
+    provider: site.analytics.provider,
+    slug: `category:${category.slug}`,
+    title: category.label,
+    url: `${site.siteUrl.replace(/\/+$/, "")}/categories/${category.slug}`,
+    siteUrl: site.siteUrl,
+    category: category.slug,
+  };
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
@@ -92,7 +101,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         ) : null}
       </section>
       <section className="space-y-5">
-        <PostList posts={pagination.items} />
+        <PostList analyticsContext={analyticsContext} posts={pagination.items} />
         <PostPagination
           currentPage={pagination.currentPage}
           hrefForPage={(page) => categoryHrefForPage(path, page)}

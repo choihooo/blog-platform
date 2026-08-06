@@ -4,6 +4,7 @@ import type { AnalyticsDashboardView } from "@blog-platform/analytics";
 import { AnalyticsEmptyState } from "./analytics-empty-state";
 import { MetricSummary } from "./metric-summary";
 import { PostPerformanceTable } from "./post-performance-table";
+import { PublicationPerformance } from "./publication-performance";
 
 function formatDate(value?: string) {
   if (!value) return "-";
@@ -83,6 +84,7 @@ export function AnalyticsDashboard({ dashboard }: { dashboard: AnalyticsDashboar
 
       <MetricSummary summary={dashboard.summary} />
       <PostPerformanceTable posts={dashboard.posts} />
+      <PublicationPerformance posts={dashboard.posts} windows={dashboard.publicationWindows} />
 
       {dashboard.warnings.length > 0 ? (
         <section className="rounded-lg border border-border bg-card px-5 py-4">

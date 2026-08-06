@@ -1,12 +1,15 @@
-import Link from "next/link";
 import Image from "next/image";
 import { Chip, ChipGroup, EmptyState } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
+import type { PostAnalyticsContext } from "./post-analytics-events";
+import { AnalyticsLink } from "./analytics-link";
 
 type PostListProps = {
   posts: PublicPost[];
+  analyticsContext?: PostAnalyticsContext;
+  postClickEvent?: "post_card_click" | "search_result_click";
   view?: "tile" | "list";
 };
 
@@ -29,18 +32,35 @@ function PostMeta({ post }: { post: PublicPost }) {
   );
 }
 
-function PostTaxonomy({ post }: { post: PublicPost }) {
+function PostTaxonomy({
+  analyticsContext,
+  post,
+}: {
+  analyticsContext?: PostAnalyticsContext;
+  post: PublicPost;
+}) {
   return (
     <ChipGroup aria-label={`${post.title} taxonomy`} className="flex flex-wrap gap-2">
       {post.categoryEntry ? (
-        <Link href={`/categories/${post.categoryEntry.slug}`}>
+        <AnalyticsLink
+          analyticsContext={analyticsContext}
+          eventName="category_click"
+          href={`/categories/${post.categoryEntry.slug}`}
+          target={post.categoryEntry.slug}
+        >
           <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
-        </Link>
+        </AnalyticsLink>
       ) : null}
       {post.tagEntries.map((tag) => (
-        <Link href={`/tags/${tag.slug}`} key={tag.slug}>
+        <AnalyticsLink
+          analyticsContext={analyticsContext}
+          eventName="tag_click"
+          href={`/tags/${tag.slug}`}
+          key={tag.slug}
+          target={tag.slug}
+        >
           <Chip label={tag.label} size="sm" tone="neutral" />
-        </Link>
+        </AnalyticsLink>
       ))}
     </ChipGroup>
   );
@@ -112,10 +132,26 @@ function Cover({
   );
 }
 
-function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) {
+function PostTile({
+  analyticsContext,
+  post,
+  postClickEvent = "post_card_click",
+  priority,
+}: {
+  analyticsContext?: PostAnalyticsContext;
+  post: PublicPost;
+  postClickEvent?: "post_card_click" | "search_result_click";
+  priority?: boolean;
+}) {
   return (
     <article className="flex h-full flex-col overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
-      <Link className="block flex-1" href={`/posts/${post.slug}`}>
+      <AnalyticsLink
+        analyticsContext={analyticsContext}
+        className="block flex-1"
+        eventName={postClickEvent}
+        href={`/posts/${post.slug}`}
+        target={post.slug}
+      >
         <Cover post={post} priority={priority} size="tile" />
         <div className="grid gap-4 p-5">
           <PostMeta post={post} />
@@ -128,25 +164,48 @@ function PostTile({ post, priority }: { post: PublicPost; priority?: boolean }) 
             ) : null}
           </div>
         </div>
-      </Link>
+      </AnalyticsLink>
       <div className="mt-auto px-5 pb-5 pt-0">
-        <PostTaxonomy post={post} />
+        <PostTaxonomy analyticsContext={analyticsContext} post={post} />
       </div>
     </article>
   );
 }
 
-function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean }) {
+function PostListItem({
+  analyticsContext,
+  post,
+  postClickEvent = "post_card_click",
+  priority,
+}: {
+  analyticsContext?: PostAnalyticsContext;
+  post: PublicPost;
+  postClickEvent?: "post_card_click" | "search_result_click";
+  priority?: boolean;
+}) {
   return (
     <article className="border-b border-border py-4 last:border-b-0">
       <div className="grid gap-4 sm:min-h-40 sm:grid-cols-[13.5rem_minmax(0,1fr)] sm:items-stretch">
-        <Link className="block h-full" href={`/posts/${post.slug}`}>
+        <AnalyticsLink
+          analyticsContext={analyticsContext}
+          className="block h-full"
+          eventName={postClickEvent}
+          href={`/posts/${post.slug}`}
+          target={post.slug}
+        >
           <Cover post={post} priority={priority} size="list" />
-        </Link>
+        </AnalyticsLink>
         <div className="flex min-w-0 flex-col py-1 sm:min-h-40">
           <PostMeta post={post} />
           <h3 className="mt-3 truncate text-2xl font-semibold tracking-normal">
-            <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+            <AnalyticsLink
+              analyticsContext={analyticsContext}
+              eventName={postClickEvent}
+              href={`/posts/${post.slug}`}
+              target={post.slug}
+            >
+              {post.title}
+            </AnalyticsLink>
           </h3>
           {post.excerpt ? (
             <p className="mt-2 line-clamp-2 max-w-[64ch] text-sm leading-5 text-muted-foreground">
@@ -154,7 +213,7 @@ function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean
             </p>
           ) : null}
           <div className="mt-auto pt-3">
-            <PostTaxonomy post={post} />
+            <PostTaxonomy analyticsContext={analyticsContext} post={post} />
           </div>
         </div>
       </div>
@@ -162,7 +221,12 @@ function PostListItem({ post, priority }: { post: PublicPost; priority?: boolean
   );
 }
 
-export function PostList({ posts, view = "list" }: PostListProps) {
+export function PostList({
+  analyticsContext,
+  postClickEvent = "post_card_click",
+  posts,
+  view = "list",
+}: PostListProps) {
   if (posts.length === 0) {
     return (
       <EmptyState
@@ -179,7 +243,13 @@ export function PostList({ posts, view = "list" }: PostListProps) {
     return (
       <div className="grid gap-6 sm:grid-cols-2">
         {posts.map((post, index) => (
-          <PostTile key={post.path} post={post} priority={index === 0} />
+          <PostTile
+            analyticsContext={analyticsContext}
+            key={post.path}
+            post={post}
+            postClickEvent={postClickEvent}
+            priority={index === 0}
+          />
         ))}
       </div>
     );
@@ -188,7 +258,13 @@ export function PostList({ posts, view = "list" }: PostListProps) {
   return (
     <div className="bg-card shadow-sm">
       {posts.map((post, index) => (
-        <PostListItem key={post.path} post={post} priority={index === 0} />
+        <PostListItem
+          analyticsContext={analyticsContext}
+          key={post.path}
+          post={post}
+          postClickEvent={postClickEvent}
+          priority={index === 0}
+        />
       ))}
     </div>
   );

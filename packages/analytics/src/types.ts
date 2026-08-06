@@ -17,7 +17,12 @@ export type BlogEventName =
   | "internal_link_click"
   | "external_link_click"
   | "search"
-  | "share";
+  | "share"
+  | "search_result_click"
+  | "recommended_post_click"
+  | "post_card_click"
+  | "category_click"
+  | "tag_click";
 
 export type BlogEvent = {
   name: BlogEventName;

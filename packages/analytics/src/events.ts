@@ -11,6 +11,11 @@ const eventNames = new Set<BlogEventName>([
   "external_link_click",
   "search",
   "share",
+  "search_result_click",
+  "recommended_post_click",
+  "post_card_click",
+  "category_click",
+  "tag_click",
 ]);
 
 export function createBlogEvent(

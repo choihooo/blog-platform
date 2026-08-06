@@ -1,11 +1,13 @@
-import Link from "next/link";
 import Image from "next/image";
 import { Chip, ChipGroup } from "@hozui/react";
 
 import type { PublicPost } from "../../lib/content-source";
 import { formatPostDate } from "../../lib/date-format";
+import type { PostAnalyticsContext } from "./post-analytics-events";
+import { AnalyticsLink } from "./analytics-link";
 
 type RecommendedPostsProps = {
+  analyticsContext?: PostAnalyticsContext;
   posts: PublicPost[];
 };
 
@@ -52,7 +54,7 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
   );
 }
 
-export function RecommendedPosts({ posts }: RecommendedPostsProps) {
+export function RecommendedPosts({ analyticsContext, posts }: RecommendedPostsProps) {
   if (posts.length === 0) return null;
 
   return (
@@ -62,10 +64,13 @@ export function RecommendedPosts({ posts }: RecommendedPostsProps) {
       </h2>
       <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          <Link
+          <AnalyticsLink
+            analyticsContext={analyticsContext}
             className="group block overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md"
+            eventName="recommended_post_click"
             href={`/posts/${post.slug}`}
             key={post.path}
+            target={post.slug}
           >
             <RecommendedPostCover post={post} />
             <div className="grid gap-3 p-4">
@@ -87,7 +92,7 @@ export function RecommendedPosts({ posts }: RecommendedPostsProps) {
                 </ChipGroup>
               ) : null}
             </div>
-          </Link>
+          </AnalyticsLink>
         ))}
       </div>
     </section>

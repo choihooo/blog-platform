@@ -47,9 +47,21 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   const { slug } = await params;
   const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
     Promise.resolve({}));
-  const [tag, posts] = await Promise.all([getTag(slug), getPostsByTag(slug, { limit: 100 })]);
+  const [tag, posts, site] = await Promise.all([
+    getTag(slug),
+    getPostsByTag(slug, { limit: 100 }),
+    getSiteConfig(),
+  ]);
   if (!tag) notFound();
   const pagination = paginateItems(posts, parsePageParam(resolvedSearchParams.page));
+  const analyticsContext = {
+    provider: site.analytics.provider,
+    slug: `tag:${tag.slug}`,
+    title: tag.label,
+    url: `${site.siteUrl.replace(/\/+$/, "")}/tags/${tag.slug}`,
+    siteUrl: site.siteUrl,
+    tags: [tag.slug],
+  };
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
@@ -63,7 +75,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         ) : null}
       </section>
       <section className="space-y-5">
-        <PostList posts={pagination.items} />
+        <PostList analyticsContext={analyticsContext} posts={pagination.items} />
         <PostPagination
           currentPage={pagination.currentPage}
           hrefForPage={(page) => tagHrefForPage(tag.slug, page)}

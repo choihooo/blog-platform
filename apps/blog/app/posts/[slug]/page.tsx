@@ -294,7 +294,7 @@ export default async function PostPage({ params }: PostPageProps) {
           >
             <PostBodyRenderer analyticsContext={analyticsContext} nodes={post.bodyNodes} />
           </div>
-          <RecommendedPosts posts={recommendedPosts} />
+          <RecommendedPosts analyticsContext={analyticsContext} posts={recommendedPosts} />
           <PostShareActions context={analyticsContext} />
         </div>
         {post.toc.length > 0 ? (

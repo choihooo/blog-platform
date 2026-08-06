@@ -4,9 +4,11 @@ import { readFile } from "node:fs/promises";
 import {
   emptySitePerformanceSummary,
   normalizeSitePerformanceSummary,
+  publicationWindowState,
   type AnalyticsProviderRequest,
   type AnalyticsProviderResult,
   type PostPerformance,
+  type PublicationPerformanceWindow,
 } from "@blog-platform/analytics";
 
 type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
@@ -215,6 +217,24 @@ function numberValue(value: string | number | undefined) {
   return Number.isFinite(number) ? number : 0;
 }
 
+function parseApiDate(value: string | undefined) {
+  if (!value) return "";
+  if (/^\d{8}$/.test(value)) {
+    return `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}`;
+  }
+  return value.slice(0, 10);
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
+}
+
+function dateKey(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
 async function fetchGa4Report(input: {
   request: AnalyticsProviderRequest;
   propertyId: string;
@@ -362,6 +382,119 @@ function normalizeLivePostPerformance(input: {
   });
 }
 
+function normalizePublicationWindows(input: {
+  request: AnalyticsProviderRequest;
+  availableThrough: string;
+  ga4DailyPages: Ga4RunReportResponse;
+  gscDailyPages: GscSearchAnalyticsResponse;
+}): PublicationPerformanceWindow[] {
+  const ga4ByDatePath = new Map<string, { pageViews: number; activeUsers: number }>();
+  for (const row of input.ga4DailyPages.rows ?? []) {
+    const date = parseApiDate(row.dimensionValues?.[0]?.value);
+    const path = cleanPath(row.dimensionValues?.[1]?.value ?? "");
+    if (!date || !path) continue;
+    ga4ByDatePath.set(`${date}|${path}`, {
+      pageViews: numberValue(row.metricValues?.[0]?.value),
+      activeUsers: numberValue(row.metricValues?.[1]?.value),
+    });
+  }
+
+  const gscByDateUrl = new Map<string, { searchClicks: number; searchImpressions: number }>();
+  for (const row of input.gscDailyPages.rows ?? []) {
+    const date = parseApiDate(row.keys?.[0]);
+    const url = cleanUrl(row.keys?.[1] ?? "");
+    if (!date || !url) continue;
+    gscByDateUrl.set(`${date}|${url}`, {
+      searchClicks: numberValue(row.clicks),
+      searchImpressions: numberValue(row.impressions),
+    });
+  }
+
+  const windows: PublicationPerformanceWindow[] = input.request.posts.flatMap((post) => {
+    const published = post.publishedAt ? new Date(post.publishedAt) : undefined;
+    const path = cleanPath(post.canonicalUrl);
+    const url = cleanUrl(post.canonicalUrl);
+
+    return ([1, 7, 28] as const).map((windowDays) => {
+      const state = publicationWindowState({
+        publishedAt: post.publishedAt,
+        availableThrough: input.availableThrough,
+        windowDays,
+        sampleSize: 1,
+      });
+      let pageViews = 0;
+      let activeUsers = 0;
+      let searchClicks = 0;
+      let searchImpressions = 0;
+
+      if (published && state !== "pending") {
+        for (let offset = 0; offset < windowDays; offset += 1) {
+          const currentDate = dateKey(addDays(published, offset));
+          const ga4 = ga4ByDatePath.get(`${currentDate}|${path}`);
+          const gsc = gscByDateUrl.get(`${currentDate}|${url}`);
+          pageViews += ga4?.pageViews ?? 0;
+          activeUsers += ga4?.activeUsers ?? 0;
+          searchClicks += gsc?.searchClicks ?? 0;
+          searchImpressions += gsc?.searchImpressions ?? 0;
+        }
+      }
+
+      const sampleSize = pageViews + searchClicks + searchImpressions;
+      return {
+        postId: post.id,
+        window: `${windowDays}d`,
+        state: state === "complete" && sampleSize === 0 ? "insufficient-data" : state,
+        pageViews,
+        activeUsers,
+        searchClicks,
+        searchImpressions,
+        needsReview: false,
+      } satisfies PublicationPerformanceWindow;
+    });
+  });
+
+  for (const window of ["1d", "7d", "28d"] as const) {
+    const complete = windows.filter((item) => item.window === window && item.state === "complete");
+    const scores = complete
+      .map((item) => item.pageViews + item.searchClicks)
+      .sort((left, right) => left - right);
+    const median = scores.length ? scores[Math.floor(scores.length / 2)] : 0;
+    if (!median) continue;
+    for (const item of complete) {
+      item.needsReview = item.pageViews + item.searchClicks < median * 0.5;
+    }
+  }
+
+  return windows;
+}
+
+function mockPublicationWindows(
+  postPerformance: PostPerformance[],
+  availableThrough: string,
+): PublicationPerformanceWindow[] {
+  return postPerformance.flatMap((post) =>
+    ([1, 7, 28] as const).map((windowDays) => {
+      const state = publicationWindowState({
+        publishedAt: post.publishedAt,
+        availableThrough,
+        windowDays,
+        sampleSize: post.pageViews + post.searchClicks + post.searchImpressions,
+      });
+      const ratio = windowDays === 1 ? 0.18 : windowDays === 7 ? 0.55 : 1;
+      return {
+        postId: post.postId,
+        window: `${windowDays}d`,
+        state,
+        pageViews: state === "pending" ? 0 : Math.round(post.pageViews * ratio),
+        activeUsers: state === "pending" ? 0 : Math.round(post.activeUsers * ratio),
+        searchClicks: state === "pending" ? 0 : Math.round(post.searchClicks * ratio),
+        searchImpressions: state === "pending" ? 0 : Math.round(post.searchImpressions * ratio),
+        needsReview: false,
+      } satisfies PublicationPerformanceWindow;
+    }),
+  );
+}
+
 function mockPostPerformance(request: AnalyticsProviderRequest): PostPerformance[] {
   return request.posts.map((post, index) => {
     const pageViews = Math.max(0, 240 - index * 23);
@@ -427,6 +560,8 @@ export async function fetchGoogleAnalyticsDashboard(
         gscPreviousSummary,
         gscPages,
         gscQueries,
+        ga4DailyPages,
+        gscDailyPages,
       ] = await Promise.all([
         fetchGa4Report({
           request,
@@ -475,6 +610,20 @@ export async function fetchGoogleAnalyticsDashboard(
           fetchImpl,
           dimensions: ["page", "query"],
         }),
+        fetchGa4Report({
+          request,
+          propertyId: config.ga4PropertyId ?? "",
+          token,
+          fetchImpl,
+          dimensions: ["date", "pagePath"],
+        }),
+        fetchGscReport({
+          request,
+          property: config.searchConsoleProperty ?? "",
+          token,
+          fetchImpl,
+          dimensions: ["date", "page"],
+        }),
       ]);
 
       const currentGa4 = summarizeGa4(ga4Summary);
@@ -486,6 +635,12 @@ export async function fetchGoogleAnalyticsDashboard(
         ga4Pages,
         gscPages,
         gscQueries,
+      });
+      const publicationWindows = normalizePublicationWindows({
+        request,
+        availableThrough: request.dateRange.endDate,
+        ga4DailyPages,
+        gscDailyPages,
       });
 
       return {
@@ -503,7 +658,7 @@ export async function fetchGoogleAnalyticsDashboard(
           previousAveragePosition: previousGsc.averagePosition,
         }),
         postPerformance,
-        publicationWindows: [],
+        publicationWindows,
         warnings: postPerformance.some((post) => post.matchState !== "matched")
           ? ["Some posts could not be fully matched across GA4 and Search Console."]
           : [],
@@ -542,7 +697,7 @@ export async function fetchGoogleAnalyticsDashboard(
           })
         : emptySitePerformanceSummary(),
     postPerformance,
-    publicationWindows: [],
+    publicationWindows: mockPublicationWindows(postPerformance, request.dateRange.endDate),
     warnings: ["Mock analytics data is displayed."],
   };
 }

@@ -67,6 +67,32 @@ describe("google analytics provider config", () => {
           },
         ],
       },
+      {
+        rows: [
+          {
+            dimensionValues: [{ value: "20260801" }, { value: "/posts/hello" }],
+            metricValues: [{ value: "5" }, { value: "3" }],
+          },
+          {
+            dimensionValues: [{ value: "20260802" }, { value: "/posts/hello" }],
+            metricValues: [{ value: "7" }, { value: "4" }],
+          },
+        ],
+      },
+      {
+        rows: [
+          {
+            keys: ["2026-08-01", "https://blog.example.com/posts/hello"],
+            clicks: 1,
+            impressions: 20,
+          },
+          {
+            keys: ["2026-08-02", "https://blog.example.com/posts/hello"],
+            clicks: 3,
+            impressions: 80,
+          },
+        ],
+      },
     ];
     const fetchImpl = async () =>
       new Response(JSON.stringify(responses.shift() ?? {}), {
@@ -92,6 +118,7 @@ describe("google analytics provider config", () => {
             slug: "hello",
             canonicalUrl: "https://blog.example.com/posts/hello",
             status: "published",
+            publishedAt: "2026-08-01T00:00:00.000Z",
           },
         ],
       },
@@ -116,5 +143,15 @@ describe("google analytics provider config", () => {
       matchState: "matched",
     });
     expect(result.postPerformance[0]?.topQueries[0]?.query).toBe("hello query");
+    expect(result.publicationWindows).toContainEqual({
+      postId: "db/posts/hello",
+      window: "1d",
+      state: "complete",
+      pageViews: 5,
+      activeUsers: 3,
+      searchClicks: 1,
+      searchImpressions: 20,
+      needsReview: false,
+    });
   });
 });
