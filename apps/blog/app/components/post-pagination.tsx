@@ -61,7 +61,7 @@ function PaginationSubmitControl({
       {target.fields.map(([name, value]) => (
         <input key={`${name}:${value}`} name={name} type="hidden" value={value} />
       ))}
-      <PaginationControl aria-label={label} control={control} disabled={disabled} />
+      <PaginationControl aria-label={label} control={control} disabled={disabled} type="submit" />
     </form>
   );
 }
@@ -75,7 +75,7 @@ export function PostPagination({ currentPage, totalPages, hrefForPage }: PostPag
   return (
     <Pagination
       aria-label="글 목록 페이지"
-      className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5"
+      className="flex flex-wrap items-center justify-center gap-3 pt-5"
       variant="simple"
     >
       <PaginationStatus className="text-sm text-muted-foreground">
