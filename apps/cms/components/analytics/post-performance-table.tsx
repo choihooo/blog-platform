@@ -41,7 +41,7 @@ export function PostPerformanceTable({ posts }: { posts: PostPerformance[] }) {
                 key={post.postId}
               >
                 <td className="px-4 py-3">
-                  <a className="block truncate font-medium" href={`/posts/${post.slug}`}>
+                  <a className="block truncate font-medium" href={`/analytics/posts/${post.slug}`}>
                     {post.title}
                   </a>
                   <span className="mt-1 block font-mono text-xs text-muted-foreground">
