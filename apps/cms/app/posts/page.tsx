@@ -1,6 +1,5 @@
 import {
   Badge,
-  Button,
   EmptyState,
   Pagination,
   PaginationControl,
@@ -12,6 +11,7 @@ import { ArrowUpRight, Plus } from "lucide-react";
 
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 import { AccessState, CmsShell } from "../../components/shell/index";
+import { PostsSearchForm } from "../../components/posts/posts-search-form";
 import { listPostSummaries, type PostSummary } from "../../lib/editor/editor-loader";
 
 type PostsPageSearchParams = {
@@ -150,34 +150,7 @@ export function PostsPageView({
             <Plus aria-hidden="true" size={16} />새 초안
           </a>
         </div>
-        <form action="/posts" className="flex max-w-3xl flex-wrap gap-2">
-          <input
-            aria-label="Search posts"
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-            defaultValue={query}
-            name="q"
-            placeholder="제목, slug, 상태, 본문 검색"
-            type="search"
-          />
-          <select
-            aria-label="Sort posts"
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
-            defaultValue={sort}
-            name="sort"
-          >
-            <option value="published">최신순</option>
-            <option value="updated">최근 수정순</option>
-          </select>
-          <Button label="검색" type="submit" variant="secondary" />
-          {query ? (
-            <a
-              className="inline-flex h-10 items-center rounded-md px-3 text-sm font-medium text-muted-foreground hover:text-foreground"
-              href="/posts"
-            >
-              초기화
-            </a>
-          ) : null}
-        </form>
+        <PostsSearchForm query={query} sort={sort} />
         <div className="rounded-lg border border-border bg-card">
           {posts.length > 0 ? (
             <table className="w-full min-w-[46rem] text-sm">

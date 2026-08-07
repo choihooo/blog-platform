@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { AnalyticsLink } from "./components/analytics-link";
+import { BlogSearchForm } from "./components/blog-search-form";
 import { paginateItems, parsePageParam, PostPagination } from "./components/post-pagination";
 import { PostList } from "./components/post-list";
 import {
@@ -104,18 +105,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <section className="mx-auto mb-10 max-w-4xl text-center">
         <h1 className="sr-only">기록하고 실험하는 개발 블로그</h1>
-        <form action="/" className="relative mx-auto w-full max-w-xl">
-          {activeCategory ? <input name="category" type="hidden" value={activeCategory} /> : null}
-          {view === "list" ? <input name="view" type="hidden" value="list" /> : null}
-          <input
-            aria-label="검색어"
-            className="h-14 w-full border border-input bg-background px-5 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-ring"
-            defaultValue={query}
-            name="q"
-            placeholder="검색어를 입력하세요"
-            type="search"
-          />
-        </form>
+        <BlogSearchForm activeCategory={activeCategory} query={query} view={view} />
       </section>
 
       <div className="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
