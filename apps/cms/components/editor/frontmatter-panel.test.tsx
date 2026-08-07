@@ -57,4 +57,23 @@ describe("FrontmatterPanel media upload", () => {
     fireEvent.click(childClear!);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ category: "engineering" }));
   });
+
+  it("keeps hyphens while editing a slug", () => {
+    const onChange = vi.fn();
+    render(
+      <FrontmatterPanel
+        frontmatter={{
+          title: "Hello",
+          status: "draft",
+          slug: "hello",
+        }}
+        onChange={onChange}
+        postSlug="hello"
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("Slug"), { target: { value: "hello-" } });
+
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ slug: "hello-" }));
+  });
 });

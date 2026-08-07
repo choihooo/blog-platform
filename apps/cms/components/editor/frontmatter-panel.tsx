@@ -38,12 +38,12 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         .map((tag) => tag.trim().toLowerCase())
         .filter(Boolean),
     });
-  const normalizeSlug = (value: string) =>
+  const normalizeSlugInput = (value: string) =>
     value
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+      .replace(/-{2,}/g, "-");
   const isSlugMutated = Boolean(frontmatter.slug && frontmatter.slug !== postSlug);
   const parentCategories = categories.filter((category) => category.depth === 1);
   const childCategories = categories.filter((category) => category.depth === 2);
@@ -121,8 +121,8 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
           id="editor-slug"
           label="Slug"
           value={normalizedPostSlug}
-          onChange={(event) => update("slug", normalizeSlug(event.currentTarget.value))}
-          onValueChange={(value) => update("slug", normalizeSlug(value))}
+          onChange={(event) => update("slug", normalizeSlugInput(event.currentTarget.value))}
+          onValueChange={(value) => update("slug", normalizeSlugInput(value))}
           placeholder="created on save"
         />
         {isSlugMutated ? (
