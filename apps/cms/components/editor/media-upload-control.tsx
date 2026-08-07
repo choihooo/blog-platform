@@ -50,6 +50,7 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
           aria-label="Upload image"
           disabled={isPending}
           icon={<Image aria-hidden="true" size={16} />}
+          loading={isPending}
           onClick={() => setDetailsOpen((value) => !value)}
           size="sm"
           type="button"
@@ -100,6 +101,7 @@ export function MediaUploadControl({ postSlug, onUploaded }: Props) {
           <Button
             disabled={isPending}
             label="Choose"
+            loading={isPending}
             onClick={() => inputRef.current?.click()}
             type="button"
           />

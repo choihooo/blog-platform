@@ -63,6 +63,7 @@ const tools = [
 ] as const;
 
 export function EditorToolbar({
+  actionLoading,
   editor,
   onSave,
   onPublish,
@@ -74,6 +75,7 @@ export function EditorToolbar({
   saveDisabled,
   publishDisabled,
 }: {
+  actionLoading?: boolean;
   editor?: Editor | null;
   onSave?: () => void;
   onPublish?: () => void;
@@ -112,6 +114,7 @@ export function EditorToolbar({
           disabled={saveDisabled}
           label="Save"
           leadingIcon={<Save aria-hidden="true" size={16} />}
+          loading={actionLoading}
           onClick={onSave}
           type="button"
           variant="secondary"
@@ -121,6 +124,7 @@ export function EditorToolbar({
             disabled={publishDisabled}
             label="Publish"
             leadingIcon={<Send aria-hidden="true" size={16} />}
+            loading={actionLoading}
             onClick={onPublish}
             type="button"
           />
@@ -130,6 +134,7 @@ export function EditorToolbar({
             disabled={publishDisabled}
             label="Preview"
             leadingIcon={<Eye aria-hidden="true" size={16} />}
+            loading={actionLoading}
             onClick={onPreview}
             type="button"
             variant="secondary"
@@ -140,6 +145,7 @@ export function EditorToolbar({
             disabled={publishDisabled}
             label="Unpublish"
             leadingIcon={<Undo2 aria-hidden="true" size={16} />}
+            loading={actionLoading}
             onClick={onUnpublish}
             type="button"
             variant="secondary"
@@ -150,6 +156,7 @@ export function EditorToolbar({
             disabled={publishDisabled}
             label="Archive"
             leadingIcon={<Archive aria-hidden="true" size={16} />}
+            loading={actionLoading}
             onClick={onArchive}
             type="button"
             variant="secondary"

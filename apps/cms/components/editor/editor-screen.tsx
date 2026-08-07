@@ -621,6 +621,7 @@ export function EditorScreen({
         </div>
       </div>
       <EditorToolbar
+        actionLoading={isPending}
         editor={editor}
         onMediaUploaded={(result) => {
           if (result.reference.target === "body") {

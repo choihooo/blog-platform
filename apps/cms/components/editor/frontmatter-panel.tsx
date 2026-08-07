@@ -209,6 +209,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         <Button
           disabled={isPending}
           label="Upload cover"
+          loading={isPending}
           onClick={() => inputRef.current?.click()}
           type="button"
         />

@@ -23,8 +23,10 @@ export function CodeCopyButton({
     title: string;
     tone: "success" | "error";
   }>();
+  const [isCopying, setIsCopying] = useState(false);
 
   async function handleCopy() {
+    setIsCopying(true);
     try {
       await copyCode(text, context, target);
       setToast((current) => ({
@@ -38,6 +40,8 @@ export function CodeCopyButton({
         title: "복사하지 못했습니다.",
         tone: "error",
       }));
+    } finally {
+      setIsCopying(false);
     }
   }
 
@@ -46,6 +50,7 @@ export function CodeCopyButton({
     null,
     createElement(Button, {
       label: "Copy",
+      loading: isCopying,
       onClick: () => void handleCopy(),
       size: "sm",
       type: "button",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   Badge,
   Button,
@@ -103,7 +104,7 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
             <CmsTextField label="이름" name="name" placeholder="이름" />
             <CmsTextField label="slug" name="slug" placeholder="slug" />
           </div>
-          <Button className="w-fit" label="Add parent" type="submit" />
+          <CategorySubmitButton label="Add parent" />
         </form>
         <form action={createCategoryAction} className="grid gap-3">
           <p className="text-xs font-semibold text-muted-foreground">2차 카테고리 추가</p>
@@ -120,7 +121,7 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
             <CmsTextField label="이름" name="name" placeholder="이름" />
             <CmsTextField label="child slug" name="childSlug" placeholder="child-slug" />
           </div>
-          <Button className="w-fit" label="Add child" type="submit" />
+          <CategorySubmitButton label="Add child" />
         </form>
       </div>
 
@@ -366,7 +367,7 @@ function EditCategoryDialog({
         )}
         <div className="flex justify-end gap-2 pt-2">
           <Button label="취소" onClick={onDone} type="button" variant="secondary" />
-          <Button label="저장" type="submit" />
+          <CategorySubmitButton label="저장" />
         </div>
       </form>
     </>
@@ -398,8 +399,31 @@ function DeleteCategoryDialog({
         <input name="categoryId" type="hidden" value={category.id} />
         <input name="slug" type="hidden" value={category.slug} />
         <Button label="취소" onClick={onDone} type="button" variant="secondary" />
-        <Button disabled={Boolean(reason)} label="삭제" type="submit" variant="danger" />
+        <CategorySubmitButton disabled={Boolean(reason)} label="삭제" variant="danger" />
       </form>
     </>
+  );
+}
+
+function CategorySubmitButton({
+  disabled,
+  label,
+  variant,
+}: {
+  disabled?: boolean;
+  label: string;
+  variant?: "primary" | "danger";
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      className="w-fit"
+      disabled={disabled || pending}
+      label={label}
+      loading={pending}
+      type="submit"
+      variant={variant}
+    />
   );
 }
