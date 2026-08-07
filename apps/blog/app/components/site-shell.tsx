@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { BlogHeaderSearchForm } from "./blog-search-form";
 import { ThemeSwitch } from "./theme-switch";
 
 type SiteShellProps = {
@@ -26,6 +27,7 @@ export function SiteShell({ children, siteName }: SiteShellProps) {
             {siteName}
           </Link>
           <div className="flex items-center gap-4">
+            <BlogHeaderSearchForm />
             <nav aria-label="주요 메뉴" className="flex items-center gap-5 text-sm font-medium">
               <Link className="text-foreground hover:text-primary" href="/#posts">
                 글

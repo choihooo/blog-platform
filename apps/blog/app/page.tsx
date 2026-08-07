@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { AnalyticsLink } from "./components/analytics-link";
-import { BlogSearchForm } from "./components/blog-search-form";
 import { paginateItems, parsePageParam, PostPagination } from "./components/post-pagination";
 import { PostList } from "./components/post-list";
 import {
@@ -103,10 +102,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
-      <section className="mx-auto mb-10 max-w-4xl text-center">
-        <h1 className="sr-only">기록하고 실험하는 개발 블로그</h1>
-        <BlogSearchForm activeCategory={activeCategory} query={query} view={view} />
-      </section>
+      <h1 className="sr-only">기록하고 실험하는 개발 블로그</h1>
 
       <div className="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
         <aside aria-label="카테고리 목록" className="lg:pt-11" id="categories">
