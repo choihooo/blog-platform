@@ -4,7 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
-import { Chip, ChipGroup } from "@hozui/react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  Chip,
+  ChipGroup,
+} from "@hozui/react";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 
 import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
@@ -239,6 +248,27 @@ export default async function PostPage({ params }: PostPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         type="application/ld+json"
       />
+      <Breadcrumb aria-label="글 위치" className="mb-6" size="sm">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">글</BreadcrumbLink>
+          </BreadcrumbItem>
+          {post.categoryEntry ? (
+            <>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/categories/${post.categoryEntry.slug}`}>
+                  {post.categoryEntry.label}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </>
+          ) : null}
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{post.title}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <article className="grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16">
         <div className="min-w-0">
           <header className="mb-12 grid gap-5 bg-card pb-10">

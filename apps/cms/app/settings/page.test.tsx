@@ -63,6 +63,10 @@ describe("SettingsPageView", () => {
     expect(screen.getByText("4")).toBeTruthy();
     expect(screen.getByText("상위: engineering")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Add child" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("switch", { name: "하위 표시" }));
+    expect(screen.queryByText("상위: engineering")).toBeNull();
+    fireEvent.click(screen.getByRole("switch", { name: "하위 표시" }));
+    expect(screen.getByText("상위: engineering")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Engineering 접기" }));
     expect(screen.queryByText("상위: engineering")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Engineering 펼치기" }));

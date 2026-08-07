@@ -17,6 +17,8 @@ import {
   ModalPortal,
   ModalTitle,
   ModalTitleStack,
+  Toast,
+  ToastStack,
 } from "@hozui/react";
 
 import {
@@ -45,6 +47,13 @@ type SelectedImageState = {
   src: string;
   alt: string;
   title: string;
+};
+
+type EditorToastState = {
+  id: number;
+  title: string;
+  description?: string;
+  tone: "success" | "error" | "info";
 };
 
 function textContent(node: JSONContent): string {
@@ -231,7 +240,12 @@ export function EditorScreen({
   const [selectedImage, setSelectedImage] = useState<SelectedImageState>();
   const selectedImagePosRef = useRef<number | undefined>(undefined);
   const [imageAttributesOpen, setImageAttributesOpen] = useState(false);
+  const [toast, setToast] = useState<EditorToastState>();
   const [isPending, startTransition] = useTransition();
+
+  function showToast(next: Omit<EditorToastState, "id">) {
+    setToast((current) => ({ ...next, id: (current?.id ?? 0) + 1 }));
+  }
 
   function syncSelectedImage(editorInstance: NonNullable<ReturnType<typeof useEditor>>) {
     const { selection } = editorInstance.state;
@@ -352,6 +366,11 @@ export function EditorScreen({
           setStatus("saved");
           setMessage(undefined);
           setRetryToken(undefined);
+          showToast({
+            title: "Draft saved",
+            description: `Saved ${savedMetadata(saved)}`,
+            tone: "success",
+          });
           if (
             typeof window !== "undefined" &&
             typeof window.localStorage?.removeItem === "function"
@@ -363,6 +382,7 @@ export function EditorScreen({
         setDocument(result.submittedDocument);
         setStatus(result.code === "validation-failure" ? "validation" : "failed");
         setMessage(result.message);
+        showToast({ title: "Save failed", tone: "error" });
       });
     });
   }
@@ -399,6 +419,16 @@ export function EditorScreen({
           setStatus(operation === "publish" ? "published" : "saved");
           setMessage(undefined);
           setRetryToken(undefined);
+          showToast({
+            title:
+              operation === "publish"
+                ? "Post published"
+                : operation === "archive"
+                  ? "Post archived"
+                  : "Post unpublished",
+            description: savedMetadata(saved),
+            tone: "success",
+          });
           if (
             typeof window !== "undefined" &&
             typeof window.localStorage?.removeItem === "function"
@@ -419,6 +449,10 @@ export function EditorScreen({
         setStatus(result.code === "public-refresh-failed" ? "refreshFailed" : "failed");
         setRetryToken(result.retryToken);
         setMessage(result.message);
+        showToast({
+          title: result.code === "public-refresh-failed" ? "Refresh failed" : "Publication failed",
+          tone: "error",
+        });
       });
     });
   }
@@ -435,10 +469,12 @@ export function EditorScreen({
           setStatus("saved");
           setMessage(undefined);
           setRetryToken(undefined);
+          showToast({ title: "Public refresh completed", tone: "success" });
           return;
         }
         setStatus("refreshFailed");
         setMessage(result.message);
+        showToast({ title: "Refresh failed", tone: "error" });
       });
     });
   }
@@ -451,6 +487,7 @@ export function EditorScreen({
         if (!result.ok) {
           setStatus("failed");
           setMessage(result.message);
+          showToast({ title: "Preview failed", tone: "error" });
           return;
         }
         const updatedAt = result.updatedAt ?? new Date().toISOString();
@@ -477,6 +514,7 @@ export function EditorScreen({
         }
         setStatus("saved");
         setMessage(undefined);
+        showToast({ title: "Preview opened", description: savedMetadata(saved), tone: "info" });
         const previewUrl = siteAnalytics?.siteUrl
           ? new URL(result.url, siteAnalytics.siteUrl).toString()
           : result.url;
@@ -500,6 +538,7 @@ export function EditorScreen({
     ];
     markDirty(documentRef.current, nextBody);
     setMessage("Image uploaded. Save the post to keep this reference.");
+    showToast({ title: "Image uploaded", description: "Save the post to keep it.", tone: "info" });
   }
 
   function uploadPastedImage(file: File) {
@@ -519,6 +558,7 @@ export function EditorScreen({
         if (!result.ok) {
           setStatus("failed");
           setMessage(result.message);
+          showToast({ title: "Image upload failed", tone: "error" });
         }
       });
     });
@@ -548,6 +588,21 @@ export function EditorScreen({
 
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background">
+      <ToastStack placement="bottom-right">
+        {toast ? (
+          <Toast
+            key={toast.id}
+            description={toast.description}
+            onOpenChange={(open) => {
+              if (!open) setToast(undefined);
+            }}
+            open
+            showCloseButton
+            title={toast.title}
+            tone={toast.tone}
+          />
+        ) : null}
+      </ToastStack>
       <RecoveryBanner
         message={message}
         onDiscard={() => {

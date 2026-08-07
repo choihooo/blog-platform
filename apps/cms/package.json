@@ -16,7 +16,7 @@
     "@blog-platform/analytics": "workspace:^",
     "@blog-platform/editor": "workspace:^",
     "@blog-platform/seo-engine": "workspace:^",
-    "@hozui/react": "^0.2.0",
+    "@hozui/react": "^0.3.0",
     "@hozui/tokens": "^0.1.0",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",

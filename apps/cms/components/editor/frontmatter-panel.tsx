@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import type { EditorFrontmatter } from "@blog-platform/editor";
-import { Button } from "@hozui/react";
+import { Button, Combobox, type ComboboxOption } from "@hozui/react";
 
 import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
 import { CmsTextField } from "../ui/text-field";
@@ -55,6 +55,22 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
   const selectedChildOptions = childCategories.filter(
     (category) => category.parentSlug === selectedParent,
   );
+  const parentOptions: ComboboxOption[] = [
+    { value: "", label: "카테고리 없음" },
+    ...parentCategories.map((category) => ({
+      value: category.slug,
+      label: category.name,
+      description: category.slug,
+    })),
+  ];
+  const childOptions: ComboboxOption[] = [
+    { value: "", label: "선택 안 함" },
+    ...selectedChildOptions.map((category) => ({
+      value: category.slug,
+      label: category.name,
+      description: category.slug,
+    })),
+  ];
 
   function updateParentCategory(parentSlug: string) {
     const firstChild = childCategories.find((category) => category.parentSlug === parentSlug);
@@ -116,41 +132,36 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
         ) : null}
       </div>
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-category-1">
-          1차 카테고리
-        </label>
-        <select
-          className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring"
-          id="editor-category-1"
-          onChange={(event) => updateParentCategory(event.currentTarget.value)}
+        <Combobox
+          ariaLabel="1차 카테고리"
+          clearable
+          emptyMessage="일치하는 카테고리가 없습니다."
+          label="1차 카테고리"
+          onValueChange={(value) => updateParentCategory(String(value))}
+          options={parentOptions}
+          placeholder="카테고리 없음"
+          portal={false}
           value={selectedParent}
-        >
-          <option value="">카테고리 없음</option>
-          {parentCategories.map((category) => (
-            <option key={category.slug} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+        />
       </div>
       <div>
-        <label className="text-xs font-medium text-muted-foreground" htmlFor="editor-category-2">
-          2차 카테고리
-        </label>
-        <select
-          className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        <Combobox
+          ariaLabel="2차 카테고리"
+          clearable
           disabled={!selectedParent || selectedChildOptions.length === 0}
-          id="editor-category-2"
-          onChange={(event) => updateChildCategory(event.currentTarget.value)}
+          emptyMessage="일치하는 하위 카테고리가 없습니다."
+          helperText={
+            selectedParent && selectedChildOptions.length === 0
+              ? "선택한 1차 카테고리에 하위 카테고리가 없습니다."
+              : undefined
+          }
+          label="2차 카테고리"
+          onValueChange={(value) => updateChildCategory(String(value))}
+          options={childOptions}
+          placeholder="선택 안 함"
+          portal={false}
           value={selectedChild}
-        >
-          <option value="">선택 안 함</option>
-          {selectedChildOptions.map((category) => (
-            <option key={category.slug} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+        />
       </div>
       <div>
         <CmsTextField

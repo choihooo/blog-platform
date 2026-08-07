@@ -12,7 +12,7 @@ type PostPaginationProps = {
   hrefForPage: (page: number) => string;
 };
 
-export const POSTS_PER_PAGE = 9;
+export const POSTS_PER_PAGE = 8;
 
 export function parsePageParam(value: string | string[] | undefined) {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -73,32 +73,36 @@ export function PostPagination({ currentPage, totalPages, hrefForPage }: PostPag
   const hasNextPage = currentPage < totalPages;
 
   return (
-    <Pagination
-      aria-label="글 목록 페이지"
-      className="flex flex-wrap items-center justify-center gap-3 pt-5"
-      variant="simple"
-    >
-      <PaginationStatus className="text-sm text-muted-foreground">
-        {currentPage} / {totalPages} 페이지
-      </PaginationStatus>
-      <PaginationList>
-        <PaginationItem>
-          <PaginationSubmitControl
-            control="previous"
-            disabled={!hasPreviousPage}
-            href={hrefForPage(currentPage - 1)}
-            label="이전"
-          />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationSubmitControl
-            control="next"
-            disabled={!hasNextPage}
-            href={hrefForPage(currentPage + 1)}
-            label="다음"
-          />
-        </PaginationItem>
-      </PaginationList>
-    </Pagination>
+    <div className="flex w-full justify-center pt-5">
+      <Pagination
+        aria-label="글 목록 페이지"
+        className="inline-flex items-center justify-center"
+        variant="simple"
+      >
+        <PaginationList className="items-center gap-3">
+          <PaginationItem>
+            <PaginationSubmitControl
+              control="previous"
+              disabled={!hasPreviousPage}
+              href={hrefForPage(currentPage - 1)}
+              label="이전"
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationStatus className="min-w-20 text-center text-sm font-medium text-foreground">
+              {currentPage}/{totalPages}페이지
+            </PaginationStatus>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationSubmitControl
+              control="next"
+              disabled={!hasNextPage}
+              href={hrefForPage(currentPage + 1)}
+              label="다음"
+            />
+          </PaginationItem>
+        </PaginationList>
+      </Pagination>
+    </div>
   );
 }

@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@hozui/react";
 
 import { PostList } from "../../components/post-list";
 import { paginateItems, parsePageParam, PostPagination } from "../../components/post-pagination";
@@ -89,6 +97,17 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
+      <Breadcrumb aria-label="카테고리 위치" className="mb-6" size="sm">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">글</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{category.label}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <section className="mb-10 grid gap-4">
         <p className="text-sm font-semibold uppercase text-muted-foreground">Category</p>
         <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-normal sm:text-7xl">

@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { ThemeSwitch } from "./theme-switch";
+
 type SiteShellProps = {
   children: ReactNode;
   siteName: string;
@@ -23,14 +25,17 @@ export function SiteShell({ children, siteName }: SiteShellProps) {
             />
             {siteName}
           </Link>
-          <nav aria-label="주요 메뉴" className="flex items-center gap-5 text-sm font-medium">
-            <Link className="text-foreground hover:text-primary" href="/#posts">
-              글
-            </Link>
-            <Link className="text-muted-foreground hover:text-primary" href="/tags">
-              태그
-            </Link>
-          </nav>
+          <div className="flex items-center gap-4">
+            <nav aria-label="주요 메뉴" className="flex items-center gap-5 text-sm font-medium">
+              <Link className="text-foreground hover:text-primary" href="/#posts">
+                글
+              </Link>
+              <Link className="text-muted-foreground hover:text-primary" href="/tags">
+                태그
+              </Link>
+            </nav>
+            <ThemeSwitch />
+          </div>
         </div>
       </header>
       {children}

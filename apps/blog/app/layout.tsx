@@ -50,8 +50,22 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const site = await getSiteConfig();
   const analytics = analyticsInit(site);
   return (
-    <html lang="ko" data-theme="light">
+    <html lang="ko" data-theme="light" suppressHydrationWarning>
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var theme = localStorage.getItem("blog-theme");
+                if (theme !== "light" && theme !== "dark") {
+                  theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                }
+                document.documentElement.dataset.theme = theme;
+                document.documentElement.style.colorScheme = theme;
+              } catch (_) {}
+            `,
+          }}
+        />
         {analytics.ok ? (
           <>
             <script

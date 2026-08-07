@@ -46,11 +46,15 @@ describe("FrontmatterPanel media upload", () => {
       />,
     );
 
-    const parentSelect = screen.getByLabelText("1차 카테고리");
-    const childSelect = screen.getByLabelText("2차 카테고리");
-    expect(parentSelect).toHaveProperty("value", "engineering");
-    expect(childSelect).toHaveProperty("value", "engineering/fe");
-    fireEvent.change(childSelect!, { target: { value: "" } });
+    const parentCombobox = screen.getByLabelText("1차 카테고리");
+    const childCombobox = screen.getByLabelText("2차 카테고리");
+    expect(parentCombobox).toHaveProperty("value", "Engineering");
+    expect(childCombobox).toHaveProperty("value", "FE");
+    const childClear = childCombobox
+      .closest(".hods-combobox")
+      ?.querySelector<HTMLButtonElement>('button[aria-label="선택 지우기"]');
+    expect(childClear).toBeTruthy();
+    fireEvent.click(childClear!);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ category: "engineering" }));
   });
 });

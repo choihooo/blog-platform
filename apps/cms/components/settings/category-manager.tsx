@@ -4,6 +4,8 @@ import { useState } from "react";
 import {
   Badge,
   Button,
+  Combobox,
+  type ComboboxOption,
   EmptyState,
   IconButton,
   Modal,
@@ -15,6 +17,7 @@ import {
   ModalPortal,
   ModalTitle,
   ModalTitleStack,
+  Switch,
 } from "@hozui/react";
 import { ChevronDown, Edit3, FolderTree, Trash2 } from "lucide-react";
 
@@ -55,7 +58,13 @@ function deleteBlockReason(input: { category: CategoryWithCount; childCount: num
 export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
   const [dialog, setDialog] = useState<CategoryDialogState>(null);
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
+  const [showChildren, setShowChildren] = useState(true);
   const parentCategories = groups.map(({ parent }) => parent);
+  const parentOptions: ComboboxOption[] = parentCategories.map((parent) => ({
+    value: parent.slug,
+    label: parent.name,
+    description: parent.slug,
+  }));
 
   function toggleCategory(categoryId: string) {
     setCollapsed((current) => {
@@ -76,7 +85,15 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
           <FolderTree aria-hidden="true" size={17} />
           Categories
         </div>
-        <Badge label={`${parentCategories.length} parents`} tone="neutral" variant="weak" />
+        <div className="flex items-center gap-3">
+          <Switch
+            checked={showChildren}
+            label="하위 표시"
+            onCheckedChange={setShowChildren}
+            size="sm"
+          />
+          <Badge label={`${parentCategories.length} parents`} tone="neutral" variant="weak" />
+        </div>
       </div>
 
       <div className="mt-5 grid gap-3 border-b border-border pb-5 lg:grid-cols-2">
@@ -91,17 +108,15 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
         <form action={createCategoryAction} className="grid gap-3">
           <p className="text-xs font-semibold text-muted-foreground">2차 카테고리 추가</p>
           <div className="grid gap-2 sm:grid-cols-3">
-            <select
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+            <Combobox
+              ariaLabel="상위 카테고리"
+              emptyMessage="상위 카테고리가 없습니다."
+              label="상위"
               name="parentSlug"
-            >
-              <option value="">상위</option>
-              {parentCategories.map((parent) => (
-                <option key={parent.slug} value={parent.slug}>
-                  {parent.name}
-                </option>
-              ))}
-            </select>
+              options={parentOptions}
+              placeholder="상위"
+              portal={false}
+            />
             <CmsTextField label="이름" name="name" placeholder="이름" />
             <CmsTextField label="child slug" name="childSlug" placeholder="child-slug" />
           </div>
@@ -131,7 +146,7 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
                 onEdit={(category) => setDialog({ mode: "edit", category })}
                 onToggle={() => toggleCategory(parent.id)}
               />
-              {collapsed.has(parent.id)
+              {!showChildren || collapsed.has(parent.id)
                 ? null
                 : children.map((child) => (
                     <CategoryRow
@@ -171,7 +186,7 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
               {dialog?.mode === "edit" ? (
                 <EditCategoryDialog
                   category={dialog.category}
-                  parentCategories={parentCategories}
+                  parentOptions={parentOptions}
                   onDone={() => setDialog(null)}
                 />
               ) : null}
@@ -308,11 +323,11 @@ function CategoryRow({
 function EditCategoryDialog({
   category,
   onDone,
-  parentCategories,
+  parentOptions,
 }: {
   category: CategoryWithCount;
   onDone: () => void;
-  parentCategories: CategoryWithCount[];
+  parentOptions: ComboboxOption[];
 }) {
   const isChild = category.depth === 2;
 
@@ -329,17 +344,14 @@ function EditCategoryDialog({
           <>
             <label className="grid gap-1 text-xs font-medium text-muted-foreground">
               상위 카테고리
-              <select
-                className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+              <Combobox
+                ariaLabel="상위 카테고리"
                 defaultValue={parentSlugFor(category)}
                 name="parentSlug"
-              >
-                {parentCategories.map((parent) => (
-                  <option key={parent.slug} value={parent.slug}>
-                    {parent.name}
-                  </option>
-                ))}
-              </select>
+                options={parentOptions}
+                placeholder="상위 카테고리"
+                portal={false}
+              />
             </label>
             <label className="grid gap-1 text-xs font-medium text-muted-foreground">
               Slug

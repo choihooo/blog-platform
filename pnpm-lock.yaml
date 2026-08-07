@@ -48,8 +48,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/seo-engine
       '@hozui/react':
-        specifier: ^0.2.0
-        version: 0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.3.0
+        version: 0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hozui/tokens':
         specifier: ^0.1.0
         version: 0.1.0
@@ -91,8 +91,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/seo-engine
       '@hozui/react':
-        specifier: ^0.2.0
-        version: 0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.3.0
+        version: 0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hozui/tokens':
         specifier: ^0.1.0
         version: 0.1.0
@@ -499,8 +499,8 @@ packages:
     peerDependencies:
       react: '>=18.2.0'
 
-  '@hozui/react@0.2.0':
-    resolution: {integrity: sha512-jOS0UDP1yYohbbT3fjCNw/gKLWDZz/81O5Tsc5AM0MInfsBR0Le2kC9EBPpsRsg8oxV5iy+4EiNTDtrGcDY+kw==}
+  '@hozui/react@0.3.0':
+    resolution: {integrity: sha512-1YnIvY78kB2lShV5xyJZo6gDKKRA9aw3aRMEbCPtnIS3DW2zcP18HrwknyaMTrfAarqAyM8ScccRs6R+ffPppA==}
     peerDependencies:
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
@@ -3098,7 +3098,7 @@ snapshots:
     dependencies:
       react: 19.2.8
 
-  '@hozui/react@0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@hozui/react@0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@hozui/icons': 0.1.0(react@19.2.8)
       '@hozui/tokens': 0.1.0
