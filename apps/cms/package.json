@@ -18,6 +18,8 @@
     "@blog-platform/seo-engine": "workspace:^",
     "@hozui/react": "^0.3.0",
     "@hozui/tokens": "^0.1.0",
+    "@img/sharp-libvips-linux-x64": "1.3.2",
+    "@img/sharp-linux-x64": "0.35.3",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",
     "@tiptap/react": "^3.29.2",
