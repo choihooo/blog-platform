@@ -27,4 +27,16 @@ describe("validateEditorDocument", () => {
       "editor.image.local-path",
     ]);
   });
+
+  it("blocks browser attachment image urls", () => {
+    const document = createEmptyEditorDocument();
+    document.frontmatter.title = "Hello";
+    document.frontmatter.coverImage = "attachment:cover:image.png";
+    document.body = [{ type: "image", src: "attachment:body:image.png" }];
+
+    expect(validateEditorDocument(document).map((issue) => issue.code)).toEqual([
+      "editor.coverImage.unsafe",
+      "editor.image.unsafe",
+    ]);
+  });
 });

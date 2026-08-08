@@ -131,6 +131,17 @@ function labelFromSlug(slug: string) {
     .join(" ");
 }
 
+function safePublicImageUrl(value?: string | null): string | undefined {
+  const normalized = value?.trim();
+  if (!normalized) return;
+  if (normalized.startsWith("/media/") || /^https?:\/\//i.test(normalized)) return normalized;
+  return undefined;
+}
+
+function safePublicNodes(nodes: EditorNode[]): EditorNode[] {
+  return nodes.filter((node) => node.type !== "image" || Boolean(safePublicImageUrl(node.src)));
+}
+
 function toPublicSourcePost(
   post: PostRecordWithTags,
   options?: { tagSlugs?: string[]; analyzeBody?: boolean },
@@ -140,16 +151,19 @@ function toPublicSourcePost(
   const requestedTags = normalizeTagInput(post.tags ?? options?.tagSlugs);
   const isPublished = post.isPublished === 1;
   const content = loadPostContent(post.content ?? "");
+  const bodyNodes = safePublicNodes(content.nodes);
   const shouldAnalyzeBody = options?.analyzeBody ?? true;
-  const analysis = shouldAnalyzeBody ? analyzeEditorNodes(content.nodes) : undefined;
-  const textBody = textFromEditorNodes(content.nodes);
+  const analysis = shouldAnalyzeBody ? analyzeEditorNodes(bodyNodes) : undefined;
+  const textBody = textFromEditorNodes(bodyNodes);
   const toc = analysis?.headings ?? [];
   const readingTimeLabel =
     analysis?.readingTime.label ?? `${Math.max(1, Math.ceil(textBody.length / 1000))} min read`;
   const heroMedia =
     post.mediaRefs?.find((media) => media.kind === "hero") ??
     post.mediaRefs?.find((media) => media.kind === "og");
-  const coverImage = heroMedia?.r2Url ?? heroMedia?.r2Key ?? post.heroImageKey ?? undefined;
+  const coverImage = safePublicImageUrl(
+    heroMedia?.r2Url ?? heroMedia?.r2Key ?? post.heroImageKey ?? undefined,
+  );
 
   return {
     path: `db/posts/${normalizedSlug}`,
@@ -162,7 +176,7 @@ function toPublicSourcePost(
     excerpt: post.summary,
     coverImage,
     body: textBody,
-    bodyNodes: content.nodes,
+    bodyNodes,
     toc,
     tags: requestedTags,
     tagEntries: requestedTags.map((tag) => ({ slug: tag, label: labelFromSlug(tag) })),

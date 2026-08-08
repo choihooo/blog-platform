@@ -32,6 +32,11 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/*": ["../../content/site.json"],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

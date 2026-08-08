@@ -3,7 +3,7 @@ import { createEditorIssue } from "./document.js";
 import { isSupportedBlock, isSupportedMark } from "./supported-format.js";
 
 function isUnsafeUrl(value: string): boolean {
-  return /^\s*(javascript|data|blob|file):/i.test(value);
+  return /^\s*(javascript|data|blob|file|attachment):/i.test(value);
 }
 
 function isLocalPath(value: string): boolean {

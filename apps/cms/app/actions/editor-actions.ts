@@ -249,7 +249,9 @@ export async function uploadEditorMediaAction(
     };
   }
 
-  const publicMediaPath = publicPath(path);
+  const publicMediaPath = result.value.data.path.startsWith("http")
+    ? result.value.data.path
+    : publicPath(path);
   return {
     ok: true,
     media: {
