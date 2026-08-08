@@ -23,6 +23,20 @@ function mediaTypeFromExtension(extension: string): string | undefined {
   return undefined;
 }
 
+function mediaBuffersFromUpload(buffer: Buffer): Buffer[] {
+  const text = buffer.toString("utf8").trim();
+  const buffers = [buffer];
+  const dataUrl = /^data:image\/(?:webp|png|jpe?g);base64,([a-z0-9+/=\s]+)$/i.exec(text);
+  if (dataUrl?.[1]) {
+    buffers.push(Buffer.from(dataUrl[1].replace(/\s/g, ""), "base64"));
+    return buffers;
+  }
+  if (/^[a-z0-9+/=\s]+$/i.test(text) && text.length > 32) {
+    buffers.push(Buffer.from(text.replace(/\s/g, ""), "base64"));
+  }
+  return buffers;
+}
+
 export type PreparedMediaFile =
   | {
       ok: true;
@@ -49,21 +63,24 @@ export async function prepareMediaFile(file: File): Promise<PreparedMediaFile> {
   }
 
   const original = Buffer.from(await file.arrayBuffer());
-  try {
-    const { default: sharp } = await import("sharp");
-    const buffer = await sharp(original).rotate().webp({ quality: 82 }).toBuffer();
-    if (buffer.byteLength > MAX_MEDIA_BYTES) {
-      return { ok: false, message: "Optimized image must be 2MB or smaller" };
+  const { default: sharp } = await import("sharp");
+  for (const uploadBuffer of mediaBuffersFromUpload(original)) {
+    try {
+      const buffer = await sharp(uploadBuffer).rotate().webp({ quality: 82 }).toBuffer();
+      if (buffer.byteLength > MAX_MEDIA_BYTES) {
+        return { ok: false, message: "Optimized image must be 2MB or smaller" };
+      }
+      return {
+        ok: true,
+        buffer,
+        base64: buffer.toString("base64"),
+        hash: mediaHash(buffer),
+        sizeBytes: buffer.byteLength,
+        extension: "webp",
+      };
+    } catch {
+      continue;
     }
-    return {
-      ok: true,
-      buffer,
-      base64: buffer.toString("base64"),
-      hash: mediaHash(buffer),
-      sizeBytes: buffer.byteLength,
-      extension: "webp",
-    };
-  } catch {
-    return { ok: false, message: "File could not be decoded as an image" };
   }
+  return { ok: false, message: "File could not be decoded as an image" };
 }
