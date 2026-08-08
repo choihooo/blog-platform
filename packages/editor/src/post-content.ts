@@ -56,6 +56,29 @@ function normalizeNode(node: EditorNode): EditorNode {
   };
 }
 
+function isUnsafeMediaUrl(value: string): boolean {
+  return /^\s*(javascript|data|blob|file|attachment):/i.test(value);
+}
+
+function isLocalMediaPath(value: string): boolean {
+  return /^([a-z]:[\\/]|\/(?!media\/))/i.test(value);
+}
+
+function isPersistedMediaUrl(value: string): boolean {
+  return !isUnsafeMediaUrl(value) && !isLocalMediaPath(value);
+}
+
+function sanitizeEditorNode(node: EditorNode): EditorNode | undefined {
+  const normalized = normalizeNode(node);
+  if (normalized.type === "image" && !isPersistedMediaUrl(normalized.src)) return undefined;
+  return normalized;
+}
+
+function sanitizeMediaUrl(value: string | null | undefined): string | undefined {
+  if (!value || !isPersistedMediaUrl(value)) return undefined;
+  return value;
+}
+
 export function editorDocumentToPostContent(document: EditorDocument): StructuredPostContent {
   return {
     version: 1,
@@ -164,6 +187,10 @@ function postStatus(post: PostRecordLike): EditorFrontmatter["status"] {
 
 export function postRecordToEditorDocument(post: PostRecordLike, now = new Date()): EditorDocument {
   const content = loadPostContent(post.content);
+  const nodes = content.nodes.flatMap((node) => {
+    const sanitized = sanitizeEditorNode(node);
+    return sanitized ? [sanitized] : [];
+  });
   return {
     id: post.id || post.slug,
     path: `db/posts/${post.slug}`,
@@ -176,11 +203,11 @@ export function postRecordToEditorDocument(post: PostRecordLike, now = new Date(
       publishedAt: post.publishedAt ?? undefined,
       updatedAt: post.updatedAt,
       excerpt: post.summary,
-      coverImage: post.heroImageKey ?? undefined,
+      coverImage: sanitizeMediaUrl(post.heroImageKey),
       category: post.categoryPath ?? undefined,
       tags: post.tags,
     },
-    body: content.nodes,
+    body: nodes,
     dirty: false,
     lastLoadedAt: now.toISOString(),
     lastSavedAt: post.updatedAt,

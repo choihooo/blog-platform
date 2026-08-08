@@ -84,6 +84,31 @@ describe("FrontmatterPanel media upload", () => {
     });
   });
 
+  it("blocks pasted attachment-only cover images", () => {
+    render(
+      <FrontmatterPanel
+        frontmatter={{ title: "Hello", slug: "hello", status: "draft" }}
+        postSlug="hello"
+      />,
+    );
+
+    const panel = screen.getByText("Cover").closest("aside");
+    const paste = createEvent.paste(panel!);
+    Object.defineProperty(paste, "clipboardData", {
+      value: {
+        files: [],
+        getData: vi.fn((type: string) =>
+          type === "text/html" ? '<img src="attachment:abc:image.png">' : "",
+        ),
+        items: [],
+      },
+    });
+    fireEvent(panel!, paste);
+
+    expect(uploadEditorMediaAction).not.toHaveBeenCalled();
+    expect(screen.getByText(/Clipboard attachment images cannot be saved/)).toBeTruthy();
+  });
+
   it("edits parent and child categories through dropdowns", () => {
     const onChange = vi.fn();
     render(

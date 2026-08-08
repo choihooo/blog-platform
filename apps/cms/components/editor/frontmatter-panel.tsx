@@ -8,7 +8,7 @@ import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
 import { CmsTextField } from "../ui/text-field";
 import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadStatus } from "./media-upload-status";
-import { normalizedImageFile } from "./clipboard-image";
+import { hasAttachmentImage, normalizedImageFile } from "./clipboard-image";
 
 type Props = {
   categories?: CategoryOption[];
@@ -99,7 +99,17 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
 
   function uploadTransferredImage(data: DataTransfer | null) {
     const file = normalizedImageFile(data);
-    if (!file) return false;
+    if (!file) {
+      if (!hasAttachmentImage(data)) return false;
+      setResult({
+        ok: false,
+        code: "validation-failure",
+        retryable: false,
+        message:
+          "Clipboard attachment images cannot be saved. Copy the image file itself or use Upload cover.",
+      });
+      return true;
+    }
     upload(file);
     return true;
   }

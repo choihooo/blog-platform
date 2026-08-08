@@ -27,3 +27,17 @@ export function normalizedImageFile(data: DataTransfer | null): File | undefined
     lastModified: file.lastModified,
   });
 }
+
+export function hasAttachmentImage(data: DataTransfer | null): boolean {
+  if (!data) return false;
+  const text = ["text/html", "text/uri-list", "text/plain"]
+    .map((type) => {
+      try {
+        return data.getData(type);
+      } catch {
+        return "";
+      }
+    })
+    .join("\n");
+  return /attachment:[^\s"'<>)]*image/i.test(text);
+}

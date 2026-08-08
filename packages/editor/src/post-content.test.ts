@@ -68,6 +68,35 @@ describe("post content", () => {
     expect(document.body).toEqual([{ type: "paragraph", text: "Stored body" }]);
   });
 
+  it("drops temporary attachment media when mapping stored records", () => {
+    const content = serializePostContent({
+      version: 1,
+      nodes: [
+        { type: "image", src: "attachment:abc:image.png", alt: "broken" },
+        { type: "paragraph", text: "Stored body" },
+        { type: "image", src: "/media/posts/hello/cover.webp", alt: "valid" },
+      ],
+    });
+    const document = postRecordToEditorDocument({
+      id: "post_1",
+      slug: "hello",
+      title: "Hello",
+      content,
+      summary: "Summary",
+      heroImageKey: "attachment:cover:image.png",
+      publishedAt: null,
+      updatedAt: "2026-08-01T00:00:00.000Z",
+      isPublished: 0,
+      viewCount: 0,
+    });
+
+    expect(document.frontmatter.coverImage).toBeUndefined();
+    expect(document.body).toEqual([
+      { type: "paragraph", text: "Stored body" },
+      { type: "image", src: "/media/posts/hello/cover.webp", alt: "valid" },
+    ]);
+  });
+
   it("analyzes headings, reading time, and plain text without Structured Content", () => {
     const nodes = [
       { type: "heading" as const, depth: 2, text: "Intro" },

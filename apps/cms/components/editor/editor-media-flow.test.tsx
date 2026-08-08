@@ -74,4 +74,27 @@ describe("EditorScreen body media flow", () => {
       ).toBeTruthy();
     });
   });
+
+  it("blocks pasted attachment-only body images", () => {
+    const doc = createEmptyEditorDocument();
+    doc.frontmatter.title = "Hello";
+    doc.frontmatter.slug = "hello";
+    render(<EditorScreen initialDocument={doc} />);
+
+    const editor = screen.getAllByRole("textbox", { name: "Post body" })[0];
+    const paste = createEvent.paste(editor!);
+    Object.defineProperty(paste, "clipboardData", {
+      value: {
+        files: [],
+        getData: vi.fn((type: string) =>
+          type === "text/html" ? '<img src="attachment:abc:image.png">' : "",
+        ),
+        items: [],
+      },
+    });
+    fireEvent(editor!, paste);
+
+    expect(uploadEditorMediaAction).not.toHaveBeenCalled();
+    expect(screen.getByText(/Clipboard attachment images cannot be saved/)).toBeTruthy();
+  });
 });

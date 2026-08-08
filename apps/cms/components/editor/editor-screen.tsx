@@ -39,7 +39,7 @@ import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 import { SeoPanel } from "./seo-panel";
 import { CmsTextField } from "../ui/text-field";
-import { normalizedImageFile } from "./clipboard-image";
+import { hasAttachmentImage, normalizedImageFile } from "./clipboard-image";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
 import type { EditorSiteAnalyticsConfig } from "../../lib/editor";
 
@@ -276,7 +276,16 @@ export function EditorScreen({
       },
       handlePaste: (_view, event) => {
         const file = normalizedImageFile(event.clipboardData);
-        if (!file) return false;
+        if (!file) {
+          if (!hasAttachmentImage(event.clipboardData)) return false;
+          event.preventDefault();
+          setStatus("failed");
+          setMessage(
+            "Clipboard attachment images cannot be saved. Copy the image file itself or use Upload image.",
+          );
+          showToast({ title: "Image paste blocked", tone: "error" });
+          return true;
+        }
         event.preventDefault();
         uploadPastedImage(file);
         return true;
