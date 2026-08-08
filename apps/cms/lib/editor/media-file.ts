@@ -7,6 +7,21 @@ export const MEDIA_REPLACEMENT_POLICY = {
   note: "Cover/body replacement writes the new media path first and keeps previous media available through the rollback window.",
 } as const;
 const ALLOWED_EXTENSIONS = new Set(["webp", "png", "jpg", "jpeg"]);
+const ALLOWED_MEDIA_TYPES = new Set(["image/webp", "image/png", "image/jpeg"]);
+
+function extensionFromMediaType(type: string): string | undefined {
+  if (type === "image/webp") return "webp";
+  if (type === "image/png") return "png";
+  if (type === "image/jpeg") return "jpg";
+  return undefined;
+}
+
+function mediaTypeFromExtension(extension: string): string | undefined {
+  if (extension === "webp") return "image/webp";
+  if (extension === "png") return "image/png";
+  if (extension === "jpg" || extension === "jpeg") return "image/jpeg";
+  return undefined;
+}
 
 export type PreparedMediaFile =
   | {
@@ -21,7 +36,12 @@ export type PreparedMediaFile =
 
 export async function prepareMediaFile(file: File): Promise<PreparedMediaFile> {
   const extension = file.name.split(".").pop()?.toLowerCase();
-  if (!extension || !ALLOWED_EXTENSIONS.has(extension)) {
+  const mediaType = file.type.toLowerCase();
+  const acceptedExtension =
+    extension && ALLOWED_EXTENSIONS.has(extension) ? extension : extensionFromMediaType(mediaType);
+  const acceptedMediaType =
+    mediaType || (acceptedExtension && mediaTypeFromExtension(acceptedExtension));
+  if (!acceptedExtension || !acceptedMediaType || !ALLOWED_MEDIA_TYPES.has(acceptedMediaType)) {
     return { ok: false, message: "Only webp, png, jpg, and jpeg images are allowed" };
   }
   if (file.size > MAX_MEDIA_BYTES) {

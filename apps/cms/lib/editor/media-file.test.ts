@@ -25,6 +25,22 @@ describe("prepareMediaFile", () => {
     }
   });
 
+  it("accepts clipboard images without a filename extension", async () => {
+    const png = await sharp({
+      create: {
+        width: 1,
+        height: 1,
+        channels: 3,
+        background: "#ffffff",
+      },
+    })
+      .png()
+      .toBuffer();
+    const file = new File([png], "", { type: "image/png" });
+    const result = await prepareMediaFile(file);
+    expect(result.ok).toBe(true);
+  });
+
   it("rejects invalid type and large files", async () => {
     await expect(prepareMediaFile(new File(["x"], "x.txt"))).resolves.toMatchObject({ ok: false });
     await expect(

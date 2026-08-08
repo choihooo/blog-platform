@@ -39,6 +39,7 @@ import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 import { SeoPanel } from "./seo-panel";
 import { CmsTextField } from "../ui/text-field";
+import { normalizedImageFile } from "./clipboard-image";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
 import type { EditorSiteAnalyticsConfig } from "../../lib/editor";
 
@@ -187,23 +188,6 @@ function nodesToTiptap(nodes: EditorNode[]): JSONContent {
   };
 }
 
-function extensionFromImageType(type: string) {
-  if (type === "image/webp") return "webp";
-  if (type === "image/jpeg") return "jpg";
-  return "png";
-}
-
-function clipboardImageFile(data: DataTransfer | null): File | undefined {
-  const file = Array.from(data?.files ?? []).find((entry) => entry.type.startsWith("image/"));
-  if (!file) return;
-  if (/\.(webp|png|jpe?g)$/i.test(file.name)) return file;
-  const extension = extensionFromImageType(file.type);
-  return new File([file], `clipboard-image.${extension}`, {
-    type: file.type || "image/png",
-    lastModified: file.lastModified,
-  });
-}
-
 function slugCandidate(document: EditorDocument): string {
   const titleSlug = document.frontmatter.title
     .trim()
@@ -291,7 +275,7 @@ export function EditorScreen({
         role: "textbox",
       },
       handlePaste: (_view, event) => {
-        const file = clipboardImageFile(event.clipboardData);
+        const file = normalizedImageFile(event.clipboardData);
         if (!file) return false;
         event.preventDefault();
         uploadPastedImage(file);

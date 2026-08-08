@@ -8,6 +8,7 @@ import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
 import { CmsTextField } from "../ui/text-field";
 import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadStatus } from "./media-upload-status";
+import { normalizedImageFile } from "./clipboard-image";
 
 type Props = {
   categories?: CategoryOption[];
@@ -96,8 +97,30 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
     });
   }
 
+  function uploadTransferredImage(data: DataTransfer | null) {
+    const file = normalizedImageFile(data);
+    if (!file) return false;
+    upload(file);
+    return true;
+  }
+
   return (
-    <aside className="space-y-4 border-l border-border p-4">
+    <aside
+      className="space-y-4 border-l border-border p-4"
+      onDrop={(event) => {
+        if (!uploadTransferredImage(event.dataTransfer)) return;
+        event.preventDefault();
+      }}
+      onDragOver={(event) => {
+        if (Array.from(event.dataTransfer.items).some((item) => item.type.startsWith("image/"))) {
+          event.preventDefault();
+        }
+      }}
+      onPaste={(event) => {
+        if (!uploadTransferredImage(event.clipboardData)) return;
+        event.preventDefault();
+      }}
+    >
       <div>
         <CmsTextField
           id="editor-title"
