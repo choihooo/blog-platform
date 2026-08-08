@@ -39,7 +39,7 @@ import { RecoveryBanner } from "./recovery-banner";
 import { SaveStatusBadge, type SaveStatus } from "./save-status";
 import { SeoPanel } from "./seo-panel";
 import { CmsTextField } from "../ui/text-field";
-import { hasAttachmentImage, normalizedImageFile } from "./clipboard-image";
+import { hasAttachmentImage, normalizedImageFile, prepareClientImageFile } from "./clipboard-image";
 import type { PublicRefreshRetryToken } from "../../lib/editor";
 import type { EditorSiteAnalyticsConfig } from "../../lib/editor";
 
@@ -287,7 +287,7 @@ export function EditorScreen({
           return true;
         }
         event.preventDefault();
-        uploadPastedImage(file);
+        void uploadPastedImage(file);
         return true;
       },
     },
@@ -534,12 +534,19 @@ export function EditorScreen({
     showToast({ title: "Image uploaded", description: "Save the post to keep it.", tone: "info" });
   }
 
-  function uploadPastedImage(file: File) {
+  async function uploadPastedImage(file: File) {
+    const prepared = await prepareClientImageFile(file);
+    if (!prepared.ok) {
+      setStatus("failed");
+      setMessage(prepared.message);
+      showToast({ title: "Image upload failed", tone: "error" });
+      return;
+    }
     const formData = new FormData();
     formData.set("target", "body");
     formData.set("postSlug", slugCandidate(documentRef.current));
-    formData.set("file", file);
-    formData.set("alt", file.name.replace(/\.[^.]+$/, ""));
+    formData.set("file", prepared.file);
+    formData.set("alt", prepared.file.name.replace(/\.[^.]+$/, ""));
     setStatus("pending");
     setMessage("Uploading pasted image...");
     startTransition(() => {

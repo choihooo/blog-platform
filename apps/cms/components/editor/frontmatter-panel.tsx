@@ -8,7 +8,7 @@ import { uploadEditorMediaAction } from "../../app/actions/editor-actions";
 import { CmsTextField } from "../ui/text-field";
 import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadStatus } from "./media-upload-status";
-import { hasAttachmentImage, normalizedImageFile } from "./clipboard-image";
+import { hasAttachmentImage, normalizedImageFile, prepareClientImageFile } from "./clipboard-image";
 
 type Props = {
   categories?: CategoryOption[];
@@ -82,11 +82,21 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
     update("category", childSlug || selectedParent);
   }
 
-  function upload(file: File) {
+  async function upload(file: File) {
+    const prepared = await prepareClientImageFile(file);
+    if (!prepared.ok) {
+      setResult({
+        ok: false,
+        code: "validation-failure",
+        retryable: false,
+        message: prepared.message,
+      });
+      return;
+    }
     const formData = new FormData();
     formData.set("target", "cover");
     formData.set("postSlug", postSlug);
-    formData.set("file", file);
+    formData.set("file", prepared.file);
     startTransition(() => {
       void uploadEditorMediaAction(formData).then((next) => {
         setResult(next);
@@ -110,7 +120,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
       });
       return true;
     }
-    upload(file);
+    void upload(file);
     return true;
   }
 
@@ -234,7 +244,7 @@ export function FrontmatterPanel({ categories = [], frontmatter, onChange, postS
           className="sr-only"
           onChange={(event) => {
             const file = event.currentTarget.files?.[0];
-            if (file) upload(file);
+            if (file) void upload(file);
             event.currentTarget.value = "";
           }}
           type="file"
