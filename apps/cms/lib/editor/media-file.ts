@@ -37,6 +37,33 @@ function mediaBuffersFromUpload(buffer: Buffer): Buffer[] {
   return buffers;
 }
 
+function detectedMediaExtension(buffer: Buffer): "webp" | "png" | "jpg" | undefined {
+  if (
+    buffer.length >= 12 &&
+    buffer.subarray(0, 4).toString("ascii") === "RIFF" &&
+    buffer.subarray(8, 12).toString("ascii") === "WEBP"
+  ) {
+    return "webp";
+  }
+  if (
+    buffer.length >= 8 &&
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47 &&
+    buffer[4] === 0x0d &&
+    buffer[5] === 0x0a &&
+    buffer[6] === 0x1a &&
+    buffer[7] === 0x0a
+  ) {
+    return "png";
+  }
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return "jpg";
+  }
+  return undefined;
+}
+
 export type PreparedMediaFile =
   | {
       ok: true;
@@ -44,7 +71,7 @@ export type PreparedMediaFile =
       base64: string;
       hash: string;
       sizeBytes: number;
-      extension: "webp";
+      extension: "webp" | "png" | "jpg";
     }
   | { ok: false; message: string };
 
@@ -63,23 +90,17 @@ export async function prepareMediaFile(file: File): Promise<PreparedMediaFile> {
   }
 
   const original = Buffer.from(await file.arrayBuffer());
-  const { default: sharp } = await import("sharp");
   for (const uploadBuffer of mediaBuffersFromUpload(original)) {
-    try {
-      const buffer = await sharp(uploadBuffer).rotate().webp({ quality: 82 }).toBuffer();
-      if (buffer.byteLength > MAX_MEDIA_BYTES) {
-        return { ok: false, message: "Optimized image must be 2MB or smaller" };
-      }
+    const extension = detectedMediaExtension(uploadBuffer);
+    if (extension) {
       return {
         ok: true,
-        buffer,
-        base64: buffer.toString("base64"),
-        hash: mediaHash(buffer),
-        sizeBytes: buffer.byteLength,
-        extension: "webp",
+        buffer: uploadBuffer,
+        base64: uploadBuffer.toString("base64"),
+        hash: mediaHash(uploadBuffer),
+        sizeBytes: uploadBuffer.byteLength,
+        extension,
       };
-    } catch {
-      continue;
     }
   }
   return { ok: false, message: "File could not be decoded as an image" };

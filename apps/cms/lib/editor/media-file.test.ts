@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { MAX_MEDIA_BYTES, prepareMediaFile } from "./media-file";
 
 describe("prepareMediaFile", () => {
-  it("normalizes a small image to webp", async () => {
+  it("prepares a small image for upload", async () => {
     const png = await sharp({
       create: {
         width: 1,
@@ -19,7 +19,7 @@ describe("prepareMediaFile", () => {
     const result = await prepareMediaFile(file);
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.extension).toBe("webp");
+      expect(result.extension).toBe("png");
       expect(result.hash).toHaveLength(12);
       expect(result.sizeBytes).toBeGreaterThan(0);
     }
