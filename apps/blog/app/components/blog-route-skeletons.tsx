@@ -4,8 +4,8 @@ export function BlogListingSkeleton() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <h1 className="sr-only">블로그 목록 로딩 중</h1>
-      <div className="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
-        <aside aria-label="카테고리 로딩 중" className="lg:pt-11">
+      <div className="grid gap-8 xl:grid-cols-[12rem_minmax(0,1fr)]">
+        <aside aria-label="카테고리 로딩 중" className="hidden xl:block xl:pt-11">
           <Skeleton height={24} width={88} />
           <div className="mt-5 grid gap-3">
             {Array.from({ length: 6 }, (_, index) => (

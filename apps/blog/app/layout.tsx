@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
 
-import { getSiteConfig } from "../lib/content-source";
+import { getSiteConfig, listCategories } from "../lib/content-source";
 import { analyticsInit } from "../lib/analytics";
 import { AnalyticsProvider } from "./components/analytics-provider";
 import { SiteShell } from "./components/site-shell";
@@ -47,7 +47,11 @@ type RootLayoutProps = {
 };
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const site = await getSiteConfig();
+  const [site, parentCategories, childCategories] = await Promise.all([
+    getSiteConfig(),
+    listCategories({ depth: 1 }),
+    listCategories({ depth: 2 }),
+  ]);
   const analytics = analyticsInit(site);
   return (
     <html lang="ko" data-theme="light" suppressHydrationWarning>
@@ -105,7 +109,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </>
         ) : null}
         <AnalyticsProvider>
-          <SiteShell siteName={site.siteName}>{children}</SiteShell>
+          <SiteShell
+            categories={[...parentCategories, ...childCategories]}
+            siteName={site.siteName}
+          >
+            {children}
+          </SiteShell>
         </AnalyticsProvider>
       </body>
     </html>

@@ -104,11 +104,11 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <h1 className="sr-only">기록하고 실험하는 개발 블로그</h1>
 
-      <div className="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
-        <aside aria-label="카테고리 목록" className="lg:pt-11" id="categories">
+      <div className="grid gap-8 xl:grid-cols-[12rem_minmax(0,1fr)]">
+        <aside aria-label="카테고리 목록" className="hidden xl:block xl:pt-11" id="categories">
           <h2 className="text-base font-semibold">카테고리</h2>
           <div className="mt-3 h-px bg-border" />
-          <nav className="mt-4 flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+          <nav className="mt-4 flex flex-col gap-3">
             <AnalyticsLink
               aria-current={!activeCategory ? "page" : undefined}
               analyticsContext={analyticsContext}

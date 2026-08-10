@@ -3,14 +3,16 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BlogHeaderSearchForm } from "./blog-search-form";
+import { MobileNavigationMenu, type MobileNavigationCategory } from "./mobile-navigation-menu";
 import { ThemeSwitch } from "./theme-switch";
 
 type SiteShellProps = {
   children: ReactNode;
+  categories: MobileNavigationCategory[];
   siteName: string;
 };
 
-export function SiteShell({ children, siteName }: SiteShellProps) {
+export function SiteShell({ categories, children, siteName }: SiteShellProps) {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-background">
@@ -26,7 +28,7 @@ export function SiteShell({ children, siteName }: SiteShellProps) {
             />
             {siteName}
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 xl:flex">
             <BlogHeaderSearchForm />
             <nav aria-label="주요 메뉴" className="flex items-center gap-5 text-sm font-medium">
               <Link className="text-foreground hover:text-primary" href="/#posts">
@@ -38,6 +40,7 @@ export function SiteShell({ children, siteName }: SiteShellProps) {
             </nav>
             <ThemeSwitch />
           </div>
+          <MobileNavigationMenu categories={categories} />
         </div>
       </header>
       {children}
