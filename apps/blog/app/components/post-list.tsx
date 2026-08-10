@@ -184,7 +184,7 @@ function PostListItem({
   priority?: boolean;
 }) {
   return (
-    <article className="border-b border-border py-4 last:border-b-0">
+    <article className="border-b border-border last:border-b-0">
       <div className="grid gap-4 sm:min-h-40 sm:grid-cols-[13.5rem_minmax(0,1fr)] sm:items-stretch">
         <AnalyticsLink
           analyticsContext={analyticsContext}
@@ -195,7 +195,7 @@ function PostListItem({
         >
           <Cover post={post} priority={priority} size="list" />
         </AnalyticsLink>
-        <div className="flex min-w-0 flex-col py-1 sm:min-h-40">
+        <div className="flex min-w-0 flex-col py-3 sm:min-h-40">
           <PostMeta post={post} />
           <h3 className="mt-3 truncate text-2xl font-semibold tracking-normal">
             <AnalyticsLink
