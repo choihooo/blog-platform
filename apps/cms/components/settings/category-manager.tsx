@@ -80,13 +80,13 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card p-5 lg:col-span-2">
-      <div className="flex items-center justify-between gap-3">
+    <div className="rounded-lg border border-border bg-card p-4 sm:p-5 lg:col-span-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm font-semibold">
           <FolderTree aria-hidden="true" size={17} />
           Categories
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Switch
             checked={showChildren}
             label="하위 표시"
@@ -126,7 +126,7 @@ export function CategoryManager({ groups }: { groups: CategoryGroup[] }) {
       </div>
 
       <div className="mt-5 overflow-hidden rounded-md border border-border">
-        <div className="grid grid-cols-[minmax(0,1fr)_8rem_5rem_7.5rem] items-center border-b border-border bg-muted/60 px-4 py-2 text-xs font-semibold text-muted-foreground">
+        <div className="hidden grid-cols-[minmax(0,1fr)_8rem_5rem_7.5rem] items-center border-b border-border bg-muted/60 px-4 py-2 text-xs font-semibold text-muted-foreground lg:grid">
           <span>카테고리</span>
           <span>Slug</span>
           <span className="text-right">글</span>
@@ -249,7 +249,7 @@ function CategoryRow({
   return (
     <div
       className={[
-        "grid min-h-16 grid-cols-[minmax(0,1fr)_8rem_5rem_7.5rem] items-center border-b border-border px-4 py-2 text-sm last:border-b-0",
+        "grid min-h-16 grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 border-b border-border px-3 py-3 text-sm last:border-b-0 lg:grid-cols-[minmax(0,1fr)_8rem_5rem_7.5rem] lg:items-center lg:gap-x-0 lg:gap-y-0 lg:px-4 lg:py-2",
         isChild ? "bg-muted/20" : "bg-card",
       ].join(" ")}
     >
@@ -257,7 +257,7 @@ function CategoryRow({
         <span
           className={[
             "flex h-8 shrink-0 items-center justify-center text-muted-foreground",
-            isChild ? "ml-8 w-5 border-l border-border" : "w-5",
+            isChild ? "ml-2 w-5 border-l border-border sm:ml-5 lg:ml-8" : "w-5",
           ].join(" ")}
         >
           {isChild ? <span className="h-px w-3 bg-border" /> : null}
@@ -290,15 +290,17 @@ function CategoryRow({
           ) : null}
         </div>
       </div>
-      <code className="truncate text-xs text-muted-foreground">{displaySlug}</code>
-      <div className="text-right">
+      <code className="col-start-1 row-start-2 truncate pl-10 text-xs text-muted-foreground sm:pl-13 lg:col-auto lg:row-auto lg:pl-0">
+        {displaySlug}
+      </code>
+      <div className="col-start-2 row-start-2 text-right lg:col-auto lg:row-auto">
         <Badge
           label={String(category.postCount ?? 0)}
           tone="neutral"
           variant={(category.postCount ?? 0) > 0 ? "weak" : "outline"}
         />
       </div>
-      <div className="flex justify-end gap-1">
+      <div className="col-start-2 row-start-1 flex justify-end gap-1 lg:col-auto lg:row-auto">
         <IconButton
           aria-label={`${category.name} 수정`}
           icon={<Edit3 aria-hidden="true" size={15} />}

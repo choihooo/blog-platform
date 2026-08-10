@@ -310,7 +310,7 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
         {post.toc.length > 0 ? (
           <aside
-            className="h-fit border-0 bg-card shadow-sm lg:sticky lg:top-6"
+            className="hidden h-fit border-0 bg-card shadow-sm lg:sticky lg:top-6 lg:block"
             aria-label="Table of contents"
           >
             <div className="grid gap-3 p-4 text-sm leading-6">
