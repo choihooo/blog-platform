@@ -66,56 +66,119 @@ export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
           </section>
         ) : null}
 
+        <nav aria-labelledby="project-toc-title" className="border-b border-border py-10">
+          <p
+            className="text-xs font-semibold tracking-[0.18em] text-primary uppercase"
+            id="project-toc-title"
+          >
+            Contents
+          </p>
+          <ol className="mt-6 max-w-3xl space-y-6">
+            {project.stories.map((story, storyIndex) => {
+              const storyId = `story-${storyIndex + 1}`;
+
+              return (
+                <li key={story.title}>
+                  <a
+                    className="group flex items-baseline gap-4 text-sm font-semibold no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px"
+                    href={`#${storyId}`}
+                  >
+                    <span className="w-5 shrink-0 text-xs tabular-nums text-primary">
+                      {String(storyIndex + 1).padStart(2, "0")}
+                    </span>
+                    <span>{story.title}</span>
+                  </a>
+                  <ol className="mt-3 ml-9 space-y-2 border-l border-border pl-5 text-xs text-muted-foreground">
+                    {[
+                      ["Problem", `${storyId}-problem`],
+                      ["Approach", `${storyId}-approach`],
+                      ["Result", `${storyId}-result`],
+                    ].map(([label, href]) => (
+                      <li key={label}>
+                        <a
+                          className="inline-block py-0.5 no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px"
+                          href={`#${href}`}
+                        >
+                          {label}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+
         <div className="divide-y divide-border">
-          {project.stories.map((story) => (
-            <section className="py-12 sm:py-16" key={story.title}>
-              <header className="mb-8 border-b border-border pb-4">
-                <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
-                  {story.eyebrow}
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                  {story.title}
-                </h2>
-              </header>
+          {project.stories.map((story, storyIndex) => {
+            const storyId = `story-${storyIndex + 1}`;
 
-              <div className="max-w-4xl">
-                {story.image ? (
-                  <figure className="mb-10">
-                    <Image
-                      alt={story.image.alt}
-                      className="aspect-video w-full rounded-lg border border-border object-cover"
-                      height={720}
-                      priority
-                      src={story.image.src}
-                      width={1280}
-                    />
-                    <figcaption className="mt-3 text-xs leading-5 text-muted-foreground">
-                      {story.image.caption}
-                    </figcaption>
-                  </figure>
-                ) : null}
+            return (
+              <section className="scroll-mt-24 py-12 sm:py-16" id={storyId} key={story.title}>
+                <header className="mb-8 border-b border-border pb-4">
+                  <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
+                    {story.eyebrow}
+                  </p>
+                  <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                    {story.title}
+                  </h2>
+                </header>
 
-                <div className="max-w-3xl">
-                  <div>
-                    <h3 className="text-sm font-semibold text-primary">Problem</h3>
-                    <p className="mt-2 text-base leading-7 text-muted-foreground">
-                      {story.problem}
-                    </p>
-                  </div>
-                  <div className="mt-7">
-                    <h3 className="text-sm font-semibold text-primary">Approach</h3>
-                    <p className="mt-2 text-base leading-7 text-muted-foreground">
-                      {story.approach}
-                    </p>
-                  </div>
-                  <div className="mt-7 border-l-2 border-primary pl-4">
-                    <h3 className="text-sm font-semibold">Result</h3>
-                    <p className="mt-2 text-base font-semibold leading-7">{story.result}</p>
+                <div className="max-w-4xl">
+                  {story.image ? (
+                    <figure className="mb-10">
+                      <Image
+                        alt={story.image.alt}
+                        className="aspect-video w-full rounded-lg border border-border object-cover"
+                        height={720}
+                        priority
+                        src={story.image.src}
+                        width={1280}
+                      />
+                      <figcaption className="mt-3 text-xs leading-5 text-muted-foreground">
+                        {story.image.caption}
+                      </figcaption>
+                    </figure>
+                  ) : null}
+
+                  <div className="max-w-3xl">
+                    <div>
+                      <h3
+                        className="scroll-mt-24 text-sm font-semibold text-primary"
+                        id={`${storyId}-problem`}
+                      >
+                        Problem
+                      </h3>
+                      <p className="mt-2 text-base leading-7 text-muted-foreground">
+                        {story.problem}
+                      </p>
+                    </div>
+                    <div className="mt-7">
+                      <h3
+                        className="scroll-mt-24 text-sm font-semibold text-primary"
+                        id={`${storyId}-approach`}
+                      >
+                        Approach
+                      </h3>
+                      <p className="mt-2 text-base leading-7 text-muted-foreground">
+                        {story.approach}
+                      </p>
+                    </div>
+                    <div className="mt-7 border-l-2 border-primary pl-4">
+                      <h3
+                        className="scroll-mt-24 text-sm font-semibold"
+                        id={`${storyId}-result`}
+                      >
+                        Result
+                      </h3>
+                      <p className="mt-2 text-base font-semibold leading-7">{story.result}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
-          ))}
+              </section>
+            );
+          })}
         </div>
       </article>
     </main>
