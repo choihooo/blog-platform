@@ -2,6 +2,7 @@ import { generateSitemapOutput, serializeSitemap, trimSlash } from "@blog-platfo
 
 import { postsToSeoSubjects, siteForSeo } from "@/features/blog/lib/seo";
 import { getPublishedPosts, getSiteConfig } from "@/features/blog/server/content-source";
+import { projects } from "@/features/projects/project-data";
 
 export const revalidate = 900;
 
@@ -15,6 +16,9 @@ export async function GET() {
   entries.unshift(
     { loc: trimSlash(site.siteUrl) },
     { loc: `${trimSlash(site.siteUrl)}/projects` },
+    ...projects.map((project) => ({
+      loc: `${trimSlash(site.siteUrl)}/projects/${project.slug}`,
+    })),
     { loc: `${trimSlash(site.siteUrl)}/resume` },
   );
   entries.push({ loc: `${trimSlash(site.siteUrl)}/blog/tags` });

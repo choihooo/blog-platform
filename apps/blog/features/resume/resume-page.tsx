@@ -11,6 +11,10 @@ type Achievement = {
   details: readonly string[];
   technologies: readonly string[];
   result?: string;
+  thumbnail?: {
+    alt: string;
+    src: string;
+  };
 };
 
 const workExperiences = [
@@ -35,19 +39,23 @@ const workExperiences = [
         ],
       },
       {
-        title: "카드 데이터 기반 CLI workflow로 개발 비용과 실행 시간 절감",
+        title: "DOM 기반 AI 워크플로 제안으로 카드 처리 시간 31.6% 단축",
         period: "2026.05",
-        technologies: ["Codex", "Claude", "MCP", "Bench"],
+        technologies: ["Playwright", "Codex", "Claude", "TypeScript"],
         context:
-          "screenshot과 HTML context에 의존하던 작업을 구조화된 카드 데이터 중심 CLI workflow로 전환했습니다.",
+          "화면 이미지만 전달받은 AI가 실제 DOM 요소를 정확히 연결하지 못해 재시도가 발생하고, 독립적인 칸반 카드도 순차 처리되어 작업 시간이 누적됐습니다.",
         summary:
-          "Langboard 카드 데이터를 기준으로 작업 대상을 결정하는 screenshotless CLI workflow를 설계했습니다.",
+          "Playwright CLI로 DOM·HTML 컨텍스트를 제공하고 독립 카드를 병렬 실행하는 공통 워크플로를 제안·구현했습니다.",
         details: [
-          "title, metadata, selector, sourceFile, acceptance criteria를 읽어 작업 범위를 결정하도록 command를 분리했습니다.",
-          "브라우저 상태 해석보다 구조화된 카드 데이터를 우선하도록 MCP 작업 흐름을 정리했습니다.",
+          "모델이 화면을 추측하는 대신 selector와 DOM 구조를 기준으로 수정 대상을 판단하도록 입력 구조를 변경했습니다.",
+          "Codex와 Claude에서 재사용할 수 있게 실행 절차를 표준화하고 Before/After 결과를 주간 회의에서 공유했습니다.",
         ],
         result:
-          "post-slim dry-run 10회 기준 median duration 31.6%, median cost 35.4%, input token 10.3% 절감",
+          "카드 처리 시간 중앙값 31.6% 단축 · 카드별 AI 실행 비용 중앙값 35.4% 절감",
+        thumbnail: {
+          alt: "화면 이미지와 실제 DOM 요소가 연결되지 않는 문제를 표현한 비교 이미지",
+          src: "/projects/ai-workflow/dom-mismatch-thumbnail.png",
+        },
       },
       {
         title: "React UI Kit과 component showcase 정리",
@@ -235,21 +243,40 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           {achievement.period}
         </time>
       </div>
-      <p className="mt-4 text-sm leading-6 text-muted-foreground">{achievement.context}</p>
-      <p className="mt-3 text-sm font-semibold leading-6">{achievement.summary}</p>
-      <ul className="mt-2 space-y-1.5 pl-4 text-sm leading-6 text-muted-foreground">
-        {achievement.details.map((detail) => (
-          <li key={detail} className="list-disc pl-1 marker:text-primary">
-            {detail}
-          </li>
-        ))}
-      </ul>
-      {achievement.result ? (
-        <p className="mt-4 text-sm font-semibold leading-6 text-primary">
-          <span aria-hidden="true">→ </span>
-          {achievement.result}
-        </p>
-      ) : null}
+      <div
+        className={
+          achievement.thumbnail
+            ? "mt-5 grid gap-5 md:grid-cols-[280px_minmax(0,1fr)]"
+            : "mt-4"
+        }
+      >
+        {achievement.thumbnail ? (
+          <Image
+            alt={achievement.thumbnail.alt}
+            className="aspect-video w-full rounded-lg border border-border object-cover"
+            height={720}
+            src={achievement.thumbnail.src}
+            width={1280}
+          />
+        ) : null}
+        <div>
+          <p className="text-sm leading-6 text-muted-foreground">{achievement.context}</p>
+          <p className="mt-3 text-sm font-semibold leading-6">{achievement.summary}</p>
+          <ul className="mt-2 space-y-1.5 pl-4 text-sm leading-6 text-muted-foreground">
+            {achievement.details.map((detail) => (
+              <li key={detail} className="list-disc pl-1 marker:text-primary">
+                {detail}
+              </li>
+            ))}
+          </ul>
+          {achievement.result ? (
+            <p className="mt-4 text-sm font-semibold leading-6 text-primary">
+              <span aria-hidden="true">→ </span>
+              {achievement.result}
+            </p>
+          ) : null}
+        </div>
+      </div>
     </article>
   );
 }
