@@ -39,25 +39,6 @@ const workExperiences = [
         ],
       },
       {
-        title: "DOM 기반 AI 워크플로 제안으로 카드 처리 시간 31.6% 단축",
-        period: "2026.05",
-        technologies: ["Playwright", "Codex", "Claude", "TypeScript"],
-        context:
-          "화면 이미지만 전달받은 AI가 실제 DOM 요소를 정확히 연결하지 못해 재시도가 발생하고, 독립적인 칸반 카드도 순차 처리되어 작업 시간이 누적됐습니다.",
-        summary:
-          "Playwright CLI로 DOM·HTML 컨텍스트를 제공하고 독립 카드를 병렬 실행하는 공통 워크플로를 제안·구현했습니다.",
-        details: [
-          "모델이 화면을 추측하는 대신 selector와 DOM 구조를 기준으로 수정 대상을 판단하도록 입력 구조를 변경했습니다.",
-          "Codex와 Claude에서 재사용할 수 있게 실행 절차를 표준화하고 Before/After 결과를 주간 회의에서 공유했습니다.",
-        ],
-        result:
-          "카드 처리 시간 중앙값 31.6% 단축 · 카드별 AI 실행 비용 중앙값 35.4% 절감",
-        thumbnail: {
-          alt: "화면 이미지와 실제 DOM 요소가 연결되지 않는 문제를 표현한 비교 이미지",
-          src: "/projects/ai-workflow/dom-mismatch-thumbnail.png",
-        },
-      },
-      {
         title: "React UI Kit과 component showcase 정리",
         period: "2026.03 ~ 2026.05",
         technologies: ["React", "i18n", "UI Kit"],
