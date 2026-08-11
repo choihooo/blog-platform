@@ -3,9 +3,16 @@
 공개 읽기 전용 블로그 앱이다. `content/posts/*.mdx` 중 `status: published`인 글만 공개 표면에
 노출한다.
 
+## Structure
+
+- `app`: Next.js 라우트, 메타데이터, route handler와 기능 조립만 둔다.
+- `features`: `blog`, `navigation`, `projects`, `resume`처럼 사용자 기능별 코드를 둔다.
+- `shared`: 날짜 포맷과 analytics처럼 여러 기능에서 재사용하는 코드를 둔다.
+- 기능은 다른 기능의 내부 파일을 직접 참조하지 않고, 공통 코드가 필요하면 `shared`로 올린다.
+
 ## Generated Outputs
 
-- `/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`는 repository에 파일을 commit하지 않고
+- `/blog/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`는 repository에 파일을 commit하지 않고
   route handler에서 현재 published content와 `@blog-platform/seo-engine` 결과를 기준으로 응답한다.
 - Draft와 archived 글은 홈, 상세, taxonomy route, RSS, Sitemap, OG route에서 제외된다.
 

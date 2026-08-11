@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Chip, ChipGroup, EmptyState } from "@hozui/react";
 import { trimSlash } from "@blog-platform/seo-engine";
 
-import { getPublishedPosts, getSiteConfig, getTags } from "../../lib/content-source";
+import { getPublishedPosts, getSiteConfig, getTags } from "@/features/blog/server/content-source";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "태그",
     description: "태그별 글 목록",
-    alternates: { canonical: `${trimSlash(site.siteUrl)}/tags` },
+    alternates: { canonical: `${trimSlash(site.siteUrl)}/blog/tags` },
   };
 }
 
@@ -50,7 +50,7 @@ export default async function TagsPage() {
       {sortedTags.length > 0 ? (
         <ChipGroup aria-label="태그 목록" className="flex flex-wrap gap-2.5 sm:gap-3" role="nav">
           {sortedTags.map((tag) => (
-            <Link href={`/tags/${tag.slug}`} key={tag.slug}>
+            <Link href={`/blog/tags/${tag.slug}`} key={tag.slug}>
               <Chip label={`${tag.label} · ${tagCounts.get(tag.slug) ?? 0}`} tone="accent" />
             </Link>
           ))}

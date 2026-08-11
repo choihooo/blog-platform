@@ -7,15 +7,19 @@ import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
 import { Chip, ChipGroup } from "@hozui/react";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 
-import { getPostBySlug, getRecommendedPosts, getSiteConfig } from "../../../lib/content-source";
-import { formatPostDateTime } from "../../../lib/date-format";
-import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
-import { PostAnalyticsEvents } from "../../components/post-analytics-events";
-import { CodeCopyButton } from "../../components/code-copy-button";
-import { BlogBreadcrumb } from "../../components/blog-breadcrumb";
-import { PostAuthorMeta } from "../../components/post-author-meta";
-import { RecommendedPosts } from "../../components/recommended-posts";
-import { PostShareActions } from "../../components/post-share-actions";
+import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
+import { CodeCopyButton } from "@/features/blog/components/code-copy-button";
+import { PostAnalyticsEvents } from "@/features/blog/components/post-analytics-events";
+import { PostAuthorMeta } from "@/features/blog/components/post-author-meta";
+import { PostShareActions } from "@/features/blog/components/post-share-actions";
+import { RecommendedPosts } from "@/features/blog/components/recommended-posts";
+import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
+import {
+  getPostBySlug,
+  getRecommendedPosts,
+  getSiteConfig,
+} from "@/features/blog/server/content-source";
+import { formatPostDateTime } from "@/shared/date/date-format";
 
 export const revalidate = 900;
 
@@ -213,7 +217,7 @@ export default async function PostPage({ params }: PostPageProps) {
     Promise.resolve(generateJsonLd(postToSeoSubject(post, siteForSeo(site)))),
     getRecommendedPosts(post, 3),
   ]);
-  const postUrl = `${site.siteUrl.replace(/\/$/, "")}/posts/${post.slug}`;
+  const postUrl = `${site.siteUrl.replace(/\/$/, "")}/blog/${post.slug}`;
   const analyticsContext = {
     provider: site.analytics.provider,
     slug: post.slug,
@@ -242,9 +246,14 @@ export default async function PostPage({ params }: PostPageProps) {
       />
       <BlogBreadcrumb
         entries={[
-          { href: "/", label: "글" },
+          { href: "/blog", label: "글" },
           ...(post.categoryEntry
-            ? [{ href: `/categories/${post.categoryEntry.slug}`, label: post.categoryEntry.label }]
+            ? [
+                {
+                  href: `/blog/categories/${post.categoryEntry.slug}`,
+                  label: post.categoryEntry.label,
+                },
+              ]
             : []),
           { label: post.title },
         ]}
@@ -287,12 +296,12 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
             <ChipGroup aria-label="글 분류" className="flex flex-wrap gap-2">
               {post.categoryEntry ? (
-                <Link href={`/categories/${post.categoryEntry.slug}`}>
+                <Link href={`/blog/categories/${post.categoryEntry.slug}`}>
                   <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
                 </Link>
               ) : null}
               {post.tagEntries.map((tag) => (
-                <Link href={`/tags/${tag.slug}`} key={tag.slug}>
+                <Link href={`/blog/tags/${tag.slug}`} key={tag.slug}>
                   <Chip label={tag.label} size="sm" tone="neutral" />
                 </Link>
               ))}

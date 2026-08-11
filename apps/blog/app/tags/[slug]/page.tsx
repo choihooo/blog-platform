@@ -2,10 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
 
-import { BlogBreadcrumb } from "../../components/blog-breadcrumb";
-import { PostList } from "../../components/post-list";
-import { paginateItems, parsePageParam, PostPagination } from "../../components/post-pagination";
-import { getPostsByTag, getSiteConfig, getTag, getTags } from "../../../lib/content-source";
+import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
+import { PostList } from "@/features/blog/components/post-list";
+import {
+  paginateItems,
+  parsePageParam,
+  PostPagination,
+} from "@/features/blog/components/post-pagination";
+import {
+  getPostsByTag,
+  getSiteConfig,
+  getTag,
+  getTags,
+} from "@/features/blog/server/content-source";
 
 export const dynamic = "force-dynamic";
 
@@ -34,14 +43,14 @@ export async function generateMetadata({ params, searchParams }: TagPageProps): 
         title: page > 1 ? `${tag.label} - ${page}페이지` : tag.label,
         description: tag.description,
         alternates: {
-          canonical: `${trimSlash(site.siteUrl)}/tags/${tag.slug}${page > 1 ? `?page=${page}` : ""}`,
+          canonical: `${trimSlash(site.siteUrl)}/blog/tags/${tag.slug}${page > 1 ? `?page=${page}` : ""}`,
         },
       }
     : {};
 }
 
 function tagHrefForPage(slug: string, page: number) {
-  return page > 1 ? `/tags/${slug}?page=${page}` : `/tags/${slug}`;
+  return page > 1 ? `/blog/tags/${slug}?page=${page}` : `/blog/tags/${slug}`;
 }
 
 export default async function TagPage({ params, searchParams }: TagPageProps) {
@@ -59,7 +68,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     provider: site.analytics.provider,
     slug: `tag:${tag.slug}`,
     title: tag.label,
-    url: `${site.siteUrl.replace(/\/+$/, "")}/tags/${tag.slug}`,
+    url: `${site.siteUrl.replace(/\/+$/, "")}/blog/tags/${tag.slug}`,
     siteUrl: site.siteUrl,
     tags: [tag.slug],
   };
@@ -68,8 +77,8 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <BlogBreadcrumb
         entries={[
-          { href: "/", label: "글" },
-          { href: "/tags", label: "태그" },
+          { href: "/blog", label: "글" },
+          { href: "/blog/tags", label: "태그" },
           { label: tag.label },
         ]}
         label="태그 위치"

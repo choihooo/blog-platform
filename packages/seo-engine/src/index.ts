@@ -1,4 +1,11 @@
-export { createSeoSubject, canonicalUrl, ogImageUrl, publicPostUrl, trimSlash } from "./subject.js";
+export {
+  createSeoSubject,
+  canonicalUrl,
+  contentHomeUrl,
+  ogImageUrl,
+  publicPostUrl,
+  trimSlash,
+} from "./subject.js";
 export { generatePageMetadata } from "./metadata.js";
 export { generateJsonLd } from "./json-ld.js";
 export { generateFeedOutput, serializeFeed, escapeXml } from "./feed.js";

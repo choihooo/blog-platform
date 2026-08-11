@@ -10,7 +10,7 @@ type EditorSeoSite = {
   siteUrl?: string;
 };
 
-const fallbackSite = { siteName: "Hozorica", siteUrl: "https://blog.hozorica.com" };
+const fallbackSite = { siteName: "Hozorica", siteUrl: "https://hozorica.com" };
 
 export function seoReportForEditorDocument(
   document: EditorDocument,
@@ -19,6 +19,7 @@ export function seoReportForEditorDocument(
   const site = {
     siteName: siteConfig.siteName?.trim() || fallbackSite.siteName,
     siteUrl: siteConfig.siteUrl?.trim() || fallbackSite.siteUrl,
+    contentPath: "/blog",
   };
   const body = textFromEditorNodes(document.body);
   const analysis = analyzeEditorNodes(document.body);

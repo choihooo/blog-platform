@@ -2,8 +2,8 @@ import { createElement } from "react";
 import { ImageResponse } from "next/og";
 import { createOgImagePayload } from "@blog-platform/seo-engine";
 
-import { getPostBySlug, getSiteConfig } from "../../../lib/content-source";
-import { postToSeoSubject, siteForSeo } from "../../../lib/seo";
+import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
+import { getPostBySlug, getSiteConfig } from "@/features/blog/server/content-source";
 
 export const revalidate = 900;
 

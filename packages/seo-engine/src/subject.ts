@@ -30,8 +30,15 @@ export function trimSlash(value: string) {
   return value.replace(/\/+$/g, "");
 }
 
+export function contentHomeUrl(site: SeoSite) {
+  const contentPath = site.contentPath?.trim().replace(/^\/+|\/+$/g, "");
+  return contentPath ? `${trimSlash(site.siteUrl)}/${contentPath}` : trimSlash(site.siteUrl);
+}
+
 export function publicPostUrl(site: SeoSite, slug: string) {
-  return `${trimSlash(site.siteUrl)}/posts/${slug}`;
+  return site.contentPath
+    ? `${contentHomeUrl(site)}/${slug}`
+    : `${trimSlash(site.siteUrl)}/posts/${slug}`;
 }
 
 export function ogImageUrl(site: SeoSite, slug: string) {
@@ -76,5 +83,5 @@ export function createSeoSubject(input: CreateSeoSubjectInput): SeoSubject {
 }
 
 export function homeEntry(site: SeoSite): SitemapEntry {
-  return { loc: trimSlash(site.siteUrl) };
+  return { loc: contentHomeUrl(site) };
 }

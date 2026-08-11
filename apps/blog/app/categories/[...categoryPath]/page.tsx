@@ -2,15 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { trimSlash } from "@blog-platform/seo-engine";
 
-import { BlogBreadcrumb } from "../../components/blog-breadcrumb";
-import { PostList } from "../../components/post-list";
-import { paginateItems, parsePageParam, PostPagination } from "../../components/post-pagination";
+import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
+import { PostList } from "@/features/blog/components/post-list";
+import {
+  paginateItems,
+  parsePageParam,
+  PostPagination,
+} from "@/features/blog/components/post-pagination";
 import {
   getCategoryByPath,
   getPostsByCategoryPath,
   getSiteConfig,
   listCategories,
-} from "../../../lib/content-source";
+} from "@/features/blog/server/content-source";
 
 export const dynamic = "force-dynamic";
 
@@ -55,14 +59,14 @@ export async function generateMetadata({
         title: page > 1 ? `${category.label} - ${page}페이지` : category.label,
         description: category.description,
         alternates: {
-          canonical: `${trimSlash(site.siteUrl)}/categories/${category.slug}${page > 1 ? `?page=${page}` : ""}`,
+          canonical: `${trimSlash(site.siteUrl)}/blog/categories/${category.slug}${page > 1 ? `?page=${page}` : ""}`,
         },
       }
     : {};
 }
 
 function categoryHrefForPage(path: string, page: number) {
-  return page > 1 ? `/categories/${path}?page=${page}` : `/categories/${path}`;
+  return page > 1 ? `/blog/categories/${path}?page=${page}` : `/blog/categories/${path}`;
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
@@ -83,7 +87,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     provider: site.analytics.provider,
     slug: `category:${category.slug}`,
     title: category.label,
-    url: `${site.siteUrl.replace(/\/+$/, "")}/categories/${category.slug}`,
+    url: `${site.siteUrl.replace(/\/+$/, "")}/blog/categories/${category.slug}`,
     siteUrl: site.siteUrl,
     category: category.slug,
   };
@@ -91,7 +95,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
       <BlogBreadcrumb
-        entries={[{ href: "/", label: "글" }, { label: category.label }]}
+        entries={[{ href: "/blog", label: "글" }, { label: category.label }]}
         label="카테고리 위치"
       />
       <section className="mb-10 grid gap-4">

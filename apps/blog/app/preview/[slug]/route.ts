@@ -1,4 +1,4 @@
-import { loadDraftPreview, previewCacheControl } from "../../../lib/preview";
+import { loadDraftPreview, previewCacheControl } from "@/features/blog/server/preview";
 
 type RouteContext = {
   params: Promise<{ slug: string }>;

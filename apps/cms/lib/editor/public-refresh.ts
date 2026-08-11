@@ -57,16 +57,16 @@ function configured(value: string | undefined) {
 function addMetadataTargets(targets: Set<string>, metadata?: PublicRefreshMetadata) {
   if (!metadata) return;
   if (metadata.slug) {
-    targets.add(`/posts/${metadata.slug}`);
+    targets.add(`/blog/${metadata.slug}`);
     targets.add(`/og/${metadata.slug}`);
   }
-  if (metadata.category) targets.add(`/categories/${metadata.category}`);
-  for (const tag of metadata.tags ?? []) targets.add(`/tags/${tag}`);
+  if (metadata.category) targets.add(`/blog/categories/${metadata.category}`);
+  for (const tag of metadata.tags ?? []) targets.add(`/blog/tags/${tag}`);
 }
 
 export function publicRefreshTargets(request: PublicRefreshRequest): string[] {
   if (request.operation === "retry") return [];
-  const targets = new Set(["/", "/rss.xml", "/sitemap.xml", "/robots.txt"]);
+  const targets = new Set(["/", "/blog", "/blog/rss.xml", "/sitemap.xml", "/robots.txt"]);
   addMetadataTargets(targets, request.previous);
   addMetadataTargets(targets, request.next);
   return [...targets];

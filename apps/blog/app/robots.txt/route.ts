@@ -1,7 +1,7 @@
 import { generateRobotsPolicy, serializeRobots } from "@blog-platform/seo-engine";
 
-import { getSiteConfig } from "../../lib/content-source";
-import { siteForSeo } from "../../lib/seo";
+import { siteForSeo } from "@/features/blog/lib/seo";
+import { getSiteConfig } from "@/features/blog/server/content-source";
 
 export async function GET() {
   const site = await getSiteConfig();

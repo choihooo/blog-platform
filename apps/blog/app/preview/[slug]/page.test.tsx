@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("../../../lib/preview", () => ({
+vi.mock("@/features/blog/server/preview", () => ({
   previewCacheControl: () => "private, no-store",
   loadDraftPreview: ({ token }: { token: string }) =>
     Promise.resolve(

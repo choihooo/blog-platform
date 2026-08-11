@@ -12,6 +12,7 @@ export type SeoIssue = {
 export type SeoSite = {
   siteName: string;
   siteUrl: string;
+  contentPath?: string;
   description?: string;
   defaultAuthor?: SeoAuthor;
 };

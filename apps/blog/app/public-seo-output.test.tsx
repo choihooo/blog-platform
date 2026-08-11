@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
-import { postToSeoSubject, siteForSeo } from "../lib/seo";
-import type { PublicPost } from "../lib/content";
+import type { PublicPost } from "@/features/blog/lib/content";
+import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
 
 describe("public SEO output", () => {
   it("can generate post metadata from public post data", () => {
@@ -25,7 +25,7 @@ describe("public SEO output", () => {
       siteForSeo({ siteName: "Blog", siteUrl: "https://example.com" }),
     );
     const metadata = generatePageMetadata(subject);
-    expect(metadata.canonical).toBe("https://example.com/posts/hello");
+    expect(metadata.canonical).toBe("https://example.com/blog/hello");
     expect(metadata.openGraph.title).toBe("Hello Structured Content");
     expect(metadata.twitter.images[0]).toBe("https://example.com/og/hello");
     expect(generateJsonLd(subject)[0]).toMatchObject({ "@type": "BlogPosting" });

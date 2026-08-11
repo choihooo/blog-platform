@@ -1,5 +1,5 @@
 import { escapeXml } from "./feed.js";
-import { homeEntry, publicPostUrl, trimSlash } from "./subject.js";
+import { contentHomeUrl, homeEntry, publicPostUrl } from "./subject.js";
 import type { SeoSite, SeoSubject, SitemapEntry } from "./types.js";
 
 export function generateSitemapOutput(site: SeoSite, subjects: SeoSubject[]): SitemapEntry[] {
@@ -18,8 +18,8 @@ export function generateSitemapOutput(site: SeoSite, subjects: SeoSubject[]): Si
       lastModified: subject.updatedAt ?? subject.publishedAt,
     });
     if (subject.category)
-      add({ loc: `${trimSlash(site.siteUrl)}/categories/${subject.category.slug}` });
-    for (const tag of subject.tags) add({ loc: `${trimSlash(site.siteUrl)}/tags/${tag.slug}` });
+      add({ loc: `${contentHomeUrl(site)}/categories/${subject.category.slug}` });
+    for (const tag of subject.tags) add({ loc: `${contentHomeUrl(site)}/tags/${tag.slug}` });
   }
   return entries;
 }

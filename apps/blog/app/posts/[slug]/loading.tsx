@@ -1,4 +1,4 @@
-import { BlogPostSkeleton } from "../../components/blog-route-skeletons";
+import { BlogPostSkeleton } from "@/features/blog/components/blog-route-skeletons";
 
 export default function Loading() {
   return <BlogPostSkeleton />;

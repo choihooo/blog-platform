@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
 
-import { getSiteConfig, listCategories } from "../lib/content-source";
-import { analyticsInit } from "../lib/analytics";
-import { AnalyticsProvider } from "./components/analytics-provider";
-import { SiteShell } from "./components/site-shell";
+import { SiteShell } from "@/features/navigation/site-shell";
+import { getSiteConfig, listCategories } from "@/features/blog/server/content-source";
+import { analyticsInit } from "@/shared/analytics/analytics";
+import { AnalyticsProvider } from "@/shared/analytics/analytics-provider";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: site.description,
     alternates: {
       canonical: site.siteUrl,
-      types: { "application/rss+xml": `${site.siteUrl.replace(/\/+$/, "")}/rss.xml` },
+      types: { "application/rss+xml": `${site.siteUrl.replace(/\/+$/, "")}/blog/rss.xml` },
     },
     icons: {
       icon: "/icon.png",

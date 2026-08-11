@@ -1,4 +1,4 @@
-import { searchPosts } from "../../../lib/content-source";
+import { searchPosts } from "@/features/blog/server/content-source";
 
 const searchCacheHeaders = {
   "cache-control": "public, s-maxage=60, stale-while-revalidate=300",
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
         updatedAt: post.updatedAt ?? "",
         readingTimeLabel: post.readingTimeLabel,
         coverImage: post.coverImage ?? "",
-        url: `/posts/${post.slug}`,
+        url: `/blog/${post.slug}`,
       })),
       total: posts.length,
       query,

@@ -6,8 +6,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 3000",
-    "format:check": "prettier \"app/**/*.{ts,tsx}\" \"lib/**/*.ts\" package.json next.config.mjs --check",
-    "lint": "eslint app next.config.mjs",
+    "format:check": "prettier \"{app,features,shared}/**/*.{ts,tsx}\" package.json next.config.mjs tsconfig.json vitest.config.ts --check",
+    "lint": "eslint app features shared next.config.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
@@ -17,13 +17,18 @@
     "@blog-platform/seo-engine": "workspace:^",
     "@hozui/react": "^0.3.0",
     "@hozui/tokens": "^0.1.0",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
     "lucide-react": "^1.27.0",
+    "motion": "^13.1.0",
     "next": "^16.2.12",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "@types/three": "^0.185.4",
     "postcss": "^8.5.25",
     "tailwindcss": "^4.3.3",
     "vitest": "^4.1.10"

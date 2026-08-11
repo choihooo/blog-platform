@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { PublicPost } from "../lib/content";
+import type { PublicPost } from "@/features/blog/lib/content";
 
 const publishedPost: PublicPost = {
   path: "db/posts/hello",
@@ -35,7 +35,7 @@ const longPost: PublicPost = {
   title: "A Very Long Generated Output Title That Must Wrap Cleanly Inside The Social Image",
 };
 
-vi.mock("../lib/content-source", () => ({
+vi.mock("@/features/blog/server/content-source", () => ({
   getSiteConfig: () => Promise.resolve({ siteName: "Blog", siteUrl: "https://example.com" }),
   getPublishedPosts: () => Promise.resolve([publishedPost, longPost]),
   searchPosts: (input: { query: string }) =>
@@ -50,7 +50,7 @@ vi.mock("../lib/content-source", () => ({
 
 describe("generated output routes", () => {
   it("keeps listing pages self-canonical and prevents search result indexing", async () => {
-    const { homeListingMetadata } = await import("../lib/listing-metadata");
+    const { homeListingMetadata } = await import("@/features/blog/lib/listing-metadata");
     const listing = homeListingMetadata({ siteUrl: "https://example.com", page: 2 });
     const search = homeListingMetadata({
       siteUrl: "https://example.com",
@@ -58,8 +58,8 @@ describe("generated output routes", () => {
       query: "hello",
     });
 
-    expect(listing.alternates?.canonical).toBe("https://example.com/?page=2");
-    expect(search.alternates?.canonical).toBe("https://example.com");
+    expect(listing.alternates?.canonical).toBe("https://example.com/blog?page=2");
+    expect(search.alternates?.canonical).toBe("https://example.com/blog");
     expect(search.robots).toEqual({ index: false, follow: true });
   });
 
@@ -69,7 +69,7 @@ describe("generated output routes", () => {
     const body = await response.text();
     expect(response.headers.get("content-type")).toBe("application/rss+xml; charset=utf-8");
     expect(body).toContain("Hello &amp; Structured Content");
-    expect(body).toContain("https://example.com/posts/hello");
+    expect(body).toContain("https://example.com/blog/hello");
     expect(body).not.toContain("draft");
   });
 
@@ -78,9 +78,9 @@ describe("generated output routes", () => {
     const response = await GET();
     const body = await response.text();
     expect(response.headers.get("content-type")).toBe("application/xml; charset=utf-8");
-    expect(body).toContain("https://example.com/posts/hello");
-    expect(body).toContain("https://example.com/categories/engineering");
-    expect(body).toContain("https://example.com/tags/content-json");
+    expect(body).toContain("https://example.com/blog/hello");
+    expect(body).toContain("https://example.com/blog/categories/engineering");
+    expect(body).toContain("https://example.com/blog/tags/content-json");
     expect(body).not.toContain("/cms");
     expect(body).not.toContain("/preview");
   });
@@ -122,7 +122,7 @@ describe("generated output routes", () => {
     expect(body.total).toBe(1);
     expect(body.items[0]).toMatchObject({
       title: "Hello & Structured Content",
-      url: "/posts/hello",
+      url: "/blog/hello",
     });
   });
 });

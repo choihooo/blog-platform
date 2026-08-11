@@ -52,7 +52,7 @@ export function dashboardDateRange(range: AnalyticsDashboardRange, now = new Dat
 }
 
 function canonicalUrl(siteUrl: string, slug: string) {
-  return `${siteUrl.replace(/\/+$/, "")}/posts/${encodeURIComponent(slug)}`;
+  return `${siteUrl.replace(/\/+$/, "")}/blog/${encodeURIComponent(slug)}`;
 }
 
 function providerPosts(siteUrl: string, posts: PostSummary[]): AnalyticsProviderPost[] {

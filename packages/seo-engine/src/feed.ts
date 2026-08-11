@@ -1,4 +1,4 @@
-import { publicPostUrl, trimSlash } from "./subject.js";
+import { contentHomeUrl, publicPostUrl } from "./subject.js";
 import type { FeedOutput, SeoSite, SeoSubject } from "./types.js";
 
 export function escapeXml(value: string) {
@@ -23,7 +23,7 @@ export function generateFeedOutput(site: SeoSite, subjects: SeoSubject[]): FeedO
         description: subject.excerpt,
       };
     });
-  return { title: site.siteName, link: trimSlash(site.siteUrl), items };
+  return { title: site.siteName, link: contentHomeUrl(site), items };
 }
 
 export function serializeFeed(output: FeedOutput) {
