@@ -78,15 +78,9 @@ export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
                 </h2>
               </header>
 
-              <div
-                className={
-                  story.image
-                    ? "grid gap-7 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start"
-                    : "max-w-3xl"
-                }
-              >
+              <div className="max-w-4xl">
                 {story.image ? (
-                  <figure>
+                  <figure className="mb-10">
                     <Image
                       alt={story.image.alt}
                       className="aspect-video w-full rounded-lg border border-border object-cover"
@@ -101,7 +95,7 @@ export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
                   </figure>
                 ) : null}
 
-                <div>
+                <div className="max-w-3xl">
                   <div>
                     <h3 className="text-sm font-semibold text-primary">Problem</h3>
                     <p className="mt-2 text-base leading-7 text-muted-foreground">
