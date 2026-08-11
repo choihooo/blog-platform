@@ -7,7 +7,6 @@ type Achievement = {
   title: string;
   period: string;
   context: string;
-  summary: string;
   details: readonly string[];
   technologies: readonly string[];
   result?: string;
@@ -31,7 +30,6 @@ const workExperiences = [
         technologies: ["TypeScript", "Electron", "Qdrant"],
         context:
           "score 중심 결과만으로는 신뢰도 판단 근거가 부족해 실제 search hit 기반 출처와 근거를 먼저 확인하는 UI로 개선했습니다.",
-        summary: "Electron renderer/preload 연동과 Search Result UI 모델 설계를 담당했습니다.",
         details: [
           "문서·이미지·오디오·영상 hit를 공통 Result 모델로 정규화했습니다.",
           "file metadata, snippet, STT segment를 Evidence 필드로 매핑했습니다.",
@@ -44,8 +42,6 @@ const workExperiences = [
         technologies: ["React", "i18n", "UI Kit"],
         context:
           "신규 수주와 PoC마다 반복되던 유사 UI 구현 및 다국어 처리 기준을 공통 구조로 정리했습니다.",
-        summary:
-          "atom/molecule 컴포넌트의 props, state, variation을 확인하는 showcase를 구성했습니다.",
         details: [
           "props table, code example, state preview를 한곳에서 확인할 수 있게 했습니다.",
           "hardcoded text를 번역 key 기반으로 전환하고 locale prefix routing 기준을 맞췄습니다.",
@@ -57,8 +53,6 @@ const workExperiences = [
         technologies: ["React", "Nexacro", "Playwright"],
         context:
           "반응형 기준이 없는 Nexacro absolute 화면을 React로 전환하기 위한 화면 단위 명세와 검증 기준을 만들었습니다.",
-        summary:
-          "화면 단위 요구사항과 acceptance criteria를 정리하고 React 전환 가능성을 검증했습니다.",
         details: [
           "layout, interaction, data state 기준을 분리해 동일 viewport에서 원본과 전환 화면을 비교했습니다.",
           "Playwright MCP 비교 검증으로 사용성과 재현도를 확인했습니다.",
@@ -79,7 +73,6 @@ const workExperiences = [
         technologies: ["React", "Recoil", "API"],
         context:
           "신규 센터 추가마다 코드 수정과 재배포가 필요했던 구조를 API 응답 기반 렌더링으로 전환했습니다.",
-        summary: "센터 목록, 상세 정보, 노출 조건을 API 응답 스키마 기준으로 매핑했습니다.",
         details: [
           "센터별 하드코딩 분기를 제거해 운영 변경 시 수정 범위를 줄였습니다.",
           "Recoil selector와 LocalStorage cache로 조회·캐싱·반영 흐름을 분리했습니다.",
@@ -90,8 +83,6 @@ const workExperiences = [
         period: "2025.04 ~ 2025.06",
         technologies: ["TypeScript", "i18n", "AWS CI"],
         context: "런타임에서 노출되던 i18n 누락 key 문제를 배포 전 검증 단계로 이동했습니다.",
-        summary:
-          "국문 기준 누락 key 자동 검출 스크립트를 구현하고 AWS CodePipeline에 연동했습니다.",
         details: [
           "배포 전 누락 key를 탐지해 번역 key가 UI에 노출되는 문제를 줄였습니다.",
           "TypeScript 3.9.5에서 5.8.3으로 단계적 migration을 진행했습니다.",
@@ -115,8 +106,6 @@ const sideProjects = [
         technologies: ["Embedding", "pgvector", "OpenAI"],
         context:
           "태그 기반 추천의 개인화 한계를 개선하기 위해 사용자·큐레이션·게시글 embedding을 연결했습니다.",
-        summary:
-          "pgvector HNSW 후보 검색과 OpenAI/Ollama embedding provider 추상화를 구현했습니다.",
         details: [
           "사용자 관심사와 게시글·큐레이션 데이터를 embedding pipeline으로 연결했습니다.",
           "추천 이유 UI를 함께 노출해 사용자가 추천 근거를 확인할 수 있게 했습니다.",
@@ -128,7 +117,6 @@ const sideProjects = [
         period: "2026.02",
         technologies: ["Next.js", "Firebase", "PWA"],
         context: "일정 조율과 참여 알림이 분리되어 확정 일정을 놓치기 쉬운 문제를 개선했습니다.",
-        summary: "날짜 투표, 참석 상태, 알림 수신을 하나의 사용자 여정으로 연결했습니다.",
         details: ["Firebase Messaging 기반 PWA push로 일정 확정과 참여 알림을 제공했습니다."],
       },
     ],
@@ -145,8 +133,6 @@ const sideProjects = [
         technologies: ["Tauri", "Turborepo", "CI"],
         context:
           "컴퓨터비전 기반 데스크톱 제품을 실제 배포 가능한 형태로 운영하기 위한 검증 흐름을 정리했습니다.",
-        summary:
-          "React/Tauri 앱, 랜딩, admin, 디자인 시스템을 pnpm/Turborepo monorepo로 분리했습니다.",
         details: [
           "signing, notarization, updater artifact, R2 upload, sidecar를 release 체크리스트로 정리했습니다.",
           "빌드 산출물과 업데이트 경로를 명시해 릴리스 실패 가능성을 낮췄습니다.",
@@ -158,7 +144,6 @@ const sideProjects = [
         technologies: ["Webcam", "Pose", "Engine"],
         context:
           "pose landmark 기반 실시간 자세 판단 흐름을 안정적으로 실행하기 위한 상태 구조를 만들었습니다.",
-        summary: "camera stream, model initialization, frame loop, scoring 상태를 분리했습니다.",
         details: [
           "목, 어깨, 상체 landmark 기준 posture score와 상태별 피드백 기준을 구성했습니다.",
           "loading, camera unavailable, detecting, warning, normal 상태별 UI를 제공했습니다.",
@@ -242,8 +227,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
         ) : null}
         <div>
           <p className="text-sm leading-6 text-muted-foreground">{achievement.context}</p>
-          <p className="mt-3 text-sm font-semibold leading-6">{achievement.summary}</p>
-          <ul className="mt-2 space-y-1.5 pl-4 text-sm leading-6 text-muted-foreground">
+          <ul className="mt-3 space-y-1.5 pl-4 text-sm leading-6 text-muted-foreground">
             {achievement.details.map((detail) => (
               <li key={detail} className="list-disc pl-1 marker:text-primary">
                 {detail}
