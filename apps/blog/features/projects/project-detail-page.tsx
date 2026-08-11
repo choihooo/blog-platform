@@ -1,14 +1,18 @@
 "use client";
 
 import { Chip, ChipGroup } from "@hozui/react";
-import Image from "next/image";
 import Link from "next/link";
 
+import { ProjectBlockRenderer } from "./project-block-renderer";
+import { getProjectSections, getProjectToc } from "./project-content";
 import type { ProjectCaseStudy } from "./project-data";
 
 export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
+  const sections = getProjectSections(project);
+  const toc = getProjectToc(sections);
+
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-14">
+    <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-14">
       <Link
         className="inline-flex items-center gap-2 text-sm text-muted-foreground no-underline transition-colors hover:text-primary hover:no-underline"
         href="/projects"
@@ -74,111 +78,69 @@ export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
             Contents
           </p>
           <ol className="mt-6 max-w-3xl space-y-6">
-            {project.stories.map((story, storyIndex) => {
-              const storyId = `story-${storyIndex + 1}`;
-
-              return (
-                <li key={story.title}>
-                  <a
-                    className="group flex items-baseline gap-4 text-sm font-semibold no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px"
-                    href={`#${storyId}`}
-                  >
-                    <span className="w-5 shrink-0 text-xs tabular-nums text-primary">
-                      {String(storyIndex + 1).padStart(2, "0")}
-                    </span>
-                    <span>{story.title}</span>
-                  </a>
+            {toc.map((item, itemIndex) => (
+              <li key={item.href}>
+                <a
+                  className="group flex items-baseline gap-4 text-sm font-semibold no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px"
+                  href={item.href}
+                >
+                  <span className="w-5 shrink-0 text-xs tabular-nums text-primary">
+                    {String(itemIndex + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item.label}</span>
+                </a>
+                {item.children.length > 0 ? (
                   <ol className="mt-3 ml-9 space-y-2 border-l border-border pl-5 text-xs text-muted-foreground">
-                    {[
-                      ["Problem", `${storyId}-problem`],
-                      ["Approach", `${storyId}-approach`],
-                      ["Result", `${storyId}-result`],
-                    ].map(([label, href]) => (
-                      <li key={label}>
+                    {item.children.map((child) => (
+                      <li key={child.href}>
                         <a
                           className="inline-block py-0.5 no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px"
-                          href={`#${href}`}
+                          href={child.href}
                         >
-                          {label}
+                          {child.label}
                         </a>
                       </li>
                     ))}
                   </ol>
-                </li>
-              );
-            })}
+                ) : null}
+              </li>
+            ))}
           </ol>
         </nav>
 
         <div className="divide-y divide-border">
-          {project.stories.map((story, storyIndex) => {
-            const storyId = `story-${storyIndex + 1}`;
-
-            return (
-              <section className="scroll-mt-24 py-12 sm:py-16" id={storyId} key={story.title}>
-                <header className="mb-8 border-b border-border pb-4">
+          {sections.map((section, sectionIndex) => (
+            <section className="scroll-mt-24 py-12 sm:py-16" id={section.id} key={section.id}>
+              <header className="mb-8 border-b border-border pb-4">
+                {section.eyebrow ? (
                   <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
-                    {story.eyebrow}
+                    {section.eyebrow}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                    {story.title}
-                  </h2>
-                </header>
+                ) : null}
+                <h2
+                  className={`${section.eyebrow ? "mt-2" : ""} text-2xl font-semibold tracking-tight sm:text-3xl`}
+                >
+                  {section.title}
+                </h2>
+              </header>
 
-                <div className="max-w-4xl">
-                  {story.image ? (
-                    <figure className="mb-10">
-                      <Image
-                        alt={story.image.alt}
-                        className="aspect-video w-full rounded-lg border border-border object-cover"
-                        height={720}
-                        priority
-                        src={story.image.src}
-                        width={1280}
-                      />
-                      <figcaption className="mt-3 text-xs leading-5 text-muted-foreground">
-                        {story.image.caption}
-                      </figcaption>
-                    </figure>
-                  ) : null}
+              <div className="space-y-10">
+                {section.blocks.map((block, blockIndex) => {
+                  const blockId = "id" in block ? block.id : undefined;
+                  const anchorId = blockId ? `${section.id}-${blockId}` : undefined;
 
-                  <div className="max-w-3xl">
-                    <div>
-                      <h3
-                        className="scroll-mt-24 text-sm font-semibold text-primary"
-                        id={`${storyId}-problem`}
-                      >
-                        Problem
-                      </h3>
-                      <p className="mt-2 text-base leading-7 text-muted-foreground">
-                        {story.problem}
-                      </p>
-                    </div>
-                    <div className="mt-7">
-                      <h3
-                        className="scroll-mt-24 text-sm font-semibold text-primary"
-                        id={`${storyId}-approach`}
-                      >
-                        Approach
-                      </h3>
-                      <p className="mt-2 text-base leading-7 text-muted-foreground">
-                        {story.approach}
-                      </p>
-                    </div>
-                    <div className="mt-7 border-l-2 border-primary pl-4">
-                      <h3
-                        className="scroll-mt-24 text-sm font-semibold"
-                        id={`${storyId}-result`}
-                      >
-                        Result
-                      </h3>
-                      <p className="mt-2 text-base font-semibold leading-7">{story.result}</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            );
-          })}
+                  return (
+                    <ProjectBlockRenderer
+                      anchorId={anchorId}
+                      block={block}
+                      key={anchorId ?? `${block.type}-${blockIndex}`}
+                      priority={sectionIndex === 0 && blockIndex === 0}
+                    />
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
       </article>
     </main>

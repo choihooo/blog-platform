@@ -7,7 +7,7 @@ import { projects } from "./project-data";
 
 export function ProjectsPage() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pb-20 pt-12 sm:px-8 sm:pb-28 sm:pt-16">
+    <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-12 sm:px-8 sm:pb-28 sm:pt-16">
       <header className="pb-10 sm:pb-14">
         <p className="text-sm font-semibold text-primary">Selected Work</p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Projects</h1>

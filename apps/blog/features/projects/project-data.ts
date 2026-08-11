@@ -9,7 +9,7 @@ import { kustingProject } from "./data/kusting";
 import { sirenPathProject } from "./data/siren-path";
 import type { ProjectCaseStudy } from "./project-types";
 
-export type { ProjectCaseStudy, ProjectMetric, ProjectStory } from "./project-types";
+export type * from "./project-types";
 
 export const projects: readonly ProjectCaseStudy[] = [
   aiWorkflowProject,

@@ -277,7 +277,7 @@ function CompactList({ items }: { items: readonly (readonly [string, string])[] 
 
 export function ResumePage() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-16">
+    <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-16">
       <section className="border-b border-border pb-10 sm:pb-12">
         <header className="mb-7 border-b border-border pb-3">
           <p className="text-sm font-semibold">Introduce.</p>

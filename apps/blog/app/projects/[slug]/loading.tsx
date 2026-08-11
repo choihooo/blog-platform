@@ -2,7 +2,7 @@ import { Skeleton } from "@hozui/react";
 
 export default function Loading() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-14 sm:px-8">
+    <main className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8">
       <Skeleton className="h-5 w-28" />
       <Skeleton className="mt-10 h-12 w-full max-w-2xl" />
       <Skeleton className="mt-5 h-24 w-full max-w-3xl" />
