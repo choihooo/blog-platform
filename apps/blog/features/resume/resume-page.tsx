@@ -211,7 +211,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       </div>
       <div
         className={
-          achievement.thumbnail ? "mt-5 grid gap-5 md:grid-cols-[280px_minmax(0,1fr)]" : "mt-4"
+          achievement.thumbnail ? "mt-5 grid gap-5 md:grid-cols-[280px_minmax(0,1fr)]" : "mt-2"
         }
       >
         {achievement.thumbnail ? (
@@ -298,7 +298,7 @@ export function ResumePage() {
           <div className="pt-1">
             <p className="text-sm font-semibold text-primary">Frontend Engineer</p>
             <h1 className="mt-2 text-4xl font-semibold tracking-tight sm:text-5xl">최호</h1>
-            <div className="mt-6 max-w-3xl space-y-3 text-base leading-7 text-muted-foreground">
+            <div className="mt-6 max-w-3xl space-y-1 text-base leading-7 text-muted-foreground">
               <p>
                 AI·데이터 기반 제품에서 검증 가능한 UI와 운영 가능한 프론트엔드 구조를 만듭니다.
               </p>
@@ -317,7 +317,7 @@ export function ResumePage() {
         <div className="space-y-14">
           {workExperiences.map((experience) => (
             <article key={experience.company}>
-              <header className="mb-2 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-6">
+              <header className="mb-2 grid gap-y-1 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-x-6">
                 <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
                   {experience.company}{" "}
                   <span className="text-muted-foreground">· {experience.role}</span>
