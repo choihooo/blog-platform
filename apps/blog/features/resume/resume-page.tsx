@@ -5,7 +5,7 @@ import Image from "next/image";
 
 type Achievement = {
   title: string;
-  period: string;
+  period?: string;
   context: string;
   details: readonly string[];
   technologies: readonly string[];
@@ -25,38 +25,46 @@ const workExperiences = [
       "AI 오케스트레이션 솔루션 조직에서 포렌식 에이전트 데스크톱 앱, 사내 UI Kit, agent workflow 도구의 프론트엔드 구조와 검증 UI를 구현했습니다.",
     achievements: [
       {
-        title: "검색 결과 검증을 위한 Evidence UI 설계·구현",
-        period: "2026.05",
-        technologies: ["TypeScript", "Electron", "Qdrant"],
-        context:
-          "score 중심 결과만으로는 신뢰도 판단 근거가 부족해 실제 search hit 기반 출처와 근거를 먼저 확인하는 UI로 개선했습니다.",
-        details: [
-          "문서·이미지·오디오·영상 hit를 공통 Result 모델로 정규화했습니다.",
-          "file metadata, snippet, STT segment를 Evidence 필드로 매핑했습니다.",
-          "검증된 search payload만 renderer에 전달하도록 preload bridge 기준을 정리했습니다.",
-        ],
-      },
-      {
-        title: "React UI Kit과 component showcase 정리",
+        title: "AI 프론트엔드 수정 워크플로 개선",
         period: "2026.03 ~ 2026.05",
-        technologies: ["React", "i18n", "UI Kit"],
+        technologies: ["Playwright", "Codex", "Claude"],
         context:
-          "신규 수주와 PoC마다 반복되던 유사 UI 구현 및 다국어 처리 기준을 공통 구조로 정리했습니다.",
+          "스크린샷 기반 AI 수정 시 DOM 식별 실패로 재지시가 반복되고, 독립 작업의 순차 실행으로 처리 시간과 비용이 누적되는 문제를 분석했습니다.",
         details: [
-          "props table, code example, state preview를 한곳에서 확인할 수 있게 했습니다.",
-          "hardcoded text를 번역 key 기반으로 전환하고 locale prefix routing 기준을 맞췄습니다.",
+          "Playwright CLI로 DOM·HTML 정보를 제공해 수정 대상과 관련 코드를 연결하는 입력 구조를 설계·구현했습니다.",
+          "카드 의존성을 분리해 독립 작업을 병렬화하고, Codex·Claude에서 재사용 가능한 워크플로로 공통화했습니다.",
         ],
+        result: "처리 시간 중앙값 31.6% 단축 및 카드별 AI 비용 중앙값 35.4% 절감",
       },
       {
-        title: "절대좌표 기반 레거시 화면의 React 전환 기준 수립",
+        title: "AI 기반 명세 자동화로 Nexacro 화면 유형 5종 전환 검증",
         period: "2026.03 ~ 2026.04",
         technologies: ["React", "Nexacro", "Playwright"],
         context:
-          "반응형 기준이 없는 Nexacro absolute 화면을 React로 전환하기 위한 화면 단위 명세와 검증 기준을 만들었습니다.",
+          "컴포넌트·좌표·이벤트·데이터 필드를 React 구현 명세로 전환하는 절차가 없어 정보 누락과 전환 품질을 검증하기 어려운 문제를 개선했습니다.",
         details: [
-          "layout, interaction, data state 기준을 분리해 동일 viewport에서 원본과 전환 화면을 비교했습니다.",
-          "Playwright MCP 비교 검증으로 사용성과 재현도를 확인했습니다.",
+          "Nexacro→React 마이그레이션 PoC의 원본 분석, 명세화, 구현 및 검증 워크플로 설계를 담당했습니다.",
+          "Playwright CLI로 원본 화면 정보를 추출해 AI 입력용 Markdown 명세로 구조화했습니다.",
+          "GitHub Spec Kit을 참고해 화면 구조, 기능 요구사항, AC와 고객사 코드 제약조건을 분리해 명세에 반영했습니다.",
+          "고객사와 태블릿의 핵심 정보 및 하위 화면 이동 기준을 조율하고, 스크린샷 비교와 기능별 AC로 화면 유형 5종을 검증했습니다.",
         ],
+        result:
+          "UI 원천 데이터 수동 추출 100% 제거, 주요 화면 유형 5종 중 5종 전환 검증 및 명세 추출 성공률 100% 달성",
+      },
+      {
+        title: "AI 검색 결과의 원본 검증을 위한 Evidence UI 설계·구현",
+        period: "2026.05",
+        technologies: ["TypeScript", "Electron", "Qdrant"],
+        context:
+          "기존 UI가 파일명과 관련도 score만 제공해 연구진이 검색 결과와 실제 증거의 일치 여부를 판단하기 어려운 문제를 개선했습니다.",
+        details: [
+          "AI 포렌식 데스크톱 프로젝트의 검색 결과 및 원본 검증 UI 설계·구현을 담당했습니다.",
+          "XAI·HCI 선행 연구 5편을 검토하고, AI 결과→핵심 근거→원본 데이터 순서의 검증 정보 구조를 설계했습니다.",
+          "문서는 본문 일치 문장, 이미지는 OCR 텍스트, 음성·영상은 STT 발화 구간을 제공하고 공통 파일 메타데이터를 연결했습니다.",
+          "STT 세그먼트에 시작·종료 시각을 포함하고, 선택 시 원본 미디어의 해당 타임스탬프로 이동하도록 구현했습니다.",
+        ],
+        result:
+          "문서·이미지·음성·영상 4종 모두 Evidence UI 적용, 음성·영상 2종의 탐색 범위를 전체 파일에서 관련 발화 구간으로 축소",
       },
     ],
   },
@@ -68,26 +76,45 @@ const workExperiences = [
       "AI·빅데이터 기반 고객사 어드민에서 API 기반 화면 구조, i18n 검증 자동화, TypeScript migration을 담당했습니다.",
     achievements: [
       {
-        title: "API 응답 기반 센터 관리 화면 구조 개선",
+        title: "API 기반 데이터 전환으로 운영 변경 절차 50% 축소",
         period: "2025.03 ~ 2025.04",
         technologies: ["React", "Recoil", "API"],
         context:
-          "신규 센터 추가마다 코드 수정과 재배포가 필요했던 구조를 API 응답 기반 렌더링으로 전환했습니다.",
+          "백엔드에 추가한 센터·클라이언트가 운영 화면에 반영되지 않는 문제의 원인을 분석하고 프론트엔드 데이터 구조 전환을 담당했습니다.",
         details: [
-          "센터별 하드코딩 분기를 제거해 운영 변경 시 수정 범위를 줄였습니다.",
-          "Recoil selector와 LocalStorage cache로 조회·캐싱·반영 흐름을 분리했습니다.",
+          "동일한 enum을 프론트엔드와 백엔드에서 각각 관리해 한쪽의 수정이 누락되면 API와 운영 화면의 데이터가 불일치하는 원인을 확인했습니다.",
+          "프론트엔드의 하드코딩 enum을 제거하고 백엔드 API 응답을 단일 데이터 기준으로 사용하도록 구조를 변경했습니다.",
+          "로그인 시 센터 목록을 LocalStorage에 저장하고 화면별 가공 데이터는 기존 Recoil selector로 파생해 변경 범위를 최소화했습니다.",
+          "백엔드 개발자와 프론트 수정·재배포 없이 신규 센터가 운영 화면에 반영되는지 검증했습니다.",
         ],
+        result: "추가 절차 4단계 → 2단계, 데이터 관리 지점 2곳 → 1곳, 프론트 수정·재배포 1회 → 0회",
       },
       {
-        title: "i18n 검증 자동화와 TypeScript migration",
+        title: "i18n 검증 자동화로 노출 키 63건 제거",
         period: "2025.04 ~ 2025.06",
         technologies: ["TypeScript", "i18n", "AWS CI"],
-        context: "런타임에서 노출되던 i18n 누락 key 문제를 배포 전 검증 단계로 이동했습니다.",
+        context:
+          "수동 검증으로 한·중·일·영 리소스 누락을 배포 전에 차단하지 못해 사용자 화면에 i18n 키 63건이 노출되는 문제를 개선했습니다.",
         details: [
-          "배포 전 누락 key를 탐지해 번역 key가 UI에 노출되는 문제를 줄였습니다.",
-          "TypeScript 3.9.5에서 5.8.3으로 단계적 migration을 진행했습니다.",
+          "다국어 리소스 자동 검증 도입을 제안하고, 오류 분석부터 스크립트 구현·CI 적용까지 전 과정을 담당했습니다.",
+          "한국어 JSON을 기준으로 중첩 키 경로를 평탄화하고 언어별 누락·불일치 키를 자동 검출하는 스크립트를 구현했습니다.",
+          "AWS CodePipeline pre_build 단계에서 누락 발견 시 배포를 차단하도록 개발팀 공통 CI 절차로 적용했습니다.",
         ],
-        result: "CI build log 기준 평균 빌드 시간 19% 단축",
+        result: "i18n 키 노출 63건 → 0건, 키별 검증 시간 20~30초 → 1초 이내로 단축",
+      },
+      {
+        title: "TypeScript 마이그레이션으로 빌드 시간 19% 단축",
+        period: "2025.04 ~ 2025.06",
+        technologies: ["TypeScript", "React", "Migration"],
+        context:
+          "프로덕션 빌드에 평균 246.22초가 소요되고, any 타입으로 인해 잘못된 데이터가 실행 단계에서 발견되는 문제를 개선했습니다.",
+        details: [
+          "TypeScript 3.9.5에서 5.8.3으로의 마이그레이션과 기존 코드의 타입 오류 수정 전 과정을 담당했습니다.",
+          "최신 컴파일러 적용 후 발생한 타입 오류 500건 이상을 수정하고, 그래프 API 응답을 인터페이스로 정의해 입력값을 number 타입으로 제한했습니다.",
+          "동일 조건에서 마이그레이션 전후의 프로덕션 빌드 시간과 7일간 런타임 오류를 비교·검증했습니다.",
+        ],
+        result:
+          "평균 빌드 시간 246.22초 → 199.51초로 19% 단축, 런타임 오류 27건 → 10건으로 63% 감소",
       },
     ],
   },
@@ -101,23 +128,53 @@ const sideProjects = [
       "글 제출, 일정 조율, 추천, 알림을 통합한 스터디 운영 플랫폼입니다. 개인화 추천과 운영 자동화 경험에 집중했습니다.",
     achievements: [
       {
-        title: "embedding 기반 맞춤 추천과 추천 이유 UI 구현",
+        title: "임베딩 기반 의미 추천으로 콘텐츠 CTR 15% 향상",
         period: "2026.04",
-        technologies: ["Embedding", "pgvector", "OpenAI"],
+        technologies: ["Embedding", "PostgreSQL", "pgvector"],
         context:
-          "태그 기반 추천의 개인화 한계를 개선하기 위해 사용자·큐레이션·게시글 embedding을 연결했습니다.",
+          "태그가 다르지만 의미가 유사한 콘텐츠를 연결하지 못하는 기존 태그 추천의 한계를 개선했습니다.",
         details: [
-          "사용자 관심사와 게시글·큐레이션 데이터를 embedding pipeline으로 연결했습니다.",
-          "추천 이유 UI를 함께 노출해 사용자가 추천 근거를 확인할 수 있게 했습니다.",
+          "내·외부 콘텐츠를 임베딩하고 pgvector HNSW 검색을 적용해 의미 기반 큐레이션을 구현했습니다.",
+          "사용자 관심사와 게시글·큐레이션 데이터를 연결하고 추천 이유 UI를 제공해 추천 근거를 확인할 수 있게 했습니다.",
+          "동일 노출 위치에서 기존 태그 추천과 의미 기반 추천의 CTR을 비교·검증했습니다.",
         ],
-        result: "동일 노출 위치 기준 큐레이션 탭 CTR 약 15% 향상",
+        result: "동일 노출 위치 기준 기존 태그 추천 대비 콘텐츠 CTR 15% 향상",
       },
       {
-        title: "날짜 투표와 PWA push를 연결한 일정 참여 흐름 개선",
+        title: "콘텐츠 자동 수집으로 게시글 등록 누락 100% 제거",
         period: "2026.02",
-        technologies: ["Next.js", "Firebase", "PWA"],
-        context: "일정 조율과 참여 알림이 분리되어 확정 일정을 놓치기 쉬운 문제를 개선했습니다.",
-        details: ["Firebase Messaging 기반 PWA push로 일정 확정과 참여 알림을 제공했습니다."],
+        technologies: ["Crawling", "PWA", "Firebase"],
+        context:
+          "글 작성 후 Notion에 URL과 태그를 직접 등록하는 과정에서 일주일간 게시글 9건이 누락되고, 사용자가 직접 방문해야 새 글을 확인할 수 있는 문제를 개선했습니다.",
+        details: [
+          "큐스팅 운영자이자 프론트엔드 개발자로서 콘텐츠 누락·전달·탐색 문제 정의부터 기능 설계·구현까지 담당했습니다.",
+          "스터디원 블로그의 신규 글을 자동 수집·등록하는 크롤링 흐름을 구축하고, 실제 작성 글과 등록 데이터를 일주일 단위로 대조했습니다.",
+          "PWA와 Firebase 푸시 알림을 연결해 새 콘텐츠를 사용자에게 능동적으로 전달하도록 운영 구조를 전환했습니다.",
+        ],
+        result:
+          "게시글 누락 9건 → 0건, 글 1건당 수동 등록 시간 약 38초 → 0초, 게시글당 평균 조회수 21회 달성",
+      },
+    ],
+  },
+  {
+    name: "Comma",
+    meta: "모바일 체크리스트 · 휴식 추천 서비스",
+    description:
+      "체크리스트 결과를 바탕으로 휴식 콘텐츠를 추천하는 모바일 서비스입니다. React 웹 화면과 React Native Bridge 연동을 담당했습니다.",
+    achievements: [
+      {
+        title: "데이터 로딩 구조 개선으로 핵심 콘텐츠 표시 시간 41.1% 단축",
+        technologies: ["React", "React Query", "React Native"],
+        context:
+          "화면 FCP는 307.2ms였지만 진입 후 데이터 요청을 시작해 핵심 질문 표시에 2,333.2ms가 걸리는 문제를 개선했습니다.",
+        details: [
+          "React 웹 화면과 React Native Bridge 연동 및 체크리스트 데이터 로딩 구조 개선을 담당했습니다.",
+          "FCP와 핵심 질문 표시 시점을 분리 측정해 초기 렌더링이 아닌 데이터 준비 구간을 병목으로 특정했습니다.",
+          "질문 데이터의 요청·로딩 상태를 React Query 기반으로 전환하고, 이전 화면에서 prefetch해 진입 전에 캐시에 저장했습니다.",
+          "LTE 유사 환경에서 개선 전후의 핵심 질문 표시 시점을 동일 조건으로 비교·검증했습니다.",
+        ],
+        result:
+          "질문 표시 시간 2,333.2ms → 1,373.6ms로 41.1% 단축, 첫 진입·재진입 API 호출 2회 → 1회 감소",
       },
     ],
   },
@@ -128,26 +185,20 @@ const sideProjects = [
       "웹캠 기반 자세 측정을 데스크톱에서 제공하는 자세 교정 서비스입니다. pose scoring, Tauri 배포, 상태별 피드백 UI를 구현했습니다.",
     achievements: [
       {
-        title: "Tauri 데스크톱 앱 릴리스 파이프라인 정리",
+        title: "추론 파이프라인 분리로 백그라운드 성능 유지율 100% 달성",
         period: "2026.04 ~ 현재",
-        technologies: ["Tauri", "Turborepo", "CI"],
+        technologies: ["Tauri", "Rust", "Python"],
         context:
-          "컴퓨터비전 기반 데스크톱 제품을 실제 배포 가능한 형태로 운영하기 위한 검증 흐름을 정리했습니다.",
+          "Electron 앱을 백그라운드로 전환하거나 최소화하면 자세 추론이 느려지거나 중단되어 앱을 전면에 유지해야 하는 문제를 개선했습니다.",
         details: [
-          "signing, notarization, updater artifact, R2 upload, sidecar를 release 체크리스트로 정리했습니다.",
-          "빌드 산출물과 업데이트 경로를 명시해 릴리스 실패 가능성을 낮췄습니다.",
+          "데스크톱 앱 전환과 자세 추론 파이프라인 재설계 및 창 상태별 성능 검증을 담당했습니다.",
+          "Electron과 Tauri의 실행 구조를 비교하고, 화면과 자세 엔진의 실행 생명주기를 분리하도록 Tauri로 전환했습니다.",
+          "React는 명령·결과 표시, Rust 네이티브 스레드는 반복 실행, Python sidecar는 카메라 캡처·MediaPipe 추론을 담당하도록 책임을 분리했습니다.",
+          "고정 입력으로 포그라운드·백그라운드·최소화 상태를 각각 3회 교차 측정해 FPS, 추론 간격 P95와 중단 횟수를 검증했습니다.",
+          "실시간 데모로 사용자 가치와 분석 과정을 전달해 큐시즘 밋업 프로젝트 대상을 수상하고 U300 등 사업화 프로그램에 선정됐습니다.",
         ],
-      },
-      {
-        title: "웹캠 기반 자세 측정 엔진의 실행 구조 개선",
-        period: "2026.04 ~ 현재",
-        technologies: ["Webcam", "Pose", "Engine"],
-        context:
-          "pose landmark 기반 실시간 자세 판단 흐름을 안정적으로 실행하기 위한 상태 구조를 만들었습니다.",
-        details: [
-          "목, 어깨, 상체 landmark 기준 posture score와 상태별 피드백 기준을 구성했습니다.",
-          "loading, camera unavailable, detecting, warning, normal 상태별 UI를 제공했습니다.",
-        ],
+        result:
+          "모든 창 상태에서 평균 4.02 FPS 유지, 성능 유지율 100% 및 1초 이상 중단 0회 달성, 최소화 CPU 사용률 9.54%p 감소",
       },
     ],
   },
@@ -205,9 +256,11 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           <h4 className="text-base font-semibold leading-6">{achievement.title}</h4>
           <TechChips items={achievement.technologies} />
         </div>
-        <time className="shrink-0 text-xs leading-5 text-muted-foreground">
-          {achievement.period}
-        </time>
+        {achievement.period ? (
+          <time className="shrink-0 text-xs leading-5 text-muted-foreground">
+            {achievement.period}
+          </time>
+        ) : null}
       </div>
       <div
         className={
