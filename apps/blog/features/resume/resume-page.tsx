@@ -227,12 +227,9 @@ const skillGroups = [
   ["DevOps / Tooling", ["GitHub Actions", "Docker", "Figma"]],
 ] as const;
 
-function SectionHeading({ children, eyebrow }: { children: string; eyebrow: string }) {
+function SectionHeading({ children }: { children: string }) {
   return (
     <header className="mb-7 border-b border-border pb-4 sm:mb-9">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-        {eyebrow}
-      </p>
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{children}</h2>
     </header>
   );
@@ -314,9 +311,6 @@ export function ResumePage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-16 print:pt-4">
       <section className="border-b border-border pb-10 sm:pb-12">
-        <header className="mb-7 border-b border-border pb-3">
-          <p className="text-sm font-semibold">Introduce.</p>
-        </header>
         <div className="grid gap-8 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-start">
           <div className="flex flex-col items-start gap-5">
             <Image
@@ -371,7 +365,7 @@ export function ResumePage() {
       </section>
 
       <section className="mt-16 sm:mt-24">
-        <SectionHeading eyebrow="Experience">Work Experience</SectionHeading>
+        <SectionHeading>Work Experience</SectionHeading>
         <div className="space-y-14">
           {workExperiences.map((experience) => (
             <article key={experience.company}>
@@ -396,7 +390,7 @@ export function ResumePage() {
       </section>
 
       <section className="mt-16 sm:mt-24">
-        <SectionHeading eyebrow="Selected Work">Side Projects</SectionHeading>
+        <SectionHeading>Side Projects</SectionHeading>
         <div className="space-y-12">
           {sideProjects.map((project) => (
             <article key={project.name}>
@@ -422,7 +416,7 @@ export function ResumePage() {
       </section>
 
       <section className="mt-16 sm:mt-24">
-        <SectionHeading eyebrow="Background">Other Experience</SectionHeading>
+        <SectionHeading>Other Experience</SectionHeading>
         <div className="grid gap-x-12 gap-y-10 lg:grid-cols-2 print:grid-cols-2">
           <article>
             <h3 className="mb-5 text-lg font-semibold">Activities</h3>
