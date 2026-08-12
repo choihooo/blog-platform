@@ -15,7 +15,7 @@ export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
     <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-14">
       <Link
         className="inline-flex items-center gap-2 text-sm text-muted-foreground no-underline transition-colors hover:text-primary hover:no-underline"
-        href="/projects"
+        href={`/projects#${project.slug}`}
       >
         <span aria-hidden="true">←</span>
         프로젝트 목록
