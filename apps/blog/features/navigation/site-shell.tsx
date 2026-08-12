@@ -16,7 +16,7 @@ type SiteShellProps = {
 export function SiteShell({ categories, children, siteName }: SiteShellProps) {
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-background">
+      <header className="border-b border-border bg-background print:hidden">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link className="flex items-center gap-2 text-lg font-semibold tracking-normal" href="/">
             <Image

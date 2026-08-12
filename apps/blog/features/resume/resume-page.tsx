@@ -211,9 +211,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       </div>
       <div
         className={
-          achievement.thumbnail
-            ? "mt-5 grid gap-5 md:grid-cols-[280px_minmax(0,1fr)]"
-            : "mt-4"
+          achievement.thumbnail ? "mt-5 grid gap-5 md:grid-cols-[280px_minmax(0,1fr)]" : "mt-4"
         }
       >
         {achievement.thumbnail ? (
@@ -319,7 +317,7 @@ export function ResumePage() {
         <div className="space-y-14">
           {workExperiences.map((experience) => (
             <article key={experience.company}>
-              <header className="mb-5 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-6">
+              <header className="mb-2 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-6">
                 <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
                   {experience.company}{" "}
                   <span className="text-muted-foreground">· {experience.role}</span>
