@@ -11,7 +11,7 @@ const ORBIT_STEP = 20;
 export function ProjectsPage() {
   const activeIndexRef = useRef(0);
   const scrollLockedRef = useRef(false);
-  const touchStartRef = useRef<number | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [copyReady, setCopyReady] = useState(false);
   const [orbitReady, setOrbitReady] = useState(false);
@@ -42,21 +42,48 @@ export function ProjectsPage() {
     };
 
     const handleWheel = (event: WheelEvent) => {
-      if (event.ctrlKey || Math.abs(event.deltaY) < 6) return;
+      if (event.ctrlKey) return;
+      if (document.querySelector(".hods-modal__dialog")) return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest(".hods-modal__overlay, .hods-modal__dialog")
+      ) {
+        return;
+      }
+      const dominantDelta =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      if (Math.abs(dominantDelta) < 6) return;
       event.preventDefault();
-      move(event.deltaY > 0 ? 1 : -1);
+      move(dominantDelta > 0 ? 1 : -1);
     };
 
     const handleTouchStart = (event: TouchEvent) => {
-      touchStartRef.current = event.touches[0]?.clientY ?? null;
+      if (document.querySelector(".hods-modal__dialog")) {
+        touchStartRef.current = null;
+        return;
+      }
+      if (
+        event.target instanceof Element &&
+        event.target.closest(".hods-modal__overlay, .hods-modal__dialog")
+      ) {
+        touchStartRef.current = null;
+        return;
+      }
+      const touch = event.touches[0];
+      touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
       const start = touchStartRef.current;
-      const end = event.changedTouches[0]?.clientY;
+      const touch = event.changedTouches[0];
       touchStartRef.current = null;
-      if (start == null || end == null || Math.abs(start - end) < 45) return;
-      move(start > end ? 1 : -1);
+      if (!start || !touch) return;
+
+      const deltaX = start.x - touch.clientX;
+      const deltaY = start.y - touch.clientY;
+      const dominantDelta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+      if (Math.abs(dominantDelta) < 45) return;
+      move(dominantDelta > 0 ? 1 : -1);
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });

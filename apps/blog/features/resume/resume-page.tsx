@@ -158,7 +158,7 @@ const sideProjects = [
   },
   {
     name: "Comma",
-    meta: "모바일 체크리스트 · 휴식 추천 서비스",
+    meta: "휴식 추천 서비스",
     description:
       "체크리스트 결과 기반 휴식 콘텐츠 추천 모바일 서비스 · React 웹 화면 및 React Native Bridge 연동 담당",
     achievements: [
@@ -247,7 +247,7 @@ function TechChips({ items }: { items: readonly string[] }) {
 
 function AchievementCard({ achievement }: { achievement: Achievement }) {
   return (
-    <article className="border-b border-border py-7 first:pt-0 last:border-b-0 last:pb-0">
+    <article className="border-b border-border py-7 first:pt-0 last:border-b-0 last:pb-0 print:break-inside-avoid-page">
       <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-6">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <h4 className="text-base font-semibold leading-6">{achievement.title}</h4>
