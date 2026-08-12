@@ -377,7 +377,7 @@ export function ResumePage() {
         </div>
       </section>
 
-      <section className="mt-16 grid gap-x-12 gap-y-10 border-t border-border pt-10 lg:grid-cols-[1.25fr_1fr]">
+      <section className="mt-16 grid gap-x-12 gap-y-10 border-t border-border pt-10 lg:grid-cols-2">
         <article>
           <h3 className="mb-5 text-lg font-semibold">Skills</h3>
           <div className="space-y-5">
