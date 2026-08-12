@@ -365,7 +365,7 @@ export function ResumePage() {
 
       <section className="mt-16 sm:mt-24">
         <SectionHeading eyebrow="Background">Other Experience</SectionHeading>
-        <div className="grid gap-x-12 gap-y-10 lg:grid-cols-2">
+        <div className="grid gap-x-12 gap-y-10 lg:grid-cols-2 print:grid-cols-2">
           <article>
             <h3 className="mb-5 text-lg font-semibold">Activities</h3>
             <CompactList items={activities} />
@@ -377,7 +377,7 @@ export function ResumePage() {
         </div>
       </section>
 
-      <section className="mt-16 grid gap-x-12 gap-y-10 border-t border-border pt-10 lg:grid-cols-2">
+      <section className="mt-16 grid gap-x-12 gap-y-10 border-t border-border pt-10 lg:grid-cols-2 print:grid-cols-2">
         <article>
           <h3 className="mb-5 text-lg font-semibold">Skills</h3>
           <div className="space-y-5">
