@@ -3,7 +3,7 @@ import type { ProjectCaseStudy } from "../project-types";
 export const aiWorkflowProject = {
   slug: "ai-workflow",
   index: "01",
-  name: "AI 프론트엔드 수정 자동화 워크플로",
+  name: "AI 수정 워크플로 자동화",
   meta: "Internal workflow · 2026.05",
   description: "DOM 컨텍스트와 병렬 실행으로 AI 수정 과정의 탐색 실패와 처리 병목을 개선했습니다.",
   role: "Frontend Engineer",

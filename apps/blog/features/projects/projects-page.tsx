@@ -224,7 +224,6 @@ export function ProjectsPage() {
             >
               {project.name}
             </Link>
-            <p className="project-copy__description">{project.description}</p>
             <Link
               className="project-copy__cta"
               href={`/projects/${project.slug}`}

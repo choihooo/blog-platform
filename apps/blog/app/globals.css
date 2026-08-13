@@ -329,15 +329,6 @@ body {
 .project-copy__title:focus-visible,
 .project-copy__cta:focus-visible { outline: 3px solid var(--ring); outline-offset: 6px; }
 
-.project-copy__description {
-  max-width: 42rem;
-  margin-top: clamp(1rem, 2.2vh, 1.6rem);
-  color: color-mix(in oklch, var(--foreground) 72%, transparent);
-  font-size: clamp(0.875rem, 1.25vw, 1rem);
-  line-height: 1.7;
-  text-wrap: pretty;
-}
-
 .project-copy__cta {
   display: inline-flex;
   align-items: center;
@@ -393,20 +384,6 @@ body {
   .project-copy__title {
     font-size: clamp(2.9rem, 15vw, 5rem);
     line-height: 0.93;
-  }
-  .project-copy__description {
-    display: -webkit-box;
-    max-width: 31rem;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-  }
-
-}
-
-@media (max-height: 720px) and (min-width: 640px) {
-  .project-copy__description {
-    display: none;
   }
 }
 

@@ -1,26 +1,26 @@
-import { adminPlatformProject } from "./data/admin-platform";
 import { aiWorkflowProject } from "./data/ai-workflow";
-import { cmc19Project } from "./data/cmc-19";
-import { dreamTrackProject } from "./data/dream-track";
-import { frontendPlatformProject } from "./data/frontend-platform";
+import { apiDataTransitionProject } from "./data/api-data-transition";
+import { commaProject } from "./data/comma";
+import { forensicAgentProject } from "./data/forensic-agent";
 import { geobugirinProject } from "./data/geobugirin";
-import { jikhaengProject } from "./data/jikhaeng";
+import { i18nValidationProject } from "./data/i18n-validation";
 import { kustingProject } from "./data/kusting";
-import { sirenPathProject } from "./data/siren-path";
+import { nexacroReactPocProject } from "./data/nexacro-react-poc";
+import { typescriptMigrationProject } from "./data/typescript-migration";
 import type { ProjectCaseStudy } from "./project-types";
 
 export type * from "./project-types";
 
 export const projects: readonly ProjectCaseStudy[] = [
   aiWorkflowProject,
+  nexacroReactPocProject,
+  forensicAgentProject,
+  apiDataTransitionProject,
+  i18nValidationProject,
+  typescriptMigrationProject,
   kustingProject,
+  commaProject,
   geobugirinProject,
-  dreamTrackProject,
-  jikhaengProject,
-  sirenPathProject,
-  frontendPlatformProject,
-  adminPlatformProject,
-  cmc19Project,
 ];
 
 export function getProject(slug: string) {

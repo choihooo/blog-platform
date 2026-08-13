@@ -2,7 +2,7 @@ import type { ProjectCaseStudy } from "../project-types";
 
 export const geobugirinProject = {
   slug: "geobugirin",
-  index: "03",
+  index: "09",
   name: "거부기린",
   meta: "데스크톱 앱 · 2026",
   description: "웹캠 기반 자세 측정과 상태별 피드백을 제공하는 Tauri 데스크톱 앱입니다.",

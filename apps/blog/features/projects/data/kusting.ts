@@ -2,7 +2,7 @@ import type { ProjectCaseStudy } from "../project-types";
 
 export const kustingProject = {
   slug: "kusting",
-  index: "02",
+  index: "07",
   name: "Kusting",
   meta: "운영 플랫폼 · 2026",
   description: "글쓰기 스터디의 추천, 일정 조율과 알림을 하나의 운영 흐름으로 연결했습니다.",
