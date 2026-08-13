@@ -174,6 +174,8 @@ export function ProjectsPage() {
     <main
       aria-label="프로젝트"
       className="project-showcase"
+      data-copy-ready={copyReady ? "true" : undefined}
+      data-project={activeProject.slug}
       data-ready={orbitReady ? "true" : undefined}
       onKeyDown={handleKeyDown}
       tabIndex={0}
