@@ -196,6 +196,40 @@ body {
   box-shadow: 0 2.5rem 5rem color-mix(in oklch, var(--foreground) 16%, transparent);
 }
 
+.project-orbit__image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.project-orbit__image--logo {
+  padding: 17%;
+  object-fit: contain;
+}
+
+.project-orbit__image--visual {
+  object-fit: cover;
+}
+
+.project-orbit__holder[data-project="kusting"] .project-orbit__card--primary,
+.project-orbit__holder[data-project="comma"] .project-orbit__card--primary {
+  background: #111214;
+}
+
+.project-orbit__holder[data-project="comma"] .project-orbit__image--logo {
+  padding: 25% 14%;
+}
+
+.project-orbit__holder[data-project="geobugirin"] .project-orbit__card--primary {
+  background: #f7bf18;
+}
+
+.project-orbit__holder[data-project="geobugirin"] .project-orbit__image--visual {
+  object-position: 8% center;
+}
+
 .project-orbit__card--primary {
   inset: 1.5rem 4rem 3rem 0;
   border-radius: 2.2rem 0.8rem 2.2rem 0.8rem;

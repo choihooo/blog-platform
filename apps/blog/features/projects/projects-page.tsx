@@ -8,6 +8,23 @@ import { projects } from "./project-data";
 const SCROLL_LOCK_MS = 850;
 const ORBIT_STEP = 20;
 
+const PROJECT_CARD_ASSETS: Partial<
+  Record<string, { primary: string; secondary: string }>
+> = {
+  kusting: {
+    primary: "/projects/kusting/logo.png",
+    secondary: "/projects/kusting/curation.png",
+  },
+  comma: {
+    primary: "/projects/comma/logo.png",
+    secondary: "/projects/comma/rest.png",
+  },
+  geobugirin: {
+    primary: "/projects/geobugirin/logo.png",
+    secondary: "/projects/geobugirin/onboarding.png",
+  },
+};
+
 export function ProjectsPage() {
   const activeIndexRef = useRef(0);
   const scrollLockedRef = useRef(false);
@@ -164,21 +181,45 @@ export function ProjectsPage() {
       <h1 className="sr-only">Projects</h1>
 
       <div aria-hidden="true" className="project-orbit" style={orbitStyle}>
-        {projects.map((project, index) => (
-          <div
-            className="project-orbit__holder"
-            data-active={activeIndex === index ? "true" : undefined}
-            key={project.slug}
-            style={{ "--item-angle": `${index * ORBIT_STEP}deg` } as CSSProperties}
-          >
-            <div className="project-orbit__card project-orbit__card--primary">
-              <span>{project.index}</span>
+        {projects.map((project, index) => {
+          const cardAssets = PROJECT_CARD_ASSETS[project.slug];
+
+          return (
+            <div
+              className="project-orbit__holder"
+              data-active={activeIndex === index ? "true" : undefined}
+              data-project={project.slug}
+              key={project.slug}
+              style={{ "--item-angle": `${index * ORBIT_STEP}deg` } as CSSProperties}
+            >
+              <div className="project-orbit__card project-orbit__card--primary">
+                {cardAssets ? (
+                  // Native image tags keep these repository assets independent from Next image transforms.
+                  <img
+                    alt=""
+                    className="project-orbit__image project-orbit__image--logo"
+                    decoding="async"
+                    src={cardAssets.primary}
+                  />
+                ) : (
+                  <span>{project.index}</span>
+                )}
+              </div>
+              <div className="project-orbit__card project-orbit__card--secondary">
+                {cardAssets ? (
+                  <img
+                    alt=""
+                    className="project-orbit__image project-orbit__image--visual"
+                    decoding="async"
+                    src={cardAssets.secondary}
+                  />
+                ) : (
+                  <span>{project.organization}</span>
+                )}
+              </div>
             </div>
-            <div className="project-orbit__card project-orbit__card--secondary">
-              <span>{project.organization}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <nav aria-label="프로젝트 빠른 이동" className="project-showcase__rail">
