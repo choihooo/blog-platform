@@ -339,7 +339,7 @@ body {
   max-width: 14ch;
   color: var(--foreground);
   font-family: var(--hods-sys-typography-text-display-xl-font-family);
-  font-size: clamp(3.25rem, 8.4vw, 8.8rem);
+  font-size: clamp(3rem, 6.8vw, 7.25rem);
   font-weight: var(--hods-sys-typography-text-display-xl-font-weight);
   line-height: 0.94;
   letter-spacing: var(--hods-sys-typography-text-display-xl-letter-spacing);
@@ -410,7 +410,7 @@ body {
 
   .project-copy { width: calc(100% - 3.5rem); }
   .project-copy__title {
-    font-size: clamp(2.9rem, 15vw, 5rem);
+    font-size: clamp(2.6rem, 13vw, 4.5rem);
     line-height: 0.93;
   }
 }
