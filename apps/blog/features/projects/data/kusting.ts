@@ -10,6 +10,13 @@ export const kustingProject = {
   period: "2026.02 ~ 2026.04",
   organization: "Side Project",
   technologies: ["Next.js", "TypeScript", "pgvector", "OpenAI", "Firebase", "PWA"],
+  relatedPosts: [
+    {
+      slug: "tag-recommendation-to-embedding-recommendation",
+      title: "태그 기반 추천에서 임베딩 기반 맞춤 추천으로 바꾼 과정",
+      excerpt: "태그 중복 기반 추천의 한계를 분석하고 임베딩 추천으로 전환한 과정을 정리했습니다.",
+    },
+  ],
   metrics: [{ label: "큐레이션 탭 CTR", value: "약 15%", detail: "동일 노출 위치 기준 향상" }],
   stories: [
     {

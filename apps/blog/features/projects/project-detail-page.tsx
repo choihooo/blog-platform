@@ -152,6 +152,38 @@ export function ProjectDetailPage({
             </section>
           ))}
         </div>
+
+        {project.relatedPosts && project.relatedPosts.length > 0 ? (
+          <section aria-labelledby="project-related-posts" className="border-t border-border py-12 sm:py-16">
+            <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
+              From the blog
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl" id="project-related-posts">
+              관련 글
+            </h2>
+            <div className="mt-6 divide-y divide-border border-y border-border">
+              {project.relatedPosts.map((post) => (
+                <a
+                  className="group grid gap-2 py-5 no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px sm:grid-cols-[1fr_auto] sm:items-center sm:gap-8"
+                  href={`/blog/${post.slug}`}
+                  key={post.slug}
+                >
+                  <span>
+                    <span className="block text-base font-semibold sm:text-lg">{post.title}</span>
+                    {post.excerpt ? (
+                      <span className="mt-1 block max-w-3xl text-sm leading-6 text-muted-foreground">
+                        {post.excerpt}
+                      </span>
+                    ) : null}
+                  </span>
+                  <svg aria-hidden="true" className="hidden size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" fill="none" viewBox="0 0 20 20">
+                    <path d="M6 14 14 6m-6 0h6v6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </article>
     </main>
   );

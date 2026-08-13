@@ -96,6 +96,12 @@ export type ProjectStory = {
   title: string;
 };
 
+export type ProjectRelatedPost = {
+  excerpt?: string;
+  slug: string;
+  title: string;
+};
+
 type ProjectCaseStudyBase = {
   description: string;
   index: string;
@@ -105,6 +111,7 @@ type ProjectCaseStudyBase = {
   organization: string;
   period: string;
   role: string;
+  relatedPosts?: readonly ProjectRelatedPost[];
   slug: string;
   technologies: readonly string[];
 };

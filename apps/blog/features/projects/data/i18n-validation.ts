@@ -11,6 +11,13 @@ export const i18nValidationProject = {
   period: "2025.04 ~ 2025.06",
   organization: "아이겐 코리아",
   technologies: ["TypeScript", "i18n", "AWS CodePipeline", "JSON", "CI"],
+  relatedPosts: [
+    {
+      slug: "contributing-korean-translation",
+      title: "한국어 번역으로 기여하기",
+      excerpt: "다국어 리소스를 추가하며 확인한 번역 구조와 검증 과정을 기록했습니다.",
+    },
+  ],
   metrics: [
     { label: "노출 키", value: "63 → 0", detail: "사용자 화면 기준" },
     { label: "키별 검증", value: "< 1초", detail: "기존 20~30초" },

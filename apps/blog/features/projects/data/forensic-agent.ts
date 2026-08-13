@@ -11,6 +11,13 @@ export const forensicAgentProject = {
   period: "2026.05",
   organization: "야근몬스터",
   technologies: ["TypeScript", "Electron", "Qdrant", "XAI", "HCI"],
+  relatedPosts: [
+    {
+      slug: "verifiable-ai-ui-design",
+      title: "검증 가능한 AI UI 설계하기",
+      excerpt: "AI 결과를 바로 믿는 대신 근거와 원본을 확인하게 만드는 UI 원칙을 다룹니다.",
+    },
+  ],
   metrics: [
     { label: "Evidence 적용", value: "4종", detail: "문서·이미지·음성·영상" },
     { label: "구간 탐색", value: "2종", detail: "음성·영상 타임스탬프 연결" },

@@ -11,6 +11,18 @@ export const typescriptMigrationProject = {
   period: "2025.04 ~ 2025.06",
   organization: "아이겐 코리아",
   technologies: ["TypeScript", "React", "Migration", "Build", "Type Safety"],
+  relatedPosts: [
+    {
+      slug: "typescript-compiler-performance-39-vs-58",
+      title: "TypeScript 컴파일러 성능 측정 (3.9 vs 5.8)",
+      excerpt: "실제 마이그레이션 전후의 컴파일 성능을 같은 조건에서 비교했습니다.",
+    },
+    {
+      slug: "typescript-compiler-internals",
+      title: "타입 스크립트 컴파일러 동작 방식",
+      excerpt: "빌드 속도 변화의 원인을 이해하기 위해 컴파일러의 처리 단계를 살펴봅니다.",
+    },
+  ],
   metrics: [
     { label: "빌드 시간", value: "−19%", detail: "246.22초 → 199.51초" },
     { label: "런타임 오류", value: "−63%", detail: "27건 → 10건" },

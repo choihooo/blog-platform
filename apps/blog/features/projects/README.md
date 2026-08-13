@@ -24,6 +24,22 @@ features/projects/
 3. `project-data.ts`에서 import하고 `projects` 배열에 추가합니다.
 4. 이미지는 `apps/blog/public/projects/{slug}/`에 둡니다.
 
+## 관련 블로그 글 연결
+
+프로젝트 상세와 모달 하단에 관련 글을 노출하려면 프로젝트 데이터에 `relatedPosts`를 추가합니다.
+
+```ts
+relatedPosts: [
+  {
+    slug: "typescript-5-migration",
+    title: "TypeScript 5 마이그레이션 회고",
+    excerpt: "500개 이상의 타입 오류를 정리하며 세운 전환 기준입니다.",
+  },
+],
+```
+
+`slug`는 공개된 블로그 글의 slug와 동일해야 합니다. 관련 글이 없거나 배열이 비어 있으면 영역은 렌더링되지 않습니다.
+
 ```ts
 import type { ProjectCaseStudy } from "../project-types";
 

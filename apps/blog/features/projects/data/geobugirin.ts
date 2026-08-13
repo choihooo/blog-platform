@@ -11,6 +11,18 @@ export const geobugirinProject = {
   organization: "Side Project",
   technologies: ["React", "Tauri", "Turborepo", "Webcam", "Pose", "R2"],
   metrics: [],
+  relatedPosts: [
+    {
+      slug: "geobugirin-10000-users-retrospective",
+      title: "거부기린 - 만 명의 사용자가 내 서비스를 이용해봤다고?",
+      excerpt: "만 명의 사용자를 만난 사이드 프로젝트를 운영하며 얻은 경험을 돌아봅니다.",
+    },
+    {
+      slug: "electron-webview-to-tauri-native-ui-migration",
+      title: "Electron 웹뷰 앱을 Tauri Native UI로 마이그레이션하기 1",
+      excerpt: "거부기린의 로딩 속도와 유지보수 구조를 개선하기 위해 Tauri 전환을 결정한 과정입니다.",
+    },
+  ],
   stories: [
     {
       eyebrow: "Platform 01",

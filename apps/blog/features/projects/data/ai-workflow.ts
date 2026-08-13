@@ -11,6 +11,13 @@ export const aiWorkflowProject = {
   organization: "야근몬스터",
   technologies: ["Playwright", "TypeScript", "Codex", "Claude", "GLM"],
   metrics: [],
+  relatedPosts: [
+    {
+      slug: "ai-agent-skills-vs-multi-agent",
+      title: "AI 에이전트 스킬 vs 멀티에이전트",
+      excerpt: "스킬과 멀티에이전트의 차이를 실제 AI 작업 흐름 관점에서 정리했습니다.",
+    },
+  ],
   sections: [
     {
       id: "dom-context",
