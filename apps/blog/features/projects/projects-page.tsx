@@ -207,7 +207,11 @@ export function ProjectsPage() {
         <p>Scroll to rotate</p>
       </div>
 
-      <section aria-live="polite" className="project-copy-stage">
+      <section
+        aria-live="polite"
+        className="project-copy-stage"
+        data-visible={copyReady ? "true" : undefined}
+      >
         {projects.map((project, index) => (
           <article
             aria-hidden={activeIndex !== index || !copyReady}
