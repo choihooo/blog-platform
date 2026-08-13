@@ -1,6 +1,8 @@
 "use client";
 
+import { Button } from "@hozui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 import { projects } from "./project-data";
@@ -9,8 +11,38 @@ const SCROLL_LOCK_MS = 850;
 const ORBIT_STEP = 20;
 
 const PROJECT_CARD_ASSETS: Partial<
-  Record<string, { primary: string; secondary: string }>
+  Record<string, { primary: string; primaryMode?: "visual"; secondary: string }>
 > = {
+  "ai-workflow": {
+    primary: "/projects/ai-workflow/card-primary-v2.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/ai-workflow/card-secondary-v2.jpg",
+  },
+  "nexacro-react-poc": {
+    primary: "/projects/nexacro-react-poc/card-primary-v2.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/nexacro-react-poc/card-secondary-v2.jpg",
+  },
+  "forensic-agent": {
+    primary: "/projects/forensic-agent/card-primary-v2.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/forensic-agent/card-secondary-v2.jpg",
+  },
+  "api-data-transition": {
+    primary: "/projects/api-data-transition/card-primary-v2.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/api-data-transition/card-secondary-v2.jpg",
+  },
+  "i18n-validation": {
+    primary: "/projects/i18n-validation/card-primary-v2.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/i18n-validation/card-secondary-v2.jpg",
+  },
+  "typescript-migration": {
+    primary: "/projects/typescript-migration/card-primary-v2.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/typescript-migration/card-secondary-v2.jpg",
+  },
   kusting: {
     primary: "/projects/kusting/symbol.svg",
     secondary: "/projects/kusting/curation.png",
@@ -26,6 +58,7 @@ const PROJECT_CARD_ASSETS: Partial<
 };
 
 export function ProjectsPage() {
+  const router = useRouter();
   const activeIndexRef = useRef(0);
   const scrollLockedRef = useRef(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -43,6 +76,13 @@ export function ProjectsPage() {
   useEffect(() => {
     let lockTimer: ReturnType<typeof setTimeout> | undefined;
 
+    const deferScrollUnlock = () => {
+      clearTimeout(lockTimer);
+      lockTimer = setTimeout(() => {
+        scrollLockedRef.current = false;
+      }, SCROLL_LOCK_MS);
+    };
+
     const move = (direction: 1 | -1) => {
       if (scrollLockedRef.current) return;
       const nextIndex = Math.max(
@@ -53,9 +93,7 @@ export function ProjectsPage() {
 
       scrollLockedRef.current = true;
       goToProject(nextIndex);
-      lockTimer = setTimeout(() => {
-        scrollLockedRef.current = false;
-      }, SCROLL_LOCK_MS);
+      deferScrollUnlock();
     };
 
     const handleWheel = (event: WheelEvent) => {
@@ -71,6 +109,12 @@ export function ProjectsPage() {
         Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
       if (Math.abs(dominantDelta) < 6) return;
       event.preventDefault();
+
+      if (scrollLockedRef.current) {
+        deferScrollUnlock();
+        return;
+      }
+
       move(dominantDelta > 0 ? 1 : -1);
     };
 
@@ -174,7 +218,6 @@ export function ProjectsPage() {
     <main
       aria-label="프로젝트"
       className="project-showcase"
-      data-copy-ready={copyReady ? "true" : undefined}
       data-project={activeProject.slug}
       data-ready={orbitReady ? "true" : undefined}
       onKeyDown={handleKeyDown}
@@ -199,7 +242,7 @@ export function ProjectsPage() {
                   // Native image tags keep these repository assets independent from Next image transforms.
                   <img
                     alt=""
-                    className="project-orbit__image project-orbit__image--logo"
+                    className={`project-orbit__image project-orbit__image--${cardAssets.primaryMode ?? "logo"}`}
                     decoding="async"
                     src={cardAssets.primary}
                   />
@@ -271,13 +314,20 @@ export function ProjectsPage() {
             >
               {project.name}
             </Link>
-            <Link
+            <Button
               className="project-copy__cta"
-              href={`/projects/${project.slug}`}
+              label="프로젝트 보기"
+              onClick={() => router.push(`/projects/${project.slug}`)}
+              size="md"
               tabIndex={activeIndex === index && copyReady ? 0 : -1}
-            >
-              프로젝트 보기 <span aria-hidden="true">↗</span>
-            </Link>
+              trailingIcon={
+                <svg aria-hidden="true" fill="none" viewBox="0 0 20 20">
+                  <path d="M6 14 14 6m-6 0h6v6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" />
+                </svg>
+              }
+              type="button"
+              variant="primary"
+            />
           </article>
         ))}
       </section>
