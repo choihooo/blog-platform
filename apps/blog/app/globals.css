@@ -336,17 +336,17 @@ body {
 }
 
 .project-copy__title {
-  max-width: 14ch;
+  max-width: none;
   color: var(--foreground);
   font-family: var(--hods-sys-typography-text-display-xl-font-family);
-  font-size: clamp(3rem, 6.8vw, 7.25rem);
+  font-size: clamp(2.75rem, 5.6vw, 6.25rem);
   font-weight: var(--hods-sys-typography-text-display-xl-font-weight);
   line-height: 0.94;
   letter-spacing: var(--hods-sys-typography-text-display-xl-letter-spacing);
-  text-wrap: balance;
   text-decoration: none;
   text-shadow: 0 0.08em 0.4em color-mix(in oklch, var(--background) 74%, transparent);
   transition: color 220ms ease, transform 220ms ease;
+  white-space: nowrap;
 }
 
 .project-copy__title:hover { color: var(--showcase-accent); transform: translateY(-0.04em); }
@@ -408,9 +408,9 @@ body {
     background-size: 14px 14px, auto;
   }
 
-  .project-copy { width: calc(100% - 3.5rem); }
+  .project-copy { width: calc(100% - 2.5rem); }
   .project-copy__title {
-    font-size: clamp(2.6rem, 13vw, 4.5rem);
+    font-size: clamp(1.15rem, 5vw, 2.1rem);
     line-height: 0.93;
   }
 }
