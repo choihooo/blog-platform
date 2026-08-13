@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="kusting-symbol-gradient" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0091ff"/>
+      <stop offset="1" stop-color="#004dff"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#kusting-symbol-gradient)">
+    <rect x="120" y="112" width="56" height="288" rx="4"/>
+    <path d="M176 256v-40L332 112h40v48L224 256h-48Z"/>
+    <path d="M176 256h48l148 96v48h-40L176 296v-40Z"/>
+    <rect x="384" y="344" width="28" height="56" rx="3" opacity=".7"/>
+  </g>
+</svg>

@@ -12,7 +12,7 @@ const PROJECT_CARD_ASSETS: Partial<
   Record<string, { primary: string; secondary: string }>
 > = {
   kusting: {
-    primary: "/projects/kusting/logo.png",
+    primary: "/projects/kusting/symbol.svg",
     secondary: "/projects/kusting/curation.png",
   },
   comma: {
@@ -20,7 +20,7 @@ const PROJECT_CARD_ASSETS: Partial<
     secondary: "/projects/comma/rest.png",
   },
   geobugirin: {
-    primary: "/projects/geobugirin/logo.png",
+    primary: "/projects/geobugirin/symbol.svg",
     secondary: "/projects/geobugirin/onboarding.png",
   },
 };

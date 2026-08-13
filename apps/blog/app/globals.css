@@ -180,12 +180,12 @@ body {
 
 .project-orbit__holder {
   position: absolute;
-  top: calc(var(--orbit-radius) * -1 - 14rem);
-  left: -18rem;
-  width: 36rem;
-  height: 28rem;
+  top: calc(var(--orbit-radius) * -1 - 16rem);
+  left: -17rem;
+  width: 34rem;
+  height: 32rem;
   transform: rotate(var(--item-angle));
-  transform-origin: 50% calc(var(--orbit-radius) + 14rem);
+  transform-origin: 50% calc(var(--orbit-radius) + 16rem);
 }
 
 .project-orbit__card {
@@ -222,8 +222,12 @@ body {
   padding: 25% 14%;
 }
 
+.project-orbit__holder[data-project="kusting"] .project-orbit__image--visual {
+  object-position: 25% center;
+}
+
 .project-orbit__holder[data-project="geobugirin"] .project-orbit__card--primary {
-  background: #f7bf18;
+  background: #29261d;
 }
 
 .project-orbit__holder[data-project="geobugirin"] .project-orbit__image--visual {
@@ -231,7 +235,10 @@ body {
 }
 
 .project-orbit__card--primary {
-  inset: 1.5rem 4rem 3rem 0;
+  top: 1.5rem;
+  left: 1rem;
+  width: 20rem;
+  aspect-ratio: 4 / 5;
   border-radius: 2.2rem 0.8rem 2.2rem 0.8rem;
   background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 78%, #d9d3c7), color-mix(in oklch, var(--primary) 36%, var(--card)));
   transform: rotate(-6deg);
@@ -248,16 +255,16 @@ body {
 .project-orbit__card--primary span {
   color: color-mix(in oklch, var(--primary-foreground) 76%, transparent);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 14rem;
+  font-size: 9rem;
   line-height: 0.8;
   letter-spacing: -0.1em;
 }
 
 .project-orbit__card--secondary {
-  right: 0;
+  right: 1rem;
   bottom: 0;
-  width: 20rem;
-  height: 17rem;
+  width: 17rem;
+  aspect-ratio: 4 / 5;
   border-radius: 0.8rem 2.2rem 0.8rem 2.2rem;
   background: color-mix(in oklch, var(--card) 76%, var(--primary));
   transform: rotate(8deg);
@@ -428,15 +435,15 @@ body {
 
   .project-orbit { --orbit-radius: 320vh; }
   .project-orbit__holder {
-    top: calc(var(--orbit-radius) * -1 - 10.5rem);
-    left: -13rem;
-    width: 26rem;
-    height: 21rem;
-    transform-origin: 50% calc(var(--orbit-radius) + 10.5rem);
+    top: calc(var(--orbit-radius) * -1 - 13rem);
+    left: -12rem;
+    width: 24rem;
+    height: 26rem;
+    transform-origin: 50% calc(var(--orbit-radius) + 13rem);
   }
-  .project-orbit__card--primary { inset: 1.2rem 2.5rem 2.4rem 0; }
-  .project-orbit__card--primary span { font-size: 9rem; }
-  .project-orbit__card--secondary { width: 15rem; height: 13rem; }
+  .project-orbit__card--primary { top: 1.2rem; left: 0; width: 15rem; }
+  .project-orbit__card--primary span { font-size: 6rem; }
+  .project-orbit__card--secondary { right: 0; width: 12.5rem; }
 
   .project-copy-stage::before {
     background-size: 14px 14px, auto;
