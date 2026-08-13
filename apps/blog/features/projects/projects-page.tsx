@@ -268,12 +268,6 @@ export function ProjectsPage() {
       </div>
 
       <nav aria-label="프로젝트 빠른 이동" className="project-showcase__rail">
-        <span aria-live="polite" className="project-showcase__count">
-          {String(activeIndex + 1).padStart(2, "0")}
-          <span aria-hidden="true"> / </span>
-          <span className="sr-only">번째 프로젝트, 전체 </span>
-          {String(projects.length).padStart(2, "0")}
-        </span>
         <div className="project-showcase__dots">
           {projects.map((project, index) => (
             <button
@@ -287,11 +281,6 @@ export function ProjectsPage() {
           ))}
         </div>
       </nav>
-
-      <div className="project-showcase__topline" aria-hidden="true">
-        <p>Selected work</p>
-        <p>Scroll to rotate</p>
-      </div>
 
       <section
         aria-live="polite"
@@ -331,15 +320,6 @@ export function ProjectsPage() {
           </article>
         ))}
       </section>
-
-      <footer className="project-showcase__footer" data-visible={copyReady ? "true" : undefined}>
-        <ul aria-label={`${activeProject.name} 사용 기술`} className="project-showcase__tech">
-          {activeProject.technologies.slice(0, 5).map((technology) => (
-            <li key={technology}>{technology}</li>
-          ))}
-        </ul>
-        <p aria-hidden="true">Scroll <span>↓</span></p>
-      </footer>
     </main>
   );
 }
