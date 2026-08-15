@@ -103,7 +103,7 @@ const workExperiences = [
         result: "i18n 키 노출 63건 → 0건, 키별 검증 시간 20~30초 → 1초 이내로 단축",
       },
       {
-        title: "TypeScript 마이그레이션으로 빌드 시간 19% 단축",
+        title: "TypeScript 마이그레이션으로 프로덕션 빌드 시간 19% 단축",
         period: "2025.04 ~ 2025.06",
         technologies: ["TypeScript", "React", "Migration"],
         context:
@@ -114,7 +114,7 @@ const workExperiences = [
           "동일 조건에서 마이그레이션 전후의 프로덕션 빌드 시간과 7일간 런타임 오류 비교·검증",
         ],
         result:
-          "평균 빌드 시간 246.22초 → 199.51초로 19% 단축, 런타임 오류 27건 → 10건으로 63% 감소",
+          "평균 프로덕션 빌드 시간 246.22초 → 199.51초로 19% 단축, 런타임 오류 27건 → 10건으로 63% 감소",
       },
     ],
   },
@@ -158,12 +158,13 @@ const sideProjects = [
   },
   {
     name: "Comma",
-    meta: "휴식 추천 서비스",
+    meta: "2026.06 ~ 2026.08 · 휴식 추천 서비스",
     description:
       "체크리스트 결과 기반 휴식 콘텐츠 추천 모바일 서비스 · React 웹 화면 및 React Native Bridge 연동 담당",
     achievements: [
       {
         title: "데이터 로딩 구조 개선으로 핵심 콘텐츠 표시 시간 41.1% 단축",
+        period: "2026.06 ~ 2026.08",
         technologies: ["React", "React Query", "React Native"],
         context:
           "화면 FCP는 307.2ms였지만 진입 후 데이터 요청을 시작해 핵심 질문 표시에 2,333.2ms가 걸리는 문제 개선",
@@ -173,8 +174,7 @@ const sideProjects = [
           "질문 데이터의 요청·로딩 상태를 React Query 기반으로 전환, 이전 화면에서 prefetch해 진입 전 캐시에 저장",
           "LTE 유사 환경에서 개선 전후의 핵심 질문 표시 시점을 동일 조건으로 비교·검증",
         ],
-        result:
-          "질문 표시 시간 2,333.2ms → 1,373.6ms로 41.1% 단축, 첫 진입·재진입 API 호출 2회 → 1회 감소",
+        result: "질문 표시 시간 2,333.2ms → 1,373.6ms로 41.1% 단축",
       },
     ],
   },
@@ -185,7 +185,7 @@ const sideProjects = [
       "웹캠 기반 데스크톱 자세 교정 서비스 · pose scoring, Tauri 배포, 상태별 피드백 UI 구현",
     achievements: [
       {
-        title: "추론 파이프라인 분리로 백그라운드 성능 유지율 100% 달성",
+        title: "추론 파이프라인 분리로 창 상태별 결과 전달률 100% 유지",
         period: "2026.04 ~ 현재",
         technologies: ["Tauri", "Rust", "Python"],
         context:
@@ -198,7 +198,7 @@ const sideProjects = [
           "실시간 데모로 사용자 가치와 분석 과정을 전달해 큐시즘 밋업 프로젝트 대상 수상 및 U300 등 사업화 프로그램 선정",
         ],
         result:
-          "모든 창 상태에서 평균 4.02 FPS 유지, 성능 유지율 100% 및 1초 이상 중단 0회 달성, 최소화 CPU 사용률 9.54%p 감소",
+          "고정 입력을 상태별 10분씩 3회 교차 측정해 결과 전달률 100% 유지, 평균 FPS 중앙값 1.41~2.22 및 최소화 시 정규화 CPU 사용률 1.19%p 감소",
       },
     ],
   },

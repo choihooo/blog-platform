@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@hozui/react";
+import { Button, Tooltip } from "@hozui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -270,14 +270,24 @@ export function ProjectsPage() {
       <nav aria-label="프로젝트 빠른 이동" className="project-showcase__rail">
         <div className="project-showcase__dots">
           {projects.map((project, index) => (
-            <button
-              aria-current={activeIndex === index ? "true" : undefined}
-              aria-label={`${project.name}으로 이동`}
-              className="project-showcase__dot"
+            <Tooltip
+              align="center"
+              content={project.name}
+              delayDuration={120}
               key={project.slug}
-              onClick={() => goToProject(index)}
-              type="button"
-            />
+              offset={4}
+              side="left"
+              size="sm"
+              tone="inverse"
+            >
+              <button
+                aria-current={activeIndex === index ? "true" : undefined}
+                aria-label={`${project.name}으로 이동`}
+                className="project-showcase__dot"
+                onClick={() => goToProject(index)}
+                type="button"
+              />
+            </Tooltip>
           ))}
         </div>
       </nav>

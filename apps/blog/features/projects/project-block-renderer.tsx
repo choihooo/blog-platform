@@ -1,16 +1,22 @@
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 
+import { AutoplayVideo } from "./autoplay-video";
 import type { ProjectContentBlock } from "./project-types";
 
 const widthClasses = {
+  compact: "max-w-2xl",
   full: "max-w-none",
+  portrait: "max-w-sm",
   reading: "max-w-3xl",
   wide: "max-w-4xl",
 } as const;
 
 function blockWidth(block: ProjectContentBlock) {
   if (block.type === "divider") return "max-w-4xl";
-  return widthClasses[block.layout ?? (block.type === "image" ? "wide" : "reading")];
+  return widthClasses[
+    block.layout ?? (block.type === "image" || block.type === "video" ? "wide" : "reading")
+  ];
 }
 
 function Paragraphs({ body }: { body: string | readonly string[] }) {
@@ -81,6 +87,75 @@ export function ProjectBlockRenderer({
         </figure>
       );
 
+    case "video":
+      return (
+        <figure className={widthClass} id={anchorId}>
+          <div className="overflow-hidden rounded-lg border border-border bg-black">
+            <AutoplayVideo
+              ariaLabel={block.ariaLabel}
+              className="h-auto w-full"
+              height={block.height ?? 720}
+              mp4Src={block.mp4Src}
+              poster={block.poster}
+              webmSrc={block.webmSrc}
+              width={block.width ?? 1280}
+            />
+          </div>
+          {block.caption ? (
+            <figcaption className="mt-3 whitespace-pre-line text-xs leading-5 text-muted-foreground">
+              {block.caption}
+            </figcaption>
+          ) : null}
+        </figure>
+      );
+
+    case "video-comparison":
+      return (
+        <figure className={widthClass} id={anchorId}>
+          <div className="grid grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-2">
+            <div className="relative overflow-hidden rounded-lg border border-border bg-black">
+              <span className="absolute left-3 top-3 z-10 rounded bg-background/90 px-2 py-1 text-xs font-semibold text-muted-foreground backdrop-blur-sm">
+                {block.beforeLabel}
+              </span>
+              <AutoplayVideo
+                ariaLabel={`${block.ariaLabel} - ${block.beforeLabel}`}
+                className="h-auto w-full"
+                height={block.height ?? 1028}
+                mp4Src={block.beforeMp4Src}
+                poster={block.beforePoster}
+                webmSrc={block.beforeWebmSrc}
+                width={block.width ?? 430}
+              />
+            </div>
+            <span
+              aria-hidden="true"
+              className="flex size-12 items-center justify-center text-primary"
+            >
+              <ArrowRight className="size-10" strokeWidth={3.5} />
+            </span>
+            <div className="relative overflow-hidden rounded-lg border border-primary/40 bg-black">
+              <span className="absolute left-3 top-3 z-10 rounded bg-primary px-2 py-1 text-xs font-semibold text-primary-foreground">
+                {block.afterLabel}
+              </span>
+              <AutoplayVideo
+                ariaLabel={`${block.ariaLabel} - ${block.afterLabel}`}
+                className="h-auto w-full"
+                height={block.height ?? 1028}
+                mp4Src={block.afterMp4Src}
+                poster={block.afterPoster}
+                webmSrc={block.afterWebmSrc}
+                width={block.width ?? 430}
+              />
+            </div>
+          </div>
+          {block.caption ? (
+            <figcaption className="mt-3 whitespace-pre-line text-xs leading-5 text-muted-foreground">
+              {block.caption}
+            </figcaption>
+          ) : null}
+        </figure>
+      );
+
     case "bullets":
       return (
         <div className={widthClass}>
@@ -117,7 +192,7 @@ export function ProjectBlockRenderer({
 
     case "result":
       return (
-        <div className={`${widthClass} border-l-2 border-primary pl-4`}>
+        <div className={widthClass}>
           <BlockHeading id={anchorId} title={block.title ?? "Result"} />
           <p className="mt-2 whitespace-pre-line text-base font-semibold leading-7">{block.body}</p>
         </div>

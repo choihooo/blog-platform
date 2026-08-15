@@ -1,0 +1,33 @@
+flowchart LR
+    subgraph Web["React WebView"]
+        direction TB
+        A["Feature UI"]
+        B["Typed Bridge Client"]
+        A --> B
+    end
+
+    C["AppBridge Contract<br/>request · response · error"]
+
+    subgraph Native["Native Shell"]
+        direction TB
+        D["Gallery · Camera"]
+        E["Secure Storage · Login"]
+        F["Back Navigation"]
+        G["Multipart Upload"]
+    end
+
+    H["Backend API"]
+
+    B <-->|"JSON message"| C
+    C <--> D
+    C <--> E
+    C <--> F
+    C <--> G
+    G <--> H
+
+    classDef accent fill:#ddf4ff,stroke:#54aeff,color:#1f2328,stroke-width:2px;
+    classDef neutral fill:#f6f8fa,stroke:#d1d9e0,color:#1f2328;
+    classDef success fill:#dafbe1,stroke:#4ac26b,color:#1a7f37,stroke-width:2px;
+    class A,B,D,E,F,G neutral;
+    class C accent;
+    class H success;

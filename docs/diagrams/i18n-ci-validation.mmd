@@ -1,0 +1,20 @@
+flowchart LR
+    A["기준 언어<br/>ko.json"] --> B["중첩 키 flatten"]
+    C["번역 언어<br/>en · ja · zh"] --> D["중첩 키 flatten"]
+    B --> E["키 집합 비교"]
+    D --> E
+    E --> F{"누락 · 초과 키"}
+    F -->|"있음"| G["검증 실패<br/>CI 차단"]
+    F -->|"없음"| H["검증 통과"]
+    H --> I["Build · Deploy"]
+
+    classDef accent fill:#ddf4ff,stroke:#54aeff,color:#1f2328,stroke-width:2px;
+    classDef neutral fill:#f6f8fa,stroke:#d1d9e0,color:#1f2328;
+    classDef warning fill:#fff8c5,stroke:#d4a72c,color:#9a6700;
+    classDef danger fill:#ffebe9,stroke:#ff8182,color:#d1242f,stroke-width:2px;
+    classDef success fill:#dafbe1,stroke:#4ac26b,color:#1a7f37,stroke-width:2px;
+    class A,C neutral;
+    class B,D,E accent;
+    class F warning;
+    class G danger;
+    class H,I success;

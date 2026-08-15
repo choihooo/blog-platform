@@ -1,10 +1,27 @@
 import { describe, expect, it } from "vitest";
 
+import { apiDataTransitionProject } from "./data/api-data-transition";
 import { aiWorkflowProject } from "./data/ai-workflow";
+import { commaProject } from "./data/comma";
+import { forensicAgentProject } from "./data/forensic-agent";
+import { geobugirinProject } from "./data/geobugirin";
+import { i18nValidationProject } from "./data/i18n-validation";
 import { kustingProject } from "./data/kusting";
+import { nexacroReactPocProject } from "./data/nexacro-react-poc";
+import { typescriptMigrationProject } from "./data/typescript-migration";
+import { projects } from "./project-data";
 import { getProjectSections, getProjectToc } from "./project-content";
 
 describe("project content", () => {
+  it("provides complete header metadata for every registered project", () => {
+    for (const project of projects) {
+      expect(project.role).toBeTruthy();
+      expect(project.period).toBeTruthy();
+      expect(project.organization).toBeTruthy();
+      expect(project.team).toBeTruthy();
+    }
+  });
+
   it("keeps native block order and builds nested TOC items", () => {
     const sections = getProjectSections(aiWorkflowProject);
     const toc = getProjectToc(sections);
@@ -13,28 +30,40 @@ describe("project content", () => {
       "image",
       "text",
       "text",
+      "text",
       "result",
     ]);
     expect(toc[0]).toEqual({
       children: [
-        { href: "#dom-context-problem", label: "Problem" },
-        { href: "#dom-context-approach", label: "Approach" },
-        { href: "#dom-context-result", label: "Result" },
+        { href: "#dom-context-problem", label: "문제" },
+        { href: "#dom-context-analysis", label: "원인 분석" },
+        { href: "#dom-context-solution", label: "해결" },
+        { href: "#dom-context-result", label: "결과" },
       ],
       href: "#dom-context",
-      label: "화면 이미지와 실제 DOM 요소가 연결되지 않음",
+      label: "AI가 화면의 수정 대상을 정확히 찾지 못함",
     });
   });
 
-  it("converts legacy stories without losing their narrative", () => {
-    const sections = getProjectSections(kustingProject);
+  it.each([
+    aiWorkflowProject,
+    nexacroReactPocProject,
+    forensicAgentProject,
+    apiDataTransitionProject,
+    i18nValidationProject,
+    typescriptMigrationProject,
+    kustingProject,
+    commaProject,
+    geobugirinProject,
+  ])("uses problem, analysis, solution, and result for every $name case", (project) => {
+    const sections = getProjectSections(project);
 
-    expect(sections).toHaveLength(2);
-    expect(sections[0]?.blocks.map((block) => block.type)).toEqual(["text", "text", "result"]);
-    expect(getProjectToc(sections)[0]?.children.map((child) => child.label)).toEqual([
-      "Problem",
-      "Approach",
-      "Result",
-    ]);
+    for (const section of sections) {
+      expect(
+        section.blocks
+          .filter((block) => "id" in block && block.id)
+          .map((block) => ("title" in block ? block.title : undefined)),
+      ).toEqual(["문제", "원인 분석", "해결", "결과"]);
+    }
   });
 });

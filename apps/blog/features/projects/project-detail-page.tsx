@@ -51,9 +51,15 @@ export function ProjectDetailPage({
               <dd className="ml-3 inline font-semibold">{project.period}</dd>
             </div>
             <div>
-              <dt className="inline text-muted-foreground">Team</dt>
+              <dt className="inline text-muted-foreground">Organization</dt>
               <dd className="ml-3 inline font-semibold">{project.organization}</dd>
             </div>
+            {project.team ? (
+              <div>
+                <dt className="inline text-muted-foreground">Team</dt>
+                <dd className="ml-3 inline font-semibold">{project.team}</dd>
+              </div>
+            ) : null}
           </dl>
 
           <ChipGroup className="mt-5 flex flex-wrap gap-1.5" aria-label="사용 기술">
@@ -154,11 +160,17 @@ export function ProjectDetailPage({
         </div>
 
         {project.relatedPosts && project.relatedPosts.length > 0 ? (
-          <section aria-labelledby="project-related-posts" className="border-t border-border py-12 sm:py-16">
+          <section
+            aria-labelledby="project-related-posts"
+            className="border-t border-border py-12 sm:py-16"
+          >
             <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
               From the blog
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl" id="project-related-posts">
+            <h2
+              className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl"
+              id="project-related-posts"
+            >
               관련 글
             </h2>
             <div className="mt-6 divide-y divide-border border-y border-border">
@@ -176,8 +188,19 @@ export function ProjectDetailPage({
                       </span>
                     ) : null}
                   </span>
-                  <svg aria-hidden="true" className="hidden size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" fill="none" viewBox="0 0 20 20">
-                    <path d="M6 14 14 6m-6 0h6v6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" />
+                  <svg
+                    aria-hidden="true"
+                    className="hidden size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M6 14 14 6m-6 0h6v6"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.6"
+                    />
                   </svg>
                 </a>
               ))}

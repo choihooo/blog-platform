@@ -6,7 +6,7 @@ export type ProjectMetric = {
 
 type ProjectBlockBase = {
   id?: string;
-  layout?: "reading" | "wide" | "full";
+  layout?: "compact" | "reading" | "wide" | "full" | "portrait";
   title?: string;
   tocLabel?: string;
 };
@@ -22,6 +22,33 @@ export type ProjectImageBlock = ProjectBlockBase & {
   height?: number;
   src: string;
   type: "image";
+  width?: number;
+};
+
+export type ProjectVideoBlock = ProjectBlockBase & {
+  ariaLabel: string;
+  caption?: string;
+  height?: number;
+  mp4Src: string;
+  poster: string;
+  type: "video";
+  webmSrc?: string;
+  width?: number;
+};
+
+export type ProjectVideoComparisonBlock = ProjectBlockBase & {
+  afterMp4Src: string;
+  afterPoster: string;
+  afterLabel: string;
+  afterWebmSrc?: string;
+  ariaLabel: string;
+  beforeMp4Src: string;
+  beforePoster: string;
+  beforeLabel: string;
+  beforeWebmSrc?: string;
+  caption?: string;
+  height?: number;
+  type: "video-comparison";
   width?: number;
 };
 
@@ -68,6 +95,8 @@ export type ProjectColumnsBlock = ProjectBlockBase & {
 export type ProjectContentBlock =
   | ProjectTextBlock
   | ProjectImageBlock
+  | ProjectVideoBlock
+  | ProjectVideoComparisonBlock
   | ProjectBulletsBlock
   | ProjectMetricsBlock
   | ProjectResultBlock
@@ -111,6 +140,7 @@ type ProjectCaseStudyBase = {
   organization: string;
   period: string;
   role: string;
+  team?: string;
   relatedPosts?: readonly ProjectRelatedPost[];
   slug: string;
   technologies: readonly string[];

@@ -1,0 +1,42 @@
+@font-face {
+  font-family: "SUIT";
+  src: url("file:///Users/choiho/coding/blog/node_modules/.pnpm/@hozui+tokens@0.1.0/node_modules/@hozui/tokens/dist/fonts/SUIT-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+.node rect,
+.node polygon,
+.node path {
+  stroke-width: 1.5px;
+}
+
+.node rect {
+  rx: 6px;
+  ry: 6px;
+}
+
+.cluster rect {
+  rx: 8px;
+  ry: 8px;
+}
+
+.cluster-label text,
+.cluster-label span {
+  color: #1f2328 !important;
+  font-weight: 700 !important;
+}
+
+.edgeLabel {
+  color: #59636e;
+  font-size: 14px;
+}
+
+.flowchart-link {
+  stroke-width: 1.7px;
+}
+
+.label,
+.nodeLabel {
+  line-height: 1.45;
+}
