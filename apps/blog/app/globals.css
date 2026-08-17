@@ -63,8 +63,10 @@ body {
   position: relative;
   height: calc(100dvh - 4rem);
   min-height: 38rem;
-  overflow: visible;
+  overflow: hidden;
+  overflow: clip;
   overscroll-behavior: none;
+  touch-action: pinch-zoom;
   background-color: var(--showcase-bg);
   color: var(--foreground);
   isolation: isolate;

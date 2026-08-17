@@ -60,6 +60,7 @@ const PROJECT_CARD_ASSETS: Partial<
 export function ProjectsPage() {
   const router = useRouter();
   const activeIndexRef = useRef(0);
+  const showcaseRef = useRef<HTMLElement>(null);
   const scrollLockedRef = useRef(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -74,6 +75,9 @@ export function ProjectsPage() {
   };
 
   useEffect(() => {
+    const showcase = showcaseRef.current;
+    if (!showcase) return;
+
     let lockTimer: ReturnType<typeof setTimeout> | undefined;
 
     const deferScrollUnlock = () => {
@@ -110,10 +114,7 @@ export function ProjectsPage() {
       if (Math.abs(dominantDelta) < 6) return;
       event.preventDefault();
 
-      if (scrollLockedRef.current) {
-        deferScrollUnlock();
-        return;
-      }
+      if (scrollLockedRef.current) return;
 
       move(dominantDelta > 0 ? 1 : -1);
     };
@@ -147,14 +148,14 @@ export function ProjectsPage() {
       move(dominantDelta > 0 ? 1 : -1);
     };
 
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    showcase.addEventListener("wheel", handleWheel, { passive: false });
+    showcase.addEventListener("touchstart", handleTouchStart, { passive: true });
+    showcase.addEventListener("touchend", handleTouchEnd, { passive: true });
     return () => {
       clearTimeout(lockTimer);
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
+      showcase.removeEventListener("wheel", handleWheel);
+      showcase.removeEventListener("touchstart", handleTouchStart);
+      showcase.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 
@@ -221,6 +222,7 @@ export function ProjectsPage() {
       data-project={activeProject.slug}
       data-ready={orbitReady ? "true" : undefined}
       onKeyDown={handleKeyDown}
+      ref={showcaseRef}
       tabIndex={0}
     >
       <h1 className="sr-only">Projects</h1>
@@ -305,7 +307,9 @@ export function ProjectsPage() {
             data-visible={activeIndex === index && copyReady ? "true" : undefined}
             key={project.slug}
           >
-            <p className="project-copy__meta">{project.period} · {project.role}</p>
+            <p className="project-copy__meta">
+              {project.period} · {project.role}
+            </p>
             <Link
               className="project-copy__title"
               href={`/projects/${project.slug}`}
@@ -321,7 +325,13 @@ export function ProjectsPage() {
               tabIndex={activeIndex === index && copyReady ? 0 : -1}
               trailingIcon={
                 <svg aria-hidden="true" fill="none" viewBox="0 0 20 20">
-                  <path d="M6 14 14 6m-6 0h6v6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" />
+                  <path
+                    d="M6 14 14 6m-6 0h6v6"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.6"
+                  />
                 </svg>
               }
               type="button"
