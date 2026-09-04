@@ -11,4 +11,18 @@ describe("initializeProvider", () => {
     expect(initializeProvider({ provider: "gtm" }).ok).toBe(false);
     expect(initializeProvider({ provider: "plausible" }).ok).toBe(false);
   });
+
+  it("normalizes valid ids and rejects malformed ids", () => {
+    expect(initializeProvider({ provider: "ga4", measurementId: " G-ABC123\n" })).toEqual({
+      ok: true,
+      provider: "ga4",
+      measurementId: "G-ABC123",
+    });
+    expect(initializeProvider({ provider: "gtm", containerId: " GTM-ABC123\n" })).toEqual({
+      ok: true,
+      provider: "gtm",
+      containerId: "GTM-ABC123",
+    });
+    expect(initializeProvider({ provider: "ga4", measurementId: "not-an-id" }).ok).toBe(false);
+  });
 });

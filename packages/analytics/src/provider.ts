@@ -8,14 +8,16 @@ export function providerFrom(value: string | undefined): AnalyticsProvider {
 export function initializeProvider(config: AnalyticsConfig): ProviderInit {
   const provider = providerFrom(config.provider);
   if (provider === "ga4") {
-    return config.measurementId
-      ? { ok: true, provider, measurementId: config.measurementId }
-      : { ok: false, provider: "disabled", reason: "GA4 measurement id is missing" };
+    const measurementId = config.measurementId?.trim();
+    return measurementId && /^G-[A-Z0-9]+$/.test(measurementId)
+      ? { ok: true, provider, measurementId }
+      : { ok: false, provider: "disabled", reason: "GA4 measurement id is missing or invalid" };
   }
   if (provider === "gtm") {
-    return config.containerId
-      ? { ok: true, provider, containerId: config.containerId }
-      : { ok: false, provider: "disabled", reason: "GTM container id is missing" };
+    const containerId = config.containerId?.trim();
+    return containerId && /^GTM-[A-Z0-9]+$/.test(containerId)
+      ? { ok: true, provider, containerId }
+      : { ok: false, provider: "disabled", reason: "GTM container id is missing or invalid" };
   }
   return { ok: false, provider: "disabled", reason: "Analytics provider is disabled" };
 }

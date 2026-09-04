@@ -2,11 +2,15 @@ import { createBlogEvent, initializeProvider, toProviderPayload } from "@blog-pl
 
 import type { AnalyticsConfig, BlogEventName } from "@blog-platform/analytics";
 
+function cleanEnv(value: string | undefined) {
+  return value?.trim() || undefined;
+}
+
 export function analyticsConfig(site: { analytics?: { provider?: string } }) {
   return {
     provider: site.analytics?.provider ?? "disabled",
-    measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
-    containerId: process.env.NEXT_PUBLIC_GTM_ID,
+    measurementId: cleanEnv(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
+    containerId: cleanEnv(process.env.NEXT_PUBLIC_GTM_ID),
   } satisfies AnalyticsConfig;
 }
 

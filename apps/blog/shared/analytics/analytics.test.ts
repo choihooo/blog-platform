@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { analyticsInit, publishedPostEvent } from "./analytics";
+import { analyticsConfig, analyticsInit, publishedPostEvent } from "./analytics";
 
 describe("publishedPostEvent", () => {
   it("disables events without provider config", () => {
@@ -33,5 +33,19 @@ describe("publishedPostEvent", () => {
     expect(analyticsInit({ analytics: { provider: "ga4" } }).ok).toBe(true);
     expect(analyticsInit({ analytics: { provider: "gtm" } }).ok).toBe(false);
     expect(analyticsInit({ analytics: { provider: "disabled" } }).ok).toBe(false);
+  });
+
+  it("removes whitespace from analytics environment variables", () => {
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID = "  G-TEST\n";
+    process.env.NEXT_PUBLIC_GTM_ID = "\tGTM-TEST\r\n";
+
+    expect(analyticsConfig({ analytics: { provider: "ga4" } })).toMatchObject({
+      measurementId: "G-TEST",
+      containerId: "GTM-TEST",
+    });
+    expect(analyticsInit({ analytics: { provider: "ga4" } })).toMatchObject({
+      ok: true,
+      measurementId: "G-TEST",
+    });
   });
 });
