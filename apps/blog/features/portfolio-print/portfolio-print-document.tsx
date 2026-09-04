@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  AspectRatio,
-  Avatar,
-  Badge,
-  Chip,
-  ChipGroup,
-} from "@hozui/react";
+import { AspectRatio, Avatar, Badge, Chip, ChipGroup } from "@hozui/react";
 
 import { aiWorkflowProject } from "@/features/projects/data/ai-workflow";
 import type { ProjectContentBlock, ProjectSection } from "@/features/projects/project-types";
@@ -130,9 +124,18 @@ export function PortfolioPrintDocument() {
             <p className={styles.projectDescription}>{project.description}</p>
           </div>
           <dl className={styles.metadata}>
-            <div><dt>ROLE</dt><dd>{project.role}</dd></div>
-            <div><dt>TEAM</dt><dd>{project.team}</dd></div>
-            <div><dt>PERIOD</dt><dd>{project.period}</dd></div>
+            <div>
+              <dt>ROLE</dt>
+              <dd>{project.role}</dd>
+            </div>
+            <div>
+              <dt>TEAM</dt>
+              <dd>{project.team}</dd>
+            </div>
+            <div>
+              <dt>PERIOD</dt>
+              <dd>{project.period}</dd>
+            </div>
           </dl>
         </header>
 
@@ -193,11 +196,15 @@ export function PortfolioPrintDocument() {
         <header className={styles.pageHeader}>
           <div>
             <p className={styles.eyebrow}>PROJECT 01 / SYSTEM DESIGN</p>
-            <h2>이미지 기반 추측에서<br />검증 가능한 실행 흐름으로</h2>
+            <h2>
+              이미지 기반 추측에서
+              <br />
+              검증 가능한 실행 흐름으로
+            </h2>
           </div>
           <p>
-            DOM 컨텍스트, 에이전트 어댑터, 의존성 라우팅을 하나의 작업 카드와
-            Acceptance Criteria로 연결했습니다.
+            DOM 컨텍스트, 에이전트 어댑터, 의존성 라우팅을 하나의 작업 카드와 Acceptance Criteria로
+            연결했습니다.
           </p>
         </header>
 
@@ -222,12 +229,18 @@ export function PortfolioPrintDocument() {
             <li>
               <span>01</span>
               <h4>Context</h4>
-              <p>화면 전체 이미지 대신 selector, DOM 계층, 주변 요소와 소스 파일을 작업 카드에 기록했습니다.</p>
+              <p>
+                화면 전체 이미지 대신 selector, DOM 계층, 주변 요소와 소스 파일을 작업 카드에
+                기록했습니다.
+              </p>
             </li>
             <li>
               <span>02</span>
               <h4>Agent</h4>
-              <p>Claude와 Codex의 인증·세션·응답 차이를 어댑터 안으로 격리하고 공통 실행 계약을 만들었습니다.</p>
+              <p>
+                Claude와 Codex의 인증·세션·응답 차이를 어댑터 안으로 격리하고 공통 실행 계약을
+                만들었습니다.
+              </p>
             </li>
             <li>
               <span>03</span>

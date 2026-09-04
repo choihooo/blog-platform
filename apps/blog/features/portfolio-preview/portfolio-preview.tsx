@@ -32,7 +32,10 @@ function AssetPlaceholder({
   return (
     <div className={`${styles.assetPlaceholder} ${className}`}>
       <div className={styles.assetGrid} aria-hidden="true" />
-      <div className={styles.assetCross} aria-hidden="true"><span /><span /></div>
+      <div className={styles.assetCross} aria-hidden="true">
+        <span />
+        <span />
+      </div>
       <div className={styles.assetCopy}>
         <span>{eyebrow}</span>
         <strong>{title}</strong>
@@ -76,7 +79,8 @@ export function PortfolioPreview() {
             <p>FRONTEND · PRODUCT · AUTOMATION</p>
             <h1>
               문제를 구조로,
-              <br />결과를 데이터로.
+              <br />
+              결과를 데이터로.
             </h1>
           </div>
 
@@ -85,7 +89,8 @@ export function PortfolioPreview() {
             <h2>최호</h2>
             <p>
               사용자 흐름에서 문제를 찾고,
-              <br />검증 가능한 프론트엔드 시스템으로 바꿉니다.
+              <br />
+              검증 가능한 프론트엔드 시스템으로 바꿉니다.
             </p>
           </div>
 
@@ -98,14 +103,26 @@ export function PortfolioPreview() {
           </div>
 
           <div className={styles.coverContact}>
-            <div><span>WEB</span><strong>blog.hozorica.com</strong></div>
-            <div><span>MAIL</span><strong>hochoi8621@gmail.com</strong></div>
-            <div><span>GITHUB</span><strong>github.com/choihooo</strong></div>
+            <div>
+              <span>WEB</span>
+              <strong>blog.hozorica.com</strong>
+            </div>
+            <div>
+              <span>MAIL</span>
+              <strong>hochoi8621@gmail.com</strong>
+            </div>
+            <div>
+              <span>GITHUB</span>
+              <strong>github.com/choihooo</strong>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className={`${styles.frame} ${styles.blueFrame} ${styles.projectIntro}`} id="frame-02">
+      <section
+        className={`${styles.frame} ${styles.blueFrame} ${styles.projectIntro}`}
+        id="frame-02"
+      >
         <FrameMeta current="02" label="FEATURED PROJECT" />
         <div className={styles.projectIntroGrid}>
           <div className={styles.projectIntroCopy}>
@@ -113,14 +130,27 @@ export function PortfolioPreview() {
               <span>{project.index}</span>
               <Badge label="INTERNAL WORKFLOW" size="sm" tone="neutral" variant="outline" />
             </div>
-            <h2>AI 수정<span>workflow 자동화</span></h2>
+            <h2>
+              AI 수정<span>workflow 자동화</span>
+            </h2>
             <p className={styles.projectThesis}>
-              화면 기반 추측을<br />검증 가능한 실행 흐름으로 전환했습니다.
+              화면 기반 추측을
+              <br />
+              검증 가능한 실행 흐름으로 전환했습니다.
             </p>
             <dl className={styles.projectFacts}>
-              <div><dt>ROLE</dt><dd>{project.role}</dd></div>
-              <div><dt>TEAM</dt><dd>{project.team}</dd></div>
-              <div><dt>PERIOD</dt><dd>{project.period}</dd></div>
+              <div>
+                <dt>ROLE</dt>
+                <dd>{project.role}</dd>
+              </div>
+              <div>
+                <dt>TEAM</dt>
+                <dd>{project.team}</dd>
+              </div>
+              <div>
+                <dt>PERIOD</dt>
+                <dd>{project.period}</dd>
+              </div>
             </dl>
           </div>
 
@@ -146,11 +176,15 @@ export function PortfolioPreview() {
         <header className={styles.dataHeader}>
           <div>
             <p className={styles.kicker}>CASE 01 · TARGET MISMATCH</p>
-            <h2>이미지는 위치를 보여줬지만,<br />수정할 코드를 알려주지 않았습니다.</h2>
+            <h2>
+              이미지는 위치를 보여줬지만,
+              <br />
+              수정할 코드를 알려주지 않았습니다.
+            </h2>
           </div>
           <p>
-            화면 캡처에는 selector, DOM 계층, 컴포넌트와 소스 파일 정보가 없습니다.
-            유사한 요소가 많아질수록 AI가 수정 대상을 다시 추측해야 했습니다.
+            화면 캡처에는 selector, DOM 계층, 컴포넌트와 소스 파일 정보가 없습니다. 유사한 요소가
+            많아질수록 AI가 수정 대상을 다시 추측해야 했습니다.
           </p>
         </header>
 
@@ -179,7 +213,9 @@ export function PortfolioPreview() {
                   src="/projects/ai-workflow/dom-mismatch-thumbnail.png"
                 />
               </AspectRatio>
-              <figcaption><span>EXISTING ASSET</span> 이미지 위치와 실제 수정 대상 DOM의 불일치</figcaption>
+              <figcaption>
+                <span>EXISTING ASSET</span> 이미지 위치와 실제 수정 대상 DOM의 불일치
+              </figcaption>
             </figure>
             <AssetPlaceholder
               className={styles.taskCardPlaceholder}
@@ -191,12 +227,19 @@ export function PortfolioPreview() {
         </div>
       </section>
 
-      <section className={`${styles.frame} ${styles.dataFrame} ${styles.systemFrame}`} id="frame-04">
+      <section
+        className={`${styles.frame} ${styles.dataFrame} ${styles.systemFrame}`}
+        id="frame-04"
+      >
         <FrameMeta current="04" label="SYSTEM / RESULT" />
         <header className={styles.systemHeader}>
           <div>
             <p className={styles.kicker}>DECISION CHAIN</p>
-            <h2>세 개의 경계를 분리하고<br />하나의 검증 흐름으로 묶었습니다.</h2>
+            <h2>
+              세 개의 경계를 분리하고
+              <br />
+              하나의 검증 흐름으로 묶었습니다.
+            </h2>
           </div>
           <ChipGroup className={styles.techChips} aria-label="프로젝트 기술 스택">
             {project.technologies.map((technology) => (
@@ -212,15 +255,29 @@ export function PortfolioPreview() {
                 alt="DOM Tree 컨텍스트부터 멀티 에이전트 실행과 검증까지의 흐름"
                 src="/projects/diagrams/ai-workflow-architecture.png"
               />
-              <figcaption><span>EXISTING ASSET</span> AI 수정 workflow 전체 구조</figcaption>
+              <figcaption>
+                <span>EXISTING ASSET</span> AI 수정 workflow 전체 구조
+              </figcaption>
             </figure>
           </div>
 
           <ol className={styles.decisionList}>
-            <li><span>01 / CONTEXT</span><strong>화면 캡처를 selector와 DOM Tree로 교체</strong></li>
-            <li><span>02 / AGENT</span><strong>Claude와 Codex의 차이를 어댑터로 격리</strong></li>
-            <li><span>03 / ROUTING</span><strong>의존 작업은 순차, 독립 작업은 병렬 실행</strong></li>
-            <li><span>04 / VERIFY</span><strong>Acceptance Criteria를 통과한 결과만 병합</strong></li>
+            <li>
+              <span>01 / CONTEXT</span>
+              <strong>화면 캡처를 selector와 DOM Tree로 교체</strong>
+            </li>
+            <li>
+              <span>02 / AGENT</span>
+              <strong>Claude와 Codex의 차이를 어댑터로 격리</strong>
+            </li>
+            <li>
+              <span>03 / ROUTING</span>
+              <strong>의존 작업은 순차, 독립 작업은 병렬 실행</strong>
+            </li>
+            <li>
+              <span>04 / VERIFY</span>
+              <strong>Acceptance Criteria를 통과한 결과만 병합</strong>
+            </li>
           </ol>
         </div>
 
