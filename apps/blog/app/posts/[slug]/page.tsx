@@ -10,6 +10,7 @@ import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine"
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
 import { CodeCopyButton } from "@/features/blog/components/code-copy-button";
 import { PostAnalyticsEvents } from "@/features/blog/components/post-analytics-events";
+import { serializeJsonLd } from "@/shared/seo/person-json-ld";
 import { PostAuthorMeta } from "@/features/blog/components/post-author-meta";
 import { PostShareActions } from "@/features/blog/components/post-share-actions";
 import { RecommendedPosts } from "@/features/blog/components/recommended-posts";
@@ -241,7 +242,7 @@ export default async function PostPage({ params }: PostPageProps) {
     <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
       <PostAnalyticsEvents context={analyticsContext} />
       <script
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         type="application/ld+json"
       />
       <BlogBreadcrumb

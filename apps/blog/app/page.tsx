@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
+import { getSiteConfig } from "@/features/blog/server/content-source";
 import { HomeExperience } from "@/features/home/home-experience";
+import { personJsonLd, serializeJsonLd } from "@/shared/seo/person-json-ld";
 
 export const metadata: Metadata = {
   title: "최호 | 프론트엔드 개발자",
@@ -8,6 +10,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function PortfolioHomePage() {
-  return <HomeExperience />;
+export default async function PortfolioHomePage() {
+  const site = await getSiteConfig();
+
+  return (
+    <>
+      <script
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(personJsonLd(site)) }}
+        type="application/ld+json"
+      />
+      <HomeExperience />
+    </>
+  );
 }

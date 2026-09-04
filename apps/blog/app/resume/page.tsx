@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
+import { getSiteConfig } from "@/features/blog/server/content-source";
 import { ResumePage } from "@/features/resume/resume-page";
+import { profilePageJsonLd, serializeJsonLd } from "@/shared/seo/person-json-ld";
 
 export const metadata: Metadata = {
   title: "Resume",
@@ -8,6 +10,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/resume" },
 };
 
-export default function Page() {
-  return <ResumePage />;
+export default async function Page() {
+  const site = await getSiteConfig();
+
+  return (
+    <>
+      <script
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(profilePageJsonLd(site)) }}
+        type="application/ld+json"
+      />
+      <ResumePage />
+    </>
+  );
 }

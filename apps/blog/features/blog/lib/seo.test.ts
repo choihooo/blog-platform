@@ -41,7 +41,13 @@ describe("postToSeoSubject", () => {
       }),
     );
 
-    expect(subject.author).toEqual({ id: "ho", name: "Ho Choi", avatar: undefined });
+    expect(subject.author).toEqual({
+      id: "ho",
+      name: "Ho Choi",
+      avatar: undefined,
+      sameAs: undefined,
+      url: "https://example.com/resume",
+    });
     expect(subject.site.description).toBe("Notes");
   });
 });

@@ -9,6 +9,7 @@ export function siteForSeo(site: {
   defaultAuthor?: string;
   defaultAuthorName?: string;
   defaultAuthorAvatar?: string;
+  adminGithubLogin?: string;
 }): SeoSite {
   return {
     siteName: site.siteName,
@@ -20,6 +21,10 @@ export function siteForSeo(site: {
           id: site.defaultAuthor,
           name: site.defaultAuthorName || site.defaultAuthor,
           avatar: site.defaultAuthorAvatar,
+          url: `${site.siteUrl.replace(/\/+$/, "")}/resume`,
+          sameAs: site.adminGithubLogin
+            ? [`https://github.com/${site.adminGithubLogin}`]
+            : undefined,
         }
       : undefined,
   };
@@ -47,6 +52,12 @@ export function postToSeoSubject(post: PublicPost, site: SeoSite): SeoSubject {
           id: post.authorProfile.id,
           name: post.authorProfile.name,
           avatar: post.authorProfile.avatar,
+          url:
+            post.authorProfile.id === site.defaultAuthor?.id ? site.defaultAuthor.url : undefined,
+          sameAs:
+            post.authorProfile.id === site.defaultAuthor?.id
+              ? site.defaultAuthor.sameAs
+              : undefined,
         }
       : site.defaultAuthor,
     category: post.categoryEntry

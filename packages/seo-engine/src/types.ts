@@ -21,6 +21,8 @@ export type SeoAuthor = {
   id: string;
   name: string;
   avatar?: string;
+  sameAs?: string[];
+  url?: string;
 };
 
 export type SeoTaxonomy = {

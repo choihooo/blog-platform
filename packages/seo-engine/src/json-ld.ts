@@ -20,7 +20,10 @@ export function generateJsonLd(subject: SeoSubject) {
       author: subject.author
         ? {
             "@type": "Person",
+            "@id": subject.author.url ? `${subject.author.url}#person` : undefined,
             name: subject.author.name,
+            url: subject.author.url,
+            sameAs: subject.author.sameAs,
             image: subject.author.avatar
               ? new URL(subject.author.avatar, `${subject.site.siteUrl}/`).toString()
               : undefined,
