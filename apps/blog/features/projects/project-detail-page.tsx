@@ -67,6 +67,23 @@ export function ProjectDetailPage({
               <Chip key={technology} label={technology} size="sm" tone="accent" />
             ))}
           </ChipGroup>
+
+          {project.evidence?.length ? (
+            <nav aria-label="프로젝트 검증 링크" className="mt-7 flex flex-wrap gap-3">
+              {project.evidence.map((item) => (
+                <a
+                  className="inline-flex items-center gap-2 border border-border px-3 py-2 text-sm font-semibold no-underline transition-colors hover:border-primary hover:text-primary hover:no-underline"
+                  href={item.href}
+                  key={item.href}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {item.label}
+                  <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </nav>
+          ) : null}
         </header>
 
         {project.metrics.length > 0 ? (

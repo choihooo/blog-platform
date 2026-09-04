@@ -131,8 +131,15 @@ export type ProjectRelatedPost = {
   title: string;
 };
 
+export type ProjectEvidence = {
+  href: string;
+  label: string;
+  type: "award" | "demo" | "deployment" | "report" | "repository";
+};
+
 type ProjectCaseStudyBase = {
   description: string;
+  evidence?: readonly ProjectEvidence[];
   index: string;
   meta: string;
   metrics: readonly ProjectMetric[];

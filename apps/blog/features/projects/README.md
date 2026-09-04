@@ -53,6 +53,13 @@ export const sampleProject = {
   period: "2026.01 ~ 2026.03",
   organization: "팀 이름",
   technologies: ["Next.js", "TypeScript"],
+  evidence: [
+    {
+      type: "repository",
+      label: "GitHub 저장소",
+      href: "https://github.com/owner/repository",
+    },
+  ],
   metrics: [],
   sections: [
     {

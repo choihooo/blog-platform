@@ -8,9 +8,16 @@ export const geobugirinProject = {
   description:
     "WebView와 자세 추론을 분리한 Tauri 데스크톱 앱을 구축하고 사용자별 자세 점수와 플랫폼별 릴리스 체계를 설계했습니다.",
   role: "Frontend Engineer (Desktop & Posture Engine)",
-  period: "2026.04 ~ 현재",
+  period: "2026.04 ~ 2026.08",
   organization: "Side Project",
   team: "기획 2 · 디자인 2 · 프론트엔드 2 · 백엔드 1",
+  evidence: [
+    {
+      type: "repository",
+      label: "Tauri 마이그레이션 저장소",
+      href: "https://github.com/choihooo/gbgr-migration",
+    },
+  ],
   technologies: [
     "React",
     "Tauri",

@@ -22,6 +22,14 @@ describe("project content", () => {
     }
   });
 
+  it("links public project evidence to a verifiable source", () => {
+    expect(geobugirinProject.evidence).toContainEqual({
+      type: "repository",
+      label: "Tauri 마이그레이션 저장소",
+      href: "https://github.com/choihooo/gbgr-migration",
+    });
+  });
+
   it("keeps native block order and builds nested TOC items", () => {
     const sections = getProjectSections(aiWorkflowProject);
     const toc = getProjectToc(sections);
