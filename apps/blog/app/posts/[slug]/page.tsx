@@ -17,6 +17,7 @@ import { RecommendedPosts } from "@/features/blog/components/recommended-posts";
 import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
 import {
   getPostBySlug,
+  getPublishedPosts,
   getRecommendedPosts,
   getSiteConfig,
 } from "@/features/blog/server/content-source";
@@ -29,6 +30,11 @@ type PostPageProps = {
     slug: string;
   }>;
 };
+
+export async function generateStaticParams() {
+  const posts = await getPublishedPosts({ analyzeBody: false, limit: 100 });
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
 function canUseOptimizedImage(src: string) {
   if (src.startsWith("/")) return true;

@@ -38,5 +38,7 @@ export async function POST(request: Request) {
   revalidateTag(blogContentCacheTags.posts, "max");
   revalidateTag(blogContentCacheTags.categories, "max");
   revalidatePath(body.path);
+  const rewrittenPostPath = /^\/blog\/([^/]+)$/.exec(body.path);
+  if (rewrittenPostPath) revalidatePath(`/posts/${rewrittenPostPath[1]}`);
   return NextResponse.json({ ok: true, path: body.path, revalidatedAt: new Date().toISOString() });
 }
