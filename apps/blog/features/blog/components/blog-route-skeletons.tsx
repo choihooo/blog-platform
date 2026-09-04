@@ -3,7 +3,9 @@ import { Skeleton } from "@hozui/react";
 export function BlogListingSkeleton() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
-      <h1 className="sr-only">블로그 목록 로딩 중</h1>
+      <p aria-live="polite" className="sr-only" role="status">
+        블로그 목록을 불러오는 중입니다.
+      </p>
       <div className="grid gap-8 xl:grid-cols-[12rem_minmax(0,1fr)]">
         <aside aria-label="카테고리 로딩 중" className="hidden xl:block xl:pt-11">
           <Skeleton height={24} width={88} />
@@ -43,7 +45,9 @@ export function BlogListingSkeleton() {
 export function BlogPostSkeleton() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
-      <h1 className="sr-only">글 로딩 중</h1>
+      <p aria-live="polite" className="sr-only" role="status">
+        글을 불러오는 중입니다.
+      </p>
       <div className="mb-6 flex gap-2">
         <Skeleton height={18} width={56} />
         <Skeleton height={18} width={120} />

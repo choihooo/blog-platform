@@ -1,6 +1,6 @@
 "use client";
 
-import { Switch } from "@hozui/react";
+import { ThemeSwitch as HozuiThemeSwitch } from "@hozui/react";
 import { useEffect, useState } from "react";
 
 type ThemeMode = "light" | "dark";
@@ -28,14 +28,11 @@ export function ThemeSwitch() {
     applyTheme(nextTheme);
   }, []);
 
-  function updateTheme(checked: boolean) {
-    const nextTheme = checked ? "dark" : "light";
+  function updateTheme(nextTheme: ThemeMode) {
     setTheme(nextTheme);
     window.localStorage.setItem(storageKey, nextTheme);
     applyTheme(nextTheme);
   }
 
-  return (
-    <Switch checked={theme === "dark"} label="다크 모드" onCheckedChange={updateTheme} size="sm" />
-  );
+  return <HozuiThemeSwitch theme={theme} onThemeChange={updateTheme} aria-label="다크 모드" />;
 }

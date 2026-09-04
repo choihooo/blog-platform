@@ -15,7 +15,7 @@
     "@blog-platform/analytics": "workspace:^",
     "@blog-platform/editor": "workspace:^",
     "@blog-platform/seo-engine": "workspace:^",
-    "@hozui/react": "^0.3.0",
+    "@hozui/react": "^0.4.1",
     "@hozui/tokens": "^0.1.0",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
