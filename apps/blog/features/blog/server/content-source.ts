@@ -4,6 +4,7 @@ import {
   textFromEditorNodes,
   type EditorNode,
 } from "@blog-platform/editor";
+import { unstable_cache } from "next/cache";
 import type { PostRecord } from "../../../../cms/lib/content-adapter/content-adapter.interface";
 import { createContentAdapter } from "../../../../cms/lib/content-adapter/content-adapter";
 import { loadSiteConfig } from "../../../../cms/lib/site-config";
@@ -226,113 +227,12 @@ function resolveModeFromEnv(): ContentSourceMode {
 }
 
 function createD1R2Source(): BlogContentSource {
-  const adapter = createContentAdapter("d1r2");
-
-  async function listCategoriesFromD1(input: CategoryListInput) {
-    const result = await adapter.listCategories({
-      depth: input.depth,
-      parentSlug: input.parentSlug,
-    });
-    if (!result.ok) return [];
-    const depth = input.depth === 1 ? 1 : 2;
-    return result.data.items
-      .filter((category) => category.depth === depth)
-      .filter((category) =>
-        input.parentSlug ? category.parentSlug === normalizeCategoryPath(input.parentSlug) : true,
-      )
-      .map((category) => ({
-        slug: category.slug,
-        label: category.name,
-        description: undefined,
-        depth: category.depth,
-        parentSlug: category.parentSlug ?? undefined,
-      }))
-      .sort(sortByPathSlug);
-  }
-
-  async function listPostsFromD1(input: ContentListInput = {}): Promise<PublicPost[]> {
-    const result = await adapter.listPosts({
-      publishedOnly: input.publishedOnly ?? true,
-      page: normalizePage(input.page),
-      limit: normalizeLimit(input.limit),
-      tagSlug: input.tagSlug,
-      categoryPath: input.categoryPath,
-      query: input.query,
-      includeTotal: input.includeTotal,
-      includeTags: input.includeTags,
-      includeMedia: input.includeMedia,
-    });
-    if (!result.ok) return [];
-
-    return Promise.all(
-      result.data.items.map((post) => toPublicSourcePost(post, { analyzeBody: input.analyzeBody })),
-    );
-  }
-
-  async function getPostsByTagFromD1(input: {
-    tagSlug: string;
-    page?: number;
-    limit?: number;
-    publishedOnly?: boolean;
-  }): Promise<PublicPost[]> {
-    const normalizedTag = normalizeSlug(input.tagSlug);
-    const result = await adapter.getPostsByTag({
-      tagSlug: normalizedTag,
-      publishedOnly: input.publishedOnly ?? true,
-      page: normalizePage(input.page),
-      limit: normalizeLimit(input.limit),
-    });
-    if (!result.ok) return [];
-
-    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
-  }
-
-  async function getPostsByCategoryPathFromD1(input: {
-    categoryPath: string;
-    page?: number;
-    limit?: number;
-    publishedOnly?: boolean;
-  }): Promise<PublicPost[]> {
-    const categoryPath = normalizeCategoryPath(input.categoryPath);
-    if (!categoryPath) return [];
-    const result = await adapter.getPostsByCategoryPath({
-      categoryPath,
-      publishedOnly: input.publishedOnly ?? true,
-      page: normalizePage(input.page),
-      limit: normalizeLimit(input.limit),
-    });
-    if (!result.ok) return [];
-
-    return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
-  }
-
-  async function getCategoryByPathFromD1(path: string): Promise<CategoryHierarchy | undefined> {
-    const categoryPath = normalizeCategoryPath(path);
-    if (!categoryPath) return;
-    const categoryItems = await listCategoriesFromD1({
-      depth: categoryPath.includes("/") ? 2 : 1,
-      parentSlug: categoryPath.includes("/") ? categoryPath.split("/")[0] : undefined,
-    });
-    return categoryItems.find((category) => category.slug === categoryPath);
-  }
-
-  async function getPostBySlugFromD1(
-    slug: string,
-    options?: { analyzeBody?: boolean },
-  ): Promise<PublicPost | undefined> {
-    const normalized = normalizeSlug(slug);
-    if (!normalized) return;
-    const result = await adapter.getPostBySlug(normalized);
-    if (!result.ok || !result.data) return;
-    return toPublicSourcePost(result.data, { analyzeBody: options?.analyzeBody });
-  }
-
   return {
     mode: "d1r2",
-    listPosts: listPostsFromD1,
-    getPostBySlug: getPostBySlugFromD1,
+    listPosts: cachedListPosts,
+    getPostBySlug: cachedGetPostBySlug,
     getPostsByTag: (slug: string, input: Omit<ContentListInput, "tagSlug"> = {}) =>
-      getPostsByTagFromD1({
+      cachedGetPostsByTag({
         tagSlug: slug,
         publishedOnly: input.publishedOnly ?? true,
         page: input.page,
@@ -342,17 +242,170 @@ function createD1R2Source(): BlogContentSource {
       categoryPath: string,
       input: Omit<ContentListInput, "categoryPath"> = {},
     ) =>
-      getPostsByCategoryPathFromD1({
+      cachedGetPostsByCategoryPath({
         categoryPath,
         publishedOnly: input.publishedOnly ?? true,
         page: input.page,
         limit: input.limit,
       }),
-    listCategories: listCategoriesFromD1,
-    getCategoryByPath: getCategoryByPathFromD1,
+    listCategories: cachedListCategories,
+    getCategoryByPath: cachedGetCategoryByPath,
     getSiteConfig: loadSiteConfig,
   };
 }
+
+export const blogContentCacheTags = {
+  posts: "blog-content-posts",
+  categories: "blog-content-categories",
+} as const;
+
+const CONTENT_CACHE_REVALIDATE_SECONDS = 300;
+
+function cacheContentSourceRead<Args extends unknown[], T>(
+  name: string,
+  tags: readonly string[],
+  fn: (...args: Args) => Promise<T>,
+) {
+  return unstable_cache(fn, ["blog-content", name], {
+    revalidate: CONTENT_CACHE_REVALIDATE_SECONDS,
+    tags: [...tags],
+  });
+}
+
+async function listCategoriesFromD1(input: CategoryListInput) {
+  const adapter = createContentAdapter("d1r2");
+  const result = await adapter.listCategories({
+    depth: input.depth,
+    parentSlug: input.parentSlug,
+  });
+  if (!result.ok) return [];
+  const depth = input.depth === 1 ? 1 : 2;
+  return result.data.items
+    .filter((category) => category.depth === depth)
+    .filter((category) =>
+      input.parentSlug ? category.parentSlug === normalizeCategoryPath(input.parentSlug) : true,
+    )
+    .map((category) => ({
+      slug: category.slug,
+      label: category.name,
+      description: undefined,
+      depth: category.depth,
+      parentSlug: category.parentSlug ?? undefined,
+    }))
+    .sort(sortByPathSlug);
+}
+
+async function listPostsFromD1(input: ContentListInput = {}): Promise<PublicPost[]> {
+  const adapter = createContentAdapter("d1r2");
+  const result = await adapter.listPosts({
+    publishedOnly: input.publishedOnly ?? true,
+    page: normalizePage(input.page),
+    limit: normalizeLimit(input.limit),
+    tagSlug: input.tagSlug,
+    categoryPath: input.categoryPath,
+    query: input.query,
+    includeTotal: input.includeTotal,
+    includeTags: input.includeTags,
+    includeMedia: input.includeMedia,
+  });
+  if (!result.ok) return [];
+
+  return Promise.all(
+    result.data.items.map((post) => toPublicSourcePost(post, { analyzeBody: input.analyzeBody })),
+  );
+}
+
+async function getPostsByTagFromD1(input: {
+  tagSlug: string;
+  page?: number;
+  limit?: number;
+  publishedOnly?: boolean;
+}): Promise<PublicPost[]> {
+  const normalizedTag = normalizeSlug(input.tagSlug);
+  const adapter = createContentAdapter("d1r2");
+  const result = await adapter.getPostsByTag({
+    tagSlug: normalizedTag,
+    publishedOnly: input.publishedOnly ?? true,
+    page: normalizePage(input.page),
+    limit: normalizeLimit(input.limit),
+  });
+  if (!result.ok) return [];
+
+  return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
+}
+
+async function getPostsByCategoryPathFromD1(input: {
+  categoryPath: string;
+  page?: number;
+  limit?: number;
+  publishedOnly?: boolean;
+}): Promise<PublicPost[]> {
+  const categoryPath = normalizeCategoryPath(input.categoryPath);
+  if (!categoryPath) return [];
+  const adapter = createContentAdapter("d1r2");
+  const result = await adapter.getPostsByCategoryPath({
+    categoryPath,
+    publishedOnly: input.publishedOnly ?? true,
+    page: normalizePage(input.page),
+    limit: normalizeLimit(input.limit),
+  });
+  if (!result.ok) return [];
+
+  return Promise.all(result.data.items.map((post) => toPublicSourcePost(post)));
+}
+
+async function getCategoryByPathFromD1(path: string): Promise<CategoryHierarchy | undefined> {
+  const categoryPath = normalizeCategoryPath(path);
+  if (!categoryPath) return;
+  const categoryItems = await listCategoriesFromD1({
+    depth: categoryPath.includes("/") ? 2 : 1,
+    parentSlug: categoryPath.includes("/") ? categoryPath.split("/")[0] : undefined,
+  });
+  return categoryItems.find((category) => category.slug === categoryPath);
+}
+
+async function getPostBySlugFromD1(
+  slug: string,
+  options?: { analyzeBody?: boolean },
+): Promise<PublicPost | undefined> {
+  const normalized = normalizeSlug(slug);
+  if (!normalized) return;
+  const adapter = createContentAdapter("d1r2");
+  const result = await adapter.getPostBySlug(normalized);
+  if (!result.ok || !result.data) return;
+  return toPublicSourcePost(result.data, { analyzeBody: options?.analyzeBody });
+}
+
+const cachedListPosts = cacheContentSourceRead(
+  "list-posts",
+  [blogContentCacheTags.posts],
+  listPostsFromD1,
+);
+const cachedGetPostBySlug = cacheContentSourceRead(
+  "post-by-slug",
+  [blogContentCacheTags.posts],
+  getPostBySlugFromD1,
+);
+const cachedGetPostsByTag = cacheContentSourceRead(
+  "posts-by-tag",
+  [blogContentCacheTags.posts],
+  getPostsByTagFromD1,
+);
+const cachedGetPostsByCategoryPath = cacheContentSourceRead(
+  "posts-by-category",
+  [blogContentCacheTags.posts],
+  getPostsByCategoryPathFromD1,
+);
+const cachedListCategories = cacheContentSourceRead(
+  "list-categories",
+  [blogContentCacheTags.categories],
+  listCategoriesFromD1,
+);
+const cachedGetCategoryByPath = cacheContentSourceRead(
+  "category-by-path",
+  [blogContentCacheTags.categories],
+  getCategoryByPathFromD1,
+);
 
 export function getContentSourceMode(): ContentSourceMode {
   return resolveModeFromEnv();
@@ -362,9 +415,28 @@ export async function getContentSource(): Promise<BlogContentSource> {
   return createD1R2Source();
 }
 
+function normalizeContentListInput(input: ContentListInput): ContentListInput {
+  const normalized: ContentListInput = {
+    publishedOnly: input.publishedOnly,
+    page: input.page,
+    limit: input.limit,
+    tagSlug: input.tagSlug,
+    categoryPath: input.categoryPath,
+    query: input.query,
+    includeTotal: input.includeTotal,
+    includeTags: input.includeTags,
+    includeMedia: input.includeMedia,
+    analyzeBody: input.analyzeBody,
+  };
+  for (const key of Object.keys(normalized) as Array<keyof ContentListInput>) {
+    if (normalized[key] === undefined) delete normalized[key];
+  }
+  return normalized;
+}
+
 export async function getPublishedPosts(input: ContentListInput = {}): Promise<PublicPost[]> {
   const source = await getContentSource();
-  return source.listPosts({ ...input, publishedOnly: true, page: input.page, limit: input.limit });
+  return source.listPosts(normalizeContentListInput({ ...input, publishedOnly: true }));
 }
 
 export async function searchPosts(input: {
@@ -374,15 +446,17 @@ export async function searchPosts(input: {
   limit?: number;
 }): Promise<PublicPost[]> {
   const source = await getContentSource();
-  return source.listPosts({
-    publishedOnly: true,
-    page: input.page,
-    limit: input.limit,
-    categoryPath: input.categoryPath,
-    query: input.query,
-    includeTotal: false,
-    analyzeBody: false,
-  });
+  return source.listPosts(
+    normalizeContentListInput({
+      publishedOnly: true,
+      page: input.page,
+      limit: input.limit,
+      categoryPath: input.categoryPath,
+      query: input.query,
+      includeTotal: false,
+      analyzeBody: false,
+    }),
+  );
 }
 
 export async function getPostBySlug(

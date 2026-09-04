@@ -1,5 +1,7 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+
+import { blogContentCacheTags } from "@/features/blog/server/content-source";
 
 type RevalidateRequest = {
   path?: unknown;
@@ -33,6 +35,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "A public path is required." }, { status: 400 });
   }
 
+  revalidateTag(blogContentCacheTags.posts, "max");
+  revalidateTag(blogContentCacheTags.categories, "max");
   revalidatePath(body.path);
   return NextResponse.json({ ok: true, path: body.path, revalidatedAt: new Date().toISOString() });
 }

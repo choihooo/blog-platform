@@ -188,7 +188,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
               {pagination.totalCount}개의 글{query ? `, "${query}" 검색 결과` : ""}
             </p>
             <div aria-label="보기 방식" className="flex items-center gap-2">
-              <a
+              <AnalyticsLink
                 aria-label="타일뷰"
                 aria-current={view === "tile" ? "page" : undefined}
                 className={`grid size-10 place-items-center rounded-md border ${
@@ -204,8 +204,8 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
                 })}
               >
                 <Grid2X2 aria-hidden="true" size={18} />
-              </a>
-              <a
+              </AnalyticsLink>
+              <AnalyticsLink
                 aria-label="리스트뷰"
                 aria-current={view === "list" ? "page" : undefined}
                 className={`grid size-10 place-items-center rounded-md border ${
@@ -221,7 +221,7 @@ export default async function BlogHomePage({ searchParams }: BlogHomePageProps) 
                 })}
               >
                 <List aria-hidden="true" size={19} />
-              </a>
+              </AnalyticsLink>
             </div>
           </div>
           <PostList
