@@ -4,22 +4,16 @@ import { SearchBar } from "@hozui/react";
 import { useFormStatus } from "react-dom";
 
 export function BlogSearchForm({
-  activeCategory,
   className,
   query,
   size = "lg",
-  view,
 }: {
-  activeCategory?: string;
   className?: string;
   query: string;
   size?: "sm" | "md" | "lg";
-  view: "tile" | "list";
 }) {
   return (
-    <form action="/blog" className={className ?? "relative mx-auto w-full max-w-xl"}>
-      {activeCategory ? <input name="category" type="hidden" value={activeCategory} /> : null}
-      {view === "list" ? <input name="view" type="hidden" value="list" /> : null}
+    <form action="/blog/search" className={className ?? "relative mx-auto w-full max-w-xl"}>
       <BlogSearchBar query={query} size={size} />
     </form>
   );
@@ -43,5 +37,5 @@ function BlogSearchBar({ query, size }: { query: string; size: "sm" | "md" | "lg
 }
 
 export function BlogHeaderSearchForm() {
-  return <BlogSearchForm className="hidden w-56 md:block lg:w-72" query="" size="sm" view="tile" />;
+  return <BlogSearchForm className="hidden w-56 md:block lg:w-72" query="" size="sm" />;
 }

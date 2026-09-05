@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { trimSlash } from "@blog-platform/seo-engine";
 
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
-import { PostList } from "@/features/blog/components/post-list";
 import {
+  POSTS_PER_PAGE,
   paginateItems,
-  parsePageParam,
   PostPagination,
 } from "@/features/blog/components/post-pagination";
+import { PostListView } from "@/features/blog/components/post-list-view";
+import { categoryListingMetadata } from "@/features/blog/lib/listing-metadata";
 import {
   getCategoryByPath,
   getPostsByCategoryPath,
@@ -16,72 +16,82 @@ import {
   listCategories,
 } from "@/features/blog/server/content-source";
 
-export const dynamic = "force-dynamic";
-
 type CategoryPageProps = {
   params: Promise<{
     categoryPath: string[];
   }>;
-  searchParams?: Promise<{
-    page?: string | string[];
-  }>;
 };
 
+type CategoryRoute = {
+  path: string;
+  page: number;
+};
+
+function parseCategoryRoute(segments: string[]): CategoryRoute | null {
+  const parts = segments.map((part) => part.trim().toLowerCase()).filter(Boolean);
+  let page = 1;
+  if (parts.length >= 3 && parts[parts.length - 2] === "page") {
+    const value = Number(parts[parts.length - 1]);
+    if (!Number.isInteger(value) || value < 1) return null;
+    page = value;
+    parts.length -= 2;
+  }
+  if (parts.length < 1 || parts.length > 2 || parts.includes("page")) return null;
+  return { path: parts.join("/"), page };
+}
+
 export async function generateStaticParams() {
-  const categories = await listCategories({ depth: 1 });
-  const depth2 = await listCategories({ depth: 2 });
+  const [depth1, depth2] = await Promise.all([
+    listCategories({ depth: 1 }),
+    listCategories({ depth: 2 }),
+  ]);
+  const categories = [...depth1, ...depth2];
+  const pagesPerCategory: number[] = await Promise.all(
+    categories.map(async (category) => {
+      const posts = await getPostsByCategoryPath(category.slug, {
+        limit: 100,
+        publishedOnly: true,
+      });
+      return Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+    }),
+  );
 
-  return [...categories, ...depth2].map((category) => ({
-    categoryPath: category.slug.split("/"),
-  }));
+  return categories.flatMap((category, index) => {
+    const segments = category.slug.split("/");
+    const totalPages = pagesPerCategory[index] ?? 1;
+    return Array.from({ length: totalPages }, (_, pageIndex) => pageIndex + 1).map((page) => ({
+      categoryPath: page > 1 ? [...segments, "page", String(page)] : segments,
+    }));
+  });
 }
 
-function toCanonicalPath(parts: string[]) {
-  return parts
-    .map((part) => part.trim().toLowerCase())
-    .filter(Boolean)
-    .join("/")
-    .replace(/^\/+|\/+$/g, "");
-}
-
-export async function generateMetadata({
-  params,
-  searchParams,
-}: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { categoryPath } = await params;
-  const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
-    Promise.resolve({}));
-  const path = toCanonicalPath(categoryPath);
-  const page = parsePageParam(resolvedSearchParams.page);
-  const [category, site] = await Promise.all([getCategoryByPath(path), getSiteConfig()]);
+  const route = parseCategoryRoute(categoryPath);
+  if (!route) notFound();
+  const [category, site] = await Promise.all([getCategoryByPath(route.path), getSiteConfig()]);
   if (!category) notFound();
-  return {
-    title: page > 1 ? `${category.label} - ${page}페이지` : category.label,
-    description: category.description,
-    alternates: {
-      canonical: `${trimSlash(site.siteUrl)}/blog/categories/${category.slug}${page > 1 ? `?page=${page}` : ""}`,
-    },
-  };
+  return categoryListingMetadata({
+    siteUrl: site.siteUrl,
+    label: category.label,
+    slug: category.slug,
+    page: route.page,
+  });
 }
 
-function categoryHrefForPage(path: string, page: number) {
-  return page > 1 ? `/blog/categories/${path}?page=${page}` : `/blog/categories/${path}`;
-}
-
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default async function CategoryPage({ params }: CategoryPageProps) {
   const { categoryPath } = await params;
-  const resolvedSearchParams: { page?: string | string[] } = await (searchParams ??
-    Promise.resolve({}));
-  const path = toCanonicalPath(categoryPath);
-  if (!path) notFound();
+  const route = parseCategoryRoute(categoryPath);
+  if (!route) notFound();
 
-  const [category, posts] = await Promise.all([
-    getCategoryByPath(path),
-    getPostsByCategoryPath(path, { limit: 100, publishedOnly: true }),
+  const [category, posts, site] = await Promise.all([
+    getCategoryByPath(route.path),
+    getPostsByCategoryPath(route.path, { limit: 100, publishedOnly: true }),
+    getSiteConfig(),
   ]);
   if (!category) notFound();
-  const site = await getSiteConfig();
-  const pagination = paginateItems(posts, parsePageParam(resolvedSearchParams.page));
+  const pagination = paginateItems(posts, route.page);
+  if (route.page > pagination.totalPages) notFound();
   const analyticsContext = {
     provider: site.analytics.provider,
     slug: `category:${category.slug}`,
@@ -109,10 +119,18 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         ) : null}
       </section>
       <section className="space-y-5">
-        <PostList analyticsContext={analyticsContext} posts={pagination.items} />
+        <PostListView
+          analyticsContext={analyticsContext}
+          posts={pagination.items}
+          summary={`${pagination.totalCount}개의 글`}
+        />
         <PostPagination
           currentPage={pagination.currentPage}
-          hrefForPage={(page) => categoryHrefForPage(path, page)}
+          hrefForPage={(page) =>
+            page > 1
+              ? `/blog/categories/${route.path}/page/${page}`
+              : `/blog/categories/${route.path}`
+          }
           totalPages={pagination.totalPages}
         />
       </section>

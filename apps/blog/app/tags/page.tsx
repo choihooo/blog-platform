@@ -5,7 +5,7 @@ import { trimSlash } from "@blog-platform/seo-engine";
 
 import { getPublishedPosts, getSiteConfig, getTags } from "@/features/blog/server/content-source";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteConfig();

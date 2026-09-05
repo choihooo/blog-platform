@@ -50,16 +50,13 @@ vi.mock("@/features/blog/server/content-source", () => ({
 
 describe("generated output routes", () => {
   it("keeps listing pages self-canonical and prevents search result indexing", async () => {
-    const { homeListingMetadata } = await import("@/features/blog/lib/listing-metadata");
+    const { homeListingMetadata, searchListingMetadata } =
+      await import("@/features/blog/lib/listing-metadata");
     const listing = homeListingMetadata({ siteUrl: "https://example.com", page: 2 });
-    const search = homeListingMetadata({
-      siteUrl: "https://example.com",
-      page: 1,
-      query: "hello",
-    });
+    const search = searchListingMetadata({ siteUrl: "https://example.com", query: "hello" });
 
-    expect(listing.alternates?.canonical).toBe("https://example.com/blog?page=2");
-    expect(search.alternates?.canonical).toBe("https://example.com/blog");
+    expect(listing.alternates?.canonical).toBe("https://example.com/blog/page/2");
+    expect(search.alternates?.canonical).toBe("https://example.com/blog/search");
     expect(search.robots).toEqual({ index: false, follow: true });
   });
 

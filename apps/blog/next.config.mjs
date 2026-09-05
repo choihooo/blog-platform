@@ -75,12 +75,29 @@ const nextConfig = {
       },
       { source: "/posts/:slug", destination: "/blog/:slug", permanent: true },
       {
+        source: "/blog",
+        has: [{ type: "query", key: "q", value: "(?<q>.+)" }],
+        destination: "/blog/search?q=:q",
+        permanent: false,
+      },
+      {
+        source: "/blog",
+        has: [{ type: "query", key: "page", value: "(?<page>[0-9]+)" }],
+        destination: "/blog/page/:page",
+        permanent: true,
+      },
+      {
         source: "/categories/:path*",
         destination: "/blog/categories/:path*",
         permanent: true,
       },
       { source: "/tags", destination: "/blog/tags", permanent: true },
       { source: "/tags/:slug", destination: "/blog/tags/:slug", permanent: true },
+      {
+        source: "/tags/:slug/page/:page",
+        destination: "/blog/tags/:slug/page/:page",
+        permanent: true,
+      },
       { source: "/rss.xml", destination: "/blog/rss.xml", permanent: true },
     ];
   },
@@ -89,7 +106,9 @@ const nextConfig = {
       { source: "/blog/rss.xml", destination: "/rss.xml" },
       { source: "/blog/categories/:path*", destination: "/categories/:path*" },
       { source: "/blog/tags", destination: "/tags" },
+      { source: "/blog/tags/:slug/page/:page", destination: "/tags/:slug/page/:page" },
       { source: "/blog/tags/:slug", destination: "/tags/:slug" },
+      { source: "/blog/search", destination: "/blog/search" },
       { source: "/blog/:slug", destination: "/posts/:slug" },
     ];
   },
