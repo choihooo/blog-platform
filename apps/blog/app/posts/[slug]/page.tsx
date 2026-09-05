@@ -204,7 +204,7 @@ function PostBodyRenderer({
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
-  if (!post) return {};
+  if (!post) notFound();
   const metadata = generatePageMetadata(postToSeoSubject(post, siteForSeo(site)));
 
   return {

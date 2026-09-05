@@ -38,15 +38,14 @@ export async function generateMetadata({ params, searchParams }: TagPageProps): 
     Promise.resolve({}));
   const page = parsePageParam(resolvedSearchParams.page);
   const [tag, site] = await Promise.all([getTag(slug), getSiteConfig()]);
-  return tag
-    ? {
-        title: page > 1 ? `${tag.label} - ${page}페이지` : tag.label,
-        description: tag.description,
-        alternates: {
-          canonical: `${trimSlash(site.siteUrl)}/blog/tags/${tag.slug}${page > 1 ? `?page=${page}` : ""}`,
-        },
-      }
-    : {};
+  if (!tag) notFound();
+  return {
+    title: page > 1 ? `${tag.label} - ${page}페이지` : tag.label,
+    description: tag.description,
+    alternates: {
+      canonical: `${trimSlash(site.siteUrl)}/blog/tags/${tag.slug}${page > 1 ? `?page=${page}` : ""}`,
+    },
+  };
 }
 
 function tagHrefForPage(slug: string, page: number) {

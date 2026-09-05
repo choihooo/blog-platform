@@ -54,15 +54,14 @@ export async function generateMetadata({
   const path = toCanonicalPath(categoryPath);
   const page = parsePageParam(resolvedSearchParams.page);
   const [category, site] = await Promise.all([getCategoryByPath(path), getSiteConfig()]);
-  return category
-    ? {
-        title: page > 1 ? `${category.label} - ${page}페이지` : category.label,
-        description: category.description,
-        alternates: {
-          canonical: `${trimSlash(site.siteUrl)}/blog/categories/${category.slug}${page > 1 ? `?page=${page}` : ""}`,
-        },
-      }
-    : {};
+  if (!category) notFound();
+  return {
+    title: page > 1 ? `${category.label} - ${page}페이지` : category.label,
+    description: category.description,
+    alternates: {
+      canonical: `${trimSlash(site.siteUrl)}/blog/categories/${category.slug}${page > 1 ? `?page=${page}` : ""}`,
+    },
+  };
 }
 
 function categoryHrefForPage(path: string, page: number) {
