@@ -2,10 +2,20 @@ import { isRagResult, type RagResult } from "./contracts";
 import { factualAnswer } from "./factual";
 import { searchQuery } from "./identity";
 import { projectCatalog, noEvidence } from "./discovery";
+import { visitorAnswer, projectDetail } from "./visitor";
+import { articleDiscovery } from "./article-discovery";
 
 export async function retrieve(query: string, signal?: AbortSignal): Promise<RagResult> {
-  const facts = projectCatalog(query) ?? factualAnswer(query);
+  const facts =
+    visitorAnswer(query) ?? projectDetail(query) ?? projectCatalog(query) ?? factualAnswer(query);
   if (facts) return facts;
+  if (/글|블로그|포스트/.test(query) && /최근|요즘|AI 제외/.test(query)) {
+    const { getPublishedPostsStrict } = await import("../blog/server/content-source");
+    return articleDiscovery(
+      query,
+      await getPublishedPostsStrict({ limit: 100, analyzeBody: false }),
+    );
+  }
   const base = process.env.RAG_API_URL;
   const token = process.env.RAG_SEARCH_TOKEN;
   if (!base || !token) throw new Error("rag_not_configured");

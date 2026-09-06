@@ -4,6 +4,28 @@ import { describe, expect, it } from "vitest";
 import { ChatAnswer } from "./chat-answer";
 
 describe("readable chat answers", () => {
+  it("renders comparison data as an accessible table", () => {
+    const html = renderToStaticMarkup(
+      createElement(ChatAnswer, {
+        text: "| 프로젝트 | 역할 |\n| --- | --- |\n| Nexacro | Frontend |",
+      }),
+    );
+    expect(html).toContain("<table>");
+    expect(html).toContain('scope="col"');
+    expect(html).toContain('aria-label="답변 비교표"');
+    expect(html).toContain("<td>Nexacro</td>");
+  });
+  it("renders safe source links without accepting executable URLs", () => {
+    const html = renderToStaticMarkup(
+      createElement(ChatAnswer, {
+        text: "[이력서](/resume) [코드](https://github.com/choihooo/blog-platform) [bad](javascript:alert) [bad](//evil.test)",
+      }),
+    );
+    expect(html).toContain('href="/resume"');
+    expect(html).toContain('href="https://github.com/choihooo/blog-platform"');
+    expect(html).not.toContain('href="javascript:');
+    expect(html).not.toContain('href="//evil');
+  });
   it("renders factual sections as headings and separate list items", () => {
     const html = renderToStaticMarkup(
       createElement(ChatAnswer, {

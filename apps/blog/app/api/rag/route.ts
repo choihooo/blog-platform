@@ -1,6 +1,7 @@
 import { boundedJson, queryFrom } from "@/features/rag/contracts";
 import { retrieve } from "@/features/rag/server";
 import { isSearchContext, resolveFollowUp, type SearchContext } from "@/features/rag/follow-up";
+import { conversationAnswer } from "@/features/rag/conversation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
   let query: string | null;
   let context: SearchContext | undefined;
   try {
-    const body = await boundedJson(request, 8192);
+    const body = await boundedJson(request, 32768);
     query = queryFrom(body);
     if (body && typeof body === "object" && "context" in body && body.context !== undefined) {
       if (!isSearchContext(body.context)) throw new Error("invalid_context");
@@ -23,10 +24,13 @@ export async function POST(request: Request) {
   }
   if (!query) return Response.json({ error: "invalid_query" }, { status: 400 });
   try {
-    const resolved = resolveFollowUp(query, context);
-    const result = resolved.clarification
-      ? { answer: resolved.clarification, sources: [], kind: "clarification" }
-      : await retrieve(resolved.query, request.signal);
+    const special = await conversationAnswer(query, context, request.signal);
+    const resolved = special ? { query: context?.query ?? query } : resolveFollowUp(query, context);
+    const result =
+      special ??
+      (resolved.clarification
+        ? { answer: resolved.clarification, sources: [], kind: "clarification" }
+        : await retrieve(resolved.query, request.signal));
     return Response.json(
       { ...result, resolvedQuery: resolved.query },
       {

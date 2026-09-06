@@ -219,6 +219,12 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
       const resolvedQuery = result.resolvedQuery ?? text;
       if (!benchmark && result.sources.length) {
         searchContext.current = {
+          history: [
+            ...(searchContext.current?.history ?? []),
+            ...(searchContext.current
+              ? [{ query: searchContext.current.query, titles: searchContext.current.titles }]
+              : []),
+          ].slice(-5),
           query: resolvedQuery,
           titles: [
             ...new Set(
@@ -226,8 +232,6 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
             ),
           ].slice(0, 3),
         };
-      } else if (!benchmark && result.kind !== "clarification") {
-        searchContext.current = undefined;
       }
       if (result.answer) {
         // Authoritative career/metric answers must never be paraphrased by the small model.

@@ -295,7 +295,10 @@ async function listCategoriesFromD1(input: CategoryListInput) {
     .sort(sortByPathSlug);
 }
 
-async function listPostsFromD1(input: ContentListInput = {}): Promise<PublicPost[]> {
+async function listPostsFromD1(
+  input: ContentListInput = {},
+  strict = false,
+): Promise<PublicPost[]> {
   const adapter = createContentAdapter("d1r2");
   const result = await adapter.listPosts({
     publishedOnly: input.publishedOnly ?? true,
@@ -308,7 +311,10 @@ async function listPostsFromD1(input: ContentListInput = {}): Promise<PublicPost
     includeTags: input.includeTags,
     includeMedia: input.includeMedia,
   });
-  if (!result.ok) return [];
+  if (!result.ok) {
+    if (strict) throw new Error("retrieval_unavailable");
+    return [];
+  }
 
   return Promise.all(
     result.data.items.map((post) => toPublicSourcePost(post, { analyzeBody: input.analyzeBody })),
@@ -437,6 +443,11 @@ function normalizeContentListInput(input: ContentListInput): ContentListInput {
 export async function getPublishedPosts(input: ContentListInput = {}): Promise<PublicPost[]> {
   const source = await getContentSource();
   return source.listPosts(normalizeContentListInput({ ...input, publishedOnly: true }));
+}
+
+/** Chat must distinguish an upstream outage from an empty public catalog. */
+export async function getPublishedPostsStrict(input: ContentListInput = {}): Promise<PublicPost[]> {
+  return listPostsFromD1(normalizeContentListInput({ ...input, publishedOnly: true }), true);
 }
 
 export async function searchPosts(input: {

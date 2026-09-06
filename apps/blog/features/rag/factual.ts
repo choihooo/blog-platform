@@ -32,7 +32,9 @@ export function factualAnswer(query: string): RagResult | null {
   const articleQuery = /글|블로그|포스트/.test(query);
   if (
     !articleQuery &&
-    /활동|경험|수상|기술\s*스택/.test(query) &&
+    /^(?:개발\s*)?(?:활동|경험|수상|기술\s*스택)(?:\s*(?:내역|알려줘|보여줘|있어))?[?.!\s]*$/.test(
+      query,
+    ) &&
     !careerIntent.test(query) &&
     !resultIntent.test(query)
   ) {

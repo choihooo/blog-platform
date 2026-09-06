@@ -2,6 +2,25 @@ import type { RagSource } from "../rag/contracts";
 
 export type ChatArticle = { source: RagSource; summary: string };
 
+function inlineLinks(text: string) {
+  return text.split(/(\[[^\]\n]+\]\([^\s)]+\))/g).map((part, i) => {
+    const match = /^\[([^\]]+)\]\(([^\s)]+)\)$/.exec(part);
+    if (!match) return part;
+    const href = match[2]!;
+    if (
+      !/^(?:https:\/\/|\/(?!\/))/.test(href) ||
+      href.includes("\\") ||
+      [...href].some((c) => c.charCodeAt(0) < 32)
+    )
+      return part;
+    return (
+      <a key={i} href={href} target="_blank" rel="noopener noreferrer">
+        {match[1]}
+      </a>
+    );
+  });
+}
+
 /** Only headings and bullet lines from our factual formatter; never interpret HTML. */
 export function ChatAnswer({ text, articles }: { text: string; articles?: ChatArticle[] }) {
   if (articles?.length)
@@ -24,6 +43,47 @@ export function ChatAnswer({ text, articles }: { text: string; articles?: ChatAr
       {blocks.length ? (
         blocks.map((block, i) => {
           const lines = block.split("\n");
+          if (
+            lines.length >= 3 &&
+            lines.every((line) => line.startsWith("|")) &&
+            /^\|[\s:|-]+\|$/.test(lines[1]!)
+          ) {
+            const cells = (line: string) =>
+              line
+                .split("|")
+                .slice(1, -1)
+                .map((s) => s.trim());
+            return (
+              <div
+                key={i}
+                style={{ maxWidth: "100%", overflowX: "auto" }}
+                tabIndex={0}
+                role="region"
+                aria-label="답변 비교표"
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      {cells(lines[0]!).map((s, j) => (
+                        <th key={j} scope="col">
+                          {s}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lines.slice(2).map((line, j) => (
+                      <tr key={j}>
+                        {cells(line).map((s, k) => (
+                          <td key={k}>{inlineLinks(s)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
           return (
             <div className="chat-answer-block" key={i}>
               {lines[0]?.startsWith("## ") && <h3>{lines.shift()!.slice(3)}</h3>}
@@ -31,11 +91,11 @@ export function ChatAnswer({ text, articles }: { text: string; articles?: ChatAr
                 (lines.every((line) => line.startsWith("- ")) ? (
                   <ul>
                     {lines.map((line, j) => (
-                      <li key={j}>{line.slice(2)}</li>
+                      <li key={j}>{inlineLinks(line.slice(2))}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p>{lines.join("\n")}</p>
+                  <p>{inlineLinks(lines.join("\n"))}</p>
                 ))}
             </div>
           );
