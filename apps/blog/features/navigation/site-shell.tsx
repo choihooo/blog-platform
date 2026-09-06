@@ -6,6 +6,7 @@ import { BlogHeaderSearchForm } from "@/features/blog/components/blog-search-for
 import { DesktopNavigation } from "./desktop-navigation";
 import { MobileNavigationMenu, type MobileNavigationCategory } from "./mobile-navigation-menu";
 import { ThemeSwitch } from "./theme-switch";
+import { HomeAwareShell } from "./home-aware-shell";
 
 type SiteShellProps = {
   children: ReactNode;
@@ -15,29 +16,35 @@ type SiteShellProps = {
 
 export function SiteShell({ categories, children, siteName }: SiteShellProps) {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-background print:hidden">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link className="flex items-center gap-2 text-lg font-semibold tracking-normal" href="/">
-            <Image
-              alt=""
-              className="h-8 w-8 rounded-md"
-              height={32}
-              priority
-              src="/brand/hozorica-logo.webp"
-              width={32}
-            />
-            {siteName}
-          </Link>
-          <div className="hidden items-center gap-4 xl:flex">
-            <BlogHeaderSearchForm />
-            <DesktopNavigation />
-            <ThemeSwitch />
+    <HomeAwareShell
+      header={
+        <header className="border-b border-border bg-background print:hidden">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
+            <Link
+              className="flex items-center gap-2 text-lg font-semibold tracking-normal"
+              href="/"
+            >
+              <Image
+                alt=""
+                className="h-8 w-8 rounded-md"
+                height={32}
+                priority
+                src="/brand/hozorica-logo.webp"
+                width={32}
+              />
+              {siteName}
+            </Link>
+            <div className="hidden items-center gap-4 xl:flex">
+              <BlogHeaderSearchForm />
+              <DesktopNavigation />
+              <ThemeSwitch />
+            </div>
+            <MobileNavigationMenu categories={categories} />
           </div>
-          <MobileNavigationMenu categories={categories} />
-        </div>
-      </header>
+        </header>
+      }
+    >
       {children}
-    </div>
+    </HomeAwareShell>
   );
 }

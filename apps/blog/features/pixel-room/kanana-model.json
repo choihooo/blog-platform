@@ -1,0 +1,10 @@
+{
+  "sourceUrl": "https://huggingface.co/dummy9996/kanana-2-1.3b-instruct-GGUF/resolve/6c998111f40f3ab7adf65620a6a752230d8c75f6/kanana-2-1.3b-instruct-Q8_0.gguf",
+  "sourceSha256": "0b63b6b68f0c1f0e667ad070808dfee7a03db06fc41c3fe23c9d794841c6f801",
+  "sourceBytes": 1377890688,
+  "directory": "kanana-q8-0b63b6b68f0c-v1",
+  "firstShard": "kanana-q8-00001-of-00003.gguf",
+  "publicModelBaseUrl": "https://pub-2eadf17a82cb46679204775b78a2c16a.r2.dev/models",
+  "shardMaxSize": "512M",
+  "parallelDownloads": 3
+}

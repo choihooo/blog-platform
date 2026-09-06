@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { getSiteConfig } from "@/features/blog/server/content-source";
-import { HomeExperience } from "@/features/home/home-experience";
+import { PixelRoom } from "@/features/pixel-room/pixel-room";
 import { personJsonLd, serializeJsonLd } from "@/shared/seo/person-json-ld";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function PortfolioHomePage() {
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(personJsonLd(site)) }}
         type="application/ld+json"
       />
-      <HomeExperience />
+      <PixelRoom />
     </>
   );
 }

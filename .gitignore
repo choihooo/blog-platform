@@ -11,11 +11,17 @@ build/
 coverage/
 *.log
 *.tsbuildinfo
+apps/blog/public/wasm/wllama.wasm
+apps/blog/public/models/kanana-q8-*/
+apps/blog/public/models/hyperclova-q4-*/
+apps/blog/public/models/.kanana-staging-*/
 
 .turbo/
 .vercel/
 .open-next/
 .wrangler/
+.dev.vars
+.dev.vars.*
 
 .agents/
 .vercel

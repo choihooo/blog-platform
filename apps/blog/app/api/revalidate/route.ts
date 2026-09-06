@@ -2,6 +2,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { blogContentCacheTags } from "@/features/blog/server/content-source";
+import { syncPost } from "@/features/rag/server";
 
 type RevalidateRequest = {
   path?: unknown;
@@ -40,5 +41,20 @@ export async function POST(request: Request) {
   revalidatePath(body.path);
   const rewrittenPostPath = /^\/blog\/([^/]+)$/.exec(body.path);
   if (rewrittenPostPath) revalidatePath(`/posts/${rewrittenPostPath[1]}`);
+  const postPath = /^\/(?:blog|posts)\/([^/]+)$/.exec(body.path);
+  if (postPath && process.env.RAG_API_URL) {
+    try {
+      await syncPost(decodeURIComponent(postPath[1]!));
+    } catch {
+      return NextResponse.json(
+        {
+          ok: false,
+          revalidated: true,
+          message: "Page refreshed, but RAG sync failed. Retry refresh.",
+        },
+        { status: 502 },
+      );
+    }
+  }
   return NextResponse.json({ ok: true, path: body.path, revalidatedAt: new Date().toISOString() });
 }
