@@ -192,10 +192,11 @@ export function ProjectDetailPage({
             </h2>
             <div className="mt-6 divide-y divide-border border-y border-border">
               {project.relatedPosts.map((post) => (
-                <a
+                <Link
                   className="group grid gap-2 py-5 no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px sm:grid-cols-[1fr_auto] sm:items-center sm:gap-8"
                   href={`/blog/${post.slug}`}
                   key={post.slug}
+                  replace={mode === "modal"}
                 >
                   <span>
                     <span className="block text-base font-semibold sm:text-lg">{post.title}</span>
@@ -219,7 +220,7 @@ export function ProjectDetailPage({
                       strokeWidth="1.6"
                     />
                   </svg>
-                </a>
+                </Link>
               ))}
             </div>
           </section>

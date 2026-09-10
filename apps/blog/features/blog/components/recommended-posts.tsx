@@ -9,6 +9,7 @@ import { AnalyticsLink } from "./analytics-link";
 type RecommendedPostsProps = {
   analyticsContext?: PostAnalyticsContext;
   posts: PublicPost[];
+  replaceLinks?: boolean;
 };
 
 function canUseOptimizedImage(src: string) {
@@ -54,7 +55,11 @@ function RecommendedPostCover({ post }: { post: PublicPost }) {
   );
 }
 
-export function RecommendedPosts({ analyticsContext, posts }: RecommendedPostsProps) {
+export function RecommendedPosts({
+  analyticsContext,
+  posts,
+  replaceLinks = false,
+}: RecommendedPostsProps) {
   if (posts.length === 0) return null;
 
   return (
@@ -76,6 +81,7 @@ export function RecommendedPosts({ analyticsContext, posts }: RecommendedPostsPr
             eventName="recommended_post_click"
             href={`/blog/${post.slug}`}
             key={post.path}
+            replace={replaceLinks}
             target={post.slug}
           >
             <div className="blog-detail__recommended-cover">

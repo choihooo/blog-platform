@@ -10,6 +10,7 @@ type PostListProps = {
   posts: PublicPost[];
   analyticsContext?: PostAnalyticsContext;
   postClickEvent?: "post_card_click" | "search_result_click";
+  replaceLinks?: boolean;
   view?: "tile" | "list";
 };
 
@@ -35,9 +36,11 @@ function PostMeta({ post }: { post: PublicPost }) {
 function PostTaxonomy({
   analyticsContext,
   post,
+  replaceLinks,
 }: {
   analyticsContext?: PostAnalyticsContext;
   post: PublicPost;
+  replaceLinks?: boolean;
 }) {
   return (
     <ChipGroup aria-label={`${post.title} taxonomy`} className="flex flex-wrap gap-2">
@@ -46,6 +49,7 @@ function PostTaxonomy({
           analyticsContext={analyticsContext}
           eventName="category_click"
           href={`/blog/categories/${post.categoryEntry.slug}`}
+          replace={replaceLinks}
           target={post.categoryEntry.slug}
         >
           <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
@@ -57,6 +61,7 @@ function PostTaxonomy({
           eventName="tag_click"
           href={`/blog/tags/${tag.slug}`}
           key={tag.slug}
+          replace={replaceLinks}
           target={tag.slug}
         >
           <Chip label={tag.label} size="sm" tone="neutral" />
@@ -137,11 +142,13 @@ function PostTile({
   post,
   postClickEvent = "post_card_click",
   priority,
+  replaceLinks,
 }: {
   analyticsContext?: PostAnalyticsContext;
   post: PublicPost;
   postClickEvent?: "post_card_click" | "search_result_click";
   priority?: boolean;
+  replaceLinks?: boolean;
 }) {
   return (
     <article className="flex h-full flex-col overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
@@ -150,6 +157,7 @@ function PostTile({
         className="block flex-1"
         eventName={postClickEvent}
         href={`/blog/${post.slug}`}
+        replace={replaceLinks}
         target={post.slug}
       >
         <Cover post={post} priority={priority} size="tile" />
@@ -166,7 +174,7 @@ function PostTile({
         </div>
       </AnalyticsLink>
       <div className="mt-auto px-5 pb-5 pt-0">
-        <PostTaxonomy analyticsContext={analyticsContext} post={post} />
+        <PostTaxonomy analyticsContext={analyticsContext} post={post} replaceLinks={replaceLinks} />
       </div>
     </article>
   );
@@ -177,11 +185,13 @@ function PostListItem({
   post,
   postClickEvent = "post_card_click",
   priority,
+  replaceLinks,
 }: {
   analyticsContext?: PostAnalyticsContext;
   post: PublicPost;
   postClickEvent?: "post_card_click" | "search_result_click";
   priority?: boolean;
+  replaceLinks?: boolean;
 }) {
   return (
     <article className="border-b border-border last:border-b-0">
@@ -191,6 +201,7 @@ function PostListItem({
           className="block h-full"
           eventName={postClickEvent}
           href={`/blog/${post.slug}`}
+          replace={replaceLinks}
           target={post.slug}
         >
           <Cover post={post} priority={priority} size="list" />
@@ -202,6 +213,7 @@ function PostListItem({
               analyticsContext={analyticsContext}
               eventName={postClickEvent}
               href={`/blog/${post.slug}`}
+              replace={replaceLinks}
               target={post.slug}
             >
               {post.title}
@@ -213,7 +225,11 @@ function PostListItem({
             </p>
           ) : null}
           <div className="mt-auto pt-3">
-            <PostTaxonomy analyticsContext={analyticsContext} post={post} />
+            <PostTaxonomy
+              analyticsContext={analyticsContext}
+              post={post}
+              replaceLinks={replaceLinks}
+            />
           </div>
         </div>
       </div>
@@ -225,6 +241,7 @@ export function PostList({
   analyticsContext,
   postClickEvent = "post_card_click",
   posts,
+  replaceLinks = false,
   view = "list",
 }: PostListProps) {
   if (posts.length === 0) {
@@ -249,6 +266,7 @@ export function PostList({
             post={post}
             postClickEvent={postClickEvent}
             priority={index === 0}
+            replaceLinks={replaceLinks}
           />
         ))}
       </div>
@@ -264,6 +282,7 @@ export function PostList({
           post={post}
           postClickEvent={postClickEvent}
           priority={index === 0}
+          replaceLinks={replaceLinks}
         />
       ))}
     </div>

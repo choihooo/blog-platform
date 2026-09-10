@@ -60,7 +60,7 @@ function getFeedLabel(project: (typeof projects)[number]) {
   return project.organization === "개인 프로젝트" ? "Personal" : project.organization;
 }
 
-function ProjectGrid() {
+function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
   return (
     <section aria-label="프로젝트 피드" className="work-feed__grid">
       {projects.map((project, index) => (
@@ -69,6 +69,7 @@ function ProjectGrid() {
           href={`/projects/${project.slug}`}
           key={project.slug}
           prefetch={false}
+          replace={replaceLinks}
           style={{ "--feed-index": index } as CSSProperties}
         >
           <img
@@ -97,7 +98,7 @@ export function ProjectsPage({ variant = "page" }: { variant?: "page" | "modal" 
     return (
       <main className="work-feed work-feed--modal" aria-label="프로젝트 작업물">
         <h1 className="sr-only">Work 프로젝트 피드</h1>
-        <ProjectGrid />
+        <ProjectGrid replaceLinks />
       </main>
     );
   }

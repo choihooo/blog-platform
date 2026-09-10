@@ -32,6 +32,7 @@ export default async function BlogSearchModal({ searchParams }: BlogSearchModalP
           }}
           postClickEvent="search_result_click"
           posts={posts}
+          replaceLinks
           summary={
             query ? `${posts.length}개의 글, "${query}" 검색 결과` : "검색어를 입력해 주세요."
           }

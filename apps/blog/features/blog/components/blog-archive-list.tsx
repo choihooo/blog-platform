@@ -35,6 +35,7 @@ function CategoryTree({
         aria-current={!activeCategoryPath ? "page" : undefined}
         className={`blog-archive__category${!activeCategoryPath ? " blog-archive__category--active" : ""}`}
         href="/blog"
+        replace
       >
         <span aria-hidden="true">▣</span> 전체보기 <small>({allPosts.length})</small>
       </Link>
@@ -50,6 +51,7 @@ function CategoryTree({
                 aria-current={isParentActive ? "page" : undefined}
                 className={`blog-archive__category${isParentActive ? " blog-archive__category--active" : ""}`}
                 href={`/blog/categories/${parent.slug}`}
+                replace
               >
                 <span aria-hidden="true">▰</span> {parent.label}{" "}
                 <small>({counts.get(parent.slug) ?? 0})</small>
@@ -62,6 +64,7 @@ function CategoryTree({
                       className={`blog-archive__category${activeCategoryPath === child.slug ? " blog-archive__category--active" : ""}`}
                       href={`/blog/categories/${child.slug}`}
                       key={child.slug}
+                      replace
                     >
                       <span aria-hidden="true">▰</span> {child.label}{" "}
                       <small>({counts.get(child.slug) ?? 0})</small>
@@ -117,6 +120,7 @@ export function BlogArchiveList({
                 className="blog-archive__post-link"
                 href={`/blog/${post.slug}`}
                 prefetch={false}
+                replace
               >
                 <PostCover post={post} />
                 <div className="blog-archive__post-copy">

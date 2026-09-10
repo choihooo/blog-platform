@@ -56,7 +56,7 @@ function slugify(value: string) {
   );
 }
 
-function inlineContent(node: EditorTextNode) {
+function inlineContent(node: EditorTextNode, replaceLinks = false) {
   let content: ReactNode =
     node.marks?.length || node.href ? node.text : renderInlineMarkdown(node.text);
   for (const mark of node.marks ?? []) {
@@ -66,7 +66,9 @@ function inlineContent(node: EditorTextNode) {
   }
   if (node.href) {
     content = node.href.startsWith("/") ? (
-      <Link href={node.href}>{content}</Link>
+      <Link href={node.href} replace={replaceLinks}>
+        {content}
+      </Link>
     ) : (
       <a href={node.href} rel="noopener noreferrer" target="_blank">
         {content}
@@ -76,7 +78,7 @@ function inlineContent(node: EditorTextNode) {
   return content;
 }
 
-function renderInlineMarkdown(text: string) {
+function renderInlineMarkdown(text: string, replaceLinks = false) {
   const parts: ReactNode[] = [];
   const inlineMarkdown = /(\*\*([^*]+)\*\*|_([^_]+)_|`([^`]+)`|\[([^\]]+)\]\(([^)]+)\))/g;
   let cursor = 0;
@@ -93,7 +95,7 @@ function renderInlineMarkdown(text: string) {
     else if (label && href)
       parts.push(
         href.startsWith("/") ? (
-          <Link href={href} key={key}>
+          <Link href={href} key={key} replace={replaceLinks}>
             {label}
           </Link>
         ) : (
@@ -113,9 +115,11 @@ function renderInlineMarkdown(text: string) {
 function PostBodyRenderer({
   analyticsContext,
   nodes,
+  replaceLinks = false,
 }: {
   analyticsContext: Parameters<typeof CodeCopyButton>[0]["context"];
   nodes: EditorNode[];
+  replaceLinks?: boolean;
 }) {
   const seen = new Map<string, number>();
   return (
@@ -141,7 +145,7 @@ function PostBodyRenderer({
           const count = seen.get(base) ?? 0;
           seen.set(base, count + 1);
           const id = count === 0 ? base : `${base}-${count + 1}`;
-          const content = inlineContent(node);
+          const content = inlineContent(node, replaceLinks);
           if (node.depth === 1)
             return (
               <h1 id={id} key={index}>
@@ -179,7 +183,7 @@ function PostBodyRenderer({
           );
         }
         if (node.type === "blockquote")
-          return <blockquote key={index}>{inlineContent(node)}</blockquote>;
+          return <blockquote key={index}>{inlineContent(node, replaceLinks)}</blockquote>;
         if (node.type === "codeBlock") {
           return (
             <div className="group relative" key={index}>
@@ -199,16 +203,16 @@ function PostBodyRenderer({
         if (node.type === "bulletList")
           return (
             <ul key={index}>
-              <li>{inlineContent(node)}</li>
+              <li>{inlineContent(node, replaceLinks)}</li>
             </ul>
           );
         if (node.type === "orderedList")
           return (
             <ol key={index}>
-              <li>{inlineContent(node)}</li>
+              <li>{inlineContent(node, replaceLinks)}</li>
             </ol>
           );
-        return <p key={index}>{inlineContent(node)}</p>;
+        return <p key={index}>{inlineContent(node, replaceLinks)}</p>;
       })}
     </>
   );
@@ -274,7 +278,7 @@ export default async function PostPage({ params, presentation = "default" }: Pos
       />
       {isArchivePresentation ? (
         <div className="blog-detail__topline">
-          <Link className="blog-detail__back-link" href="/blog">
+          <Link className="blog-detail__back-link" href="/blog" replace>
             <span aria-hidden="true">←</span> 목록
           </Link>
           <span className="blog-detail__path">
@@ -361,12 +365,19 @@ export default async function PostPage({ params, presentation = "default" }: Pos
               className={isArchivePresentation ? "blog-detail__chips" : "flex flex-wrap gap-2"}
             >
               {post.categoryEntry ? (
-                <Link href={`/blog/categories/${post.categoryEntry.slug}`}>
+                <Link
+                  href={`/blog/categories/${post.categoryEntry.slug}`}
+                  replace={isArchivePresentation}
+                >
                   <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
                 </Link>
               ) : null}
               {post.tagEntries.map((tag) => (
-                <Link href={`/blog/tags/${tag.slug}`} key={tag.slug}>
+                <Link
+                  href={`/blog/tags/${tag.slug}`}
+                  key={tag.slug}
+                  replace={isArchivePresentation}
+                >
                   <Chip label={tag.label} size="sm" tone="neutral" />
                 </Link>
               ))}
@@ -401,9 +412,17 @@ export default async function PostPage({ params, presentation = "default" }: Pos
             data-analytics-category={post.category}
             data-analytics-slug={post.slug}
           >
-            <PostBodyRenderer analyticsContext={analyticsContext} nodes={post.bodyNodes} />
+            <PostBodyRenderer
+              analyticsContext={analyticsContext}
+              nodes={post.bodyNodes}
+              replaceLinks={isArchivePresentation}
+            />
           </div>
-          <RecommendedPosts analyticsContext={analyticsContext} posts={recommendedPosts} />
+          <RecommendedPosts
+            analyticsContext={analyticsContext}
+            posts={recommendedPosts}
+            replaceLinks={isArchivePresentation}
+          />
           <PostShareActions context={analyticsContext} />
         </div>
         {!isArchivePresentation && post.toc.length > 0 ? (

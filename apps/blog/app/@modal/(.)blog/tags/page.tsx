@@ -31,7 +31,7 @@ export default async function BlogTagsModal() {
         {sortedTags.length > 0 ? (
           <ChipGroup aria-label="태그 목록" className="flex flex-wrap gap-2.5 sm:gap-3" role="nav">
             {sortedTags.map(([slug, tag]) => (
-              <Link href={`/blog/tags/${slug}`} key={slug}>
+              <Link href={`/blog/tags/${slug}`} key={slug} replace>
                 <Chip label={`${tag.label} · ${tag.count}`} tone="accent" />
               </Link>
             ))}

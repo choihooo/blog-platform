@@ -41,11 +41,18 @@ describe("pixel-room blog archive integration", () => {
     const postPage = read("app/posts/[slug]/page.tsx");
     expect(postPage).toContain('node.href.startsWith("/")');
     expect(postPage).toContain('href.startsWith("/")');
+    expect(postPage).toContain("replace={isArchivePresentation}");
     expect(read("features/blog/components/recommended-posts.tsx")).toContain("AnalyticsLink");
+    expect(read("features/projects/projects-page.tsx")).toContain("<ProjectGrid replaceLinks />");
   });
 
-  it("closes every blog modal state back to the room", () => {
-    expect(read("features/blog/components/blog-archive-modal.tsx")).toContain("router.back()");
+  it("uses one history entry for each modal flow", () => {
+    const archiveModal = read("features/blog/components/blog-archive-modal.tsx");
+    expect(archiveModal).toContain("router.back()");
+    expect(archiveModal).toContain("closeRequested");
+    expect(archiveModal).not.toContain("window.setTimeout");
+    expect(read("features/blog/components/blog-archive-list.tsx")).toContain("replace");
+    expect(read("features/blog/components/post-list-view.tsx")).toContain("replaceLinks");
     expect(read("features/blog/components/blog-archive-modal.tsx")).not.toContain(
       'router.replace("/")',
     );

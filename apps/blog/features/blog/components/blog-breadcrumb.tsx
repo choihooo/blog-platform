@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -14,7 +14,15 @@ type BreadcrumbEntry = {
   label: string;
 };
 
-export function BlogBreadcrumb({ entries, label }: { entries: BreadcrumbEntry[]; label: string }) {
+export function BlogBreadcrumb({
+  entries,
+  label,
+  replace = false,
+}: {
+  entries: BreadcrumbEntry[];
+  label: string;
+  replace?: boolean;
+}) {
   return (
     <Breadcrumb aria-label={label} className="mb-6" size="sm">
       <BreadcrumbList>
@@ -22,7 +30,9 @@ export function BlogBreadcrumb({ entries, label }: { entries: BreadcrumbEntry[];
           <BreadcrumbItem key={`${entry.href ?? "current"}:${entry.label}`}>
             {index > 0 ? <BreadcrumbSeparator /> : null}
             {entry.href ? (
-              <BreadcrumbLink href={entry.href}>{entry.label}</BreadcrumbLink>
+              <Link className="hods-breadcrumb__link" href={entry.href} replace={replace}>
+                {entry.label}
+              </Link>
             ) : (
               <BreadcrumbPage>{entry.label}</BreadcrumbPage>
             )}

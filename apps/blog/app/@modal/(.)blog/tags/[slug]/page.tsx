@@ -15,7 +15,7 @@ export default async function TagModal({ params }: TagModalProps) {
 
   return (
     <BlogArchiveModal title={`BLOG ARCHIVE / TAG / ${tag.label}`}>
-      <TagListingPage page={1} slug={tag.slug} />
+      <TagListingPage page={1} replaceLinks slug={tag.slug} />
     </BlogArchiveModal>
   );
 }

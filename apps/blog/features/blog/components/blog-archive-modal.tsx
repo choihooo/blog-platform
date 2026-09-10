@@ -13,6 +13,7 @@ import {
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { useRef } from "react";
 
 type BlogArchiveModalProps = {
   children: ReactNode;
@@ -21,21 +22,17 @@ type BlogArchiveModalProps = {
 
 export function BlogArchiveModal({ children, title = "BLOG ARCHIVE" }: BlogArchiveModalProps) {
   const router = useRouter();
+  const closeRequested = useRef(false);
 
   function closeToRoom() {
+    if (closeRequested.current) return;
+    closeRequested.current = true;
     router.back();
-
-    // A post/category view is one history entry deeper than the archive.
-    // Return to the room as the window close action, while keeping the
-    // separate "목록" link for the archive-level back action.
-    window.setTimeout(() => {
-      if (window.location.pathname !== "/") router.back();
-    }, 400);
 
     let attempts = 0;
     const restoreFocus = () => {
       if (window.location.pathname !== "/") {
-        if (attempts < 20) {
+        if (attempts < 30) {
           attempts += 1;
           window.requestAnimationFrame(restoreFocus);
         }
