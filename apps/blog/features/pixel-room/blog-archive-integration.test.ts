@@ -74,4 +74,11 @@ describe("pixel-room blog archive integration", () => {
       "work-feed__loading-grid",
     );
   });
+
+  it("closes the Work feed when its empty backdrop is clicked", () => {
+    const modal = read("features/projects/project-feed-modal.tsx");
+    expect(modal).toContain("onPointerDown");
+    expect(modal).toContain("event.target === event.currentTarget");
+    expect(modal).toContain("closeRequested");
+  });
 });
