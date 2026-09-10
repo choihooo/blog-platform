@@ -45,5 +45,7 @@ describe("pixel room integration contracts", () => {
     expect(styles).not.toContain("animation: project-modal-in 300ms");
     expect(styles).toContain(".work-feed-backdrop");
     expect(styles).toContain(".resume-modal-backdrop");
+    expect(styles).toContain(".hods-modal__dialog.resume-modal");
+    expect(styles).toContain("transform: translate(-50%, -50%);");
   });
 });

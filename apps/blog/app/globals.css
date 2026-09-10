@@ -627,6 +627,7 @@ body {
   z-index: 1001;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   width: min(940px, calc(100vw - 2rem));
   max-width: none;
@@ -2192,6 +2193,7 @@ body:has(.resume-modal-backdrop) header {
   z-index: 1001;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   width: min(1040px, calc(100vw - 2rem));
   max-width: none;
