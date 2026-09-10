@@ -64,4 +64,14 @@ describe("pixel-room blog archive integration", () => {
     expect(css).toContain(".blog-archive__sidebar");
     expect(css).toContain("@media (max-width: 639px)");
   });
+
+  it("uses Work-specific skeletons instead of the blog window fallback", () => {
+    expect(read("app/@modal/(.)projects/loading.tsx")).toContain("ProjectFeedLoadingSkeleton");
+    expect(read("app/@modal/(.)projects/[slug]/loading.tsx")).toContain(
+      "ProjectDetailLoadingSkeleton",
+    );
+    expect(read("features/projects/project-loading-skeleton.tsx")).toContain(
+      "work-feed__loading-grid",
+    );
+  });
 });
