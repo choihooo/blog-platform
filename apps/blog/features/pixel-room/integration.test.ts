@@ -31,8 +31,11 @@ describe("pixel room integration contracts", () => {
     expect(read("./pixel-room.css")).toContain(".pixel-room-page {");
     expect(read("./pixel-room.css")).toContain("@keyframes chat-ai-shimmer");
   });
-  it("does not ship a missing experimental model or replace content-page header", () => {
+  it("does not ship a missing experimental model and keeps portfolio surfaces headerless", () => {
     expect(read("./portfolio-chat.tsx")).not.toContain("/models/");
-    expect(read("../navigation/home-aware-shell.tsx")).toContain('pathname !== "/"');
+    const shell = read("../navigation/home-aware-shell.tsx");
+    expect(shell).toContain('pathname.startsWith("/projects")');
+    expect(shell).toContain('pathname.startsWith("/blog")');
+    expect(shell).toContain('pathname.startsWith("/resume")');
   });
 });

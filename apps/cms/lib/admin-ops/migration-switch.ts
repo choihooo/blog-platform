@@ -32,8 +32,7 @@ type MigrationSwitchOutput = {
 };
 
 function normalizeMode(input: string | undefined): MigrationMode {
-  void input;
-  return "d1r2";
+  return input === "legacy" ? "legacy" : "d1r2";
 }
 
 export function getMigrationSwitch(

@@ -18,8 +18,12 @@ const server = spawn("pnpm", ["--filter", "@blog-platform/blog", "dev", "--port"
 });
 
 let serverOutput = "";
-server.stdout.on("data", (chunk) => { serverOutput += chunk.toString(); });
-server.stderr.on("data", (chunk) => { serverOutput += chunk.toString(); });
+server.stdout.on("data", (chunk) => {
+  serverOutput += chunk.toString();
+});
+server.stderr.on("data", (chunk) => {
+  serverOutput += chunk.toString();
+});
 
 async function waitForServer() {
   for (let attempt = 0; attempt < 90; attempt += 1) {

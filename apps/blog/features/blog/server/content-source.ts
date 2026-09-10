@@ -9,7 +9,7 @@ import type { PostRecord } from "../../../../cms/lib/content-adapter/content-ada
 import { createContentAdapter } from "../../../../cms/lib/content-adapter/content-adapter";
 import { loadSiteConfig } from "../../../../cms/lib/site-config";
 
-export type ContentSourceMode = "d1r2";
+export type ContentSourceMode = "d1r2" | "remote";
 
 export type Category = {
   slug: string;
@@ -223,7 +223,7 @@ function sortByPathSlug(a: CategoryHierarchy, b: CategoryHierarchy) {
 }
 
 function resolveModeFromEnv(): ContentSourceMode {
-  return "d1r2";
+  return process.env.BLOG_CONTENT_PROXY_URL?.trim() ? "remote" : "d1r2";
 }
 
 function createD1R2Source(): BlogContentSource {
@@ -250,6 +250,94 @@ function createD1R2Source(): BlogContentSource {
       }),
     listCategories: cachedListCategories,
     getCategoryByPath: cachedGetCategoryByPath,
+    getSiteConfig: loadSiteConfig,
+  };
+}
+
+type RemoteContentResponse = {
+  posts?: PostRecord[];
+  categories?: CategoryHierarchy[];
+  post?: PostRecord;
+};
+
+function remoteContentUrl(params?: Record<string, string | undefined>) {
+  const base = process.env.BLOG_CONTENT_PROXY_URL?.trim().replace(/\/$/, "");
+  if (!base) return;
+  const proxyPath = process.env.BLOG_CONTENT_PROXY_PATH?.trim() || "/api/public-content";
+  const url = new URL(`${base}${proxyPath}`);
+  for (const [key, value] of Object.entries(params ?? {})) {
+    if (value) url.searchParams.set(key, value);
+  }
+  return url;
+}
+
+async function fetchRemoteContent(
+  params?: Record<string, string | undefined>,
+): Promise<RemoteContentResponse | undefined> {
+  const url = remoteContentUrl(params);
+  if (!url) return;
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) return;
+  return (await response.json()) as RemoteContentResponse;
+}
+
+function createRemoteSource(): BlogContentSource {
+  return {
+    mode: "remote",
+    listPosts: async (input = {}) => {
+      const response = await fetchRemoteContent({
+        page: String(normalizePage(input.page)),
+        limit: String(normalizeLimit(input.limit)),
+        tag: input.tagSlug,
+        category: input.categoryPath,
+        analyzeBody: input.analyzeBody === false ? "false" : "true",
+      });
+      return (
+        response?.posts?.map((post) =>
+          toPublicSourcePost(post, { analyzeBody: input.analyzeBody }),
+        ) ?? []
+      );
+    },
+    getPostBySlug: async (slug, options) => {
+      const response = await fetchRemoteContent({
+        slug: normalizeSlug(slug),
+        analyzeBody: options?.analyzeBody === false ? "false" : "true",
+      });
+      return response?.post
+        ? toPublicSourcePost(response.post, { analyzeBody: options?.analyzeBody })
+        : undefined;
+    },
+    getPostsByTag: async (tagSlug, input = {}) => {
+      const response = await fetchRemoteContent({
+        page: String(normalizePage(input.page)),
+        limit: String(normalizeLimit(input.limit)),
+        tag: tagSlug,
+        analyzeBody: "false",
+      });
+      return response?.posts?.map((post) => toPublicSourcePost(post)) ?? [];
+    },
+    getPostsByCategoryPath: async (categoryPath, input = {}) => {
+      const response = await fetchRemoteContent({
+        page: String(normalizePage(input.page)),
+        limit: String(normalizeLimit(input.limit)),
+        category: categoryPath,
+        analyzeBody: "false",
+      });
+      return response?.posts?.map((post) => toPublicSourcePost(post)) ?? [];
+    },
+    listCategories: async (input) => {
+      const response = await fetchRemoteContent({
+        page: "1",
+        limit: "1",
+      });
+      return (response?.categories ?? [])
+        .filter((category) => category.depth === input.depth)
+        .filter((category) => (input.parentSlug ? category.parentSlug === input.parentSlug : true));
+    },
+    getCategoryByPath: async (path) => {
+      const response = await fetchRemoteContent({ page: "1", limit: "1" });
+      return response?.categories?.find((category) => category.slug === path);
+    },
     getSiteConfig: loadSiteConfig,
   };
 }
@@ -417,8 +505,10 @@ export function getContentSourceMode(): ContentSourceMode {
   return resolveModeFromEnv();
 }
 
-export async function getContentSource(): Promise<BlogContentSource> {
-  return createD1R2Source();
+export async function getContentSource(
+  mode: ContentSourceMode = resolveModeFromEnv(),
+): Promise<BlogContentSource> {
+  return mode === "remote" ? createRemoteSource() : createD1R2Source();
 }
 
 function normalizeContentListInput(input: ContentListInput): ContentListInput {

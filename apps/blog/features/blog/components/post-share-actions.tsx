@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
 
 import type { PostAnalyticsContext } from "./post-analytics-events";
@@ -8,7 +8,11 @@ import { sharePost } from "./post-share";
 
 export function PostShareActions({ context }: { context: PostAnalyticsContext }) {
   const [copied, setCopied] = useState(false);
-  const canNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
+  const [canNativeShare, setCanNativeShare] = useState(false);
+
+  useEffect(() => {
+    setCanNativeShare(typeof navigator.share === "function");
+  }, []);
 
   async function onCopyLink() {
     await sharePost({ context, mode: "copy-link" });
@@ -25,16 +29,16 @@ export function PostShareActions({ context }: { context: PostAnalyticsContext })
   }
 
   return (
-    <section className="mt-16 border-t border-border pt-8" aria-label="글 공유">
+    <section className="blog-detail__share mt-16 border-t border-border pt-8" aria-label="글 공유">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-semibold tracking-normal">공유</h2>
+        <div className="blog-detail__share-copy">
+          <h2 className="blog-detail__section-title text-xl font-semibold tracking-normal">공유</h2>
           <p className="mt-1 text-sm text-muted-foreground">{context.title}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="blog-detail__share-actions flex flex-wrap items-center gap-2">
           {canNativeShare ? (
             <button
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5"
+              className="blog-detail__share-button blog-detail__share-button--primary inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5"
               onClick={() => void onNativeShare()}
               type="button"
             >
@@ -43,7 +47,7 @@ export function PostShareActions({ context }: { context: PostAnalyticsContext })
             </button>
           ) : null}
           <button
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-border px-4 text-sm font-medium text-foreground hover:bg-muted"
+            className="blog-detail__share-button inline-flex h-10 items-center gap-2 rounded-md border border-border px-4 text-sm font-medium text-foreground hover:bg-muted"
             onClick={() => void onCopyLink()}
             type="button"
           >

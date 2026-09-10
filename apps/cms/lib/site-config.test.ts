@@ -10,7 +10,7 @@ describe("loadSiteConfig", () => {
     if (previousSiteUrl === undefined) delete process.env.SITE_URL;
     else process.env.SITE_URL = previousSiteUrl;
 
-    expect(config.siteUrl).toBe("https://blog.hozorica.com");
+    expect(config.siteUrl).toBe("https://hozorica.com");
     expect(config.siteName).toBe("Hozorica");
   });
 });

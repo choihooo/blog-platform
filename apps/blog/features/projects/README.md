@@ -38,7 +38,8 @@ relatedPosts: [
 ],
 ```
 
-`slug`는 공개된 블로그 글의 slug와 동일해야 합니다. 관련 글이 없거나 배열이 비어 있으면 영역은 렌더링되지 않습니다.
+`slug`는 공개된 블로그 글의 slug와 동일해야 합니다. 관련 글이 없거나 배열이 비어 있으면 영역은
+렌더링되지 않습니다.
 
 ```ts
 import type { ProjectCaseStudy } from "../project-types";

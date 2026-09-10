@@ -38,7 +38,11 @@
   width: 72mm;
   height: 72mm;
   background:
-    linear-gradient(90deg, transparent 49.5%, color-mix(in srgb, var(--accent-ink) 18%, transparent) 50%),
+    linear-gradient(
+      90deg,
+      transparent 49.5%,
+      color-mix(in srgb, var(--accent-ink) 18%, transparent) 50%
+    ),
     linear-gradient(transparent 49.5%, color-mix(in srgb, var(--accent-ink) 18%, transparent) 50%);
   background-size: 18mm 18mm;
   content: "";

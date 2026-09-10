@@ -26,3 +26,4 @@ apps/blog/public/models/.kanana-staging-*/
 .agents/
 .vercel
 .gstack/
+.env*.local

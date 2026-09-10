@@ -4,7 +4,8 @@
 
 - apps/blog/app/page.tsx의 기존 HomeExperience 대신 PixelRoom 렌더링. 기존
   메타데이터·canonical·Person JSON-LD 유지.
-- 기존 HomeExperience 소스는 보존. CMS·D1 데이터·프로젝트·이력서 내용은 변경하지 않음.
+- 기존 HomeExperience 소스는 픽셀룸 전환 후 미사용 코드로 확인되어 dead-code 정리에서 제거했다.
+  CMS·D1 데이터·프로젝트·이력서 내용은 변경하지 않음.
 - Work → /projects, Blog → /blog, About → /resume. 준비 중 모달 제거, 실제 Next Link 연결.
 - 루트에서만 SiteShell 헤더를 숨기고 하위 페이지와 클라이언트 이동 시 복원.
 - 프런트엔드 스킬의 스타일 격리 원칙에 따라 모든 룸 CSS를 .pixel-room-page 아래로 제한. 기존 전역

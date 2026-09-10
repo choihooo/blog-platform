@@ -23,7 +23,7 @@ describe("seoReportForEditorDocument", () => {
       createTextNode("heading", "Intro", { depth: 2 }),
       createTextNode("heading", "Details", { depth: 2 }),
       { type: "image", src: "/media/cover.webp", alt: "cover" },
-      createTextNode("paragraph", "Read more", { href: "/posts/other" }),
+      createTextNode("paragraph", "Read more", { href: "/blog/other" }),
     ];
     expect(seoReportForEditorDocument(doc).score).toBeGreaterThanOrEqual(70);
   });
@@ -33,6 +33,6 @@ describe("seoReportForEditorDocument", () => {
     doc.frontmatter.title = "Configured URL";
     doc.frontmatter.slug = "configured-url";
     const report = seoReportForEditorDocument(doc, { siteUrl: "https://example.com" });
-    expect(report.searchPreview.url).toBe("https://example.com/posts/configured-url");
+    expect(report.searchPreview.url).toBe("https://example.com/blog/configured-url");
   });
 });

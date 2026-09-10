@@ -17,25 +17,26 @@ describe("public refresh", () => {
       }),
     ).toEqual([
       "/",
-      "/rss.xml",
+      "/blog",
+      "/blog/rss.xml",
       "/sitemap.xml",
       "/robots.txt",
-      "/posts/old",
+      "/blog/old",
       "/og/old",
-      "/categories/dev",
-      "/tags/ts",
-      "/posts/new",
+      "/blog/categories/dev",
+      "/blog/tags/ts",
+      "/blog/new",
       "/og/new",
-      "/tags/next",
+      "/blog/tags/next",
     ]);
   });
 
   it("reports failed refresh targets and creates retry tokens", async () => {
-    const result = await refreshPublicTargets(["/", "/rss.xml"], (target) => {
-      if (target === "/rss.xml") throw new Error("nope");
+    const result = await refreshPublicTargets(["/", "/blog/rss.xml"], (target) => {
+      if (target === "/blog/rss.xml") throw new Error("nope");
     });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.failedTargets).toEqual(["/rss.xml"]);
+    if (!result.ok) expect(result.failedTargets).toEqual(["/blog/rss.xml"]);
     expect(
       createPublicRefreshRetryToken({
         operation: "publish",
@@ -57,7 +58,7 @@ describe("public refresh", () => {
       },
     );
 
-    await refreshPublicTargets(["/", "/rss.xml"], refresh);
+    await refreshPublicTargets(["/", "/blog/rss.xml"], refresh);
 
     expect(calls).toEqual(["https://example.com/deploy"]);
   });
@@ -75,11 +76,11 @@ describe("public refresh", () => {
       },
     );
 
-    await refreshPublicTargets(["/", "/rss.xml"], refresh);
+    await refreshPublicTargets(["/", "/blog/rss.xml"], refresh);
 
     expect(bodies).toEqual([
       { path: "/", secret: "secret" },
-      { path: "/rss.xml", secret: "secret" },
+      { path: "/blog/rss.xml", secret: "secret" },
     ]);
   });
 });

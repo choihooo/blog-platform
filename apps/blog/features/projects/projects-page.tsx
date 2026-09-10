@@ -1,14 +1,7 @@
-"use client";
-
-import { Button, Tooltip } from "@hozui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 import { projects } from "./project-data";
-
-const SCROLL_LOCK_MS = 850;
-const ORBIT_STEP = 20;
 
 const PROJECT_CARD_ASSETS: Partial<
   Record<string, { primary: string; primaryMode?: "visual"; secondary: string }>
@@ -57,289 +50,122 @@ const PROJECT_CARD_ASSETS: Partial<
   },
 };
 
-export function ProjectsPage() {
-  const router = useRouter();
-  const activeIndexRef = useRef(0);
-  const showcaseRef = useRef<HTMLElement>(null);
-  const scrollLockedRef = useRef(false);
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [copyReady, setCopyReady] = useState(false);
-  const [orbitReady, setOrbitReady] = useState(false);
+function getFeedImage(slug: string) {
+  const assets = PROJECT_CARD_ASSETS[slug];
+  if (!assets) return "/brand/no-thumbnail.webp";
+  return assets.primaryMode === "visual" ? assets.primary : assets.secondary;
+}
 
-  const goToProject = (index: number) => {
-    const nextIndex = Math.max(0, Math.min(projects.length - 1, index));
-    if (nextIndex === activeIndexRef.current) return;
-    activeIndexRef.current = nextIndex;
-    setActiveIndex(nextIndex);
-  };
+function getFeedLabel(project: (typeof projects)[number]) {
+  return project.organization === "개인 프로젝트" ? "Personal" : project.organization;
+}
 
-  useEffect(() => {
-    const showcase = showcaseRef.current;
-    if (!showcase) return;
+function ProjectGrid() {
+  return (
+    <section aria-label="프로젝트 피드" className="work-feed__grid">
+      {projects.map((project, index) => (
+        <Link
+          className="work-feed__tile"
+          href={`/projects/${project.slug}`}
+          key={project.slug}
+          prefetch={false}
+          style={{ "--feed-index": index } as CSSProperties}
+        >
+          <img
+            alt={`${project.name} 프로젝트 미리보기`}
+            className="work-feed__tile-image"
+            decoding="async"
+            height="640"
+            loading={index < 3 ? "eager" : "lazy"}
+            src={getFeedImage(project.slug)}
+            width="640"
+          />
+          <span className="work-feed__tile-overlay">
+            <span className="work-feed__tile-title">{project.name}</span>
+            <span className="work-feed__tile-meta">
+              {getFeedLabel(project)} · {project.role}
+            </span>
+          </span>
+        </Link>
+      ))}
+    </section>
+  );
+}
 
-    let lockTimer: ReturnType<typeof setTimeout> | undefined;
-
-    const deferScrollUnlock = () => {
-      clearTimeout(lockTimer);
-      lockTimer = setTimeout(() => {
-        scrollLockedRef.current = false;
-      }, SCROLL_LOCK_MS);
-    };
-
-    const move = (direction: 1 | -1) => {
-      if (scrollLockedRef.current) return;
-      const nextIndex = Math.max(
-        0,
-        Math.min(projects.length - 1, activeIndexRef.current + direction),
-      );
-      if (nextIndex === activeIndexRef.current) return;
-
-      scrollLockedRef.current = true;
-      goToProject(nextIndex);
-      deferScrollUnlock();
-    };
-
-    const handleWheel = (event: WheelEvent) => {
-      if (event.ctrlKey) return;
-      if (document.querySelector(".hods-modal__dialog")) return;
-      if (
-        event.target instanceof Element &&
-        event.target.closest(".hods-modal__overlay, .hods-modal__dialog")
-      ) {
-        return;
-      }
-      const dominantDelta =
-        Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      if (Math.abs(dominantDelta) < 6) return;
-      event.preventDefault();
-
-      if (scrollLockedRef.current) return;
-
-      move(dominantDelta > 0 ? 1 : -1);
-    };
-
-    const handleTouchStart = (event: TouchEvent) => {
-      if (document.querySelector(".hods-modal__dialog")) {
-        touchStartRef.current = null;
-        return;
-      }
-      if (
-        event.target instanceof Element &&
-        event.target.closest(".hods-modal__overlay, .hods-modal__dialog")
-      ) {
-        touchStartRef.current = null;
-        return;
-      }
-      const touch = event.touches[0];
-      touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
-    };
-
-    const handleTouchEnd = (event: TouchEvent) => {
-      const start = touchStartRef.current;
-      const touch = event.changedTouches[0];
-      touchStartRef.current = null;
-      if (!start || !touch) return;
-
-      const deltaX = start.x - touch.clientX;
-      const deltaY = start.y - touch.clientY;
-      const dominantDelta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
-      if (Math.abs(dominantDelta) < 45) return;
-      move(dominantDelta > 0 ? 1 : -1);
-    };
-
-    showcase.addEventListener("wheel", handleWheel, { passive: false });
-    showcase.addEventListener("touchstart", handleTouchStart, { passive: true });
-    showcase.addEventListener("touchend", handleTouchEnd, { passive: true });
-    return () => {
-      clearTimeout(lockTimer);
-      showcase.removeEventListener("wheel", handleWheel);
-      showcase.removeEventListener("touchstart", handleTouchStart);
-      showcase.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, []);
-
-  useEffect(() => {
-    setCopyReady(false);
-    const copyTimer = window.setTimeout(() => setCopyReady(true), 1980);
-    return () => window.clearTimeout(copyTimer);
-  }, [activeIndex]);
-
-  useEffect(() => {
-    const restoreFromHash = () => {
-      const slug = decodeURIComponent(window.location.hash.slice(1));
-      const restoredIndex = projects.findIndex((project) => project.slug === slug);
-      if (restoredIndex >= 0) {
-        activeIndexRef.current = restoredIndex;
-        setActiveIndex(restoredIndex);
-      }
-    };
-
-    restoreFromHash();
-    window.addEventListener("hashchange", restoreFromHash);
-
-    const readyFrame = window.requestAnimationFrame(() => setOrbitReady(true));
-    return () => {
-      window.cancelAnimationFrame(readyFrame);
-      window.removeEventListener("hashchange", restoreFromHash);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!orbitReady) return;
-    window.history.replaceState(null, "", `/projects#${projects[activeIndex]!.slug}`);
-  }, [activeIndex, orbitReady]);
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.target instanceof HTMLElement && event.target.closest("a, button")) return;
-    if (["ArrowDown", "PageDown"].includes(event.key)) {
-      event.preventDefault();
-      goToProject(activeIndexRef.current + 1);
-    }
-    if (["ArrowUp", "PageUp"].includes(event.key)) {
-      event.preventDefault();
-      goToProject(activeIndexRef.current - 1);
-    }
-    if (event.key === "Home") {
-      event.preventDefault();
-      goToProject(0);
-    }
-    if (event.key === "End") {
-      event.preventDefault();
-      goToProject(projects.length - 1);
-    }
-  };
-
-  const orbitStyle = {
-    "--orbit-rotation": `${activeIndex * -ORBIT_STEP}deg`,
-  } as CSSProperties;
-  const activeProject = projects[activeIndex]!;
+export function ProjectsPage({ variant = "page" }: { variant?: "page" | "modal" }) {
+  if (variant === "modal") {
+    return (
+      <main className="work-feed work-feed--modal" aria-label="프로젝트 작업물">
+        <h1 className="sr-only">Work 프로젝트 피드</h1>
+        <ProjectGrid />
+      </main>
+    );
+  }
 
   return (
-    <main
-      aria-label="프로젝트"
-      className="project-showcase"
-      data-project={activeProject.slug}
-      data-ready={orbitReady ? "true" : undefined}
-      onKeyDown={handleKeyDown}
-      ref={showcaseRef}
-      tabIndex={0}
-    >
-      <h1 className="sr-only">Projects</h1>
-
-      <div aria-hidden="true" className="project-orbit" style={orbitStyle}>
-        {projects.map((project, index) => {
-          const cardAssets = PROJECT_CARD_ASSETS[project.slug];
-
-          return (
-            <div
-              className="project-orbit__holder"
-              data-active={activeIndex === index ? "true" : undefined}
-              data-project={project.slug}
-              key={project.slug}
-              style={{ "--item-angle": `${index * ORBIT_STEP}deg` } as CSSProperties}
-            >
-              <div className="project-orbit__card project-orbit__card--primary">
-                {cardAssets ? (
-                  // Native image tags keep these repository assets independent from Next image transforms.
-                  <img
-                    alt=""
-                    className={`project-orbit__image project-orbit__image--${cardAssets.primaryMode ?? "logo"}`}
-                    decoding="async"
-                    src={cardAssets.primary}
-                  />
-                ) : (
-                  <span>{project.index}</span>
-                )}
-              </div>
-              <div className="project-orbit__card project-orbit__card--secondary">
-                {cardAssets ? (
-                  <img
-                    alt=""
-                    className="project-orbit__image project-orbit__image--visual"
-                    decoding="async"
-                    src={cardAssets.secondary}
-                  />
-                ) : (
-                  <span>{project.organization}</span>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <nav aria-label="프로젝트 빠른 이동" className="project-showcase__rail">
-        <div className="project-showcase__dots">
-          {projects.map((project, index) => (
-            <Tooltip
-              align="center"
-              content={project.name}
-              delayDuration={120}
-              key={project.slug}
-              offset={4}
-              side="left"
-              size="sm"
-              tone="inverse"
-            >
-              <button
-                aria-current={activeIndex === index ? "true" : undefined}
-                aria-label={`${project.name}으로 이동`}
-                className="project-showcase__dot"
-                onClick={() => goToProject(index)}
-                type="button"
-              />
-            </Tooltip>
-          ))}
+    <main className="work-feed" aria-label="프로젝트 작업물">
+      <header className="work-feed__profile">
+        <div className="work-feed__avatar-wrap">
+          <img
+            alt="최호 프로필"
+            className="work-feed__avatar"
+            height="128"
+            src="/resume/profile.png"
+            width="128"
+          />
         </div>
+
+        <div className="work-feed__profile-content">
+          <div className="work-feed__identity">
+            <div>
+              <p className="work-feed__eyebrow">WORK / HOZORICA</p>
+              <h1>최호</h1>
+              <p className="work-feed__handle">@hozorica</p>
+            </div>
+            <Link className="work-feed__profile-link" href="/resume">
+              프로필 보기
+            </Link>
+          </div>
+
+          <dl className="work-feed__stats">
+            <div>
+              <dt>작업물</dt>
+              <dd>{projects.length}</dd>
+            </div>
+            <div>
+              <dt>분야</dt>
+              <dd>FE</dd>
+            </div>
+            <div>
+              <dt>기록</dt>
+              <dd>Blog</dd>
+            </div>
+          </dl>
+
+          <p className="work-feed__bio">
+            복잡한 문제를 구조화하고, 오래 쓰이는 인터페이스를 만드는 프론트엔드 개발자입니다.
+            <br />
+            제품의 맥락과 사용자의 흐름을 함께 설계합니다.
+          </p>
+        </div>
+      </header>
+
+      <nav className="work-feed__tabs" aria-label="작업실 메뉴">
+        <Link
+          aria-current="page"
+          className="work-feed__tab work-feed__tab--active"
+          href="/projects"
+        >
+          <span aria-hidden="true">▦</span>
+          작업물
+        </Link>
+        <Link className="work-feed__tab" href="/blog">
+          <span aria-hidden="true">▤</span>
+          기록
+        </Link>
       </nav>
 
-      <section
-        aria-live="polite"
-        className="project-copy-stage"
-        data-visible={copyReady ? "true" : undefined}
-      >
-        {projects.map((project, index) => (
-          <article
-            aria-hidden={activeIndex !== index || !copyReady}
-            className="project-copy"
-            data-active={activeIndex === index ? "true" : undefined}
-            data-visible={activeIndex === index && copyReady ? "true" : undefined}
-            key={project.slug}
-          >
-            <p className="project-copy__meta">
-              {project.period} · {project.role}
-            </p>
-            <Link
-              className="project-copy__title"
-              href={`/projects/${project.slug}`}
-              tabIndex={activeIndex === index && copyReady ? 0 : -1}
-            >
-              {project.name}
-            </Link>
-            <Button
-              className="project-copy__cta"
-              label="프로젝트 보기"
-              onClick={() => router.push(`/projects/${project.slug}`)}
-              size="md"
-              tabIndex={activeIndex === index && copyReady ? 0 : -1}
-              trailingIcon={
-                <svg aria-hidden="true" fill="none" viewBox="0 0 20 20">
-                  <path
-                    d="M6 14 14 6m-6 0h6v6"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.6"
-                  />
-                </svg>
-              }
-              type="button"
-              variant="primary"
-            />
-          </article>
-        ))}
-      </section>
+      <ProjectGrid />
     </main>
   );
 }

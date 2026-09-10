@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { RagSource } from "../rag/contracts";
 
 export type ChatArticle = { source: RagSource; summary: string };
@@ -13,8 +14,12 @@ function inlineLinks(text: string) {
       [...href].some((c) => c.charCodeAt(0) < 32)
     )
       return part;
-    return (
-      <a key={i} href={href} target="_blank" rel="noopener noreferrer">
+    return href.startsWith("/") ? (
+      <Link href={href} key={i}>
+        {match[1]}
+      </Link>
+    ) : (
+      <a href={href} key={i} target="_blank" rel="noopener noreferrer">
         {match[1]}
       </a>
     );
@@ -28,10 +33,17 @@ export function ChatAnswer({ text, articles }: { text: string; articles?: ChatAr
       <ol className="chat-articles">
         {articles.map(({ source, summary }) => (
           <li key={source.url}>
-            <a href={source.url} target="_blank" rel="noopener noreferrer">
-              {source.title}
-              <span aria-hidden="true"> ↗</span>
-            </a>
+            {source.url.startsWith("/") ? (
+              <Link href={source.url}>
+                {source.title}
+                <span aria-hidden="true"> ↗</span>
+              </Link>
+            ) : (
+              <a href={source.url} target="_blank" rel="noopener noreferrer">
+                {source.title}
+                <span aria-hidden="true"> ↗</span>
+              </a>
+            )}
             <p>{summary || "글 내용을 정리하고 있어요…"}</p>
           </li>
         ))}

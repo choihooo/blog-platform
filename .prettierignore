@@ -7,4 +7,10 @@ coverage/
 .vercel/
 package-lock.json
 yarn.lock
+_workspace/
+artifacts/
+output/
+research/
+tmp/
+android-screen.png
 pnpm-lock.yaml

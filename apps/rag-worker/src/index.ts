@@ -21,6 +21,46 @@ function authorized(request: Request, secret: string | undefined) {
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
 
+function isLocalRequest(request: Request) {
+  const hostname = new URL(request.url).hostname;
+  return hostname === "127.0.0.1" || hostname === "localhost";
+}
+
+async function localD1Query(request: Request, env: Env) {
+  if (!isLocalRequest(request)) return json({ error: "not_found" }, 404);
+  if (!authorized(request, env.RAG_ADMIN_TOKEN)) return json({ error: "unauthorized" }, 401);
+
+  let body: unknown;
+  try {
+    body = await boundedJson(request);
+  } catch {
+    return json({ error: "invalid_body" }, 400);
+  }
+
+  if (!body || typeof body !== "object") return json({ error: "invalid_body" }, 400);
+  const input = body as Record<string, unknown>;
+  const sql = typeof input.sql === "string" ? input.sql.trim() : "";
+  const params = Array.isArray(input.params) ? input.params : null;
+  const operation =
+    input.operation === "first" || input.operation === "run" ? input.operation : "all";
+  if (!sql || sql.length > 20_000 || !params || params.length > 100) {
+    return json({ error: "invalid_body" }, 400);
+  }
+
+  try {
+    const db = env.DB.withSession("first-primary");
+    const statement = db.prepare(sql).bind(...params);
+    if (operation === "run") {
+      const result = await statement.run();
+      return json({ results: [], meta: result.meta ?? null });
+    }
+    const result = await statement.all();
+    return json({ results: result.results, meta: result.meta ?? null });
+  } catch {
+    return json({ error: "query_failed" }, 502);
+  }
+}
+
 async function corpus(env: Env, slug?: string) {
   // Fresh primary session: no cached or replicated publication status.
   const db = env.DB.withSession("first-primary");
@@ -57,6 +97,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const path = new URL(request.url).pathname;
     if (path === "/health" && request.method === "GET") return json({ ok: true });
+    if (path === "/__local/d1" && request.method === "POST") return localD1Query(request, env);
     if (request.method !== "POST" || !["/search", "/sync"].includes(path))
       return json({ error: "not_found" }, 404);
     if (!authorized(request, path === "/sync" ? env.RAG_ADMIN_TOKEN : env.RAG_SEARCH_TOKEN))

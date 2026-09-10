@@ -58,22 +58,30 @@ export function RecommendedPosts({ analyticsContext, posts }: RecommendedPostsPr
   if (posts.length === 0) return null;
 
   return (
-    <section className="mt-16 border-t border-border pt-8" aria-labelledby="recommended-posts">
-      <h2 id="recommended-posts" className="text-2xl font-semibold tracking-normal">
+    <section
+      className="blog-detail__recommended mt-16 border-t border-border pt-8"
+      aria-labelledby="recommended-posts"
+    >
+      <h2
+        id="recommended-posts"
+        className="blog-detail__section-title text-2xl font-semibold tracking-normal"
+      >
         추천글
       </h2>
-      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="blog-detail__recommended-grid mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
           <AnalyticsLink
             analyticsContext={analyticsContext}
-            className="group block overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md"
+            className="blog-detail__recommended-card group block overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md"
             eventName="recommended_post_click"
             href={`/blog/${post.slug}`}
             key={post.path}
             target={post.slug}
           >
-            <RecommendedPostCover post={post} />
-            <div className="grid gap-3 p-4">
+            <div className="blog-detail__recommended-cover">
+              <RecommendedPostCover post={post} />
+            </div>
+            <div className="blog-detail__recommended-copy grid gap-3 p-4">
               <h3 className="line-clamp-2 text-lg font-semibold leading-snug tracking-normal group-hover:text-primary">
                 {post.title}
               </h3>

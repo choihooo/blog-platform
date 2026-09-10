@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import Link from "next/link";
 import { FAB } from "@hozui/react/fab";
 import { Button } from "@hozui/react/button";
 import { IconButton } from "@hozui/react/icon-button";
@@ -475,9 +476,13 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
                       .filter((source, i, all) => all.findIndex((s) => s.url === source.url) === i)
                       .map((source, sourceIndex) => (
                         <div key={`${source.url}-${sourceIndex}`}>
-                          <a href={source.url} target="_blank" rel="noopener noreferrer">
-                            {source.title} ↗
-                          </a>
+                          {source.url.startsWith("/") ? (
+                            <Link href={source.url}>{source.title} ↗</Link>
+                          ) : (
+                            <a href={source.url} target="_blank" rel="noopener noreferrer">
+                              {source.title} ↗
+                            </a>
+                          )}
                         </div>
                       ))}
                   </details>

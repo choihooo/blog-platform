@@ -1,17 +1,17 @@
 # 개발 서버 네이버 모델 연결
 
-2026-09-06. 개발 모드에만 HyperCLOVA X SEED Text Instruct 1.5B Q4_K_M을 연결했다. 프로덕션 기본
-URL은 기존 Kanana 설정을 유지한다. 배포하지 않았다.
+2026-09-06. 개발 모드에서 HyperCLOVA X SEED Text Instruct 1.5B Q4_K_M을 실험했다. 프로덕션 기본
+URL은 기존 Kanana 설정을 유지한다. 실험 파일은 2026-09-09 로컬에서 삭제했고, 배포하지 않았다.
 
-- 선택: `features/pixel-room/chat-model.ts`, `kanana-model-source.ts`
-- 개발 파일: `/models/hyperclova-q4-6e0841f886f5-v1/model.gguf`
+- 당시 실험 대상: `features/pixel-room/chat-model.ts`, `kanana-model-source.ts`
+- 개발 파일: `/models/hyperclova-q4-6e0841f886f5-v1/model.gguf` (삭제됨)
 - 크기: 1,006,572,160 bytes
 - SHA-256 검증: `6e0841f886f55411327d4659308f2408424f0ac55a2d32f60a49f470c71381a6`
-- 정확한 다운로드 원본과 revision은 `NAVER_MODEL.sourceUrl`에 기록했다.
+- 정확한 다운로드 원본과 revision은 이 문서와 `docs/model-alternatives-evaluation.md`에 기록했다.
 - `NEXT_PUBLIC_KANANA_MODEL_URL`을 설정하면 기존처럼 URL을 우선한다. 다른 모델로 override할 경우 UI
   메타데이터도 함께 맞춰야 한다.
-- 원복: 개발 URL을 보존된 `LOCAL_SPLIT_MODEL_URL`로 되돌리고 `CHAT_MODEL` 표시를 카나나로 맞춘 뒤
-  페이지를 새로고침한다.
+- 현재 로컬 개발도 운영과 같은 R2 hosted Kanana URL을 사용한다. 별도 파일을 직접 테스트할 때만
+  `NEXT_PUBLIC_KANANA_MODEL_URL`로 명시적으로 override한다.
 
 모델 파일은 Git에서 제외한다. 다른 로컬 체크아웃에서는 검증한 파일을 위 경로에 별도 준비해야 한다.
 파일이 없을 때 외부 호스트로 자동 전환하거나 새 다운로드를 시작하지 않는다.

@@ -29,6 +29,7 @@ type PostPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  presentation?: "default" | "archive";
 };
 
 export async function generateStaticParams() {
@@ -64,7 +65,13 @@ function inlineContent(node: EditorTextNode) {
     if (mark === "inlineCode") content = <code>{content}</code>;
   }
   if (node.href) {
-    content = <a href={node.href}>{content}</a>;
+    content = node.href.startsWith("/") ? (
+      <Link href={node.href}>{content}</Link>
+    ) : (
+      <a href={node.href} rel="noopener noreferrer" target="_blank">
+        {content}
+      </a>
+    );
   }
   return content;
 }
@@ -85,9 +92,15 @@ function renderInlineMarkdown(text: string) {
     else if (code) parts.push(<code key={key}>{code}</code>);
     else if (label && href)
       parts.push(
-        <a href={href} key={key}>
-          {label}
-        </a>,
+        href.startsWith("/") ? (
+          <Link href={href} key={key}>
+            {label}
+          </Link>
+        ) : (
+          <a href={href} key={key} rel="noopener noreferrer" target="_blank">
+            {label}
+          </a>
+        ),
       );
 
     cursor = match.index + raw.length;
@@ -216,8 +229,9 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   };
 }
 
-export default async function PostPage({ params }: PostPageProps) {
+export default async function PostPage({ params, presentation = "default" }: PostPageProps) {
   const { slug } = await params;
+  const isArchivePresentation = presentation === "archive";
   const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
   if (!post) notFound();
   const [jsonLd, recommendedPosts] = await Promise.all([
@@ -245,31 +259,59 @@ export default async function PostPage({ params }: PostPageProps) {
       };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
+    <main
+      className={[
+        "mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12",
+        isArchivePresentation ? "blog-detail-page blog-detail-page--archive" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <PostAnalyticsEvents context={analyticsContext} />
       <script
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         type="application/ld+json"
       />
-      <BlogBreadcrumb
-        entries={[
-          { href: "/blog", label: "글" },
-          ...(post.categoryEntry
-            ? [
-                {
-                  href: `/blog/categories/${post.categoryEntry.slug}`,
-                  label: post.categoryEntry.label,
-                },
-              ]
-            : []),
-          { label: post.title },
-        ]}
-        label="글 위치"
-      />
-      <article className="grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16">
+      {isArchivePresentation ? (
+        <div className="blog-detail__topline">
+          <Link className="blog-detail__back-link" href="/blog">
+            <span aria-hidden="true">←</span> 목록
+          </Link>
+          <span className="blog-detail__path">
+            Projects / {post.categoryEntry?.label ?? "Hozui"}
+          </span>
+        </div>
+      ) : (
+        <BlogBreadcrumb
+          entries={[
+            { href: "/blog", label: "글" },
+            ...(post.categoryEntry
+              ? [
+                  {
+                    href: `/blog/categories/${post.categoryEntry.slug}`,
+                    label: post.categoryEntry.label,
+                  },
+                ]
+              : []),
+            { label: post.title },
+          ]}
+          label="글 위치"
+        />
+      )}
+      <article
+        className={
+          isArchivePresentation
+            ? "blog-detail__article"
+            : "grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16"
+        }
+      >
         <div className="min-w-0">
-          <header className="mb-12 grid gap-5 bg-card pb-10">
-            {post.coverImage ? (
+          <header
+            className={
+              isArchivePresentation ? "blog-detail__header" : "mb-12 grid gap-5 bg-card pb-10"
+            }
+          >
+            {!isArchivePresentation && post.coverImage ? (
               canUseOptimizedImage(post.coverImage) ? (
                 <div className="relative aspect-[16/9] w-full overflow-hidden">
                   <Image
@@ -293,15 +335,31 @@ export default async function PostPage({ params }: PostPageProps) {
                 />
               )
             ) : null}
-            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
+            <h1
+              className={
+                isArchivePresentation
+                  ? "blog-detail__title"
+                  : "text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl"
+              }
+            >
               {post.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
+            <div
+              className={
+                isArchivePresentation
+                  ? "blog-detail__meta"
+                  : "flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground"
+              }
+            >
               <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
+              <span>·</span>
               <span>{post.readingTimeLabel}</span>
               <PostAuthorMeta author={author} size="md" />
             </div>
-            <ChipGroup aria-label="글 분류" className="flex flex-wrap gap-2">
+            <ChipGroup
+              aria-label="글 분류"
+              className={isArchivePresentation ? "blog-detail__chips" : "flex flex-wrap gap-2"}
+            >
               {post.categoryEntry ? (
                 <Link href={`/blog/categories/${post.categoryEntry.slug}`}>
                   <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
@@ -313,9 +371,33 @@ export default async function PostPage({ params }: PostPageProps) {
                 </Link>
               ))}
             </ChipGroup>
+            {isArchivePresentation && post.coverImage ? (
+              <div className="blog-detail__hero">
+                {canUseOptimizedImage(post.coverImage) ? (
+                  <Image
+                    alt=""
+                    className="object-cover"
+                    fill
+                    fetchPriority="high"
+                    priority
+                    sizes="(max-width: 639px) calc(100vw - 40px), 700px"
+                    src={post.coverImage}
+                  />
+                ) : (
+                  <img
+                    alt=""
+                    className="object-cover"
+                    decoding="async"
+                    fetchPriority="high"
+                    loading="eager"
+                    src={post.coverImage}
+                  />
+                )}
+              </div>
+            ) : null}
           </header>
           <div
-            className="prose"
+            className={isArchivePresentation ? "prose blog-detail__prose" : "prose"}
             data-analytics-category={post.category}
             data-analytics-slug={post.slug}
           >
@@ -324,7 +406,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <RecommendedPosts analyticsContext={analyticsContext} posts={recommendedPosts} />
           <PostShareActions context={analyticsContext} />
         </div>
-        {post.toc.length > 0 ? (
+        {!isArchivePresentation && post.toc.length > 0 ? (
           <aside
             className="hidden h-fit border-0 bg-card shadow-sm lg:sticky lg:top-6 lg:block"
             aria-label="Table of contents"

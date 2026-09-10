@@ -124,9 +124,9 @@ describe("PostsPageView", () => {
     expect(
       previous?.closest("form")?.querySelector('input[name="sort"]')?.getAttribute("value"),
     ).toBe("updated");
-    expect(
-      next?.closest("form")?.querySelector('input[name="sort"]')?.getAttribute("value"),
-    ).toBe("updated");
+    expect(next?.closest("form")?.querySelector('input[name="sort"]')?.getAttribute("value")).toBe(
+      "updated",
+    );
     expect(next?.closest("form")?.querySelector('input[name="page"]')?.getAttribute("value")).toBe(
       "3",
     );

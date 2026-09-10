@@ -1,7 +1,7 @@
 # Specification Quality Checklist: d1-r2-migration
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-07-31 **Feature**: [spec.md](specs/014-d1-r2-migration/spec.md)
+**Created**: 2026-07-31 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
 

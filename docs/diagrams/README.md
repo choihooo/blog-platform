@@ -4,21 +4,21 @@
 
 ## HozUI token mapping
 
-| Diagram role | HozUI token | Value |
-| --- | --- | --- |
-| Canvas | `--color-canvas-default` | `#ffffff` |
-| Subgraph | `--color-canvas-subtle` | `#f6f8fa` |
-| Border | `--color-border-default` | `#d1d9e0` |
-| Text | `--color-fg-default` | `#1f2328` |
-| Muted text | `--color-fg-muted` | `#59636e` |
-| Accent | `--color-accent-emphasis` | `#0969da` |
-| Accent surface | `--color-accent-subtle` | `#ddf4ff` |
-| Success | `--color-success-emphasis` | `#1a7f37` |
-| Success surface | `--color-success-subtle` | `#dafbe1` |
-| Attention | `--color-attention-emphasis` | `#9a6700` |
-| Attention surface | `--color-attention-subtle` | `#fff8c5` |
-| Danger | `--color-danger-emphasis` | `#d1242f` |
-| Danger surface | `--color-danger-subtle` | `#ffebe9` |
+| Diagram role      | HozUI token                  | Value     |
+| ----------------- | ---------------------------- | --------- |
+| Canvas            | `--color-canvas-default`     | `#ffffff` |
+| Subgraph          | `--color-canvas-subtle`      | `#f6f8fa` |
+| Border            | `--color-border-default`     | `#d1d9e0` |
+| Text              | `--color-fg-default`         | `#1f2328` |
+| Muted text        | `--color-fg-muted`           | `#59636e` |
+| Accent            | `--color-accent-emphasis`    | `#0969da` |
+| Accent surface    | `--color-accent-subtle`      | `#ddf4ff` |
+| Success           | `--color-success-emphasis`   | `#1a7f37` |
+| Success surface   | `--color-success-subtle`     | `#dafbe1` |
+| Attention         | `--color-attention-emphasis` | `#9a6700` |
+| Attention surface | `--color-attention-subtle`   | `#fff8c5` |
+| Danger            | `--color-danger-emphasis`    | `#d1242f` |
+| Danger surface    | `--color-danger-subtle`      | `#ffebe9` |
 
 ## Render
 

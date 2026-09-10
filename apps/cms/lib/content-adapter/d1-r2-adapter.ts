@@ -169,6 +169,48 @@ function createCloudflareD1RestDatabase(): D1Database | undefined {
   };
 }
 
+function createLocalD1ProxyDatabase(): D1Database | undefined {
+  const endpoint = process.env.CLOUDFLARE_D1_PROXY_URL?.trim();
+  const token = process.env.CLOUDFLARE_D1_PROXY_TOKEN?.trim();
+  if (!endpoint || !token) return;
+  const proxyEndpoint = endpoint;
+  const proxyToken = token;
+
+  function statement(sql: string, boundParams: unknown[] = []): D1Prepared {
+    async function query<T>(
+      operation: "all" | "first" | "run",
+      params: unknown[],
+    ): Promise<{ results: T[] }> {
+      const response = await fetch(proxyEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${proxyToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sql, params, operation }),
+      });
+      const payload = (await response.json()) as { results?: T[]; error?: string };
+      if (!response.ok)
+        throw new Error(payload.error ?? `Local D1 query failed with ${response.status}`);
+      return { results: payload.results ?? [] };
+    }
+
+    return {
+      bind: (...params: unknown[]) => statement(sql, params),
+      all: <T>(...params: unknown[]) => query<T>("all", params.length > 0 ? params : boundParams),
+      first: async <T>(...params: unknown[]) => {
+        const rows = await query<T>("first", params.length > 0 ? params : boundParams);
+        return rows.results?.[0] ?? null;
+      },
+      run: async (...params: unknown[]) => {
+        await query<unknown>("run", params.length > 0 ? params : boundParams);
+      },
+    };
+  }
+
+  return { prepare: statement };
+}
+
 function normalizeSlug(value: string) {
   return value
     .trim()
@@ -374,7 +416,7 @@ function getD1Binding(): D1Database | undefined {
     if (isD1Database(parsed)) return parsed;
   }
 
-  return createCloudflareD1RestDatabase();
+  return createLocalD1ProxyDatabase() ?? createCloudflareD1RestDatabase();
 }
 
 function normalizeCategorySlug(input?: string): string | undefined {
