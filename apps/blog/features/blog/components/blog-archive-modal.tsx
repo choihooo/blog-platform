@@ -17,15 +17,10 @@ import { useRef } from "react";
 
 type BlogArchiveModalProps = {
   children: ReactNode;
-  disableEntranceAnimation?: boolean;
   title?: string;
 };
 
-export function BlogArchiveModal({
-  children,
-  disableEntranceAnimation = false,
-  title = "BLOG ARCHIVE",
-}: BlogArchiveModalProps) {
+export function BlogArchiveModal({ children, title = "BLOG ARCHIVE" }: BlogArchiveModalProps) {
   const router = useRouter();
   const closeRequested = useRef(false);
 
@@ -59,13 +54,8 @@ export function BlogArchiveModal({
   return (
     <Modal open onOpenChange={(open) => !open && closeToRoom()}>
       <ModalPortal>
-        <ModalOverlay
-          className={`blog-archive-backdrop${disableEntranceAnimation ? " blog-archive-backdrop--static" : ""}`}
-        />
-        <ModalContent
-          className={`blog-archive-dialog${disableEntranceAnimation ? " blog-archive-dialog--static" : ""}`}
-          size="lg"
-        >
+        <ModalOverlay className="blog-archive-backdrop" />
+        <ModalContent className="blog-archive-dialog" size="lg">
           <ModalHeader className="blog-archive__bar">
             <ModalTitle className="blog-archive__title">
               <span className="blog-archive__file-icon" aria-hidden="true">

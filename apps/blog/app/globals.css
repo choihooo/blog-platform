@@ -620,11 +620,6 @@ body {
   place-items: center;
   padding: clamp(0.75rem, 3vw, 2.5rem);
   background: transparent;
-  animation: blog-archive-backdrop-in 180ms ease both;
-}
-
-.blog-archive-backdrop--static {
-  animation: none;
 }
 
 .hods-modal__dialog.blog-archive-dialog {
@@ -648,11 +643,6 @@ body {
     0 22px 60px rgba(12, 20, 32, 0.38),
     0 0 0 1px rgba(255, 255, 255, 0.72) inset;
   color: #263244;
-  animation: blog-archive-window-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.hods-modal__dialog.blog-archive-dialog--static {
-  animation: none;
 }
 
 .blog-archive__bar {
@@ -999,26 +989,6 @@ body {
   }
 }
 
-@keyframes blog-archive-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes blog-archive-window-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
 @media (max-width: 639px) {
   .blog-archive-backdrop {
     padding: 0;
@@ -1082,8 +1052,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .blog-archive-backdrop,
-  .hods-modal__dialog.blog-archive-dialog,
   .blog-archive-loading__bar,
   .blog-archive-loading__line {
     animation-duration: 1ms;

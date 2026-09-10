@@ -17,7 +17,6 @@ describe("pixel-room blog archive integration", () => {
   it("supports archive-to-post modal navigation", () => {
     const postModal = read("app/@modal/(.)blog/[slug]/page.tsx");
     expect(postModal).toContain("PostPage");
-    expect(postModal).toContain("disableEntranceAnimation");
     expect(read("features/blog/components/blog-archive-list.tsx")).toContain("/blog/${post.slug}");
   });
 
@@ -63,8 +62,8 @@ describe("pixel-room blog archive integration", () => {
   it("records the archive window styling and responsive fallback", () => {
     const css = read("app/globals.css");
     expect(css).toContain(".blog-archive-backdrop");
-    expect(css).toContain(".blog-archive-backdrop--static");
-    expect(css).toContain(".hods-modal__dialog.blog-archive-dialog--static");
+    expect(css).not.toContain("blog-archive-backdrop-in");
+    expect(css).not.toContain("blog-archive-window-in");
     expect(css).toContain(".blog-archive__sidebar");
     expect(css).toContain("@media (max-width: 639px)");
   });
