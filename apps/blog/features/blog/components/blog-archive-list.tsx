@@ -5,31 +5,52 @@ import type { CategoryHierarchy, PublicPost } from "../server/content-source";
 
 type BlogArchiveListProps = {
   posts: PublicPost[];
+  allPosts?: PublicPost[];
+  activeCategoryPath?: string;
   parentCategories: CategoryHierarchy[];
   childCategories: CategoryHierarchy[];
 };
 
-function CategoryTree({ posts, parentCategories, childCategories }: BlogArchiveListProps) {
+function CategoryTree({
+  posts,
+  allPosts = posts,
+  activeCategoryPath,
+  parentCategories,
+  childCategories,
+}: BlogArchiveListProps) {
   const counts = new Map<string, number>();
-  for (const post of posts) {
+  for (const post of allPosts) {
     if (!post.category) continue;
     counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
     const parent = post.category.split("/")[0];
     if (parent && parent !== post.category) counts.set(parent, (counts.get(parent) ?? 0) + 1);
   }
 
+  const visibleParents = parentCategories.filter((parent) => (counts.get(parent.slug) ?? 0) > 0);
+
   return (
     <aside className="blog-archive__sidebar" aria-label="블로그 카테고리">
       <div className="blog-archive__sidebar-heading">📁 CATEGORIES</div>
-      <Link className="blog-archive__category blog-archive__category--active" href="/blog">
-        <span aria-hidden="true">▣</span> 전체보기 <small>({posts.length})</small>
+      <Link
+        aria-current={!activeCategoryPath ? "page" : undefined}
+        className={`blog-archive__category${!activeCategoryPath ? " blog-archive__category--active" : ""}`}
+        href="/blog"
+      >
+        <span aria-hidden="true">▣</span> 전체보기 <small>({allPosts.length})</small>
       </Link>
       <div className="blog-archive__category-tree">
-        {parentCategories.map((parent) => {
-          const children = childCategories.filter((child) => child.parentSlug === parent.slug);
+        {visibleParents.map((parent) => {
+          const children = childCategories.filter(
+            (child) => child.parentSlug === parent.slug && (counts.get(child.slug) ?? 0) > 0,
+          );
+          const isParentActive = activeCategoryPath === parent.slug;
           return (
             <div key={parent.slug}>
-              <Link className="blog-archive__category" href={`/blog/categories/${parent.slug}`}>
+              <Link
+                aria-current={isParentActive ? "page" : undefined}
+                className={`blog-archive__category${isParentActive ? " blog-archive__category--active" : ""}`}
+                href={`/blog/categories/${parent.slug}`}
+              >
                 <span aria-hidden="true">▰</span> {parent.label}{" "}
                 <small>({counts.get(parent.slug) ?? 0})</small>
               </Link>
@@ -37,7 +58,8 @@ function CategoryTree({ posts, parentCategories, childCategories }: BlogArchiveL
                 <div className="blog-archive__children">
                   {children.map((child) => (
                     <Link
-                      className="blog-archive__category"
+                      aria-current={activeCategoryPath === child.slug ? "page" : undefined}
+                      className={`blog-archive__category${activeCategoryPath === child.slug ? " blog-archive__category--active" : ""}`}
                       href={`/blog/categories/${child.slug}`}
                       key={child.slug}
                     >
@@ -65,12 +87,16 @@ function PostCover({ post }: { post: PublicPost }) {
 
 export function BlogArchiveList({
   posts,
+  allPosts,
+  activeCategoryPath,
   parentCategories,
   childCategories,
 }: BlogArchiveListProps) {
   return (
     <div className="blog-archive__layout">
       <CategoryTree
+        activeCategoryPath={activeCategoryPath}
+        allPosts={allPosts}
         posts={posts}
         parentCategories={parentCategories}
         childCategories={childCategories}

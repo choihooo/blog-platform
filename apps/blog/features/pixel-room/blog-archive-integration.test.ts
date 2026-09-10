@@ -8,7 +8,9 @@ const read = (file: string) => readFileSync(join(root, file), "utf8");
 describe("pixel-room blog archive integration", () => {
   it("keeps Blog as a route-intercepted modal over the room", () => {
     expect(read("app/@modal/(.)blog/page.tsx")).toContain("BlogArchiveModal");
+    expect(read("app/@modal/loading.tsx")).toContain("불러오는 중");
     expect(read("features/pixel-room/pixel-room.tsx")).toContain('href="/blog"');
+    expect(read("features/pixel-room/pixel-room.tsx")).toContain('data-hotspot="blog"');
     expect(read("app/layout.tsx")).toContain("{modal}");
   });
 
@@ -40,6 +42,13 @@ describe("pixel-room blog archive integration", () => {
     expect(postPage).toContain('node.href.startsWith("/")');
     expect(postPage).toContain('href.startsWith("/")');
     expect(read("features/blog/components/recommended-posts.tsx")).toContain("AnalyticsLink");
+  });
+
+  it("closes every blog modal state back to the room", () => {
+    expect(read("features/blog/components/blog-archive-modal.tsx")).toContain("router.back()");
+    expect(read("features/blog/components/blog-archive-modal.tsx")).not.toContain(
+      'router.replace("/")',
+    );
   });
 
   it("records the archive window styling and responsive fallback", () => {

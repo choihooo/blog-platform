@@ -144,6 +144,7 @@ export function PixelRoom() {
             </Link>
             <Link
               className="hotspot hotspot--blog"
+              data-hotspot="blog"
               href="/blog"
               prefetch={false}
               aria-label="Blog 열기"

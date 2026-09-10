@@ -4,6 +4,7 @@ import { BlogArchiveList } from "@/features/blog/components/blog-archive-list";
 import { BlogArchiveModal } from "@/features/blog/components/blog-archive-modal";
 import {
   getCategoryByPath,
+  getPublishedPosts,
   getPostsByCategoryPath,
   listCategories,
 } from "@/features/blog/server/content-source";
@@ -23,9 +24,10 @@ export default async function CategoryModal({ params }: CategoryModalProps) {
   const path = categoryPathFromParams((await params).categoryPath);
   if (!path) notFound();
 
-  const [category, posts, parentCategories, childCategories] = await Promise.all([
+  const [category, posts, allPosts, parentCategories, childCategories] = await Promise.all([
     getCategoryByPath(path),
     getPostsByCategoryPath(path, { limit: 100, publishedOnly: true }),
+    getPublishedPosts({ limit: 100, analyzeBody: false }),
     listCategories({ depth: 1 }),
     listCategories({ depth: 2 }),
   ]);
@@ -34,6 +36,8 @@ export default async function CategoryModal({ params }: CategoryModalProps) {
   return (
     <BlogArchiveModal title={`BLOG ARCHIVE / ${category.label}`}>
       <BlogArchiveList
+        activeCategoryPath={path}
+        allPosts={allPosts}
         childCategories={childCategories}
         parentCategories={parentCategories}
         posts={posts}
