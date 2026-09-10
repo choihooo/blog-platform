@@ -623,6 +623,10 @@ body {
   animation: blog-archive-backdrop-in 180ms ease both;
 }
 
+.blog-archive-backdrop--static {
+  animation: none;
+}
+
 .hods-modal__dialog.blog-archive-dialog {
   position: fixed;
   z-index: 1001;
@@ -645,6 +649,10 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.72) inset;
   color: #263244;
   animation: blog-archive-window-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hods-modal__dialog.blog-archive-dialog--static {
+  animation: none;
 }
 
 .blog-archive__bar {

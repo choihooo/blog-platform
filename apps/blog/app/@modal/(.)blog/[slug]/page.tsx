@@ -12,7 +12,7 @@ export default async function BlogPostModalPage({ params }: BlogPostModalPagePro
   if (!post) notFound();
 
   return (
-    <BlogArchiveModal title={`BLOG ARCHIVE / ${post.title}`}>
+    <BlogArchiveModal disableEntranceAnimation title={`BLOG ARCHIVE / ${post.title}`}>
       <PostPage params={Promise.resolve({ slug })} presentation="archive" />
     </BlogArchiveModal>
   );
