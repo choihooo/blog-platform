@@ -1934,7 +1934,6 @@ body {
   z-index: 50;
   inset: 0;
   background: transparent;
-  animation: work-feed-backdrop-in 220ms ease both;
 }
 
 .hods-modal__dialog.work-feed-modal {
@@ -1954,7 +1953,6 @@ body {
   background: transparent;
   box-shadow: none;
   transform: translate(-50%, -50%);
-  animation: work-feed-modal-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .work-feed-modal__body {
@@ -2151,26 +2149,6 @@ body {
   }
 }
 
-@keyframes work-feed-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes work-feed-modal-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
 @media (max-width: 639px) {
   .work-feed-modal__body {
     height: 100dvh;
@@ -2207,7 +2185,6 @@ body:has(.resume-modal-backdrop) header {
   z-index: 50;
   inset: 0;
   background: transparent;
-  animation: work-feed-backdrop-in 220ms ease both;
 }
 
 .hods-modal__dialog.resume-modal {
@@ -2228,7 +2205,6 @@ body:has(.resume-modal-backdrop) header {
   padding: 0;
   background: var(--background);
   box-shadow: 0 2rem 6rem color-mix(in oklch, var(--foreground) 28%, transparent);
-  animation: project-modal-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .resume-modal__bar {
@@ -2304,17 +2280,7 @@ body:has(.resume-modal-backdrop) header {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .resume-modal-backdrop,
-  .hods-modal__dialog.resume-modal {
-    animation: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .work-feed-backdrop,
-  .hods-modal__dialog.work-feed-modal,
   .work-feed-modal__close {
-    animation: none;
     transition: none;
   }
 

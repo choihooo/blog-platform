@@ -38,4 +38,12 @@ describe("pixel room integration contracts", () => {
     expect(shell).toContain('pathname.startsWith("/blog")');
     expect(shell).toContain('pathname.startsWith("/resume")');
   });
+  it("opens About and Work without a window entrance animation", () => {
+    const styles = read("../../app/globals.css");
+    expect(styles).not.toContain("animation: work-feed-backdrop-in");
+    expect(styles).not.toContain("animation: work-feed-modal-in");
+    expect(styles).not.toContain("animation: project-modal-in 300ms");
+    expect(styles).toContain(".work-feed-backdrop");
+    expect(styles).toContain(".resume-modal-backdrop");
+  });
 });
