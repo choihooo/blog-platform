@@ -1,29 +1,53 @@
+# OS and editor files
 .DS_Store
+*.swp
+*.swo
+
+# Local configuration and secrets
 .env
 .env.*
 !.env.example
+!.env.*.example
+.env*.local
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 
+# Dependencies
 node_modules/
+
+# Build, cache, test, and deployment output
 .next/
 out/
 dist/
 build/
 coverage/
-*.log
+.turbo/
+.vercel/
+.open-next/
+.wrangler/
+.cache/
+playwright-report/
+test-results/
+storybook-static/
 *.tsbuildinfo
+*.log
+
+# Local Codex and agent state
+.agents/
+.claude/
+.gstack/
+
+# Large local AI assets
 apps/blog/public/wasm/wllama.wasm
 apps/blog/public/models/kanana-q8-*/
 apps/blog/public/models/hyperclova-q4-*/
 apps/blog/public/models/.kanana-staging-*/
 
-.turbo/
-.vercel/
-.open-next/
-.wrangler/
-.dev.vars
-.dev.vars.*
-
-.agents/
-.vercel
-.gstack/
-.env*.local
+# Local generated work products
+/_workspace/
+/artifacts/
+/output/
+/tmp/
+/android-screen.png
+/tsts.js
