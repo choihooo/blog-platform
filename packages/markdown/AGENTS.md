@@ -9,6 +9,12 @@ heading, TOC, reading time, slug 정책처럼 문서 변환에 필요한 순수 
 - heading 추출, TOC 순서, slug 충돌 검증의 기존 계약을 보존한다.
 - 한국어·영어·숫자·특수문자 입력을 모두 고려한다.
 - 오류는 기존 `ValidationIssue` 계약에 맞춰 반환한다.
+- 현재 공개 API는 heading, TOC, reading time, slug 정책이다. `parseMdxDocument`, `analyzeMdx`,
+  `validateMdxSafety` 같은 MDX API를 이 패키지에 있다고 가정하지 않는다.
+- `extractHeadings`는 fenced code block 안의 heading을 무시하고 `github-slugger`의 중복 anchor
+  규칙을 유지한다.
+- `generateToc`의 기본 depth 범위는 2~3이고, `validateUniqueSlug`의 `currentPath`는 기존 문서가 자기
+  slug를 유지할 때 허용되어야 한다.
 
 ## 검증
 

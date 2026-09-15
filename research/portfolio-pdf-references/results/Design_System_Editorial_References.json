@@ -1,0 +1,178 @@
+{
+  "fields": {
+  "item_name": "Design System Editorial References",
+  "references": [
+    {
+      "title": "IBM Design for Sustainability and Design Checklist for Sustainability",
+      "creator_or_publisher": "IBM Design",
+      "direct_url": "https://www.ibm.com/design/practices/design-for-sustainability/design-for-sustainability-positionpaper.pdf",
+      "format": "Eight-page portrait PDF position paper",
+      "access_status": "Publicly accessible; direct PDF; printing allowed",
+      "why_relevant": "The closest compact editorial model in the set: a short, restrained document explicitly grounded in IBM Design Language and Carbon Design System. Its spare pages, strong type contrast, modular checklist structure, and limited accent color translate well to a technical portfolio.",
+      "reusable_patterns": [
+        "A quiet cover with one oversized title, a small version label, and a single modular graphic",
+        "One argument or checklist family per page",
+        "Two-column detail pages with repeated subheading and bullet modules",
+        "Blue used primarily for links and emphasis while most content remains black on white",
+        "Large display type balanced by compact evidence-dense body copy"
+      ],
+      "cautions": [
+        "The source is US Letter rather than A4, so margins and line lengths must be recalculated",
+        "Its very large display serif can consume too much space when Korean project titles wrap",
+        "The PDF is not tagged, so its visual quality should not be mistaken for an accessibility model"
+      ]
+    },
+    {
+      "title": "Transforming the American Digital Experience: What’s Next for the U.S. Web Design System",
+      "creator_or_publisher": "U.S. Web Design System, U.S. General Services Administration",
+      "direct_url": "https://designsystem.digital.gov/files/next/Transforming-the-American-digital-experience.pdf",
+      "format": "31-page tagged landscape PDF research and strategy report",
+      "access_status": "Publicly accessible; direct PDF",
+      "why_relevant": "A strong example of compressing research into a navigable narrative: executive summary, five findings, short evidence passages, and opportunity areas. It demonstrates how a design-system team can present process and recommendations without turning every page into a UI screenshot.",
+      "reusable_patterns": [
+        "A report-level thesis followed by a fixed set of numbered findings",
+        "Large left-hand statement paired with narrower evidence columns",
+        "Running section labels, page numbers, and a restrained footer system",
+        "Inline numbered citations that connect claims to evidence",
+        "Full-bleed section dividers that reset pacing between dense passages"
+      ],
+      "cautions": [
+        "The landscape format is unsuitable for a conventional A4 hiring document without substantial reflow",
+        "The multicolor icon band is more expressive than Hozui’s restrained blue-accent language",
+        "Three narrow text columns would become uncomfortable on portrait A4"
+      ]
+    },
+    {
+      "title": "IBM iX Brand Guidelines",
+      "creator_or_publisher": "IBM iX",
+      "direct_url": "https://www.ibm.com/design/event/files/IBM_iX_Brand_Guidelines_101218.pdf",
+      "format": "55-page PDF brand and application guide",
+      "access_status": "Publicly accessible; direct PDF",
+      "why_relevant": "This guide exposes the mechanics behind an IBM editorial system: the 2x Grid, typography, color, pictograms, photography, digital layouts, presentations, and physical applications. It is useful as a construction reference rather than as a portfolio narrative model.",
+      "reusable_patterns": [
+        "Binary grid divisions that produce consistent halves, quarters, and eighths",
+        "Strict alignment of titles, annotations, diagrams, and examples",
+        "A small family of repeatable specimen-page templates",
+        "Clear do-and-do-not comparisons with short captions",
+        "System documentation that shows rules next to their visual application"
+      ],
+      "cautions": [
+        "The document is a brand specification, so copying its didactic tone would weaken personal project storytelling",
+        "Some brand assets and IBM-specific marks are not reusable",
+        "Landscape specimen layouts need a portrait A4 interpretation"
+      ]
+    },
+    {
+      "title": "Digital Transformation Agency Annual Report 2017–18",
+      "creator_or_publisher": "Australian Government Digital Transformation Agency",
+      "direct_url": "https://www.dta.gov.au/sites/default/files/files/Annual%20reports/18459%20DTA%20-%20Annual%20Report%202017%E2%80%9318-wcag%20%283%29.pdf",
+      "format": "158-page portrait annual report PDF",
+      "access_status": "Publicly accessible; direct PDF",
+      "why_relevant": "A long-form government report that repeatedly turns programs, performance statements, metrics, governance, and tables into stable editorial modules. Its Design System spotlight also connects the report directly to an established component-and-token practice.",
+      "reusable_patterns": [
+        "Chapter openers that combine a section number, concise title, and generous whitespace",
+        "Spotlight pages that isolate one initiative from the surrounding report",
+        "Consistent table styles for targets, results, and quantitative evidence",
+        "Running heads and folios that make a long PDF scannable",
+        "Alternation between narrative pages, metric summaries, and formal evidence tables"
+      ],
+      "cautions": [
+        "At 158 pages it is a reference for modularity, not an appropriate length target",
+        "Statutory reporting tables are denser than a recruiter-facing portfolio should be",
+        "Government governance content should not be imitated unless it directly proves project responsibility"
+      ]
+    },
+    {
+      "title": "Print Palette — GOV.UK Brand Guidelines",
+      "creator_or_publisher": "Government Digital Service",
+      "direct_url": "https://brand.design-system.service.gov.uk/colour/print/",
+      "format": "Web-based print color specification with CMYK and Pantone values",
+      "access_status": "Publicly accessible web guidance",
+      "why_relevant": "The most directly actionable restrained-blue reference: it defines a production-ready print palette with primary blue, blue tints, a dark blue shade, neutrals, and controlled secondary families. It provides a disciplined bridge from screen tokens to printed output.",
+      "reusable_patterns": [
+        "A primary blue supported by several measured tints instead of many unrelated accents",
+        "Near-black text and pale blue surfaces for high information density",
+        "CMYK-aware color specifications for predictable printing",
+        "Accent colors reserved for categorical meaning rather than decoration",
+        "A neutral scale for rules, table fills, captions, and secondary text"
+      ],
+      "cautions": [
+        "GOV.UK colors are brand assets and should inform ratios and roles, not be copied as a new identity",
+        "Pantone matching is unnecessary for ordinary digital PDF delivery",
+        "Color must never be the sole carrier of status or category meaning"
+      ]
+    },
+    {
+      "title": "Fonts — NHS Identity Guidelines",
+      "creator_or_publisher": "NHS England",
+      "direct_url": "https://www.england.nhs.uk/nhsidentity/identity-guidelines/fonts/",
+      "format": "Web-based typography guidance with A4 report, leaflet, signage, and presentation examples",
+      "access_status": "Publicly accessible web guidance",
+      "why_relevant": "A practical model for accessible institutional typography across print and digital media. The page explicitly shows an A4 annual report and explains how a modest number of weights creates hierarchy, including why a lighter title weight can prevent an image-led cover from feeling heavy.",
+      "reusable_patterns": [
+        "One sans-serif family with a deliberately small set of weights",
+        "Regular or light weight for large titles and bold for compact emphasis",
+        "Clear role separation among title, heading, body, list, and supporting information",
+        "Strong text-background contrast and avoidance of italic body copy",
+        "Typography that remains legible in dense reports as well as display applications"
+      ],
+      "cautions": [
+        "Frutiger is licensed and should not replace Hozui’s SUIT-based typography",
+        "The institutional NHS tone can feel impersonal if copied without project-specific voice",
+        "A light display weight should be tested carefully for Korean glyph rendering and print contrast"
+      ]
+    }
+  ],
+  "strongest_reference": {
+    "title": "IBM Design for Sustainability and Design Checklist for Sustainability",
+    "direct_url": "https://www.ibm.com/design/practices/design-for-sustainability/design-for-sustainability-positionpaper.pdf",
+    "selection_reason": "It is the best overall structural analogue for a concise Hozui-based portfolio PDF: short, portrait-oriented, visibly system-driven, mostly monochrome, modular, and able to place high-level principles beside dense checklist evidence without losing hierarchy."
+  },
+  "visual_patterns": [
+    "Grid: use a stable four-column A4 grid that can resolve into one full-width narrative column, a 3+1 evidence rail, or two equal modules; this adapts IBM’s binary grid logic without forcing landscape layouts.",
+    "Typography: use one Korean-capable sans-serif family for nearly all content, with a restrained weight range; create contrast through scale, spacing, and alignment before introducing a second face.",
+    "Color: keep body text near-black on white, use one Hozui blue for links, key labels, and selected rules, and use pale blue or neutral fills for evidence panels and tables.",
+    "Hierarchy: give each project a short thesis, role and timeframe metadata, one dominant result, then progressively disclose problem, intervention, technical decisions, and proof.",
+    "Image treatment: align screenshots to the grid, preserve common aspect ratios, use thin neutral borders, and add short captions that state what the reader should notice.",
+    "Tables: prefer lightly ruled tables with strong column labels, tabular numerals, restrained fills, and no vertical borders unless comparison would otherwise become ambiguous.",
+    "Navigation: combine a compact contents page, persistent project or section labels, page numbers, and visible link styling; do not reproduce website navigation chrome in print.",
+    "Rhythm: alternate dense evidence pages with quieter project openers or full-width diagrams so a nine-project document does not become a continuous wall of cards."
+  ],
+  "content_patterns": [
+    "Project selection: lead with three to four flagship projects and compress the remaining projects into shorter proof pages or a selected-work appendix.",
+    "Problem framing: open each case with one sentence naming the user or operational problem, its constraint, and why it mattered.",
+    "Process compression: summarize discovery, decision, implementation, and validation as four compact stages; expand only the stage containing the candidate’s distinctive contribution.",
+    "Evidence: attach each important claim to a screenshot, architecture diagram, pull request, release artifact, user signal, or cited metric.",
+    "Metrics: show baseline, intervention, result, and measurement window together; label proxy metrics and estimates explicitly.",
+    "Outcomes: distinguish shipped output from user, business, reliability, accessibility, or team outcomes.",
+    "Role clarity: state ownership, collaborators, duration, stack, and decision scope in a consistent metadata block near the start of every project.",
+    "Recommendations and learning: close each flagship case with one concise lesson or next step, mirroring the finding-to-opportunity logic of the USWDS report."
+  ],
+  "a4_adaptation": [
+    "Use Hozui spacing tokens to build a 4 mm or token-rounded base rhythm, then derive margins, gutters, card padding, caption gaps, and section spacing from consistent multiples.",
+    "Map the document to a four-column A4 portrait grid with approximately 16–20 mm outer margins and 4–6 mm gutters; validate the exact values through print proofs rather than inheriting US Letter proportions.",
+    "Use Hozui SUIT for Korean and Latin text, with regular body copy, semibold subheads, and bold only for compact results or labels; avoid relying on an untested display serif for Korean titles.",
+    "Translate Hozui semantic color tokens into a print-safe palette: near-black content, neutral rules, one primary blue, and one pale blue surface. Keep dark-theme tokens out of the printable edition.",
+    "Reuse Hozui Chip or Badge styling only for short metadata such as role, platform, or status; flatten shadows, preserve text labels, and prevent chip groups from wrapping across page breaks.",
+    "Adapt Hozui cards into border-led evidence modules with minimal radius and no elevation. Keep headings with at least two following lines and keep each metric tile or figure caption with its artifact.",
+    "Render links in Hozui blue with visible underlines and include human-readable labels; optionally add small QR codes only for the most important demos or repositories.",
+    "Create three repeatable page templates: project opener, evidence/process page, and compact project summary. Repetition should come from tokens and component roles, while image scale and column span create editorial variation.",
+    "For screenshots and video posters, use fixed aspect-ratio frames, a one-line descriptive caption, and a visible artifact type label such as Screenshot, Architecture, or Video poster.",
+    "Export and inspect at actual A4 size, in grayscale, and with links enabled; verify Korean glyph embedding, minimum body size, contrast, table continuation, widows and orphans, and page-break behavior."
+  ],
+  "avoid_patterns": [
+    "Do not compress landscape three-column report layouts directly onto portrait A4.",
+    "Do not reproduce a full web interface with sticky navigation, hover-only affordances, dark mode, or interactive controls in the printable document.",
+    "Do not use blue fills behind long body passages; reserve saturated blue for small, high-value accents.",
+    "Do not turn every project section into identical rounded cards, because continuous card grids erase editorial hierarchy and waste printable area.",
+    "Do not include process ceremonies, tool lists, or generic design-thinking diagrams unless they prove a consequential decision.",
+    "Do not present metrics without a baseline, measurement method, or time window.",
+    "Do not split screenshots from their captions, table headers from rows, or headings from the first paragraph across pages.",
+    "Do not imitate the excessive length of annual reports or brand manuals; borrow their modular discipline, not their page count.",
+    "Do not rely on color alone for statuses, chart series, links, or before-and-after comparisons.",
+    "Do not copy protected logos, proprietary typefaces, or exact brand palettes when the underlying layout principle is sufficient."
+  ],
+  "source_quality_notes": "All six references are first-party sources from IBM, the U.S. General Services Administration, the Australian Government Digital Transformation Agency, the UK Government Digital Service, or NHS England. Four are direct documents or reports and two are official production guidelines with explicit print or A4 guidance. The IBM and USWDS PDFs were visually inspected in addition to text extraction; page counts, orientation, tagging, and print permissions were checked from the files. Recommendations that combine patterns across sources are editorial synthesis rather than claims made verbatim by any single publisher.",
+  "uncertain": []
+  }
+}

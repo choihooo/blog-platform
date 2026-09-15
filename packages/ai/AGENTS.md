@@ -8,6 +8,8 @@
 - AI 호출 구현을 이 패키지에 임의로 추가하지 않는다.
 - 모델 제공자, 프롬프트, 개인정보 처리 정책은 별도 설계와 사용자 요청 없이 확정하지 않는다.
 - 공개 API를 추가하면 `src/index.ts`, README, typecheck를 함께 갱신한다.
+- 현재 `src/index.ts`는 `aiPackage` placeholder만 export한다. 실제 feature flag나 AI 호출 계약이
+  생기기 전까지 provider SDK, prompt, runtime secret을 이 패키지에 추가하지 않는다.
 
 ## 검증
 

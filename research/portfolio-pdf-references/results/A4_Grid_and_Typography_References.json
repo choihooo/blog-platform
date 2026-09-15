@@ -1,0 +1,237 @@
+{
+  "fields": {
+  "item_name": "A4 Grid and Typography References",
+  "references": [
+    {
+      "title": "CSS Paged Media Module Level 3",
+      "creator_or_publisher": "World Wide Web Consortium (W3C)",
+      "direct_url": "https://www.w3.org/TR/css-page-3/",
+      "format": "W3C Working Draft / web specification",
+      "access_status": "Public, full text",
+      "why_relevant": "Defines the page model, named A4 size (210 mm by 297 mm), page margins, page-margin boxes, running headers and footers, page counters, bleed, and print orientation. It is the authoritative implementation reference for an HTML-to-PDF portfolio.",
+      "reusable_patterns": [
+        "Declare @page { size: A4; } rather than relying on printer defaults.",
+        "Reserve page-margin boxes for document title, section context, and page number instead of placing navigation inside the content flow.",
+        "Use explicit physical units for the print frame and margins so output remains stable across renderers."
+      ],
+      "cautions": [
+        "The specification allows partial implementations; verify the exact HTML-to-PDF renderer used by the project.",
+        "The specification defines mechanisms, not an aesthetically optimal margin size."
+      ]
+    },
+    {
+      "title": "CSS Fragmentation Module Level 3",
+      "creator_or_publisher": "World Wide Web Consortium (W3C)",
+      "direct_url": "https://www.w3.org/TR/css-break-3/",
+      "format": "W3C Candidate Recommendation Draft / web specification",
+      "access_status": "Public, full text",
+      "why_relevant": "Defines break-before, break-after, break-inside, widows, and orphans for paged output. These controls are central to keeping headings, metric rows, captions, and compact evidence units intelligible across A4 page boundaries.",
+      "reusable_patterns": [
+        "Force a new page only at major project boundaries with break-before: page.",
+        "Apply break-inside: avoid to compact semantic units such as a figure with its caption or a small metric block.",
+        "Use widows and orphans as paragraph safeguards while still allowing long content to fragment."
+      ],
+      "cautions": [
+        "Avoid applying break-inside: avoid to large sections that cannot fit on one page; the renderer must then override or create excessive whitespace.",
+        "Legacy page-break-* properties are aliases with narrower semantics; prefer the modern break-* properties and test fallbacks only where needed."
+      ]
+    },
+    {
+      "title": "Requirements for Hangul Text Layout and Typography",
+      "creator_or_publisher": "World Wide Web Consortium (W3C) Internationalization Working Group",
+      "direct_url": "https://www.w3.org/TR/klreq/",
+      "format": "W3C Working Group Note / bilingual web reference",
+      "access_status": "Public, full text",
+      "why_relevant": "The most direct standards-oriented reference for Korean punctuation, mixed Hangul-Latin composition, character- or word-based line breaking, prohibited line-start and line-end characters, paragraph alignment, last-line adjustment, spacing, and baselines.",
+      "reusable_patterns": [
+        "Enable Korean-aware line breaking and prohibit closing punctuation at line start and opening punctuation at line end.",
+        "Keep Arabic numeral sequences, numeric prefixes or suffixes, and footnote-number strings intact where possible.",
+        "Use a consistent policy for Hangul-Latin mixed text rather than treating Latin tokens as visually unrelated inserts.",
+        "For short horizontal-reading measures, unindented paragraphs separated by controlled vertical space are a supported pattern."
+      ],
+      "cautions": [
+        "The document describes typographic requirements rather than prescribing one portfolio-specific type size or grid.",
+        "Browser support for Korean line-break controls varies, so representative Korean, English, punctuation, and numeric strings require visual proofing."
+      ]
+    },
+    {
+      "title": "Use a baseline grid",
+      "creator_or_publisher": "Adobe",
+      "direct_url": "https://helpx.adobe.com/indesign/desktop/layout-and-grid-tools/grids/use-a-baseline-grid.html",
+      "format": "Official product documentation",
+      "access_status": "Public, full text",
+      "why_relevant": "Explains how a baseline grid aligns text across columns and pages, and explicitly recommends matching the grid increment to body-text leading. This gives a practical method for vertical rhythm in an editorial A4 layout.",
+      "reusable_patterns": [
+        "Set the baseline increment equal to the body leading.",
+        "Start the baseline grid at the top content margin so text, rules, and media captions share a stable vertical origin.",
+        "Use a local frame grid only for exceptional modules whose leading must differ from the main editorial rhythm."
+      ],
+      "cautions": [
+        "A baseline grid is an alignment tool, not a reason to force every display heading onto the body baseline.",
+        "This documentation describes InDesign behavior; an HTML or ReportLab implementation must recreate the principle with tokens and measured spacing."
+      ]
+    },
+    {
+      "title": "Add text, graphics, and headers to tables",
+      "creator_or_publisher": "Adobe",
+      "direct_url": "https://helpx.adobe.com/indesign/desktop/add-tables-and-data/create-tables/add-content-to-a-table.html",
+      "format": "Official product documentation",
+      "access_status": "Public, full text",
+      "why_relevant": "Documents expanding rows and repeating header or footer rows when a table continues across columns, frames, or pages. It provides a concrete model for project indexes and metric tables in a multipage technical portfolio.",
+      "reusable_patterns": [
+        "Repeat column labels on each continued page.",
+        "Allow row height to grow with content rather than clipping text to fixed heights.",
+        "Use a continuation label only after the first table segment and omit it from the final segment when possible."
+      ],
+      "cautions": [
+        "Do not embed oversized graphics in constrained cells because they may overflow or produce overset content.",
+        "Dense tables still require editorial reduction; repeating headers does not solve excessive column count or weak hierarchy."
+      ]
+    },
+    {
+      "title": "Create and manage image captions",
+      "creator_or_publisher": "Adobe",
+      "direct_url": "https://helpx.adobe.com/indesign/desktop/indexes-and-references/references-and-bookmarks/create-image-captions.html",
+      "format": "Official product documentation",
+      "access_status": "Public, full text",
+      "why_relevant": "Treats captions as structured descriptive content, defines a controlled offset from the image, supports paragraph styles, and recommends grouping caption and image. These patterns map directly to portfolio evidence figures.",
+      "reusable_patterns": [
+        "Give every evidence image a nearby descriptive caption with a dedicated caption style.",
+        "Keep the figure and caption grouped during layout and pagination.",
+        "Use a consistent image-to-caption offset and include provenance or context fields when useful."
+      ],
+      "cautions": [
+        "A filename alone is not an explanatory caption.",
+        "Automatically sourced metadata must be edited when it does not explain what the reader should notice."
+      ]
+    },
+    {
+      "title": "Noto CJK Fonts",
+      "creator_or_publisher": "Noto Fonts project",
+      "direct_url": "https://github.com/notofonts/noto-cjk",
+      "format": "Official open-source font repository and documentation",
+      "access_status": "Public repository",
+      "why_relevant": "Documents Korean-specific Noto Sans CJK and Noto Serif CJK builds, multiple weights, variable fonts, full CJK coverage, and language-specific glyph behavior. It is a useful fallback and verification reference for embedded Korean PDF fonts.",
+      "reusable_patterns": [
+        "Use a Korean-specific font build or correct language tagging so Korean glyph forms are selected intentionally.",
+        "Embed the actual weights used by the document rather than synthesizing bold faces.",
+        "Maintain a fallback with broad Korean, Latin, punctuation, and symbol coverage for evidence-heavy technical text."
+      ],
+      "cautions": [
+        "Noto is a font resource, not a complete typographic system; size, leading, tracking, and hierarchy still need document-specific tuning.",
+        "Large CJK font files can increase PDF size; subset or embed only required faces when the export tool safely supports it."
+      ]
+    },
+    {
+      "title": "Typography in Ten Minutes",
+      "creator_or_publisher": "Matthew Butterick, Practical Typography",
+      "direct_url": "https://practicaltypography.com/typography-in-ten-minutes.html",
+      "format": "Professional typography handbook chapter",
+      "access_status": "Public, full text",
+      "why_relevant": "Provides practical starting ranges for print body text, leading, and line length: 10-12 point body text, 120-145 percent leading, and an average measure of 45-90 characters. These are useful proofing targets for the A4 portfolio rather than fixed rules.",
+      "reusable_patterns": [
+        "Start print body text within the 10-12 point range and adjust for the actual Korean font's apparent size.",
+        "Start body leading within 120-145 percent of point size and tune against dense mixed-script paragraphs.",
+        "Constrain narrative measure instead of stretching body copy across the entire A4 content width."
+      ],
+      "cautions": [
+        "The ranges are general professional guidance, not a Korean-specific standard.",
+        "Character counts differ materially between Hangul and Latin text; proof representative Korean lines rather than copying a Latin measure mechanically."
+      ]
+    }
+  ],
+  "strongest_reference": {
+    "title": "Requirements for Hangul Text Layout and Typography",
+    "direct_url": "https://www.w3.org/TR/klreq/",
+    "selection_reason": "It uniquely addresses the hardest part of this portfolio: correct Korean and mixed Korean-Latin composition. Its line-start and line-end restrictions, unbreakable sequences, spacing, paragraph, and baseline guidance should govern the typography layer, while the W3C paged-media specifications govern the page layer."
+  },
+  "visual_patterns": [
+    {
+      "area": "Page frame and grid",
+      "pattern": "Use a portrait A4 sheet at 210 mm by 297 mm with a stable content frame. Retain the current 15-16 mm side-margin range as a compact technical-document baseline, but create an intentionally wider text measure inside full-width sections through a two-column grid, inset narrative column, or 60-70 percent reading column. Use 4 or 6 columns with consistent gutters so media, metrics, and prose can align without arbitrary widths."
+    },
+    {
+      "area": "Vertical rhythm",
+      "pattern": "Use the body leading as the base vertical increment. Map Hozui spacing tokens to multiples or clean half-multiples of that increment, and align body text, table rows, captions, dividers, and evidence blocks to the rhythm. Allow large headings to optically align rather than forcing every display line onto the grid."
+    },
+    {
+      "area": "Typography",
+      "pattern": "Use the embedded Hozui SUIT family for Korean-first composition, with a verified Korean fallback such as Noto Sans KR. Target approximately 10-11 point body text, 13-15 point section headings, 18-24 point project titles, and 7.5-9 point captions or metadata, then verify at actual-size print. Keep body leading near 1.4-1.55 for Hangul-heavy copy and avoid excessive negative tracking."
+    },
+    {
+      "area": "Hierarchy",
+      "pattern": "Limit hierarchy to a repeatable ladder: portfolio title, project title, section heading, body, label, caption. Use weight, spacing, and one accent color before adding size variants. Keep dates, roles, and technologies in a secondary metadata lane so they never compete with project outcomes."
+    },
+    {
+      "area": "Color",
+      "pattern": "Use Hozui canvas white, default foreground, muted foreground, stroke, muted background, and accent tokens. Reserve the blue accent for navigation cues, outcome labels, and small evidence annotations. Ensure body and caption text remain strongly legible in grayscale and meet at least a 4.5:1 screen-contrast target before print proofing."
+    },
+    {
+      "area": "Image treatment",
+      "pattern": "Place evidence images on the column grid, preserve aspect ratio, and use a light Hozui stroke rather than decorative shadows. Pair each image with a numbered or clearly titled caption that states what the artifact is, what to inspect, and why it supports the claim. Keep the image and caption in the same pagination unit."
+    },
+    {
+      "area": "Tables",
+      "pattern": "Use left-aligned text, tabular numerals for comparable metrics, a muted header surface, minimal horizontal rules, and no decorative vertical rules unless columns would otherwise become ambiguous. Repeat table headers after page breaks, permit rows to expand, and avoid splitting a single row when it can fit on the next page."
+    },
+    {
+      "area": "Navigation",
+      "pattern": "Use a compact project index near the front, consistent project numbering, running project or section labels, and page numbers in the page margin. Export tagged headings, bookmarks, hyperlinks, and a logical reading order so the PDF remains navigable beyond its visual grid."
+    }
+  ],
+  "content_patterns": [
+    {
+      "area": "Project selection",
+      "pattern": "Select a small set of projects with distinct proof types: product outcome, architecture or reliability improvement, and delivery or team leverage. Prefer projects with traceable evidence over projects chosen only for visual variety."
+    },
+    {
+      "area": "Problem framing",
+      "pattern": "Open each project with a compact facts block containing context, user or business problem, personal responsibility, constraints, and time period. Put the central problem and outcome above process detail."
+    },
+    {
+      "area": "Process compression",
+      "pattern": "Compress process into a decision chain: observed signal, diagnosed cause, options considered, implementation choice, and validation method. Use diagrams or tables only when they reveal relationships that prose would obscure."
+    },
+    {
+      "area": "Evidence",
+      "pattern": "Attach each major claim to one nearby artifact, such as a metric table, annotated screenshot, architecture diagram, test result, or release record. Captions should explain the artifact's evidentiary role rather than merely naming it."
+    },
+    {
+      "area": "Metrics",
+      "pattern": "Show baseline, resulting value, unit, measurement window, and source wherever available. Distinguish measured outcomes from estimates and qualitative observations. Use a consistent compact metric-row component across projects."
+    },
+    {
+      "area": "Outcomes",
+      "pattern": "Close each project with the result, the contributor's specific scope, what remained unresolved, and what was learned or changed in later work. Avoid ending on a list of implementation tasks."
+    }
+  ],
+  "a4_adaptation": [
+    "Declare @page { size: A4; margin: 14mm 16mm 17mm; } or retain the existing HTML generator's 13mm 15mm 15mm frame after print proofing; do not let the browser choose paper size or margins.",
+    "Keep Hozui SUIT as the primary embedded face, instantiate actual 400, 600, and 700 weights as the ReportLab generator already does, and add a tested Korean fallback only if glyph coverage fails.",
+    "For the current Hozui scale, treat body-md (14 px, approximately 10.5 pt) as the default printed body, body-sm or caption (12 px, approximately 9 pt) as metadata, heading-sm (16 px, approximately 12 pt) as subsection text, and heading-lg (24 px, approximately 18 pt) as a project title. Avoid using the web display scale throughout the interior pages.",
+    "Set the main baseline increment from body-md leading. The current 22 px leading is approximately 16.5 pt and produces a spacious 1.57 ratio; test a print-specific 19-21 px leading range for denser pages while maintaining Korean readability, then align vertical Hozui spacing choices to that rhythm.",
+    "Use a 6-column content grid inside the 178 mm-wide ReportLab frame or the 180 mm-wide HTML frame. Let narrative copy span 4 columns, images and tables span 6, and narrow metadata or metric labels span 1-2 columns.",
+    "Build project sections from reusable Hozui-style primitives: SectionHeader, MetadataList, MetricRow, EvidenceFigure, Caption, DataTable, Divider, ChipGroup, and PageFooter. Apply token colors, spacing, radii, and typography through print aliases instead of one-off values.",
+    "Replace broad break-inside: avoid rules on complete achievement sections with narrower keep rules: keep headings with the next paragraph, keep a short metric block together, keep each figure with its caption, and allow long evidence narratives to split.",
+    "For tables, repeat thead on every page, use break-inside: avoid on individual rows where supported, left-align prose, right-align or decimal-align comparable numbers, and define a continuation treatment. In ReportLab, retain repeatRows=1 and verify each row's split behavior.",
+    "Apply Korean-aware wrapping to every text component, not just body paragraphs. Test line-start closing punctuation, line-end opening punctuation, uninterrupted numerals, URLs, code identifiers, mixed Hangul-Latin labels, and narrow table cells.",
+    "Add running project context and page counters through page-margin boxes in HTML output or the existing ReportLab page callback. Keep them outside the narrative grid and use the Hozui caption style with muted foreground color.",
+    "Export with semantic headings, logical reading order, tagged tables, descriptive alternative text, bookmarks, and working links. Treat captions as visible evidence descriptions and alternative text as nonvisual equivalents rather than duplicating filenames.",
+    "Verify the final artifact in three modes: rendered-page screenshots for clipping and hierarchy, actual-size print for type and rule weight, and text extraction or accessibility inspection for reading order and embedded Korean glyphs."
+  ],
+  "avoid_patterns": [
+    "Do not shrink body or caption text merely to hit an arbitrary page count; reduce repetition and project count first.",
+    "Do not copy screen-first bento cards, large corner radii, heavy shadows, translucent layers, or large empty hero areas into every A4 page.",
+    "Do not use a full-width single column for long body paragraphs across the entire printable frame; control the reading measure with grid spans or insets.",
+    "Do not justify Korean text aggressively if the renderer produces uneven inter-character spacing or violates line-start and line-end punctuation rules.",
+    "Do not apply break-inside: avoid to a block taller than the printable area, and do not force every subsection onto a new page.",
+    "Do not split an image from its caption, a heading from its first paragraph, or a compact table row across pages when the unit can fit intact on the following page.",
+    "Do not use color alone to distinguish status, metric direction, or project category; retain labels, symbols, and sufficient grayscale contrast.",
+    "Do not use dense tables with many narrow columns, fixed-height rows, tiny type, or unlabelled continued pages.",
+    "Do not present screenshots, architecture diagrams, or metrics without a claim-specific caption and source context.",
+    "Do not synthesize Korean font weights or rely on unembedded system fonts, because glyph form, line wrapping, and PDF portability may change across machines."
+  ],
+  "source_quality_notes": "The W3C paged-media, fragmentation, and Hangul references are the highest-authority sources for page mechanics and Korean composition. Adobe documentation is authoritative for mature editorial-production patterns such as baseline grids, grouped captions, and repeating table headers, although its UI instructions must be translated into HTML/CSS or ReportLab equivalents. The official Noto repository is authoritative for the font files and language-specific builds, but it is a fallback and coverage reference rather than a reason to replace Hozui SUIT. Butterick provides respected professional starting ranges for print size, leading, and measure; those figures are heuristic and must be proofed with Korean text. Recommendations for a 6-column grid, specific Hozui token mappings, print leading, and component structure are explicit synthesis from the sources and the existing portfolio generators, not mandates stated verbatim by any one reference.",
+  "uncertain": []
+  }
+}

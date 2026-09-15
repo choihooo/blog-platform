@@ -1,0 +1,24 @@
+topic: portfolio-pdf-references
+items:
+  - name: A4 Developer Portfolio References
+    category: Portfolio references
+    description: Publicly accessible A4 or print-oriented software engineer and frontend developer portfolios with strong project storytelling, clear page hierarchy, and reusable layout patterns.
+  - name: Product UX Case Study PDF References
+    category: Case study references
+    description: Publicly accessible product design and UX case study portfolios or PDFs that demonstrate problem, process, solution, evidence, and outcome within a concise editorial layout.
+  - name: Design System Editorial References
+    category: Visual system references
+    description: Editorial reports, case studies, or printable documents built from established design systems, especially restrained blue-accent systems comparable to Hozui.
+  - name: Korean Hiring Portfolio References
+    category: Local market references
+    description: Korean software engineer, product designer, or frontend hiring portfolios that reveal locally relevant page count, content density, project selection, and evidence presentation patterns.
+  - name: A4 Grid and Typography References
+    category: Print design references
+    description: Authoritative references for A4 editorial grids, Korean typography, margins, type scale, captions, tables, and page-break behavior suitable for a technical portfolio.
+  - name: Portfolio Layout Patterns for Current Dataset
+    category: Synthesis references
+    description: Reference-backed layout patterns directly applicable to a nine-project frontend portfolio containing metrics, diagrams, screenshots, videos represented by posters, technical explanations, and evidence links.
+execution:
+  output_dir: ./research/portfolio-pdf-references/results
+  batch_size: 3
+  items_per_agent: 1

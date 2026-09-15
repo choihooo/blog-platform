@@ -31,8 +31,23 @@
 ## 콘텐츠와 모델 파일
 
 - 글 데이터는 콘텐츠·데이터 계층에서 관리하고 시각 컴포넌트에 하드코딩하지 않는다.
+- 현재 공개 콘텐츠는 `features/blog/server/content-source.ts`의 `d1r2` 또는 `remote` 모드에서
+  읽는다. `BLOG_CONTENT_PROXY_URL` 유무, published-only 필터, `blogContentCacheTags`와
+  `revalidatePath` 동작을 함께 확인한다.
+- 프로젝트·이력서처럼 `features/*/data`에 있는 정적 데이터는 UI 컴포넌트와 분리된 데이터 모듈로
+  유지한다.
 - 로컬 모델이나 WASM 파일을 새로 커밋하지 않는다.
 - 모델 준비 스크립트를 수정하면 개발 서버와 프로덕션 빌드의 동작을 각각 확인한다.
+
+## API와 미리보기
+
+- `/api/rag`는 same-origin 검사, bounded JSON, `no-store` 응답 계약을 유지한다. 검색 오류는 `400`,
+  `429`, `503`의 의미를 섞지 않는다.
+- `/api/revalidate`는 `BLOG_REVALIDATE_SECRET`과 public path 검증을 거친 뒤 콘텐츠 cache와 필요한
+  RAG post sync를 갱신한다. 페이지 갱신 성공과 RAG sync 실패를 별도 상태로 표시한다.
+- `/api/search`의 공개 캐시 헤더를 임의로 `no-store` 또는 장기 캐시로 바꾸지 않는다.
+- `/preview/[slug]`는 preview token, `private, no-store`, `noindex,nofollow,noarchive`를 유지하고
+  draft 내용이 일반 공개 route나 generated output에 섞이지 않게 한다.
 
 ## 검증
 
