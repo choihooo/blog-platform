@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { PublicPost } from "@/features/blog/lib/content";
+import type { PublicPost } from "@/features/blog/server/content-source";
 
 const publishedPost: PublicPost = {
   path: "db/posts/hello",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { PublicPost } from "../lib/content";
+import type { PublicPost } from "./content-source";
 import { normalizeForDualRunCompare } from "./content-source";
 
 describe("content source dual-run compare helper", () => {

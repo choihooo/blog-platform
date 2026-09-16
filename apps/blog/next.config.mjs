@@ -24,7 +24,8 @@ const securityHeaders = [
       `script-src 'self' 'unsafe-inline' ${scriptEvaluationPolicy} https://www.googletagmanager.com`,
       "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://huggingface.co https://*.hf.co https://pub-2eadf17a82cb46679204775b78a2c16a.r2.dev",
       "worker-src 'self' blob:",
-      "style-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+      "font-src 'self' https://cdn.jsdelivr.net",
     ].join("; "),
   },
 ];
@@ -109,7 +110,6 @@ const nextConfig = {
       { source: "/blog/tags", destination: "/tags" },
       { source: "/blog/tags/:slug/page/:page", destination: "/tags/:slug/page/:page" },
       { source: "/blog/tags/:slug", destination: "/tags/:slug" },
-      { source: "/blog/search", destination: "/blog/search" },
       { source: "/blog/:slug", destination: "/posts/:slug" },
     ];
   },

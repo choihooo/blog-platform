@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { postToSeoSubject, siteForSeo } from "./seo";
-import type { PublicPost } from "./content";
+import type { PublicPost } from "../server/content-source";
 
 const post: PublicPost = {
   path: "db/posts/hello",

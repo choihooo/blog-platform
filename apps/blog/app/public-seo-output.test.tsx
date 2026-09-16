@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
-import type { PublicPost } from "@/features/blog/lib/content";
+import type { PublicPost } from "@/features/blog/server/content-source";
 import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
 
 describe("public SEO output", () => {
