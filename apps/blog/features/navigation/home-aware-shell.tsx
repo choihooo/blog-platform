@@ -9,8 +9,6 @@ export function HomeAwareShell({ children, header }: { children: ReactNode; head
   const pathname = usePathname();
   const isPortfolioSurface =
     pathname === "/" ||
-    pathname.startsWith("/projects") ||
-    pathname.startsWith("/blog") ||
     pathname.startsWith("/resume");
 
   return (

@@ -164,8 +164,6 @@ importers:
         specifier: 4.129.0
         version: 4.129.0
 
-  packages/ai: {}
-
   packages/analytics:
     devDependencies:
       vitest:
@@ -173,19 +171,6 @@ importers:
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
 
   packages/editor:
-    devDependencies:
-      vitest:
-        specifier: ^4.1.10
-        version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
-
-  packages/markdown:
-    dependencies:
-      github-slugger:
-        specifier: ^2.0.0
-        version: 2.0.0
-      reading-time:
-        specifier: ^1.5.0
-        version: 1.5.0
     devDependencies:
       vitest:
         specifier: ^4.1.10
@@ -2263,9 +2248,6 @@ packages:
     resolution: {integrity: sha512-FJhYRoDaiatfEkUK8HKlicmu/3SGFD51q3itKDGoSTysQJBnfOcxU5GxnhE1E6soB76MbT0MBtnKJuXyAx+96Q==}
     engines: {node: '>=6'}
 
-  github-slugger@2.0.0:
-    resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
-
   glob-parent@6.0.2:
     resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
     engines: {node: '>=10.13.0'}
@@ -2770,9 +2752,6 @@ packages:
   react@19.2.8:
     resolution: {integrity: sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==}
     engines: {node: '>=0.10.0'}
-
-  reading-time@1.5.0:
-    resolution: {integrity: sha512-onYyVhBNr4CmAxFsKS7bz+uTLRakypIe4R+5A824vBSkQy/hB3fZepoVEf8OVAxzLvK+H/jm9TzpI3ETSm64Kg==}
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -4986,8 +4965,6 @@ snapshots:
 
   get-nonce@1.0.1: {}
 
-  github-slugger@2.0.0: {}
-
   glob-parent@6.0.2:
     dependencies:
       is-glob: 4.0.3
@@ -5465,8 +5442,6 @@ snapshots:
       '@types/react': 19.2.17
 
   react@19.2.8: {}
-
-  reading-time@1.5.0: {}
 
   require-from-string@2.0.2: {}
 

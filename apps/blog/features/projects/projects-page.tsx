@@ -137,10 +137,6 @@ export function ProjectsPage({ variant = "page" }: { variant?: "page" | "modal" 
               <dt>분야</dt>
               <dd>FE</dd>
             </div>
-            <div>
-              <dt>기록</dt>
-              <dd>Blog</dd>
-            </div>
           </dl>
 
           <p className="work-feed__bio">
@@ -150,21 +146,6 @@ export function ProjectsPage({ variant = "page" }: { variant?: "page" | "modal" 
           </p>
         </div>
       </header>
-
-      <nav className="work-feed__tabs" aria-label="작업실 메뉴">
-        <Link
-          aria-current="page"
-          className="work-feed__tab work-feed__tab--active"
-          href="/projects"
-        >
-          <span aria-hidden="true">▦</span>
-          작업물
-        </Link>
-        <Link className="work-feed__tab" href="/blog">
-          <span aria-hidden="true">▤</span>
-          기록
-        </Link>
-      </nav>
 
       <ProjectGrid />
     </main>

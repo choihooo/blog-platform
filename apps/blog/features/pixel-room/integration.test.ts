@@ -31,12 +31,17 @@ describe("pixel room integration contracts", () => {
     expect(read("./pixel-room.css")).toContain(".pixel-room-page {");
     expect(read("./pixel-room.css")).toContain("@keyframes chat-ai-shimmer");
   });
-  it("does not ship a missing experimental model and keeps portfolio surfaces headerless", () => {
+  it("shows the site header on content pages and keeps the room headerless", () => {
     expect(read("./portfolio-chat.tsx")).not.toContain("/models/");
     const shell = read("../navigation/home-aware-shell.tsx");
-    expect(shell).toContain('pathname.startsWith("/projects")');
-    expect(shell).toContain('pathname.startsWith("/blog")');
+    expect(shell).not.toContain('pathname.startsWith("/projects")');
+    expect(shell).not.toContain('pathname.startsWith("/blog")');
     expect(shell).toContain('pathname.startsWith("/resume")');
+  });
+  it("uses a full page navigation for the desktop Projects header link", () => {
+    const navigation = read("../navigation/desktop-navigation.tsx");
+    expect(navigation).toContain('item.href === "/projects" ? (');
+    expect(navigation).toContain('<a');
   });
   it("opens About and Work without a window entrance animation", () => {
     const styles = read("../../app/globals.css");

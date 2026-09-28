@@ -20,18 +20,30 @@ export function DesktopNavigation() {
     <nav aria-label="주요 메뉴" className="flex items-center gap-5 text-sm font-medium">
       {navigationItems.map((item) => {
         const isCurrent = isCurrentPath(pathname, item.href);
+        const className = `no-underline transition-colors hover:no-underline hover:text-primary ${
+          isCurrent ? "text-foreground" : "text-muted-foreground"
+        }`;
 
         return (
-          <Link
-            aria-current={isCurrent ? "page" : undefined}
-            className={`no-underline transition-colors hover:no-underline hover:text-primary ${
-              isCurrent ? "text-foreground" : "text-muted-foreground"
-            }`}
-            href={item.href}
-            key={item.href}
-          >
-            {item.label}
-          </Link>
+          item.href === "/projects" ? (
+            <a
+              aria-current={isCurrent ? "page" : undefined}
+              className={className}
+              href={item.href}
+              key={item.href}
+            >
+              {item.label}
+            </a>
+          ) : (
+            <Link
+              aria-current={isCurrent ? "page" : undefined}
+              className={className}
+              href={item.href}
+              key={item.href}
+            >
+              {item.label}
+            </Link>
+          )
         );
       })}
     </nav>

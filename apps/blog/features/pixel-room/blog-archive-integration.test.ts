@@ -6,18 +6,16 @@ const root = join(process.cwd());
 const read = (file: string) => readFileSync(join(root, file), "utf8");
 
 describe("pixel-room blog archive integration", () => {
-  it("keeps Blog as a route-intercepted modal over the room", () => {
-    expect(read("app/@modal/(.)blog/page.tsx")).toContain("BlogArchiveModal");
-    expect(read("app/@modal/loading.tsx")).toContain("불러오는 중");
+  it("opens Blog as a full page without a route-intercepted modal", () => {
+    expect(() => read("app/@modal/(.)blog/page.tsx")).toThrow();
     expect(read("features/pixel-room/pixel-room.tsx")).toContain('href="/blog"');
     expect(read("features/pixel-room/pixel-room.tsx")).toContain('data-hotspot="blog"');
-    expect(read("app/layout.tsx")).toContain("{modal}");
   });
 
-  it("supports archive-to-post modal navigation", () => {
-    const postModal = read("app/@modal/(.)blog/[slug]/page.tsx");
-    expect(postModal).toContain("PostPage");
-    expect(read("features/blog/components/blog-archive-list.tsx")).toContain("/blog/${post.slug}");
+  it("uses canonical full-page routes for archive-to-post navigation", () => {
+    expect(() => read("app/@modal/(.)blog/[slug]/page.tsx")).toThrow();
+    expect(read("app/posts/[slug]/page.tsx")).toContain("export default async function PostPage");
+    expect(read("features/blog/components/blog-listing-page.tsx")).toContain("/blog");
   });
 
   it("keeps canonical full pages for direct URL and SEO access", () => {
@@ -45,27 +43,6 @@ describe("pixel-room blog archive integration", () => {
     expect(postPage).toContain("replace={isArchivePresentation}");
     expect(read("features/blog/components/recommended-posts.tsx")).toContain("AnalyticsLink");
     expect(read("features/projects/projects-page.tsx")).toContain("<ProjectGrid replaceLinks />");
-  });
-
-  it("uses one history entry for each modal flow", () => {
-    const archiveModal = read("features/blog/components/blog-archive-modal.tsx");
-    expect(archiveModal).toContain("router.back()");
-    expect(archiveModal).toContain("closeRequested");
-    expect(archiveModal).not.toContain("window.setTimeout");
-    expect(read("features/blog/components/blog-archive-list.tsx")).toContain("replace");
-    expect(read("features/blog/components/post-list-view.tsx")).toContain("replaceLinks");
-    expect(read("features/blog/components/blog-archive-modal.tsx")).not.toContain(
-      'router.replace("/")',
-    );
-  });
-
-  it("records the archive window styling and responsive fallback", () => {
-    const css = read("app/globals.css");
-    expect(css).toContain(".blog-archive-backdrop");
-    expect(css).not.toContain("blog-archive-backdrop-in");
-    expect(css).not.toContain("blog-archive-window-in");
-    expect(css).toContain(".blog-archive__sidebar");
-    expect(css).toContain("@media (max-width: 639px)");
   });
 
   it("uses Work-specific skeletons instead of the blog window fallback", () => {

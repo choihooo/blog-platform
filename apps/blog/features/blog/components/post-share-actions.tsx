@@ -32,7 +32,9 @@ export function PostShareActions({ context }: { context: PostAnalyticsContext })
     <section className="blog-detail__share mt-16 border-t border-border pt-8" aria-label="글 공유">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="blog-detail__share-copy">
-          <h2 className="blog-detail__section-title text-xl font-semibold tracking-normal">공유</h2>
+          <h2 className="blog-detail__section-title text-xl font-semibold tracking-normal">
+            <Share2 aria-hidden="true" size={18} /> 공유
+          </h2>
           <p className="mt-1 text-sm text-muted-foreground">{context.title}</p>
         </div>
         <div className="blog-detail__share-actions flex flex-wrap items-center gap-2">

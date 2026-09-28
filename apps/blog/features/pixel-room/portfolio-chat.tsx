@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import Link from "next/link";
 import { FAB } from "@hozui/react/fab";
 import { Button } from "@hozui/react/button";
 import { IconButton } from "@hozui/react/icon-button";
@@ -17,34 +16,16 @@ import { X as CloseIcon, Bot as RobotIcon, Square as StopIcon } from "lucide-rea
 import type { Wllama } from "@wllama/wllama/esm/index.js";
 import { KOREAN_QUESTIONS } from "./kanana-benchmark";
 import { CHAT_MODEL } from "./chat-model";
-import { ChatAnswer, type ChatArticle } from "./chat-answer";
+import type { ChatArticle } from "./chat-answer";
+import { PortfolioChatDiagnostics } from "./portfolio-chat-diagnostics";
+import { PortfolioChatMessages } from "./portfolio-chat-messages";
+import { PortfolioChatStatus } from "./portfolio-chat-status";
+import type { Measurement, Message, ModelState, Profile } from "./portfolio-chat-types";
 import type { ModelLoadTiming } from "./kanana-load";
 import { groundedPrompt, groundedQuestion, isRagResult, type RagSource } from "../rag/contracts";
 import type { SearchContext } from "../rag/follow-up";
 
 const suggestions = ["대표 프로젝트", "기술 스택", "개발 경험"];
-type Message = {
-  role: "user" | "assistant";
-  text: string;
-  sources?: RagSource[];
-  articles?: ChatArticle[];
-};
-type ModelState = "checking" | "unsupported" | "idle" | "loading" | "ready" | "error";
-type Profile = "baseline" | "optimized";
-type Measurement = {
-  model: "q8" | "q4";
-  question?: string;
-  answer?: string;
-  profile: Profile;
-  firstTextMs: number | null;
-  totalMs: number;
-  tokensPerSecond: number | null;
-  outputTokens: number | null;
-  promptTokens: number | null;
-  uiUpdates: number;
-  stopped: boolean;
-};
-
 export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
@@ -395,54 +376,13 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
               <br />
               공개된 프로젝트·블로그·이력서를 검색해 답하고, 참고한 원문을 함께 보여드려요.
             </MessageBubble>
-            {modelState === "unsupported" && (
-              <p role="status">
-                현재는 WebGPU를 지원하는 데스크톱 Chrome·Edge에서만 사용할 수 있어요. 모바일은 아직
-                지원하지 않아요.
-              </p>
-            )}
-            {modelState === "checking" && (
-              <p role="status">모델 불러오는 중… 브라우저 지원을 확인하고 있어요.</p>
-            )}
-            {(modelState === "idle" || modelState === "error") && (
-              <div className="chat-model-status">
-                <p>
-                  첫 실행 시 약 {CHAT_MODEL.size}를 내려받아요. 모델은 브라우저에 캐시되며 실행
-                  중에는 추가 메모리를 사용해요. 커뮤니티 GGUF 변환본을 사용합니다.
-                </p>
-                <Button
-                  label={
-                    modelState === "error" ? "다시 불러오기" : `모델 불러오기 · ${CHAT_MODEL.size}`
-                  }
-                  onClick={() => loadModel()}
-                  size="sm"
-                />
-              </div>
-            )}
-            {modelState === "loading" && (
-              <div className="chat-model-status" role="status">
-                <p>모델 불러오는 중…</p>
-                <p>
-                  {progress < 100 ? `다운로드 ${progress}%` : "다운로드 완료 · GPU에 모델 준비 중…"}
-                </p>
-                <p>
-                  처음에는 약 {CHAT_MODEL.size}를 내려받아요. 다음 방문에는 브라우저 캐시를
-                  사용해요.
-                </p>
-                <progress max={100} value={progress} aria-label="모델 다운로드" />
-                <Button
-                  label="불러오기 취소"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => operation.current?.abort()}
-                />
-              </div>
-            )}
-            {error && (
-              <p className="chat-model-error" role="alert">
-                {error}
-              </p>
-            )}
+            <PortfolioChatStatus
+              error={error}
+              modelState={modelState}
+              onCancel={() => operation.current?.abort()}
+              onLoad={() => loadModel()}
+              progress={progress}
+            />
             {modelState === "ready" && messages.length === 0 && (
               <div className="chat-suggestions" role="group" aria-label="추천 질문">
                 {suggestions.map((text) => (
@@ -456,39 +396,7 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
                 ))}
               </div>
             )}
-            {messages.map((message, index) => (
-              <MessageBubble
-                key={index}
-                role={message.role}
-                contentType={message.role === "assistant" ? "rich" : "text"}
-              >
-                {message.role === "assistant" ? (
-                  <ChatAnswer text={message.text} articles={message.articles} />
-                ) : (
-                  <span className="chat-message-text">{message.text}</span>
-                )}
-                {!message.articles?.length && message.sources && message.sources.length > 0 && (
-                  <details className="chat-sources">
-                    <summary>
-                      참고 자료 · {new Set(message.sources.map((s) => s.url)).size}개
-                    </summary>
-                    {message.sources
-                      .filter((source, i, all) => all.findIndex((s) => s.url === source.url) === i)
-                      .map((source, sourceIndex) => (
-                        <div key={`${source.url}-${sourceIndex}`}>
-                          {source.url.startsWith("/") ? (
-                            <Link href={source.url}>{source.title} ↗</Link>
-                          ) : (
-                            <a href={source.url} target="_blank" rel="noopener noreferrer">
-                              {source.title} ↗
-                            </a>
-                          )}
-                        </div>
-                      ))}
-                  </details>
-                )}
-              </MessageBubble>
-            ))}
+            <PortfolioChatMessages messages={messages} />
           </ChatPanelBody>
           <ChatPanelFooter>
             <ChatComposer
@@ -531,60 +439,24 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
               sendAriaLabel={generating ? "답변 생성 중" : "메시지 보내기"}
               textareaProps={{ maxLength: 600 }}
             />
-            {diagnostics && process.env.NODE_ENV === "development" && (
-              <details className="chat-diagnostics">
-                <summary>성능 진단 · 개발 전용</summary>
-                <p>벤치마크는 현재 대화 대신 같은 질문을 새 대화로 실행합니다.</p>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  label={`${CHAT_MODEL.quantization.toUpperCase()} 현재 모델 불러오기`}
-                  disabled={generating || modelState === "loading" || modelState === "unsupported"}
-                  onClick={() => loadModel()}
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  label={`다운로드 포함 로딩 측정 · ${CHAT_MODEL.size}`}
-                  disabled={generating || modelState !== "ready" || suiteProgress > 0}
-                  onClick={() => loadModel(undefined, true)}
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  label={suiteProgress ? `한국어 테스트 ${suiteProgress}/10` : "한국어 10문항 실행"}
-                  disabled={modelState !== "ready" || generating || suiteProgress > 0}
-                  onClick={runSuite}
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  label="기존 설정 측정"
-                  disabled={modelState !== "ready" || generating}
-                  onClick={() => send("대표 프로젝트를 알려주세요.", "baseline", true)}
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  label="최적화 설정 측정"
-                  disabled={modelState !== "ready" || generating}
-                  onClick={() => send("대표 프로젝트를 알려주세요.", "optimized", true)}
-                />
-                <pre>
-                  {JSON.stringify(
-                    {
-                      modelVariant,
-                      loadMs,
-                      loadTiming,
-                      requestedGpuLayers: 99,
-                      runtimeLogs,
-                      measurements,
-                    },
-                    null,
-                    2,
-                  )}
-                </pre>
-              </details>
+            {diagnostics && (
+              <PortfolioChatDiagnostics
+                data={{
+                  modelVariant,
+                  loadMs,
+                  loadTiming,
+                  runtimeLogs,
+                  measurements,
+                }}
+                generating={generating}
+                modelState={modelState}
+                onLoad={() => loadModel()}
+                onLoadWithDownload={() => loadModel(undefined, true)}
+                onRunSuite={runSuite}
+                onSendBaseline={() => send("대표 프로젝트를 알려주세요.", "baseline", true)}
+                onSendOptimized={() => send("대표 프로젝트를 알려주세요.", "optimized", true)}
+                suiteProgress={suiteProgress}
+              />
             )}
           </ChatPanelFooter>
         </ChatPanel>

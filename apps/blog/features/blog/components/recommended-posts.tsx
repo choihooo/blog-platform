@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Chip, ChipGroup } from "@hozui/react";
+import { BookOpen } from "lucide-react";
 
 import { formatPostDate } from "@/shared/date/date-format";
 import type { PublicPost } from "../server/content-source";
@@ -71,7 +72,7 @@ export function RecommendedPosts({
         id="recommended-posts"
         className="blog-detail__section-title text-2xl font-semibold tracking-normal"
       >
-        추천글
+        <BookOpen aria-hidden="true" size={22} /> 추천글
       </h2>
       <div className="blog-detail__recommended-grid mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (

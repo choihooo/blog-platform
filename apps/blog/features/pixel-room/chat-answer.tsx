@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import type { RagSource } from "../rag/contracts";
 
 export type ChatArticle = { source: RagSource; summary: string };
@@ -36,12 +37,12 @@ export function ChatAnswer({ text, articles }: { text: string; articles?: ChatAr
             {source.url.startsWith("/") ? (
               <Link href={source.url}>
                 {source.title}
-                <span aria-hidden="true"> ↗</span>
+                <ArrowUpRight aria-hidden="true" size={14} />
               </Link>
             ) : (
               <a href={source.url} target="_blank" rel="noopener noreferrer">
                 {source.title}
-                <span aria-hidden="true"> ↗</span>
+                <ArrowUpRight aria-hidden="true" size={14} />
               </a>
             )}
             <p>{summary || "글 내용을 정리하고 있어요…"}</p>

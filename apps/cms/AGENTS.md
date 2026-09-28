@@ -15,8 +15,8 @@ CMS는 인증된 운영자만 사용하는 비공개 앱이다. 콘텐츠 편집
   때는 local, repository, D1/R2 adapter의 계약과 fixture를 함께 확인한다.
 - `runPublicationOperation()`은 repository 저장과 public refresh를 분리해 결과를 반환한다. commit
   성공 뒤 refresh가 실패할 수 있으므로 retry token, 재시도 대상, 사용자에게 표시할 상태를 보존한다.
-- `CONTENT_SOURCE_MODE`, dual-run, rollback window를 바꾸면 `lib/admin-ops/migration-switch.ts`,
-  `rollout-checks.ts`, runbook과 migration report를 함께 확인한다.
+- `CONTENT_SOURCE_MODE`나 migration report를 바꾸면 현재 content adapter와 migration script 계약을
+  함께 확인한다.
 
 ## 보안
 
@@ -37,4 +37,4 @@ pnpm --filter @blog-platform/cms test
 pnpm --filter @blog-platform/cms build
 ```
 
-인증·발행·마이그레이션을 바꾼 경우에는 관련 security, admin-ops, migration 테스트를 반드시 확인한다.
+인증·발행·마이그레이션을 바꾼 경우에는 관련 security와 migration script 테스트를 반드시 확인한다.

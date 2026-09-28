@@ -16,8 +16,7 @@ fallback, round-trip과 preview 분석을 담당한다.
 - serializer를 바꾸면 parse·serialize round-trip 테스트를 함께 수정한다.
 - 저장·발행 경계에서는 `validateEditorDocument`를 먼저 통과시키고, 임시 attachment media가 persisted
   content에 남지 않는지 확인한다.
-- heading slug와 reading time은 `analyzeEditorNodes`의 결과를 사용하며 `@blog-platform/markdown`의
-  결과와 임의로 다른 규칙을 만들지 않는다.
+- heading slug와 reading time은 `analyzeEditorNodes`의 결과를 사용한다.
 
 ## 검증
 

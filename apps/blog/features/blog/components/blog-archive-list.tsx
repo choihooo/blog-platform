@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FileText, Folder, FolderOpen, FolderTree, Grid2X2, List } from "lucide-react";
 
 import { formatPostDate } from "@/shared/date/date-format";
 import type { CategoryHierarchy, PublicPost } from "../server/content-source";
@@ -30,14 +31,16 @@ function CategoryTree({
 
   return (
     <aside className="blog-archive__sidebar" aria-label="블로그 카테고리">
-      <div className="blog-archive__sidebar-heading">📁 CATEGORIES</div>
+      <div className="blog-archive__sidebar-heading">
+        <FolderTree aria-hidden="true" size={14} /> CATEGORIES
+      </div>
       <Link
         aria-current={!activeCategoryPath ? "page" : undefined}
         className={`blog-archive__category${!activeCategoryPath ? " blog-archive__category--active" : ""}`}
         href="/blog"
         replace
       >
-        <span aria-hidden="true">▣</span> 전체보기 <small>({allPosts.length})</small>
+        <FileText aria-hidden="true" size={14} /> 전체보기 <small>({allPosts.length})</small>
       </Link>
       <div className="blog-archive__category-tree">
         {visibleParents.map((parent) => {
@@ -53,7 +56,7 @@ function CategoryTree({
                 href={`/blog/categories/${parent.slug}`}
                 replace
               >
-                <span aria-hidden="true">▰</span> {parent.label}{" "}
+                <Folder aria-hidden="true" size={14} /> {parent.label}{" "}
                 <small>({counts.get(parent.slug) ?? 0})</small>
               </Link>
               {children.length > 0 ? (
@@ -66,7 +69,7 @@ function CategoryTree({
                       key={child.slug}
                       replace
                     >
-                      <span aria-hidden="true">▰</span> {child.label}{" "}
+                      <FolderOpen aria-hidden="true" size={14} /> {child.label}{" "}
                       <small>({counts.get(child.slug) ?? 0})</small>
                     </Link>
                   ))}
@@ -106,11 +109,11 @@ export function BlogArchiveList({
       />
       <section className="blog-archive__posts" aria-label="공개 블로그 글 목록">
         <div className="blog-archive__list-toolbar">
-          <span aria-hidden="true">▤</span>
+          <List aria-hidden="true" size={15} />
           <strong>{posts.length}개의 글</strong>
           <div className="blog-archive__view-icons" aria-hidden="true">
-            <span>☷</span>
-            <span>⊞</span>
+            <List aria-hidden="true" size={16} />
+            <Grid2X2 aria-hidden="true" size={16} />
           </div>
         </div>
         <div className="blog-archive__post-list">

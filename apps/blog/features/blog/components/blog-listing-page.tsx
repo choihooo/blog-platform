@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import type { CategoryHierarchy, PublicPost } from "../server/content-source";
 import { AnalyticsLink } from "./analytics-link";
+import { BlogSearchForm } from "./blog-search-form";
 import { paginateItems, PostPagination } from "./post-pagination";
 import { PostListView } from "./post-list-view";
 
@@ -110,6 +111,7 @@ export function BlogListingPage({
         </aside>
 
         <section aria-label="글 목록" className="min-w-0" id="posts">
+          <BlogSearchForm className="mb-6 w-full max-w-xl" query="" />
           <PostListView
             analyticsContext={analyticsContext}
             postClickEvent="post_card_click"

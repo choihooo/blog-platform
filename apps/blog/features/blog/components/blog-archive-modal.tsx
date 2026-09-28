@@ -10,7 +10,7 @@ import {
   ModalPortal,
   ModalTitle,
 } from "@hozui/react";
-import { X } from "lucide-react";
+import { FileText, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useRef } from "react";
@@ -59,7 +59,7 @@ export function BlogArchiveModal({ children, title = "BLOG ARCHIVE" }: BlogArchi
           <ModalHeader className="blog-archive__bar">
             <ModalTitle className="blog-archive__title">
               <span className="blog-archive__file-icon" aria-hidden="true">
-                📄
+                <FileText size={16} />
               </span>
               {title}
             </ModalTitle>

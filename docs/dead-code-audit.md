@@ -24,16 +24,16 @@
 - 참조되지 않는 프로젝트 데이터 4개(`cmc-19`, `dream-track`, `jikhaeng`, `siren-path`)를 제거했다.
 - 참조되지 않는 Comma 비교 영상 3개와 사용되지 않는 SVG 다이어그램 8개를 제거했다. 현재 프로젝트
   피드와 문서가 사용하는 PNG 다이어그램은 유지했다.
+- 현재 호출자가 없던 CMS admin-ops 보조 모듈과 일부 migration 보조 모듈을 제거했다. 실제
+  `migrate:upload` 경로가 사용하는 미디어 업로드·매핑 모듈은 유지했다.
+- 앱에서 소비하지 않던 `@blog-platform/ai`와 `@blog-platform/markdown` workspace 패키지를 제거하고,
+  현재 운영 지침에서 더 이상 유효하지 않은 참조를 정리했다.
 
 ## 보류한 항목
 
 아래 항목은 참조가 적거나 현재 기능 프리뷰/롤백 자료일 가능성이 있어 이번 작업에서 삭제하지 않았다.
 
 - `features/portfolio-preview`: 홈 픽셀룸과 별도로 `/portfolio/preview`에서 사용하는 프리뷰 화면.
-- `apps/cms/lib/admin-ops`와 `apps/cms/lib/migration/*`: 현재 production caller는 없지만
-  마이그레이션 runbook과 롤백 자료다.
-- `packages/ai`, `packages/markdown`: 현재 앱 import는 없지만 workspace의 독립 패키지와
-  문서/스펙에서 공개 API로 다룬다.
 - 프로젝트의 `card-secondary-v2.jpg`와 Comma 비교 영상: 현재 피드에서는 primary 이미지만 사용하지만,
   상세/수동 콘텐츠용일 수 있다.
 - 오래된 `specs/*/tasks.md`: 구현 경로가 바뀐 과거 작업 기록이라 기능 코드와 섞어 삭제하지 않았다.
@@ -45,5 +45,4 @@
 - Blog 테스트 통과
 - CMS 테스트 통과
 
-삭제가 필요한 보류 항목은 실제 운영 URL/마이그레이션 문서 사용 여부를 확인한 뒤 별도 커밋으로
-정리한다.
+위 보류 항목은 실제 운영 URL과 수동 콘텐츠 사용 여부를 확인한 뒤 별도 커밋으로 정리한다.
