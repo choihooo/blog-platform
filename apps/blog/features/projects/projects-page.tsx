@@ -4,7 +4,16 @@ import type { CSSProperties } from "react";
 import { projects } from "./project-data";
 
 const PROJECT_CARD_ASSETS: Partial<
-  Record<string, { primary: string; primaryMode?: "visual"; secondary: string }>
+  Record<
+    string,
+    {
+      primary: string;
+      primaryMode?: "visual" | "logo";
+      secondary: string;
+      background?: string;
+      foreground?: string;
+    }
+  >
 > = {
   still: {
     primary: "/projects/still/card.jpg",
@@ -48,14 +57,23 @@ const PROJECT_CARD_ASSETS: Partial<
   },
   kusting: {
     primary: "/projects/kusting/symbol.svg",
+    primaryMode: "logo",
+    background: "var(--background)",
+    foreground: "#0066ff",
     secondary: "/projects/kusting/curation.png",
   },
   comma: {
-    primary: "/projects/comma/logo.png",
+    primary: "/projects/comma/brand-symbol.png",
+    primaryMode: "logo",
+    background: "var(--background)",
+    foreground: "var(--foreground)",
     secondary: "/projects/comma/rest.png",
   },
   geobugirin: {
     primary: "/projects/geobugirin/symbol.svg",
+    primaryMode: "logo",
+    background: "var(--background)",
+    foreground: "var(--foreground)",
     secondary: "/projects/geobugirin/onboarding.png",
   },
 };
@@ -63,7 +81,7 @@ const PROJECT_CARD_ASSETS: Partial<
 function getFeedImage(slug: string) {
   const assets = PROJECT_CARD_ASSETS[slug];
   if (!assets) return "/brand/no-thumbnail.webp";
-  return assets.primaryMode === "visual" ? assets.primary : assets.secondary;
+  return assets.primaryMode ? assets.primary : assets.secondary;
 }
 
 function getFeedLabel(project: (typeof projects)[number]) {
@@ -74,6 +92,8 @@ function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
   return (
     <section aria-label="프로젝트 피드" className="work-feed__grid">
       {projects.map((project, index) => {
+        const assets = PROJECT_CARD_ASSETS[project.slug];
+        const isLogo = assets?.primaryMode === "logo";
         return (
           <div className="work-feed__item" key={project.slug}>
             <Link
@@ -81,17 +101,47 @@ function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
               href={`/projects/${project.slug}`}
               prefetch={false}
               replace={replaceLinks}
-              style={{ "--feed-index": index } as CSSProperties}
+              style={
+                {
+                  "--feed-index": index,
+                  "--feed-brand-background": assets?.background,
+                  "--feed-brand-foreground": assets?.foreground,
+                } as CSSProperties
+              }
             >
-              <img
-                alt={`${project.name} 프로젝트 미리보기`}
-                className="work-feed__tile-image"
-                decoding="async"
-                height="640"
-                loading={index < 3 ? "eager" : "lazy"}
-                src={getFeedImage(project.slug)}
-                width="640"
-              />
+              {isLogo ? (
+                <span className="work-feed__brand">
+                  {project.slug === "comma" ? (
+                    <span
+                      aria-label="Comma 서비스 로고"
+                      role="img"
+                      className="work-feed__brand-logo work-feed__brand-logo--mask"
+                      style={{ maskImage: `url(${getFeedImage(project.slug)})` }}
+                    />
+                  ) : (
+                    <img
+                      alt={`${project.name} 서비스 로고`}
+                      className="work-feed__brand-logo"
+                      decoding="async"
+                      height="76"
+                      loading="lazy"
+                      src={getFeedImage(project.slug)}
+                      width="76"
+                    />
+                  )}
+                  <span className="work-feed__brand-name">{project.name}</span>
+                </span>
+              ) : (
+                <img
+                  alt={`${project.name} 프로젝트 미리보기`}
+                  className="work-feed__tile-image"
+                  decoding="async"
+                  height="640"
+                  loading={index < 3 ? "eager" : "lazy"}
+                  src={getFeedImage(project.slug)}
+                  width="640"
+                />
+              )}
               <span className="work-feed__tile-overlay">
                 <span className="work-feed__tile-title">{project.name}</span>
                 <span className="work-feed__tile-meta">

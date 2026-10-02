@@ -1385,6 +1385,37 @@ body {
   transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.work-feed__brand {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 22px);
+  background: var(--feed-brand-background);
+  color: var(--feed-brand-foreground);
+}
+
+.work-feed__brand-logo {
+  width: min(42%, 76px);
+  height: auto;
+  object-fit: contain;
+}
+
+.work-feed__brand-name {
+  font-size: clamp(12px, 2vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.work-feed__brand-logo--mask {
+  aspect-ratio: 1;
+  background: currentColor;
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
 .work-feed__tile-overlay {
   position: absolute;
   inset: 0;
