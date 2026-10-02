@@ -11,16 +11,17 @@ import {
   ModalPortal,
   ModalTitle,
 } from "@hozui/react";
-import { X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 
 type ProjectModalProps = {
   children: ReactNode;
   projectName: string;
+  siteUrl?: string;
 };
 
-export function ProjectModal({ children, projectName }: ProjectModalProps) {
+export function ProjectModal({ children, projectName, siteUrl }: ProjectModalProps) {
   const router = useRouter();
 
   return (
@@ -31,6 +32,18 @@ export function ProjectModal({ children, projectName }: ProjectModalProps) {
           <ModalHeader className="project-modal__bar">
             <ModalTitle className="project-modal__title">{projectName}</ModalTitle>
             <div className="project-modal__bar-actions">
+              {siteUrl ? (
+                <a
+                  aria-label={`${projectName} 사이트 바로 가기 (새 탭)`}
+                  className="project-modal__site-link"
+                  href={siteUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  사이트 바로 가기
+                  <ArrowUpRight aria-hidden="true" size={14} />
+                </a>
+              ) : null}
               <ModalClose asChild>
                 <IconButton
                   aria-label="프로젝트 상세 닫기"

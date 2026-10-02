@@ -15,7 +15,14 @@ export default async function ProjectModalPage({ params }: ProjectModalPageProps
   if (!project) notFound();
 
   return (
-    <ProjectModal projectName={project.name}>
+    <ProjectModal
+      projectName={project.name}
+      siteUrl={
+        project.format === "showcase"
+          ? project.evidence?.find((item) => item.type === "deployment")?.href
+          : undefined
+      }
+    >
       <ProjectDetailPage mode="modal" project={project} />
     </ProjectModal>
   );
