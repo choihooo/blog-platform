@@ -74,10 +74,6 @@ function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
   return (
     <section aria-label="프로젝트 피드" className="work-feed__grid">
       {projects.map((project, index) => {
-        const liveSite =
-          project.format === "showcase"
-            ? project.evidence?.find((item) => item.type === "deployment")
-            : undefined;
         return (
           <div className="work-feed__item" key={project.slug}>
             <Link
@@ -103,17 +99,6 @@ function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
                 </span>
               </span>
             </Link>
-            {liveSite ? (
-              <a
-                aria-label={`${project.name} 사이트 바로 가기 (새 탭)`}
-                className="work-feed__live-link"
-                href={liveSite.href}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                사이트 바로 가기 <span aria-hidden="true">↗</span>
-              </a>
-            ) : null}
           </div>
         );
       })}

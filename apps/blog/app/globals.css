@@ -1341,36 +1341,6 @@ body {
   min-width: 0;
 }
 
-.work-feed__live-link {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-height: 44px;
-  padding: 6px 8px;
-  border: 1px solid rgb(255 255 255 / 55%);
-  border-radius: 6px;
-  background: #17212e;
-  color: #fff;
-  font-size: clamp(9px, 1.5vw, 12px);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.work-feed__live-link:hover {
-  background: #30445c;
-  color: #fff;
-  text-decoration: none;
-}
-
-.work-feed__live-link:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-
 .work-feed__tile {
   position: relative;
   display: block;
