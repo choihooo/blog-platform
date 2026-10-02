@@ -32,7 +32,7 @@ export function staticDocuments(): RagDocument[] {
       url: `/projects/${p.slug}`,
       text: [
         p.description,
-        `${p.organization} · ${p.period} · ${p.role}`,
+        [p.organization, p.period, p.role].filter(Boolean).join(" · "),
         p.technologies.join(", "),
         ...p.metrics.map((m) => `${m.label}: ${m.value}. ${m.detail}`),
         ...(p.sections?.map((s) => `${s.title}\n${s.blocks.map(blockText).join("\n\n")}`) ??

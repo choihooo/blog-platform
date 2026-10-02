@@ -6,6 +6,16 @@ import { projects } from "./project-data";
 const PROJECT_CARD_ASSETS: Partial<
   Record<string, { primary: string; primaryMode?: "visual"; secondary: string }>
 > = {
+  still: {
+    primary: "/projects/still/card.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/still/mobile.jpg",
+  },
+  afterimage: {
+    primary: "/projects/afterimage/card.jpg",
+    primaryMode: "visual",
+    secondary: "/projects/afterimage/mobile.jpg",
+  },
   "ai-workflow": {
     primary: "/projects/ai-workflow/card-primary-v2.jpg",
     primaryMode: "visual",
@@ -63,32 +73,50 @@ function getFeedLabel(project: (typeof projects)[number]) {
 function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
   return (
     <section aria-label="프로젝트 피드" className="work-feed__grid">
-      {projects.map((project, index) => (
-        <Link
-          className="work-feed__tile"
-          href={`/projects/${project.slug}`}
-          key={project.slug}
-          prefetch={false}
-          replace={replaceLinks}
-          style={{ "--feed-index": index } as CSSProperties}
-        >
-          <img
-            alt={`${project.name} 프로젝트 미리보기`}
-            className="work-feed__tile-image"
-            decoding="async"
-            height="640"
-            loading={index < 3 ? "eager" : "lazy"}
-            src={getFeedImage(project.slug)}
-            width="640"
-          />
-          <span className="work-feed__tile-overlay">
-            <span className="work-feed__tile-title">{project.name}</span>
-            <span className="work-feed__tile-meta">
-              {getFeedLabel(project)} · {project.role}
-            </span>
-          </span>
-        </Link>
-      ))}
+      {projects.map((project, index) => {
+        const liveSite =
+          project.format === "showcase"
+            ? project.evidence?.find((item) => item.type === "deployment")
+            : undefined;
+        return (
+          <div className="work-feed__item" key={project.slug}>
+            <Link
+              className="work-feed__tile"
+              href={`/projects/${project.slug}`}
+              prefetch={false}
+              replace={replaceLinks}
+              style={{ "--feed-index": index } as CSSProperties}
+            >
+              <img
+                alt={`${project.name} 프로젝트 미리보기`}
+                className="work-feed__tile-image"
+                decoding="async"
+                height="640"
+                loading={index < 3 ? "eager" : "lazy"}
+                src={getFeedImage(project.slug)}
+                width="640"
+              />
+              <span className="work-feed__tile-overlay">
+                <span className="work-feed__tile-title">{project.name}</span>
+                <span className="work-feed__tile-meta">
+                  {getFeedLabel(project)} · {project.role}
+                </span>
+              </span>
+            </Link>
+            {liveSite ? (
+              <a
+                aria-label={`${project.name} 사이트 바로 가기 (새 탭)`}
+                className="work-feed__live-link"
+                href={liveSite.href}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                사이트 바로 가기 <span aria-hidden="true">↗</span>
+              </a>
+            ) : null}
+          </div>
+        );
+      })}
     </section>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "./corpus";
 import { boundedJson, groundedPrompt, isRagResult, queryFrom } from "./contracts";
 import { POST } from "../../app/api/rag/route";
+import { projects } from "../projects/project-data";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -58,9 +59,11 @@ describe("RAG corpus", () => {
     }
     expect(postDocument({ ...row, tags_json: null }).tags).toEqual([]);
   });
-  it("reuses nine projects and the real resume, not invented profile data", () => {
+  it("reuses registered projects and the real resume, not invented profile data", () => {
     const docs = staticDocuments();
-    expect(docs.filter((d) => d.key.startsWith("project:"))).toHaveLength(9);
+    expect(docs.filter((d) => d.key.startsWith("project:")).map((d) => d.key)).toEqual(
+      projects.map((project) => `project:${project.slug}`),
+    );
     const career = docs.filter((d) => d.key.startsWith("resume:career:"));
     expect(career).toHaveLength(2);
     expect(career[0]?.text).toContain("야근몬스터");

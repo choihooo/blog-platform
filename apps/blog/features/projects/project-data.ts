@@ -1,4 +1,6 @@
 import { aiWorkflowProject } from "./data/ai-workflow";
+import { afterimageProject } from "./data/afterimage";
+import { stillProject } from "./data/still";
 import { apiDataTransitionProject } from "./data/api-data-transition";
 import { commaProject } from "./data/comma";
 import { forensicAgentProject } from "./data/forensic-agent";
@@ -21,6 +23,8 @@ export const projects: readonly ProjectCaseStudy[] = [
   kustingProject,
   commaProject,
   geobugirinProject,
+  stillProject,
+  afterimageProject,
 ];
 
 export function getProject(slug: string) {

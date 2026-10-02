@@ -18,6 +18,15 @@
 - draft, archived, preview, publishing, analytics-dashboard, CMS behavior를 노출하지 않는다.
 - GitHub credential, content file, authentication setup, deployment configuration을 요구하지 않는다.
 
+## Public project details
+
+- `/projects/still`과 `/projects/afterimage`는 기존 `/projects/[slug]` 상세와 가로채기 모달을
+  재사용한다. 직접 진입·새로고침·뒤로 가기 동작은 다른 프로젝트와 동일하다.
+- 프로젝트 데이터의 선택 필드 `format: "showcase"`는 Web Publishing Showcase 헤더와 이미지·영상 우선
+  본문을 선택한다. 기본값은 기존 case study 표시다.
+- `period`는 선택 필드다. 확인되지 않은 기간·팀·기술 스택은 UI에서 생략하고 검색 문서에도
+  `undefined`를 노출하지 않는다. 성과가 없는 작업에 수치를 만들어 넣지 않는다.
+
 ## CMS App
 
 **Boundary**: `apps/cms`

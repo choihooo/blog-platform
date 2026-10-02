@@ -2,9 +2,18 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { factualAnswer } from "./factual";
 import { isRagResult } from "./contracts";
 import { retrieve } from "./server";
+import { staticDocuments } from "./corpus-documents";
 
 afterEach(() => vi.unstubAllGlobals());
 describe("structured factual answers", () => {
+  it.each(["STILL", "AFTERIMAGE"])("omits unknown dates and empty metrics for %s", (name) => {
+    const result = factualAnswer(`${name} 작업 기간과 성과`)!;
+    expect(result.answer).toContain(name);
+    expect(result.answer).not.toContain("undefined");
+    expect(result.answer).not.toContain("## 주요 결과");
+    const document = staticDocuments().find((item) => item.title === name)!;
+    expect(document.text).not.toContain("undefined");
+  });
   it("keeps activity dates attached to their original entries", () => {
     const result = factualAnswer("개발 경험")!;
     expect(result.answer).toContain("## 개발 경험");

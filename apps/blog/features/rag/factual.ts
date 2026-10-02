@@ -71,8 +71,12 @@ export function factualAnswer(query: string): RagResult | null {
   if (selectedProjects.length === 1 && (resultIntent.test(query) || careerIntent.test(query))) {
     const project = selectedProjects[0]!;
     const metrics = project.metrics.map((m) => `- ${m.label}: ${m.value} — ${m.detail}`).join("\n");
-    const header = `${project.name}\n${project.organization} · ${project.period} · ${project.role}`;
-    const answer = `공개 프로젝트에 기록된 내용입니다.\n\n## ${project.name}\n${project.organization} · ${project.period} · ${project.role}\n\n${project.description}\n\n## 주요 결과\n${metrics}`;
+    const metadata = [project.organization, project.period, project.role]
+      .filter(Boolean)
+      .join(" · ");
+    const header = `${project.name}\n${metadata}`;
+    const results = metrics ? `\n\n## 주요 결과\n${metrics}` : "";
+    const answer = `공개 프로젝트에 기록된 내용입니다.\n\n## ${header}\n\n${project.description}${results}`;
     return {
       answer,
       sources: [

@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 
 import { apiDataTransitionProject } from "./data/api-data-transition";
 import { aiWorkflowProject } from "./data/ai-workflow";
@@ -13,12 +15,36 @@ import { projects } from "./project-data";
 import { getProjectSections, getProjectToc } from "./project-content";
 
 describe("project content", () => {
+  it("registers publishing showcases with live links and existing media", () => {
+    for (const slug of ["still", "afterimage"]) {
+      const project = projects.find((item) => item.slug === slug)!;
+      expect(project.format).toBe("showcase");
+      expect(project.evidence).toContainEqual({
+        type: "deployment",
+        label: "사이트 바로 보기",
+        href: `https://${slug}.hozorica.com/`,
+      });
+      for (const section of getProjectSections(project)) {
+        for (const block of section.blocks) {
+          const paths =
+            block.type === "image"
+              ? [block.src]
+              : block.type === "video"
+                ? [block.mp4Src, block.poster]
+                : [];
+          for (const path of paths) expect(existsSync(resolve("public", path.slice(1)))).toBe(true);
+        }
+      }
+    }
+  });
   it("provides complete header metadata for every registered project", () => {
     for (const project of projects) {
       expect(project.role).toBeTruthy();
-      expect(project.period).toBeTruthy();
       expect(project.organization).toBeTruthy();
-      expect(project.team).toBeTruthy();
+      if (project.format !== "showcase") {
+        expect(project.period).toBeTruthy();
+        expect(project.team).toBeTruthy();
+      }
     }
   });
 

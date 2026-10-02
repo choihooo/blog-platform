@@ -38,12 +38,12 @@ export function projectCatalog(
           : personal
             ? p.organization === "Side Project"
             : company
-              ? p.organization !== "Side Project"
+              ? p.organization !== "Side Project" && p.format !== "showcase"
               : true,
     )
     .filter((p) => !technology || p.technologies.some((t) => t.toLowerCase() === technology))
     .filter((p) => !/AI 제외/.test(q) || !p.technologies.some((t) => t.toLowerCase() === "ai"))
-    .sort((a, b) => (recent ? b.period.localeCompare(a.period) : 0))
+    .sort((a, b) => (recent ? (b.period ?? "").localeCompare(a.period ?? "") : 0))
     .slice(0, 3);
   if (!selected.length)
     return {

@@ -138,6 +138,7 @@ export type ProjectEvidence = {
 };
 
 type ProjectCaseStudyBase = {
+  format?: "case-study" | "showcase";
   description: string;
   evidence?: readonly ProjectEvidence[];
   index: string;
@@ -145,7 +146,7 @@ type ProjectCaseStudyBase = {
   metrics: readonly ProjectMetric[];
   name: string;
   organization: string;
-  period: string;
+  period?: string;
   role: string;
   team?: string;
   relatedPosts?: readonly ProjectRelatedPost[];
