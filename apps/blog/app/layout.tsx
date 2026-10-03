@@ -44,10 +44,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 type RootLayoutProps = {
   children: ReactNode;
-  modal?: ReactNode;
 };
 
-export default async function RootLayout({ children, modal }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
   const [site, parentCategories, childCategories] = await Promise.all([
     getSiteConfig(),
     listCategories({ depth: 1 }),
@@ -116,7 +115,6 @@ export default async function RootLayout({ children, modal }: RootLayoutProps) {
           >
             {children}
           </SiteShell>
-          {modal}
         </AnalyticsProvider>
       </body>
     </html>

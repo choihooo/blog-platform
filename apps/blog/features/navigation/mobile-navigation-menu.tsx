@@ -48,10 +48,7 @@ export function MobileNavigationMenu({ categories }: { categories: MobileNavigat
           className="max-h-[calc(100dvh-5rem)] overflow-y-auto"
           sideOffset={8}
         >
-          <MenuItem
-            icon={<BriefcaseBusiness size={16} />}
-            onSelect={() => window.location.assign("/projects")}
-          >
+          <MenuItem icon={<BriefcaseBusiness size={16} />} onSelect={() => navigate("/projects")}>
             프로젝트
           </MenuItem>
           <MenuItem icon={<Newspaper size={16} />} onSelect={() => navigate("/blog")}>

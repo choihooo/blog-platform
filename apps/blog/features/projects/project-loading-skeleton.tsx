@@ -1,9 +1,6 @@
 export function ProjectFeedLoadingSkeleton() {
   return (
-    <main
-      aria-label="Work 프로젝트 피드 로딩 중"
-      className="work-feed work-feed--modal work-feed--loading"
-    >
+    <main aria-label="Work 프로젝트 피드 로딩 중" className="work-feed work-feed--loading">
       <div className="work-feed__loading-grid" aria-hidden="true">
         {Array.from({ length: 6 }, (_, index) => (
           <div className="work-feed__loading-tile" key={index}>

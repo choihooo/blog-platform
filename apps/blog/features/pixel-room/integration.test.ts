@@ -36,21 +36,23 @@ describe("pixel room integration contracts", () => {
     const shell = read("../navigation/home-aware-shell.tsx");
     expect(shell).not.toContain('pathname.startsWith("/projects")');
     expect(shell).not.toContain('pathname.startsWith("/blog")');
-    expect(shell).toContain('pathname.startsWith("/resume")');
+    expect(shell).not.toContain('pathname.startsWith("/resume")');
+    expect(shell).toContain('const isHome = pathname === "/"');
+    expect(shell).toContain("{!isHome && header}");
   });
-  it("uses a full page navigation for the desktop Projects header link", () => {
+  it("uses client navigation without modal bypasses", () => {
     const navigation = read("../navigation/desktop-navigation.tsx");
-    expect(navigation).toContain('item.href === "/projects" ? (');
-    expect(navigation).toContain('<a');
+    expect(navigation).toContain("<Link");
+    expect(navigation).not.toContain("<a");
+    expect(read("../navigation/mobile-navigation-menu.tsx")).not.toContain(
+      "window.location.assign",
+    );
   });
-  it("opens About and Work without a window entrance animation", () => {
+  it("removes route modal styling and provides a home link on About", () => {
     const styles = read("../../app/globals.css");
-    expect(styles).not.toContain("animation: work-feed-backdrop-in");
-    expect(styles).not.toContain("animation: work-feed-modal-in");
-    expect(styles).not.toContain("animation: project-modal-in 300ms");
-    expect(styles).toContain(".work-feed-backdrop");
-    expect(styles).toContain(".resume-modal-backdrop");
-    expect(styles).toContain(".hods-modal__dialog.resume-modal");
-    expect(styles).toContain("transform: translate(-50%, -50%);");
+    expect(styles).not.toContain(".work-feed-backdrop");
+    expect(styles).not.toContain(".resume-modal-backdrop");
+    expect(styles).not.toContain(".hods-modal__dialog");
+    expect(read("../resume/resume-page.tsx")).toContain('href="/"');
   });
 });

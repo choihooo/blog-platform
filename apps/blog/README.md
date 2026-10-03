@@ -10,11 +10,19 @@
 - `shared`: 날짜 포맷과 analytics처럼 여러 기능에서 재사용하는 코드를 둔다.
 - 기능은 다른 기능의 내부 파일을 직접 참조하지 않고, 공통 코드가 필요하면 `shared`로 올린다.
 
+## Navigation
+
+- 홈 픽셀룸의 Work, Blog, About은 각각 `/projects`, `/blog`, `/resume` 전체 페이지로 이동한다.
+- 프로젝트 카드는 `/projects/[slug]`로 이동하고, 상세의 목록 링크는 해당 카드 위치로 돌아간다.
+- 가로채기 라우트와 모달 슬롯은 사용하지 않는다. 링크 이동은 방문 기록을 남겨 브라우저 뒤로 가기를
+  지원한다.
+- 프로젝트 목록과 이력서에는 홈 링크를 제공한다.
+
 ## Project showcases
 
 - Work 데이터는 `features/projects/data`에서 관리하고 `project-data.ts`에 등록한다.
-- `format: "showcase"`는 이미지·영상 중심 상세로 표시하며 기존 프로젝트 상세 URL과 모달을
-  재사용한다. 일반 사례의 목차 대신 본문을 바로 보여준다.
+- `format: "showcase"`는 이미지·영상 중심 상세로 표시하며 기존 프로젝트 상세 URL을 재사용한다. 일반
+  사례의 목차 대신 본문을 바로 보여준다.
 - STILL과 AFTERIMAGE는 Web Publishing 작업이다. 확인되지 않은 기간·팀·기술 스택과 정량 성과는
   생략한다. 디자인·이미지·영상 제작 기여는 별도 확인 후 기재한다.
 - 실제 사이트 캡처는 `public/projects/{still,afterimage}`에 둔다. 2026-10-02 기준 데스크톱 1440×900,

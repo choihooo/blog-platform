@@ -36,29 +36,38 @@ describe("pixel-room blog archive integration", () => {
     }
   });
 
-  it("keeps internal links inside the room while viewing an article", () => {
+  it("renders article links through the extracted body renderer", () => {
     const postPage = read("app/posts/[slug]/page.tsx");
-    expect(postPage).toContain('node.href.startsWith("/")');
-    expect(postPage).toContain('href.startsWith("/")');
-    expect(postPage).toContain("replace={isArchivePresentation}");
+    const renderer = read("app/posts/[slug]/post-body-renderer.tsx");
+    expect(postPage).toContain("<PostBodyRenderer");
+    expect(renderer).toContain('node.href.startsWith("/")');
+    expect(renderer).toContain('href.startsWith("/")');
     expect(read("features/blog/components/recommended-posts.tsx")).toContain("AnalyticsLink");
-    expect(read("features/projects/projects-page.tsx")).toContain("<ProjectGrid replaceLinks />");
   });
 
   it("uses Work-specific skeletons instead of the blog window fallback", () => {
-    expect(read("app/@modal/(.)projects/loading.tsx")).toContain("ProjectFeedLoadingSkeleton");
-    expect(read("app/@modal/(.)projects/[slug]/loading.tsx")).toContain(
-      "ProjectDetailLoadingSkeleton",
-    );
+    expect(read("app/projects/loading.tsx")).toContain("ProjectFeedLoadingSkeleton");
+    expect(read("app/projects/[slug]/loading.tsx")).toContain("ProjectDetailLoadingSkeleton");
     expect(read("features/projects/project-loading-skeleton.tsx")).toContain(
       "work-feed__loading-grid",
     );
   });
 
-  it("closes the Work feed when its empty backdrop is clicked", () => {
-    const modal = read("features/projects/project-feed-modal.tsx");
-    expect(modal).toContain("onPointerDown");
-    expect(modal).toContain("event.target === event.currentTarget");
-    expect(modal).toContain("closeRequested");
+  it("uses ordinary pages for Work and About without a modal slot", () => {
+    for (const route of [
+      "app/@modal/(.)projects/page.tsx",
+      "app/@modal/(.)projects/[slug]/page.tsx",
+      "app/@modal/(.)resume/page.tsx",
+      "app/@modal/default.tsx",
+    ])
+      expect(() => read(route)).toThrow();
+    expect(read("app/layout.tsx")).not.toContain("{modal}");
+    const projects = read("features/projects/projects-page.tsx");
+    expect(projects).not.toContain("replaceLinks");
+    expect(projects).toContain("id={project.slug}");
+    expect(projects).toContain('href="/"');
+    expect(read("features/projects/project-detail-page.tsx")).toContain(
+      "href={`/projects#${project.slug}`}",
+    );
   });
 });

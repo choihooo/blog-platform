@@ -88,19 +88,18 @@ function getFeedLabel(project: (typeof projects)[number]) {
   return project.organization === "개인 프로젝트" ? "Personal" : project.organization;
 }
 
-function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
+function ProjectGrid() {
   return (
     <section aria-label="프로젝트 피드" className="work-feed__grid">
       {projects.map((project, index) => {
         const assets = PROJECT_CARD_ASSETS[project.slug];
         const isLogo = assets?.primaryMode === "logo";
         return (
-          <div className="work-feed__item" key={project.slug}>
+          <div className="work-feed__item scroll-mt-6" id={project.slug} key={project.slug}>
             <Link
               className="work-feed__tile"
               href={`/projects/${project.slug}`}
               prefetch={false}
-              replace={replaceLinks}
               style={
                 {
                   "--feed-index": index,
@@ -156,18 +155,12 @@ function ProjectGrid({ replaceLinks = false }: { replaceLinks?: boolean }) {
   );
 }
 
-export function ProjectsPage({ variant = "page" }: { variant?: "page" | "modal" }) {
-  if (variant === "modal") {
-    return (
-      <main className="work-feed work-feed--modal" aria-label="프로젝트 작업물">
-        <h1 className="sr-only">Work 프로젝트 피드</h1>
-        <ProjectGrid replaceLinks />
-      </main>
-    );
-  }
-
+export function ProjectsPage() {
   return (
     <main className="work-feed" aria-label="프로젝트 작업물">
+      <Link className="mb-6 inline-flex text-sm text-muted-foreground hover:text-primary" href="/">
+        ← 홈
+      </Link>
       <header className="work-feed__profile">
         <div className="work-feed__avatar-wrap">
           <img

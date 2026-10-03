@@ -40,13 +40,7 @@ export function ProjectSections({ sections }: { sections: readonly ProjectSectio
   );
 }
 
-export function RelatedPosts({
-  mode,
-  posts,
-}: {
-  mode: "modal" | "page";
-  posts?: readonly ProjectRelatedPost[];
-}) {
+export function RelatedPosts({ posts }: { posts?: readonly ProjectRelatedPost[] }) {
   if (!posts?.length) return null;
   return (
     <section
@@ -68,7 +62,6 @@ export function RelatedPosts({
             className="group grid gap-2 py-5 no-underline transition-colors hover:text-primary hover:no-underline active:translate-y-px sm:grid-cols-[1fr_auto] sm:items-center sm:gap-8"
             href={`/blog/${post.slug}`}
             key={post.slug}
-            replace={mode === "modal"}
           >
             <span>
               <span className="block text-base font-semibold sm:text-lg">{post.title}</span>

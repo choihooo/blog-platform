@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { workExperiences, sideProjects, activities, awards, skillGroups } from "./resume-data";
 import { profile } from "./profile-data";
@@ -9,6 +10,12 @@ import { AchievementCard, CompactList, SectionHeading, TechChips } from "./resum
 export function ResumePage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-16 print:pt-4">
+      <Link
+        className="mb-8 inline-flex text-sm text-muted-foreground hover:text-primary print:hidden"
+        href="/"
+      >
+        ← 홈
+      </Link>
       <section className="border-b border-border pb-10 sm:pb-12">
         <div className="grid gap-8 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-start">
           <div className="flex flex-col items-start gap-5">

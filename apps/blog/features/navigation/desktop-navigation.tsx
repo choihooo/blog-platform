@@ -25,25 +25,14 @@ export function DesktopNavigation() {
         }`;
 
         return (
-          item.href === "/projects" ? (
-            <a
-              aria-current={isCurrent ? "page" : undefined}
-              className={className}
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </a>
-          ) : (
-            <Link
-              aria-current={isCurrent ? "page" : undefined}
-              className={className}
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </Link>
-          )
+          <Link
+            aria-current={isCurrent ? "page" : undefined}
+            className={className}
+            href={item.href}
+            key={item.href}
+          >
+            {item.label}
+          </Link>
         );
       })}
     </nav>

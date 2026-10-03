@@ -8,31 +8,21 @@ import { ProjectSections, RelatedPosts } from "./project-detail-body";
 import { getProjectSections, getProjectToc } from "./project-content";
 import type { ProjectCaseStudy } from "./project-data";
 
-export function ProjectDetailPage({
-  mode = "page",
-  project,
-}: {
-  mode?: "modal" | "page";
-  project: ProjectCaseStudy;
-}) {
+export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
   const sections = getProjectSections(project);
   const toc = getProjectToc(sections);
 
   return (
-    <main
-      className={`mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-28 ${mode === "modal" ? "pt-4 sm:pt-7" : "pt-10 sm:pt-14"}`}
-    >
-      {mode === "page" ? (
-        <Link
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground no-underline transition-colors hover:text-primary hover:no-underline"
-          href={`/projects#${project.slug}`}
-        >
-          <ArrowLeft aria-hidden="true" size={16} />
-          프로젝트 목록
-        </Link>
-      ) : null}
+    <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-14">
+      <Link
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground no-underline transition-colors hover:text-primary hover:no-underline"
+        href={`/projects#${project.slug}`}
+      >
+        <ArrowLeft aria-hidden="true" size={16} />
+        프로젝트 목록
+      </Link>
 
-      <article className={mode === "modal" ? "mt-2" : "mt-10"}>
+      <article className="mt-10">
         <header className="border-b border-border pb-10 sm:pb-14">
           <p className="text-sm font-semibold text-primary">
             {project.format === "showcase" ? "Web Publishing Showcase" : "Project Case Study"}
@@ -153,7 +143,7 @@ export function ProjectDetailPage({
         ) : null}
 
         <ProjectSections sections={sections} />
-        <RelatedPosts mode={mode} posts={project.relatedPosts} />
+        <RelatedPosts posts={project.relatedPosts} />
       </article>
     </main>
   );
