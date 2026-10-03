@@ -18,15 +18,13 @@ describe("structured factual answers", () => {
     const result = factualAnswer("개발 경험")!;
     expect(result.answer).toContain("## 개발 경험");
     expect(result.answer).toContain("## 활동");
-    expect(result.answer).toContain(
-      "- 유데미 러닝크루 2기 리더 — 2025.03 ~ 2025.04 · 학습 커뮤니티 운영",
-    );
-    expect(result.answer).toContain("- CMC 19기 프론트엔드 개발자 — Turborepo");
+    expect(result.answer).toContain("- 유데미 러닝크루 2기 리더 — 2025.03 ~ 2025.04 · 유데미");
+    expect(result.answer).toContain("- CMC 19기 프론트엔드 개발자 — 2026.05 ~ 2026.08 · CMC");
     expect(isRagResult(result)).toBe(true);
   });
   it("formats skills and awards from structured records, not generated facts", () => {
     expect(factualAnswer("기술 스택")?.answer).toContain("- Core: Next.js, React");
-    expect(factualAnswer("수상 내역")?.answer).toContain("2025.10.31 · Dream Track");
+    expect(factualAnswer("수상 내역")?.answer).toContain("2025.10.31 · SW중심대학사업단");
     expect(factualAnswer("개발 경험에 대한 블로그 글 있어?")).toBeNull();
   });
   it.each([

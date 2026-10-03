@@ -82,12 +82,25 @@ export function AchievementCard({ achievement }: { achievement: Achievement }) {
 export function CompactList({ items }: { items: readonly (readonly [string, string])[] }) {
   return (
     <div className="divide-y divide-border">
-      {items.map(([title, description]) => (
-        <div key={title} className="py-4 first:pt-0 last:pb-0">
-          <p className="text-sm font-semibold leading-6">{title}</p>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
-        </div>
-      ))}
+      {items.map(([title, description]) => {
+        const [metadata, ...details] = description.split("\n");
+
+        return (
+          <div key={title} className="py-6 first:pt-0 last:pb-0">
+            <h4 className="text-base font-semibold leading-7 text-foreground">{title}</h4>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">{metadata}</p>
+            {details.length > 0 ? (
+              <ul className="mt-3 space-y-1.5 break-keep pl-4 text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
+                {details.map((detail) => (
+                  <li key={detail} className="list-disc pl-1 marker:text-primary">
+                    {detail}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        );
+      })}
     </div>
   );
 }

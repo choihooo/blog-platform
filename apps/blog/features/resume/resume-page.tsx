@@ -3,7 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { workExperiences, sideProjects, activities, awards, skillGroups } from "./resume-data";
+import {
+  workExperiences,
+  sideProjects,
+  activities,
+  awards,
+  skillGroups,
+  education,
+  certifications,
+} from "./resume-data";
 import { profile } from "./profile-data";
 import { AchievementCard, CompactList, SectionHeading, TechChips } from "./resume-components";
 
@@ -30,19 +38,26 @@ export function ResumePage() {
             <nav aria-label="연락처" className="grid gap-2 text-xs leading-5">
               <a
                 className="break-all text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                href="mailto:hochoi8621@gmail.com"
+                href={`mailto:${profile.email}`}
               >
-                hochoi8621@gmail.com
+                {profile.email}
               </a>
               <a
+                className="text-muted-foreground hover:text-foreground"
+                href={`tel:${profile.phone}`}
+              >
+                {profile.phone}
+              </a>
+              <span className="text-muted-foreground">{profile.birthDate}</span>
+              <a
                 className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                href="https://blog.hozorica.com"
+                href={profile.blogUrl}
               >
                 blog.hozorica.com
               </a>
               <a
                 className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                href="https://github.com/choihooo"
+                href={profile.githubUrl}
               >
                 github.com/choihooo
               </a>
@@ -54,6 +69,7 @@ export function ResumePage() {
               {profile.name}
             </h1>
             <div className="mt-6 max-w-3xl space-y-1 text-base leading-7 text-muted-foreground">
+              <p className="font-semibold text-foreground">{profile.headline}</p>
               {profile.introduction.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
@@ -97,6 +113,16 @@ export function ResumePage() {
                   </h3>
                   <p className="text-sm text-muted-foreground">{project.meta}</p>
                 </div>
+                {"url" in project ? (
+                  <a
+                    className="mt-2 inline-block break-all text-sm text-primary hover:underline"
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {project.url}
+                  </a>
+                ) : null}
                 <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">
                   {project.description}
                 </p>
@@ -112,7 +138,7 @@ export function ResumePage() {
       </section>
       <section className="mt-16 sm:mt-24">
         <SectionHeading>Other Experience</SectionHeading>
-        <div className="grid gap-x-12 gap-y-10 lg:grid-cols-2 print:grid-cols-2">
+        <div className="grid gap-12">
           <article>
             <h3 className="mb-5 text-lg font-semibold">Activities</h3>
             <CompactList items={activities} />
@@ -140,21 +166,11 @@ export function ResumePage() {
         <div className="grid gap-5">
           <article>
             <h3 className="mb-5 text-lg font-semibold">Education</h3>
-            <CompactList
-              items={[
-                ["한국공학대학교", "2024.03 ~ 2026.02 · 컴퓨터공학부 소프트웨어전공"],
-                ["공주대학교", "2020.03 ~ 2024.02 · 컴퓨터공학부 컴퓨터공학전공"],
-              ]}
-            />
+            <CompactList items={education} />
           </article>
           <article className="border-t border-border pt-5">
             <h3 className="mb-5 text-lg font-semibold">Certification</h3>
-            <CompactList
-              items={[
-                ["ADsP", "2026.06.05"],
-                ["SQLD", "2025.06.27"],
-              ]}
-            />
+            <CompactList items={certifications} />
           </article>
         </div>
       </section>
