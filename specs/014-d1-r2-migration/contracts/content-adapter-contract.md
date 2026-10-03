@@ -62,6 +62,20 @@ write 경로와 공개 read 경로는 모두 동일한 인터페이스를 통해
 
 ## Runtime Switch
 
-- `contentSourceMode=legacy|d1r2`로 전환한다.
-- dual-run이 필요할 때는 동일 요청을 양쪽 모드로 조회해 비교 로그를 남긴다.
-- 롤백은 동일 설정 키를 변경해 1분 내 새 모드로 복귀할 수 있어야 한다.
+- CMS의 기본 adapter는 `d1r2`다. Blog는 `BLOG_CONTENT_PROXY_URL`이 있으면 `remote`, 없으면 `d1r2`를
+  사용한다. legacy 파일 모드는 현재 공개 Blog의 runtime 선택지가 아니다.
+
+## Public Blog pagination and failure contract (2026-10-04)
+
+- `BlogContentSource.listPostPage(input)`는 `{ items, total }`을 반환한다. `total`은 필터에 해당하는
+  전체 공개 글 수이며 페이지 크기가 아니다. 기존 `listPosts`의 배열 반환 계약은 유지한다.
+- CMS `GET /api/public-content` 목록 응답은 `{ posts, total, categories }`이다. `page`는 1부터,
+  `limit`은 최대 100이며 `tag`, `category`, `query`를 지원한다.
+- 공개 Blog의 목록은 페이지당 8개를 서버에서 조회한다. 전체 사이트맵과 태그 discovery는 100개 단위로
+  마지막 페이지까지 순회한다. RSS는 최신 20개를 유지한다.
+- 성공한 단건 조회의 미존재만 `undefined`/404로 변환한다. D1 설정 누락·조회 실패·remote 5xx· 잘못된
+  응답은 예외로 전파한다. 사이트맵은 부분 목록으로 성공하지 않는다.
+- D1 `unstable_cache`/ISR 재검증에서 예외를 삼키지 않아 성공 캐시를 오류 결과로 대체하지 않는다.
+  cold request는 서버 오류로 응답한다. remote는 기존 `no-store` 정책을 유지한다.
+- remote 모드는 CMS 계약을 먼저 배포하고 Blog를 배포한다. D1/R2 직접 조회 모드는 Blog를 독립 배포할
+  수 있다. 원격 데이터 마이그레이션은 필요 없다.

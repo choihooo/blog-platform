@@ -80,6 +80,7 @@ export type CategoryListInput = {
 
 export interface BlogContentSource {
   readonly mode: ContentSourceMode;
+  listPostPage(input?: ContentListInput): Promise<{ items: PublicPost[]; total: number }>;
   listPosts(input?: ContentListInput): Promise<PublicPost[]>;
   getPostBySlug(slug: string, options?: { analyzeBody?: boolean }): Promise<PublicPost | undefined>;
   getPostsByTag(tagSlug: string, input?: Omit<ContentListInput, "tagSlug">): Promise<PublicPost[]>;

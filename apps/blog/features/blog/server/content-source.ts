@@ -47,6 +47,39 @@ export async function getPublishedPosts(input: ContentListInput = {}): Promise<P
   return source.listPosts(normalizeContentListInput({ ...input, publishedOnly: true }));
 }
 
+export async function getPublishedPostPage(input: ContentListInput = {}) {
+  const source = await getContentSource();
+  return source.listPostPage(
+    normalizeContentListInput({ ...input, publishedOnly: true, includeTotal: true }),
+  );
+}
+
+/** Exhaust the catalog; sitemap and taxonomy discovery must not inherit a UI page limit. */
+export async function getAllPublishedPosts(input: Omit<ContentListInput, "page" | "limit"> = {}) {
+  const posts: PublicPost[] = [];
+  for (let page = 1; ; page += 1) {
+    const batch = await getPublishedPosts({ ...input, page, limit: 100, includeTotal: false });
+    posts.push(...batch);
+    if (batch.length < 100) return posts;
+  }
+}
+
+export async function getCategoryCounts(categories: CategoryHierarchy[]) {
+  return Object.fromEntries(
+    await Promise.all(
+      categories.map(async (category) => {
+        const { total } = await getPublishedPostPage({
+          categoryPath: category.slug,
+          limit: 1,
+          analyzeBody: false,
+          includeMedia: false,
+        });
+        return [category.slug, total];
+      }),
+    ),
+  );
+}
+
 /** Chat must distinguish an upstream outage from an empty public catalog. */
 export async function getPublishedPostsStrict(input: ContentListInput = {}): Promise<PublicPost[]> {
   return listPostsFromD1(normalizeContentListInput({ ...input, publishedOnly: true }), true);
@@ -148,7 +181,7 @@ export async function getCategory(path: string): Promise<CategoryHierarchy | und
 }
 
 export async function getTags(): Promise<Tag[]> {
-  const posts = await getPublishedPosts({ limit: 100 });
+  const posts = await getAllPublishedPosts({ analyzeBody: false });
   const tagMap = new Map<string, Tag>();
   for (const post of posts) {
     for (const tag of post.tagEntries ?? []) tagMap.set(tag.slug, tag);

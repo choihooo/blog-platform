@@ -1,4 +1,5 @@
 import process from "node:process";
+import { legacyPostRedirects } from "./features/blog/data/legacy-post-redirects.mjs";
 
 const scriptEvaluationPolicy =
   process.env.NODE_ENV === "development"
@@ -45,6 +46,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      ...legacyPostRedirects(),
       {
         source: "/",
         has: [{ type: "host", value: "blog.hozorica.com" }],

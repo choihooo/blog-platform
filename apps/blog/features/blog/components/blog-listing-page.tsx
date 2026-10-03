@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { CategoryHierarchy, PublicPost } from "../server/content-source";
 import { AnalyticsLink } from "./analytics-link";
 import { BlogSearchForm } from "./blog-search-form";
-import { paginateItems, PostPagination } from "./post-pagination";
+import { POSTS_PER_PAGE, PostPagination } from "./post-pagination";
 import { PostListView } from "./post-list-view";
 
 export function blogListingHrefForPage(page: number) {
@@ -17,6 +17,8 @@ type BlogListingPageProps = {
     analytics: { provider: string };
   };
   posts: PublicPost[];
+  total: number;
+  categoryCounts: Record<string, number>;
   parentCategories: CategoryHierarchy[];
   childCategories: CategoryHierarchy[];
 };
@@ -25,11 +27,13 @@ export function BlogListingPage({
   page,
   site,
   posts,
+  total,
+  categoryCounts,
   parentCategories,
   childCategories,
 }: BlogListingPageProps) {
-  const pagination = paginateItems(posts, page);
-  if (page > pagination.totalPages) notFound();
+  const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
+  if (page > totalPages) notFound();
 
   const analyticsContext = {
     provider: site.analytics.provider,
@@ -38,16 +42,6 @@ export function BlogListingPage({
     url: `${site.siteUrl.replace(/\/+$/, "")}/blog`,
     siteUrl: site.siteUrl,
   };
-  const categoryCounts = new Map<string, number>();
-  for (const post of posts) {
-    if (post.category) {
-      categoryCounts.set(post.category, (categoryCounts.get(post.category) ?? 0) + 1);
-      const parentSlug = post.category.split("/")[0];
-      if (parentSlug && parentSlug !== post.category) {
-        categoryCounts.set(parentSlug, (categoryCounts.get(parentSlug) ?? 0) + 1);
-      }
-    }
-  }
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
@@ -65,7 +59,7 @@ export function BlogListingPage({
               href="/blog"
               target="all"
             >
-              전체보기 <span className="text-muted-foreground">({posts.length})</span>
+              전체보기 <span className="text-muted-foreground">({total})</span>
             </AnalyticsLink>
             {parentCategories.map((category) => {
               const children = childCategories.filter(
@@ -82,7 +76,7 @@ export function BlogListingPage({
                   >
                     {category.label}{" "}
                     <span className="text-muted-foreground">
-                      ({categoryCounts.get(category.slug) ?? 0})
+                      ({categoryCounts[category.slug] ?? 0})
                     </span>
                   </AnalyticsLink>
                   {children.length > 0 ? (
@@ -98,7 +92,7 @@ export function BlogListingPage({
                         >
                           {child.label}{" "}
                           <span className="text-muted-foreground">
-                            ({categoryCounts.get(child.slug) ?? 0})
+                            ({categoryCounts[child.slug] ?? 0})
                           </span>
                         </AnalyticsLink>
                       ))}
@@ -115,13 +109,13 @@ export function BlogListingPage({
           <PostListView
             analyticsContext={analyticsContext}
             postClickEvent="post_card_click"
-            posts={pagination.items}
-            summary={`${pagination.totalCount}개의 글`}
+            posts={posts}
+            summary={`${total}개의 글`}
           />
           <PostPagination
-            currentPage={pagination.currentPage}
+            currentPage={page}
             hrefForPage={blogListingHrefForPage}
-            totalPages={pagination.totalPages}
+            totalPages={totalPages}
           />
         </section>
       </div>

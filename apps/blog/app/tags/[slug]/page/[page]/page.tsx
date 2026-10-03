@@ -5,7 +5,7 @@ import { POSTS_PER_PAGE } from "@/features/blog/components/post-pagination";
 import { TagListingPage } from "@/features/blog/components/tag-listing-page";
 import { tagListingMetadata } from "@/features/blog/lib/listing-metadata";
 import {
-  getPostsByTag,
+  getPublishedPostPage,
   getSiteConfig,
   getTag,
   getTags,
@@ -28,8 +28,12 @@ export async function generateStaticParams() {
   const tags = await getTags();
   const pagesPerTag: number[] = await Promise.all(
     tags.map(async (tag) => {
-      const posts = await getPostsByTag(tag.slug, { limit: 100 });
-      return Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+      const { total } = await getPublishedPostPage({
+        tagSlug: tag.slug,
+        limit: 1,
+        analyzeBody: false,
+      });
+      return Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
     }),
   );
 

@@ -42,10 +42,12 @@ export async function GET(request: Request) {
 
   const result = await adapter.listPosts({
     publishedOnly: true,
-    page: positiveInteger(url.searchParams.get("page"), 1, 1000),
+    page: positiveInteger(url.searchParams.get("page"), 1, Number.MAX_SAFE_INTEGER),
     limit: positiveInteger(url.searchParams.get("limit"), 100, 100),
     tagSlug: optionalParam(url.searchParams.get("tag")),
     categoryPath: optionalParam(url.searchParams.get("category")),
+    query: optionalParam(url.searchParams.get("query")),
+    includeTotal: true,
     includeTags: true,
     includeMedia: true,
   });
@@ -61,6 +63,7 @@ export async function GET(request: Request) {
   return Response.json(
     {
       posts: result.data.items,
+      total: result.data.total,
       categories: [
         ...parentCategories.data.items.map(publicCategory),
         ...childCategories.data.items.map(publicCategory),

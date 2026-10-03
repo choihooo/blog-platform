@@ -666,7 +666,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
     input: ContentListInput,
   ): Promise<{ posts: PostRecord[]; total: number }> {
     if (!binding) {
-      return { posts: [], total: 0 };
+      throw new Error("D1 binding is unavailable");
     }
 
     const normalized = normalizeListInput(input);
@@ -686,7 +686,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
     const depth = input.depth === 1 || input.depth === 2 ? input.depth : 1;
     const parentSlug = input.parentSlug ? normalizeCategorySlug(input.parentSlug) : undefined;
 
-    if (!binding) return { items: [] };
+    if (!binding) throw new Error("D1 binding is unavailable");
 
     const categorySql = [
       "SELECT id, name, slug, parent_id, parent_slug, depth, created_at",
@@ -725,7 +725,7 @@ export function createD1R2ContentAdapter(): ContentAdapter {
       const normalized = normalizeSlug(slug);
       if (!normalized) return failure("validation-failure", "slug is required");
 
-      if (!binding) return { ok: true, data: null };
+      if (!binding) return failure("storage-failure", "D1 binding is unavailable");
 
       try {
         const post = await runD1PostBySlug(binding, normalized, options?.includeUnpublished);

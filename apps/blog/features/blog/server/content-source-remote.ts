@@ -12,6 +12,7 @@ import {
 } from "./content-source-utils";
 
 type RemoteContentResponse = {
+  total?: number;
   posts?: Parameters<typeof toPublicSourcePost>[0][];
   categories?: CategoryHierarchy[];
   post?: Parameters<typeof toPublicSourcePost>[0];
@@ -32,21 +33,47 @@ async function fetchRemoteContent(
   params?: Record<string, string | undefined>,
 ): Promise<RemoteContentResponse | undefined> {
   const url = remoteContentUrl(params);
-  if (!url) return;
+  if (!url) throw new Error("content_unavailable");
+  // Let Next.js propagate its no-store/static-render bailout unchanged.
   const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) return;
-  return (await response.json()) as RemoteContentResponse;
+  if (response.status === 404 && params?.slug) return;
+  if (!response.ok) throw new Error("content_unavailable");
+  const data = (await response.json()) as RemoteContentResponse;
+  if (params?.slug ? !data?.post : !Array.isArray(data?.posts)) {
+    throw new Error("content_unavailable");
+  }
+  return data;
 }
 
 export function createRemoteSource(): BlogContentSource {
   return {
     mode: "remote",
+    listPostPage: async (input = {}) => {
+      const response = await fetchRemoteContent({
+        page: String(normalizePage(input.page)),
+        limit: String(normalizeLimit(input.limit)),
+        tag: input.tagSlug,
+        category: input.categoryPath,
+        query: input.query,
+        includeTotal: "true",
+      });
+      if (!response?.posts || !Number.isSafeInteger(response.total) || response.total! < 0) {
+        throw new Error("content_unavailable");
+      }
+      return {
+        items: response.posts.map((post) =>
+          toPublicSourcePost(post, { analyzeBody: input.analyzeBody }),
+        ),
+        total: response.total!,
+      };
+    },
     listPosts: async (input: ContentListInput = {}) => {
       const response = await fetchRemoteContent({
         page: String(normalizePage(input.page)),
         limit: String(normalizeLimit(input.limit)),
         tag: input.tagSlug,
         category: input.categoryPath,
+        query: input.query,
         analyzeBody: input.analyzeBody === false ? "false" : "true",
       });
       return (

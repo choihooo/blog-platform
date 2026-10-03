@@ -1,7 +1,7 @@
 import { generateSitemapOutput, serializeSitemap, trimSlash } from "@blog-platform/seo-engine";
 
 import { postsToSeoSubjects, siteForSeo } from "@/features/blog/lib/seo";
-import { getPublishedPosts, getSiteConfig } from "@/features/blog/server/content-source";
+import { getAllPublishedPosts, getSiteConfig } from "@/features/blog/server/content-source";
 import { projects } from "@/features/projects/project-data";
 
 export const revalidate = 900;
@@ -9,7 +9,7 @@ export const revalidate = 900;
 export async function GET() {
   const [site, posts] = await Promise.all([
     getSiteConfig(),
-    getPublishedPosts({ includeTotal: false, includeMedia: false, analyzeBody: false }),
+    getAllPublishedPosts({ includeMedia: false, analyzeBody: false }),
   ]);
   const seoSite = siteForSeo(site);
   const entries = generateSitemapOutput(seoSite, postsToSeoSubjects(posts, seoSite));

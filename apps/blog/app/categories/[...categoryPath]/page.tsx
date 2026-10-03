@@ -2,16 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
-import {
-  POSTS_PER_PAGE,
-  paginateItems,
-  PostPagination,
-} from "@/features/blog/components/post-pagination";
+import { POSTS_PER_PAGE, PostPagination } from "@/features/blog/components/post-pagination";
 import { PostListView } from "@/features/blog/components/post-list-view";
 import { categoryListingMetadata } from "@/features/blog/lib/listing-metadata";
 import {
   getCategoryByPath,
-  getPostsByCategoryPath,
+  getPublishedPostPage,
   getSiteConfig,
   listCategories,
 } from "@/features/blog/server/content-source";
@@ -48,11 +44,12 @@ export async function generateStaticParams() {
   const categories = [...depth1, ...depth2];
   const pagesPerCategory: number[] = await Promise.all(
     categories.map(async (category) => {
-      const posts = await getPostsByCategoryPath(category.slug, {
-        limit: 100,
-        publishedOnly: true,
+      const posts = await getPublishedPostPage({
+        categoryPath: category.slug,
+        limit: 1,
+        analyzeBody: false,
       });
-      return Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+      return Math.max(1, Math.ceil(posts.total / POSTS_PER_PAGE));
     }),
   );
 
@@ -86,12 +83,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   const [category, posts, site] = await Promise.all([
     getCategoryByPath(route.path),
-    getPostsByCategoryPath(route.path, { limit: 100, publishedOnly: true }),
+    getPublishedPostPage({
+      categoryPath: route.path,
+      page: route.page,
+      limit: POSTS_PER_PAGE,
+      analyzeBody: false,
+    }),
     getSiteConfig(),
   ]);
   if (!category) notFound();
-  const pagination = paginateItems(posts, route.page);
-  if (route.page > pagination.totalPages) notFound();
+  const totalPages = Math.max(1, Math.ceil(posts.total / POSTS_PER_PAGE));
+  if (route.page > totalPages) notFound();
   const analyticsContext = {
     provider: site.analytics.provider,
     slug: `category:${category.slug}`,
@@ -121,17 +123,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <section className="space-y-5">
         <PostListView
           analyticsContext={analyticsContext}
-          posts={pagination.items}
-          summary={`${pagination.totalCount}개의 글`}
+          posts={posts.items}
+          summary={`${posts.total}개의 글`}
         />
         <PostPagination
-          currentPage={pagination.currentPage}
+          currentPage={route.page}
           hrefForPage={(page) =>
             page > 1
               ? `/blog/categories/${route.path}/page/${page}`
               : `/blog/categories/${route.path}`
           }
-          totalPages={pagination.totalPages}
+          totalPages={totalPages}
         />
       </section>
     </main>

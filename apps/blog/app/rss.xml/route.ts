@@ -8,7 +8,7 @@ export const revalidate = 900;
 export async function GET() {
   const [site, posts] = await Promise.all([
     getSiteConfig(),
-    getPublishedPosts({ includeTotal: false, includeMedia: false, analyzeBody: false }),
+    getPublishedPosts({ limit: 20, includeTotal: false, includeMedia: false, analyzeBody: false }),
   ]);
   const seoSite = siteForSeo(site);
   const output = generateFeedOutput(seoSite, postsToSeoSubjects(posts, seoSite));

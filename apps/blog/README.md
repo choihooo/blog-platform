@@ -1,7 +1,7 @@
 # Blog App
 
-공개 읽기 전용 블로그 앱이다. `content/posts/*.mdx` 중 `status: published`인 글만 공개 표면에
-노출한다.
+공개 읽기 전용 블로그 앱이다. 기본 콘텐츠 소스는 D1/R2이며, `BLOG_CONTENT_PROXY_URL`이 있으면 CMS의
+`/api/public-content`를 읽는 remote 소스를 사용한다. 공개된 글만 노출한다.
 
 ## Structure
 
@@ -33,6 +33,22 @@
 - `/blog/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`는 repository에 파일을 commit하지 않고
   route handler에서 현재 published content와 `@blog-platform/seo-engine` 결과를 기준으로 응답한다.
 - Draft와 archived 글은 홈, 상세, taxonomy route, RSS, Sitemap, OG route에서 제외된다.
+- Sitemap은 100개씩 모든 페이지를 조회한다. RSS는 최신 20개 글만 제공한다.
+- 블로그·태그·카테고리 목록은 서버에서 페이지당 8개와 전체 개수를 조회하며, 이전/다음은 크롤러가
+  따라갈 수 있는 `<a href>` 링크다. 태그 검색 대상도 전체 공개 글에서 수집한다.
+- 콘텐츠 조회 실패는 예외로 전파한다. 실제로 글이 없을 때만 404로 처리하며, 저장소 설정 누락이나
+  원격 5xx를 빈 목록/글 없음으로 캐시하지 않는다. D1 캐시와 ISR의 재검증 실패 시 기존 성공 응답을
+  대체하지 않으며, 성공 캐시가 없는 요청은 서버 오류로 처리한다.
+- remote 배포 시 CMS의 `{ posts, total, categories }` 응답을 먼저 배포한 뒤 Blog를 배포한다.
+  `total`은 현재 필터에 해당하는 전체 공개 글 수다.
+
+## Legacy post URLs
+
+- `features/blog/data/legacy-post-redirects.mjs`에 이전 티스토리 ID와 현재 slug를 보관한다.
+  2026-10-04에 migration `posts.json`의 제목과 공개 catalog 제목이 정확히 일치한 32개를 확인했다.
+- `/:id`, `/m/:id`, `/posts/tistory-:id`, `/blog/tistory-:id` 중 매핑에 있는 경로만 현재 글로 308
+  이동한다. 알 수 없는 ID나 삭제된 콘텐츠를 홈으로 보내지 않는다.
+- 대상 글을 삭제하거나 slug를 바꾸면 매핑도 갱신한다. 원격 D1/R2 변경은 필요하지 않다.
 
 ## Analytics
 

@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 
 import { BlogBreadcrumb } from "./blog-breadcrumb";
-import { paginateItems, PostPagination } from "./post-pagination";
+import { POSTS_PER_PAGE, PostPagination } from "./post-pagination";
 import { PostListView } from "./post-list-view";
-import { getPostsByTag, getSiteConfig, getTag } from "../server/content-source";
+import { getPublishedPostPage, getSiteConfig, getTag } from "../server/content-source";
 
 export function tagListingHrefForPage(slug: string, page: number) {
   return page > 1 ? `/blog/tags/${slug}/page/${page}` : `/blog/tags/${slug}`;
@@ -20,12 +20,12 @@ export async function TagListingPage({
 }) {
   const [tag, posts, site] = await Promise.all([
     getTag(slug),
-    getPostsByTag(slug, { limit: 100 }),
+    getPublishedPostPage({ tagSlug: slug, page, limit: POSTS_PER_PAGE, analyzeBody: false }),
     getSiteConfig(),
   ]);
   if (!tag) notFound();
-  const pagination = paginateItems(posts, page);
-  if (page > pagination.totalPages) notFound();
+  const totalPages = Math.max(1, Math.ceil(posts.total / POSTS_PER_PAGE));
+  if (page > totalPages) notFound();
   const analyticsContext = {
     provider: site.analytics.provider,
     slug: `tag:${tag.slug}`,
@@ -58,14 +58,14 @@ export async function TagListingPage({
       <section className="space-y-5">
         <PostListView
           analyticsContext={analyticsContext}
-          posts={pagination.items}
+          posts={posts.items}
           replaceLinks={replaceLinks}
-          summary={`${pagination.totalCount}개의 글`}
+          summary={`${posts.total}개의 글`}
         />
         <PostPagination
-          currentPage={pagination.currentPage}
+          currentPage={page}
           hrefForPage={(page) => tagListingHrefForPage(tag.slug, page)}
-          totalPages={pagination.totalPages}
+          totalPages={totalPages}
         />
       </section>
     </main>

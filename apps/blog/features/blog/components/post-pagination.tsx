@@ -1,10 +1,6 @@
-import {
-  Pagination,
-  PaginationControl,
-  PaginationItem,
-  PaginationList,
-  PaginationStatus,
-} from "@hozui/react";
+import { Pagination, PaginationItem, PaginationList, PaginationStatus } from "@hozui/react";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type PostPaginationProps = {
   currentPage: number;
@@ -34,16 +30,7 @@ export function paginateItems<T>(items: T[], page: number, pageSize = POSTS_PER_
   };
 }
 
-function paginationTarget(href: string) {
-  const url = new URL(href, "https://local.blog");
-
-  return {
-    action: url.pathname,
-    fields: Array.from(url.searchParams.entries()),
-  };
-}
-
-function PaginationSubmitControl({
+function PaginationLink({
   control,
   disabled,
   href,
@@ -54,15 +41,25 @@ function PaginationSubmitControl({
   href: string;
   label: string;
 }) {
-  const target = paginationTarget(href);
-
+  const Icon = control === "previous" ? ChevronLeft : ChevronRight;
+  const className =
+    "inline-flex size-9 items-center justify-center rounded-md border border-border text-foreground hover:bg-muted";
+  if (disabled) {
+    return (
+      <span aria-label={label} aria-disabled="true" className={`${className} opacity-40`}>
+        <Icon aria-hidden="true" size={18} />
+      </span>
+    );
+  }
   return (
-    <form action={target.action} method="get">
-      {target.fields.map(([name, value]) => (
-        <input key={`${name}:${value}`} name={name} type="hidden" value={value} />
-      ))}
-      <PaginationControl aria-label={label} control={control} disabled={disabled} type="submit" />
-    </form>
+    <Link
+      aria-label={label}
+      className={className}
+      href={href}
+      rel={control === "previous" ? "prev" : "next"}
+    >
+      <Icon aria-hidden="true" size={18} />
+    </Link>
   );
 }
 
@@ -81,7 +78,7 @@ export function PostPagination({ currentPage, totalPages, hrefForPage }: PostPag
       >
         <PaginationList className="items-center gap-3">
           <PaginationItem>
-            <PaginationSubmitControl
+            <PaginationLink
               control="previous"
               disabled={!hasPreviousPage}
               href={hrefForPage(currentPage - 1)}
@@ -94,7 +91,7 @@ export function PostPagination({ currentPage, totalPages, hrefForPage }: PostPag
             </PaginationStatus>
           </PaginationItem>
           <PaginationItem>
-            <PaginationSubmitControl
+            <PaginationLink
               control="next"
               disabled={!hasNextPage}
               href={hrefForPage(currentPage + 1)}

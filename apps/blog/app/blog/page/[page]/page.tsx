@@ -5,7 +5,8 @@ import { BlogListingPage } from "@/features/blog/components/blog-listing-page";
 import { homeListingMetadata } from "@/features/blog/lib/listing-metadata";
 import { POSTS_PER_PAGE } from "@/features/blog/components/post-pagination";
 import {
-  getPublishedPosts,
+  getPublishedPostPage,
+  getCategoryCounts,
   getSiteConfig,
   listCategories,
 } from "@/features/blog/server/content-source";
@@ -25,8 +26,8 @@ function parsePage(value: string) {
 }
 
 export async function generateStaticParams() {
-  const posts = await getPublishedPosts({ limit: 100, analyzeBody: false });
-  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+  const { total } = await getPublishedPostPage({ limit: 1, analyzeBody: false });
+  const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
   return Array.from({ length: totalPages }, (_, index) => index + 1)
     .filter((page) => page > 1)
     .map((page) => ({ page: String(page) }));
@@ -44,17 +45,21 @@ export default async function BlogPagedPage({ params }: BlogPagedProps) {
 
   const [site, posts, parentCategories, childCategories] = await Promise.all([
     getSiteConfig(),
-    getPublishedPosts({ limit: 100, analyzeBody: false }),
+    getPublishedPostPage({ page, limit: POSTS_PER_PAGE, analyzeBody: false }),
     listCategories({ depth: 1 }),
     listCategories({ depth: 2 }),
   ]);
+
+  const categoryCounts = await getCategoryCounts([...parentCategories, ...childCategories]);
 
   return (
     <BlogListingPage
       childCategories={childCategories}
       page={page}
       parentCategories={parentCategories}
-      posts={posts}
+      posts={posts.items}
+      total={posts.total}
+      categoryCounts={categoryCounts}
       site={site}
     />
   );

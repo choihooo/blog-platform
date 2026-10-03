@@ -38,6 +38,7 @@ const longPost: PublicPost = {
 vi.mock("@/features/blog/server/content-source", () => ({
   getSiteConfig: () => Promise.resolve({ siteName: "Blog", siteUrl: "https://example.com" }),
   getPublishedPosts: () => Promise.resolve([publishedPost, longPost]),
+  getAllPublishedPosts: () => Promise.resolve([publishedPost, longPost]),
   searchPosts: (input: { query: string }) =>
     Promise.resolve(
       [publishedPost, longPost].filter((post) =>
