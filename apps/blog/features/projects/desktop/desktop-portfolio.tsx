@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import {
-  ArrowDown,
   ArrowUpRight,
   BookOpen,
   FolderOpen,
   House,
-  LayoutGrid,
   Maximize2,
   Minus,
   RotateCcw,
@@ -377,9 +375,6 @@ export function DesktopPortfolio() {
         <nav aria-label="포트폴리오 메뉴">
           <Link href="/resume">About</Link>
           <Link href="/blog">Blog</Link>
-          <a href="#all-projects">
-            모든 작업 <ArrowDown size={13} aria-hidden="true" />
-          </a>
         </nav>
       </header>
       <div
@@ -601,21 +596,11 @@ export function DesktopPortfolio() {
             ))}
         </nav>
       </div>
-      <section
-        className="desktop-all-projects"
-        id="all-projects"
-        aria-labelledby="all-projects-title"
-      >
-        <div className="desktop-index-heading">
-          <h2 id="all-projects-title">
-            모든 작업 <span>{projects.length}</span>
-          </h2>
-          <a href="#">
-            <LayoutGrid size={15} /> 바탕화면으로
-          </a>
-        </div>
-        <ProjectList />
-      </section>
+      <noscript>
+        <p>
+          <Link href="/projects">프로젝트 목록 보기</Link>
+        </p>
+      </noscript>
     </main>
   );
 }
