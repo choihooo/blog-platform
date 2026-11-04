@@ -48,16 +48,22 @@
   background: #eaf0fb;
 }
 .story-scene {
+  --story-sky: #f4f3ee;
+  --story-floor: #e5e4df;
   position: absolute;
   inset: 0;
   overflow: hidden;
   background: #f5f3ed;
 }
 .story-scene--blog {
+  --story-sky: #3d6ed5;
+  --story-floor: #3967c7;
   background: #3d6ed5;
   color: #fff;
 }
 .story-scene--work {
+  --story-sky: #e9effb;
+  --story-floor: #dae1eb;
   background: #eaf0fb;
   color: #172c52;
 }
@@ -200,6 +206,43 @@
 }
 .story-transition {
   z-index: 3;
+}
+/* Wide monitors must not enlarge a 16:9 plate until its top/bottom are cropped. */
+@media (min-aspect-ratio: 16/9) {
+  .story-copy {
+    gap: 6px;
+  }
+  .story-copy .story-title {
+    font-size: clamp(26px, 5dvh, 52px);
+  }
+  .story-copy p {
+    font-size: clamp(12px, 1.8dvh, 17px);
+  }
+  .story-scene {
+    background: linear-gradient(var(--story-sky) 0 70%, var(--story-floor) 70% 100%);
+  }
+  .story-character {
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+  }
+  .story-character,
+  .story-transition {
+    width: min(100%, calc(100dvh * 16 / 9));
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 64px,
+      #000 calc(100% - 64px),
+      transparent
+    );
+  }
+  .story-loop,
+  .story-transition {
+    object-fit: contain;
+  }
 }
 .story-backdrop {
   position: absolute;
@@ -350,6 +393,37 @@
   }
 }
 @media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .story-scene {
+    background: linear-gradient(var(--story-sky) 0 70%, var(--story-floor) 70% 100%);
+  }
+  .story-character {
+    top: 132px;
+    bottom: 56px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  .story-character,
+  .story-transition {
+    width: min(100%, calc((100dvh - 188px) * 16 / 9));
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 48px,
+      #000 calc(100% - 48px),
+      transparent
+    );
+  }
+  .story-loop,
+  .story-transition {
+    object-fit: contain;
+  }
+  .story-transition {
+    top: 132px;
+    height: calc(100% - 188px);
+  }
   .story-header {
     top: 8px;
     left: 24px;
