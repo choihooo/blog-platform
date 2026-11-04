@@ -36,3 +36,13 @@
 - 운영 메인 Portfolio 장면의 바로가기에서 새 `/projects` 진입 동작을 확인했다.
 - 원본 checkout과 원격 Git branch는 변경하지 않았다. 후속 Git 기반 배포 전 이 작업 브랜치의 변경을
   통합해야 수동 배포한 작업실이 유지된다.
+
+## Git 통합 검증
+
+- 사용자 요청으로 `codex/scroll-story-home`을 push하고 PR #3에서 `main` 통합을 진행한다. 위 기록은
+  최초 수동 배포 시점의 상태다. 원본 checkout의 미커밋 변경은 계속 보존한다.
+- CMS의 Vitest globals가 꺼져 자동 등록되지 않던 React cleanup을 setup 파일에서 명시한다. 테스트 간
+  DOM 격리 회귀 검사와 CMS 전체 141개 테스트, 저장소 전체 테스트·lint·typecheck·format 통과.
+- Blog Preview에는 콘텐츠 소스 설정이 없어 빌드가 실패했다. 공개 읽기 전용 API가 HTTP 200으로
+  응답하는 것을 확인하고 Preview에만 `BLOG_CONTENT_PROXY_URL=https://cms.hozorica.com`을 설정한다.
+  운영 D1/R2 설정과 콘텐츠 데이터는 변경하지 않는다.
