@@ -2,6 +2,14 @@ import { projects } from "../project-data";
 import { projectCardAssets } from "../project-card-assets";
 
 export const desktopProjects = projects;
+export function projectIdFromHash(hash: string): string | undefined {
+  try {
+    const slug = decodeURIComponent(hash.replace(/^#/, ""));
+    return projects.some((project) => project.slug === slug) ? slug : undefined;
+  } catch {
+    return undefined;
+  }
+}
 export function projectPoster(slug: string) {
   const media = projectCardAssets[slug];
   return media

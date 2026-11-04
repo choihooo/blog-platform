@@ -29,11 +29,12 @@ describe("public header policy", () => {
         "/projects/kusting",
       ].includes(path),
     );
-    if (path === "/projects" || path === "/projects/kusting") {
+    if (path === "/projects/kusting") {
       expect(html).toContain("HOZORICA");
       expect(html).toContain("Portfolio");
       expect(html.match(/<header\b/g)).toHaveLength(1);
     }
+    if (path === "/projects") expect(html).not.toContain("<header");
     expect(html).toContain("<p>내용</p>");
   });
 });

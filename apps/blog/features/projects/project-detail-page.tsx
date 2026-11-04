@@ -16,7 +16,7 @@ export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
     <main className="project-document">
       <article className="project-document-sheet">
         <div className="project-document-bar">
-          <Link className="project-document-back" href="/experiments/interactive-portfolio">
+          <Link className="project-document-back" href="/projects">
             <ArrowLeft size={15} aria-hidden="true" />
             작업실
           </Link>

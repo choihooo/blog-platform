@@ -21,7 +21,13 @@ import {
   type CSSProperties,
 } from "react";
 import { projects } from "../project-data";
-import { desktopProjects, projectPoster, projectPreviews, windowTitle } from "./desktop-data";
+import {
+  desktopProjects,
+  projectPoster,
+  projectPreviews,
+  windowTitle,
+  projectIdFromHash,
+} from "./desktop-data";
 import { ProjectWindowSummary } from "./project-window-summary";
 import { MainHeader } from "../../navigation/main-header";
 import {
@@ -227,6 +233,17 @@ export function DesktopPortfolio() {
   const pendingFocus = useRef<{ kind: "dock" | "launcher"; id: string } | null>(null);
   const active = windows.filter((w) => !w.minimized).at(-1)?.id;
   const windowBounds = { width: space.width, height: space.height - 92 };
+  useEffect(() => {
+    const restore = () => {
+      const id = projectIdFromHash(window.location.hash);
+      if (!id) return;
+      const width = workspace.current?.clientWidth ?? 1280;
+      dispatch({ type: "open", id, x: (width - Math.min(720, width - 32)) / 2, y: 38 });
+    };
+    restore();
+    window.addEventListener("hashchange", restore);
+    return () => window.removeEventListener("hashchange", restore);
+  }, []);
   useEffect(() => {
     const el = workspace.current;
     if (!el) return;
@@ -592,9 +609,16 @@ export function DesktopPortfolio() {
         </nav>
       </div>
       <noscript>
-        <p>
-          <Link href="/projects">프로젝트 목록 보기</Link>
-        </p>
+        <nav aria-label="프로젝트 목록" className="desktop-noscript-projects">
+          <h2>프로젝트 목록</h2>
+          <ul>
+            {projects.map((project) => (
+              <li key={project.slug}>
+                <Link href={`/projects/${project.slug}`}>{project.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </noscript>
     </main>
   );

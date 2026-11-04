@@ -14,7 +14,8 @@ it.each(["kusting", "afterimage"])(
     expect(html.match(/<h1\b/g)).toHaveLength(1);
     expect(html).toContain(project.name);
     expect(html).toContain(project.role);
-    expect(html).toContain('href="/experiments/interactive-portfolio"');
+    expect(html).not.toContain('href="/experiments/interactive-portfolio"');
+    expect(html).toContain('href="/projects"');
     expect(html).toContain(`href="/projects#${slug}"`);
     for (const section of getProjectSections(project)) expect(html).toContain(`id="${section.id}"`);
     if (project.format !== "showcase")

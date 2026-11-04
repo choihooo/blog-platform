@@ -13,6 +13,12 @@
 .desktop-portfolio * {
   box-sizing: border-box;
 }
+.desktop-noscript-projects {
+  padding: 24px;
+}
+.desktop-noscript-projects li {
+  padding: 8px 0;
+}
 .desktop-visually-hidden {
   position: absolute;
   width: 1px;

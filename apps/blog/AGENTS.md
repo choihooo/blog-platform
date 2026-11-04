@@ -13,7 +13,10 @@
 ## 라우팅과 모달
 
 - 홈은 `features/scroll-story`이며 픽셀룸은 `/experiments/pixel-room`에 noindex로 보관한다.
-- 블로그, Work, About, Resume는 일반 페이지다. 기존 URL을 유지하며 모달을 다시 추가하지 않는다.
+- `/projects`는 작업 바탕화면이며 모델리스 미리보기 창을 사용한다. `/projects/[slug]`, 블로그,
+  About, Resume는 일반 페이지다. 상세 라우트를 가로채는 모달은 추가하지 않는다.
+- `/experiments/interactive-portfolio`는 정식 `/projects`로 영구 이동한다. 목록은 자체 MainHeader를
+  표시하며 HomeAwareShell이 같은 헤더를 중복해서 표시하지 않게 한다.
 - 같은 목적지에 parallel route나 모달 슬롯을 중복으로 추가하지 않는다.
 - 모달을 닫을 때 이전 모달이 다시 열리거나 픽셀룸이 초기화되지 않게 한다.
 - 새 canonical URL은 직접 진입, 새로고침, 브라우저 뒤로 가기를 모두 지원해야 한다.

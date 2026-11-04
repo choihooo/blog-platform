@@ -18,5 +18,6 @@ it("shows all desktop icons without a duplicate lower catalogue and provides a n
   for (const href of ["/", "/resume", "/blog"]) expect(html).toContain(`href="${href}"`);
   expect(html).not.toContain("<canvas");
   expect(html).not.toContain('preload="auto"');
-  expect(html.match(/<noscript>([\s\S]*?)<\/noscript>/)?.[1]).toContain('href="/projects"');
+  const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/)?.[1];
+  for (const project of projects) expect(fallback).toContain(`href="/projects/${project.slug}"`);
 });
