@@ -23,17 +23,29 @@ import {
 } from "react";
 import { projects } from "../project-data";
 import { desktopProjects, projectPoster, projectPreviews, windowTitle } from "./desktop-data";
-import { clampPosition, desktopReducer, type DesktopWindow } from "./desktop-state";
+import {
+  clampPosition,
+  desktopReducer,
+  getWindowRect,
+  resizeWindow,
+  type DesktopWindow,
+  type ResizeEdge,
+  type WindowRect,
+} from "./desktop-state";
 
 type Point = { x: number; y: number };
-const iconPlaces = [
-  { x: 0.08, y: 0.39 },
-  { x: 0.79, y: 0.14 },
-  { x: 0.08, y: 0.68 },
-  { x: 0.8, y: 0.68 },
-  { x: 0.24, y: 0.58 },
-  { x: 0.84, y: 0.41 },
-];
+const resizeEdges: readonly ResizeEdge[] = ["n", "ne", "e", "se", "s", "sw", "w", "nw"];
+const resizeEdgeLabels: Record<ResizeEdge, string> = {
+  n: "위쪽",
+  ne: "오른쪽 위",
+  e: "오른쪽",
+  se: "오른쪽 아래",
+  s: "아래쪽",
+  sw: "왼쪽 아래",
+  w: "왼쪽",
+  nw: "왼쪽 위",
+};
+const iconColumns = [0.05, 0.19, 0.73, 0.86];
 
 function ProjectPreview({ id, active }: { id: string; active: boolean }) {
   const media = projectPreviews[id];
@@ -204,20 +216,22 @@ export function DesktopPortfolio() {
   const [space, setSpace] = useState({ width: 1280, height: 740 });
   const workspace = useRef<HTMLDivElement>(null);
   const drag = useRef<{
-    kind: "icon" | "window";
+    kind: "icon" | "window" | "resize";
     id: string;
     px: number;
     py: number;
     x: number;
     y: number;
     moved: boolean;
+    width: number;
+    height: number;
+    edge?: ResizeEdge;
   } | null>(null);
   const suppressClick = useRef<string | null>(null);
   const focusReturn = useRef<HTMLElement | null>(null);
   const pendingFocus = useRef<{ kind: "dock" | "launcher"; id: string } | null>(null);
   const active = windows.filter((w) => !w.minimized).at(-1)?.id;
-  const windowWidth = Math.min(720, space.width - 32),
-    windowHeight = Math.min(560, space.height - 126);
+  const windowBounds = { width: space.width, height: space.height - 92 };
   useEffect(() => {
     const el = workspace.current;
     if (!el) return;
@@ -250,7 +264,13 @@ export function DesktopPortfolio() {
   }, [windows]);
   const open = (id: string) => {
     focusReturn.current = document.activeElement as HTMLElement;
-    dispatch({ type: "open", id });
+    const width = Math.min(720, space.width - 32);
+    dispatch({
+      type: "open",
+      id,
+      x: (space.width - width) / 2 + windows.length * 18,
+      y: 38 + windows.length * 12,
+    });
   };
   const close = (id: string) => {
     pendingFocus.current = { kind: "launcher", id };
@@ -260,21 +280,12 @@ export function DesktopPortfolio() {
     pendingFocus.current = { kind: "dock", id };
     dispatch({ type: "minimize", id });
   };
-  const windowPosition = (item: DesktopWindow) =>
-    clampPosition(
-      item.x || (space.width - windowWidth) / 2 + windows.findIndex((w) => w.id === item.id) * 18,
-      item.y || 38,
-      space.width,
-      space.height - 92,
-      windowWidth,
-      windowHeight,
-    );
+  const windowPosition = (item: DesktopWindow) => getWindowRect(item, windowBounds);
   const iconPosition = (id: string, index: number) => {
-    const place = iconPlaces[index]!;
     const saved = positions[id];
     return clampPosition(
-      saved?.x ?? place.x * space.width,
-      saved?.y ?? place.y * (space.height - 100),
+      saved?.x ?? iconColumns[index % 4]! * space.width,
+      saved?.y ?? (0.12 + Math.floor(index / 4) * 0.27) * (space.height - 150),
       space.width,
       space.height - 110,
       100,
@@ -285,7 +296,7 @@ export function DesktopPortfolio() {
     event: ReactPointerEvent<HTMLElement>,
     kind: "icon" | "window",
     id: string,
-    point: Point,
+    point: Point & Partial<Pick<WindowRect, "width" | "height">>,
   ) {
     if (
       event.button !== 0 ||
@@ -303,6 +314,8 @@ export function DesktopPortfolio() {
       x: point.x,
       y: point.y,
       moved: false,
+      width: point.width ?? 100,
+      height: point.height ?? 100,
     };
     event.currentTarget.setPointerCapture(event.pointerId);
   }
@@ -313,13 +326,18 @@ export function DesktopPortfolio() {
       dy = event.clientY - current.py;
     if (Math.hypot(dx, dy) < 5 && !current.moved) return;
     current.moved = true;
+    if (current.kind === "resize") {
+      const rect = resizeWindow(current, dx, dy, current.edge!, windowBounds);
+      dispatch({ type: "resize", id: current.id, ...rect });
+      return;
+    }
     const point = clampPosition(
       current.x + dx,
       current.y + dy,
       space.width,
       space.height - (current.kind === "window" ? 92 : 110),
-      current.kind === "window" ? windowWidth : 100,
-      current.kind === "window" ? windowHeight : 100,
+      current.width,
+      current.height,
     );
     if (current.kind === "window") dispatch({ type: "move", id: current.id, ...point });
     else setPositions((prev) => ({ ...prev, [current.id]: point }));
@@ -328,6 +346,26 @@ export function DesktopPortfolio() {
     if (drag.current?.moved && drag.current.kind === "icon")
       suppressClick.current = drag.current.id;
     drag.current = null;
+  }
+  function startResize(
+    event: ReactPointerEvent<HTMLButtonElement>,
+    id: string,
+    edge: ResizeEdge,
+    rect: WindowRect,
+  ) {
+    if (event.button !== 0) return;
+    event.stopPropagation();
+    dispatch({ type: "focus", id });
+    drag.current = {
+      kind: "resize",
+      id,
+      px: event.clientX,
+      py: event.clientY,
+      ...rect,
+      edge,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
   }
 
   return (
@@ -354,14 +392,7 @@ export function DesktopPortfolio() {
           }
         }}
       >
-        <div className="desktop-intro">
-          <h1>
-            호조리카의
-            <br />
-            작업 바탕화면.
-          </h1>
-          <p>작은 아이디어를, 쓸 수 있는 경험으로.</p>
-        </div>
+        <h1 className="desktop-visually-hidden">호조리카 프로젝트 작업실</h1>
         <span className="desktop-wallpaper-word" aria-hidden="true">
           HOZORICA
         </span>
@@ -373,7 +404,7 @@ export function DesktopPortfolio() {
           height={1199}
           draggable={false}
         />
-        <div className="desktop-shortcuts" aria-label="대표 프로젝트">
+        <div className="desktop-shortcuts" aria-label="전체 프로젝트">
           {desktopProjects.map((project, index) => {
             const point = iconPosition(project.slug, index);
             return (
@@ -383,6 +414,7 @@ export function DesktopPortfolio() {
                 data-shortcut={project.slug}
                 style={{ left: point.x, top: point.y }}
                 aria-label={`${project.name} 프로젝트 열기`}
+                title={project.name}
                 onPointerDown={(e) => startDrag(e, "icon", project.slug, point)}
                 onPointerMove={moveDrag}
                 onPointerUp={endDrag}
@@ -433,8 +465,8 @@ export function DesktopPortfolio() {
                 style={{
                   left: point.x,
                   top: point.y,
-                  width: windowWidth,
-                  height: windowHeight,
+                  width: point.width,
+                  height: point.height,
                   zIndex: 20 + windows.indexOf(item),
                 }}
                 onPointerDown={() => {
@@ -484,6 +516,46 @@ export function DesktopPortfolio() {
                 <div className="desktop-window-content">
                   <WindowBody id={item.id} active={isActive} onOpen={open} />
                 </div>
+                {!item.maximized &&
+                  resizeEdges.map((edge) => (
+                    <button
+                      key={edge}
+                      className={`desktop-resize-handle desktop-resize-${edge}`}
+                      data-resize-edge={edge}
+                      aria-label={`${windowTitle(item.id)} 창 ${resizeEdgeLabels[edge]} 크기 조절`}
+                      tabIndex={edge === "se" ? 0 : -1}
+                      title="드래그해서 창 크기 조절 · 방향키로 조절"
+                      onPointerDown={(event) => startResize(event, item.id, edge, point)}
+                      onPointerMove={moveDrag}
+                      onPointerUp={endDrag}
+                      onPointerCancel={() => {
+                        drag.current = null;
+                      }}
+                      onKeyDown={(event) => {
+                        if (
+                          !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)
+                        )
+                          return;
+                        event.preventDefault();
+                        const step = event.shiftKey ? 40 : 16;
+                        dispatch({
+                          type: "resize",
+                          id: item.id,
+                          ...resizeWindow(
+                            point,
+                            event.key === "ArrowLeft"
+                              ? -step
+                              : event.key === "ArrowRight"
+                                ? step
+                                : 0,
+                            event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0,
+                            edge,
+                            windowBounds,
+                          ),
+                        });
+                      }}
+                    />
+                  ))}
               </section>
             );
           })}

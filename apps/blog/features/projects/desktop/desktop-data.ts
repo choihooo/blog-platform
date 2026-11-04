@@ -1,14 +1,7 @@
-import { getProject, projects } from "../project-data";
+import { projects } from "../project-data";
 import { projectCardAssets } from "../project-card-assets";
 
-export const desktopProjects = [
-  "afterimage",
-  "still",
-  "kusting",
-  "comma",
-  "geobugirin",
-  "ai-workflow",
-].map((slug) => getProject(slug)!);
+export const desktopProjects = projects;
 export function projectPoster(slug: string) {
   const media = projectCardAssets[slug];
   return media

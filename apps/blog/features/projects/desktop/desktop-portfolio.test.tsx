@@ -5,10 +5,13 @@ import { DesktopPortfolio } from "./desktop-portfolio";
 it("retains real navigation and every project without JavaScript", () => {
   const html = renderToStaticMarkup(<DesktopPortfolio />);
   expect(html.match(/<h1\b/g)).toHaveLength(1);
+  expect(html).not.toContain("작업 바탕화면.");
+  expect(html).not.toContain("작은 아이디어를");
   expect(html).toContain('id="all-projects"');
   for (const project of projects) {
     expect(html).toContain(`href="/projects/${project.slug}"`);
     expect(html).toContain(project.name);
+    expect(html).toContain(`aria-label="${project.name} 프로젝트 열기"`);
   }
   for (const href of ["/", "/resume", "/blog"]) expect(html).toContain(`href="${href}"`);
   expect(html).not.toContain("<canvas");
