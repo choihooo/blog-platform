@@ -22,6 +22,7 @@ import {
 } from "react";
 import { projects } from "../project-data";
 import { desktopProjects, projectPoster, projectPreviews, windowTitle } from "./desktop-data";
+import { ProjectWindowSummary } from "./project-window-summary";
 import {
   clampPosition,
   desktopReducer,
@@ -65,15 +66,25 @@ function ProjectPreview({ id, active }: { id: string; active: boolean }) {
     const el = video.current;
     if (!el) return;
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = false;
     const update = () => {
-      if (active && !document.hidden && !motion.matches) void el.play().catch(() => {});
+      if (active && visible && !document.hidden && !motion.matches) void el.play().catch(() => {});
       else el.pause();
     };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = !!entry && entry.intersectionRatio >= 0.1;
+        update();
+      },
+      { threshold: [0, 0.1] },
+    );
+    observer.observe(el);
     update();
     document.addEventListener("visibilitychange", update);
     motion.addEventListener("change", update);
     return () => {
       el.pause();
+      observer.disconnect();
       document.removeEventListener("visibilitychange", update);
       motion.removeEventListener("change", update);
     };
@@ -186,38 +197,10 @@ function WindowBody({
     );
   const project = projects.find((p) => p.slug === id);
   if (!project) return null;
-  const site = project.evidence?.find((e) => e.type === "deployment" || e.type === "demo");
   return (
-    <>
-      <div className="desktop-project-heading">
-        <h2>{project.name}</h2>
-        <span>{project.organization}</span>
-      </div>
-      <p className="desktop-window-intro">{project.description}</p>
-      <dl className="desktop-project-meta">
-        <div>
-          <dt>맡은 일</dt>
-          <dd>{project.role}</dd>
-        </div>
-        {project.period && (
-          <div>
-            <dt>기간</dt>
-            <dd>{project.period}</dd>
-          </div>
-        )}
-      </dl>
+    <ProjectWindowSummary project={project}>
       <ProjectPreview id={id} active={active} />
-      <div className="desktop-window-actions">
-        <Link className="desktop-detail-link" href={`/projects/${id}`}>
-          프로젝트 자세히 보기 <ArrowUpRight size={18} />
-        </Link>
-        {site && (
-          <a href={site.href} target="_blank" rel="noopener noreferrer">
-            사이트 보기 <ArrowUpRight size={16} />
-          </a>
-        )}
-      </div>
-    </>
+    </ProjectWindowSummary>
   );
 }
 
