@@ -210,7 +210,14 @@ export function ScrollStory() {
             />
           )}
           <header className="story-header">
-            <Link className="story-brand" href="/">
+            <Link
+              className="story-brand"
+              href="/"
+              onClick={(event) => {
+                event.preventDefault();
+                goTo(0);
+              }}
+            >
               HOZORICA
             </Link>
             <nav aria-label="장면 이동">

@@ -21,6 +21,8 @@ export function useStoryNavigation(
   const target = useRef<SceneIndex>(0);
   const motion = useRef(reducedMotion);
   const pending = useRef<SceneIndex | null>(null);
+  const settleTimer = useRef<number | undefined>(undefined);
+  const reconcile = useRef<(() => void) | null>(null);
   useEffect(() => {
     motion.current = reducedMotion;
   }, [reducedMotion]);
@@ -30,8 +32,14 @@ export function useStoryNavigation(
       const container = root.current;
       if (!container) return;
       target.current = index;
-      pending.current = index;
+      pending.current =
+        Math.abs(container.scrollTop - index * container.clientHeight) < 1 ? null : index;
       setSelection({ target: index, immediate: false });
+      window.clearTimeout(settleTimer.current);
+      settleTimer.current = window.setTimeout(() => {
+        pending.current = null;
+        reconcile.current?.();
+      }, 1500);
       container.scrollTo({
         top: index * container.clientHeight,
         behavior: motion.current ? "instant" : "smooth",
@@ -61,6 +69,12 @@ export function useStoryNavigation(
       if (index === target.current) return;
       target.current = index;
       setSelection({ target: index, immediate: false });
+    }
+    reconcile.current = updateProgress;
+    function interrupt() {
+      window.clearTimeout(settleTimer.current);
+      pending.current = null;
+      updateProgress();
     }
     let lastWheel = -Infinity;
     let wheelLockedUntil = 0;
@@ -113,14 +127,22 @@ export function useStoryNavigation(
     container.addEventListener("scroll", updateProgress, { passive: true });
     container.addEventListener("wheel", wheel, { passive: false });
     container.addEventListener("keydown", keyboard);
+    container.addEventListener("pointerdown", interrupt);
+    container.addEventListener("touchstart", interrupt, { passive: true });
+    container.addEventListener("scrollend", interrupt);
     window.addEventListener("hashchange", restore);
     window.addEventListener("popstate", restore);
     window.addEventListener("pageshow", restore);
     return () => {
       observer.disconnect();
+      window.clearTimeout(settleTimer.current);
+      reconcile.current = null;
       container.removeEventListener("scroll", updateProgress);
       container.removeEventListener("wheel", wheel);
       container.removeEventListener("keydown", keyboard);
+      container.removeEventListener("pointerdown", interrupt);
+      container.removeEventListener("touchstart", interrupt);
+      container.removeEventListener("scrollend", interrupt);
       window.removeEventListener("hashchange", restore);
       window.removeEventListener("popstate", restore);
       window.removeEventListener("pageshow", restore);
