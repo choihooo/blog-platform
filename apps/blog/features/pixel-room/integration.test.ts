@@ -32,7 +32,6 @@ describe("pixel room integration contracts", () => {
     expect(shell).not.toContain('pathname.startsWith("/blog")');
     expect(shell).not.toContain('pathname.startsWith("/resume")');
     expect(shell).toMatch(/const isHome =\s*pathname === "\/"/);
-    expect(shell).toContain("{!isHome && header}");
   });
   it("uses client navigation without modal bypasses", () => {
     const navigation = read("../navigation/desktop-navigation.tsx");

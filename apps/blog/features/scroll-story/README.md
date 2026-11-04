@@ -1,5 +1,10 @@
 # 호조리카 스크롤 홈
 
+헤더는 `features/navigation/main-header.tsx`를 작업실·프로젝트 페이지와 공유합니다.
+홈의 About/Blog/Portfolio는 기존 장면 이동 콜백을 사용하고, 로고는 처음 장면으로 이동합니다.
+파란 Blog 장면에서는 상위 장면의 흰색을 상속합니다. 다른 페이지에서는 같은 메뉴가 실제 URL로
+연결됩니다. 브랜드/메뉴의 폰트·간격·포커스·모바일 규칙은 `main-header.css`에서 함께 관리합니다.
+
 ## 현재 영상: 무료 ZeroGPU 고해상도 재생성 (2026-11-04)
 
 현재 미디어 경로는 `public/brand/scroll-story/plates-ultrawide-v2/`입니다. 인사·글쓰기·작업의

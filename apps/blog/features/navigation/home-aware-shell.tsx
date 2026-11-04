@@ -2,9 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { MainHeader } from "./main-header";
 
-// Keep the existing server-rendered header on content pages, but let the story
-// occupy the entire home viewport. Re-evaluate on client-side navigation.
+// Home and desktop own their header placement. Portfolio pages share MainHeader;
+// other content pages retain search and category navigation. Re-evaluate on navigation.
 export function HomeAwareShell({ children, header }: { children: ReactNode; header: ReactNode }) {
   const pathname = usePathname();
   const isHome =
@@ -14,7 +15,12 @@ export function HomeAwareShell({ children, header }: { children: ReactNode; head
 
   return (
     <div className="min-h-screen bg-background">
-      {!isHome && header}
+      {!isHome &&
+        (pathname === "/projects" || /^\/projects\/[^/]+\/?$/.test(pathname) ? (
+          <MainHeader active="work" />
+        ) : (
+          header
+        ))}
       {children}
     </div>
   );

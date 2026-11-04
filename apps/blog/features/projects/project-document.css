@@ -13,18 +13,8 @@
   background: #f5f3ed;
   color: #172c52;
   color-scheme: light;
-  min-height: calc(100svh - 64px);
+  min-height: calc(100svh - 79px);
   padding: 40px 32px 88px;
-}
-body:has(.project-document) .public-site-header {
-  --background: #f5f3ed;
-  --foreground: #172c52;
-  --muted-foreground: #53647b;
-  --primary: #3d6ed5;
-  --border: rgba(23, 44, 82, 0.16);
-  background: #f5f3ed;
-  color: #172c52;
-  color-scheme: light;
 }
 .project-document * {
   box-sizing: border-box;

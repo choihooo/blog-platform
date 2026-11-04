@@ -23,6 +23,7 @@ import {
 import { projects } from "../project-data";
 import { desktopProjects, projectPoster, projectPreviews, windowTitle } from "./desktop-data";
 import { ProjectWindowSummary } from "./project-window-summary";
+import { MainHeader } from "../../navigation/main-header";
 import {
   clampPosition,
   desktopReducer,
@@ -365,15 +366,7 @@ export function DesktopPortfolio() {
 
   return (
     <main className="desktop-portfolio">
-      <header className="desktop-menubar">
-        <Link className="desktop-logo" href="/">
-          HOZORICA<span>작업실</span>
-        </Link>
-        <nav aria-label="포트폴리오 메뉴">
-          <Link href="/resume">About</Link>
-          <Link href="/blog">Blog</Link>
-        </nav>
-      </header>
+      <MainHeader active="work" />
       <div
         className="desktop-space"
         ref={workspace}

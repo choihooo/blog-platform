@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useEffect, useReducer, useRef, useState } from "react";
+import { MainHeader } from "../navigation/main-header";
 import { storyScenes } from "./story-data";
 import { reduceStory, type SceneIndex } from "./story-controller";
 import { useStoryNavigation } from "./use-story-navigation";
@@ -212,30 +213,14 @@ export function ScrollStory() {
               onError={() => finishTransition(transition.id)}
             />
           )}
-          <header className="story-header">
-            <Link
-              className="story-brand"
-              href="/"
-              onClick={(event) => {
-                event.preventDefault();
-                goTo(0);
-              }}
-            >
-              HOZORICA
-            </Link>
-            <nav aria-label="장면 이동">
-              {storyScenes.map((scene, index) => (
-                <button
-                  key={scene.id}
-                  type="button"
-                  aria-current={displayed === index ? "step" : undefined}
-                  onClick={() => goTo(index as SceneIndex)}
-                >
-                  {scene.label}
-                </button>
-              ))}
-            </nav>
-          </header>
+          <MainHeader
+            className="story-header"
+            active={currentScene.id}
+            onHome={() => goTo(0)}
+            onNavigate={(section) =>
+              goTo((section === "about" ? 0 : section === "blog" ? 1 : 2) as SceneIndex)
+            }
+          />
           <footer className="story-footer">
             <button
               className="story-next"

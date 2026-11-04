@@ -21,8 +21,19 @@ describe("public header policy", () => {
       </HomeAwareShell>,
     );
     expect(html.includes("<header>메뉴</header>")).toBe(
-      !["/", "/experiments/pixel-room", "/experiments/interactive-portfolio"].includes(path),
+      ![
+        "/",
+        "/experiments/pixel-room",
+        "/experiments/interactive-portfolio",
+        "/projects",
+        "/projects/kusting",
+      ].includes(path),
     );
+    if (path === "/projects" || path === "/projects/kusting") {
+      expect(html).toContain("HOZORICA");
+      expect(html).toContain("Portfolio");
+      expect(html.match(/<header\b/g)).toHaveLength(1);
+    }
     expect(html).toContain("<p>내용</p>");
   });
 });

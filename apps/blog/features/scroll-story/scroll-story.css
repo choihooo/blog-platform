@@ -74,38 +74,8 @@
 .story-header {
   top: 35px;
 }
-.story-brand {
-  font-size: 23px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  text-decoration: none;
-}
 .scroll-story :is(.story-action, .story-header a, .story-header button) {
   cursor: pointer;
-}
-.story-brand span {
-  display: block;
-  margin-top: 5px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-.story-header nav {
-  display: flex;
-  gap: 30px;
-}
-.story-header button {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 10px 6px;
-  background: none;
-  border: 0;
-  color: inherit;
-  font-size: 14px;
-  border-bottom: 1px solid transparent;
-}
-.story-header button[aria-current] {
-  border-bottom-color: currentColor;
 }
 .story-stage[data-scene="blog"] .story-header,
 .story-stage[data-scene="blog"] .story-footer {
@@ -302,19 +272,6 @@
   }
   .story-header {
     top: 22px;
-    align-items: flex-start;
-  }
-  .story-brand {
-    font-size: 19px;
-  }
-  .story-brand span {
-    font-size: 9px;
-  }
-  .story-header nav {
-    gap: 8px;
-  }
-  .story-header button {
-    font-size: 12px;
   }
   .story-copy {
     top: 13%;
@@ -366,12 +323,6 @@
     top: 8px;
     left: 24px;
     right: 24px;
-  }
-  .story-brand {
-    font-size: 17px;
-  }
-  .story-header nav {
-    gap: 8px;
   }
   .story-copy {
     top: 64px;

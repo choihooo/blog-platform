@@ -113,51 +113,8 @@
   outline: 3px solid #3d6ed5;
   outline-offset: 5px;
 }
-.desktop-menubar {
-  height: 56px;
-  padding: 0 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--desk-line);
-  position: relative;
-  z-index: 2;
-}
-.desktop-logo {
-  font-size: 18px;
-  font-weight: 850;
-  letter-spacing: -0.025em;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.desktop-logo span {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--desk-muted);
-  padding-left: 18px;
-  border-left: 1px solid var(--desk-line);
-}
-.desktop-menubar nav {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  font-size: 12px;
-  font-weight: 650;
-}
-.desktop-menubar nav a {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  text-decoration: none;
-}
-.desktop-menubar a:hover {
-  color: var(--desk-blue);
-}
 .desktop-space {
-  height: calc(100svh - 56px);
+  height: calc(100svh - 79px);
   min-height: 620px;
   position: relative;
   overflow: hidden;
@@ -741,9 +698,6 @@
   }
 }
 @media (max-width: 1023px) {
-  .desktop-menubar {
-    padding: 0 24px;
-  }
   .desktop-character {
     width: 45vw;
   }
@@ -755,23 +709,8 @@
   }
 }
 @media (max-width: 759px) {
-  .desktop-menubar {
-    height: 54px;
-    padding: 0 20px;
-  }
-  .desktop-logo {
-    font-size: 16px;
-    gap: 0;
-  }
-  .desktop-logo span {
-    display: none;
-  }
-  .desktop-menubar nav {
-    gap: 18px;
-    font-size: 11px;
-  }
   .desktop-space {
-    height: calc(100svh - 54px);
+    height: calc(100svh - 66px);
     min-height: 900px;
   }
   .desktop-wallpaper-word {
@@ -889,6 +828,7 @@
     touch-action: pan-y;
   }
   .desktop-space {
+    height: calc(100svh - 52px);
     min-height: 0;
   }
   .desktop-character {
