@@ -16,4 +16,20 @@
 - 11개 아이콘, 드래그·크기 조절·최소화·복원, 상세 문서 톤, 메인 공통 헤더, 풍부한 미리보기를 배포한다.
 - DB/R2 콘텐츠 쓰기는 없으며 비밀키/모델 파일은 배포 snapshot에 복사하지 않는다.
 
-검증·배포 결과는 실행 후 아래에 추가한다.
+## 검증과 배포 결과
+
+- 배포 소스 commit `ce3805e`. 격리된 git archive snapshot에 Blog 프로젝트 연결과 실제 소스가
+  존재하는지 확인했다. `.env.local`과 개인 모델을 포함하지 않았다.
+- 전체 Blog 테스트 412개/45파일, lint/typecheck/format 검사 통과. 별도 배포 전 검토에서
+  Critical/Important 문제 없음. 기존 OG/콘텐츠 데이터 계약은 변경하지 않았다.
+- 후보: `https://blog-cxezrrwgk-hochois-projects.vercel.app`,
+  `dpl_Eqxi1eidyP3DfRZqccJkoZK4Qy4g`. 149페이지 운영 빌드 통과 후 promote 완료.
+- 후보 브라우저에서 icon 11개, header 1개, 캐릭터 이미지 로드, canonical/index/follow,
+  hash 미리보기 복원 및 상세→작업실 이동을 확인했다.
+- 운영 `/projects`, `/`, `/blog`, `/projects/kusting` HTTP 200. 예전 실험 주소는 HTTP 308,
+  Location `/projects`. 운영 SSR에 11개 프로젝트 아이콘이 존재함을 확인했다.
+- 실제 운영 브라우저에서 미리보기/상세/복귀 및 390×844 화면의 가로 overflow 없음과 헤더 1개를
+  확인했다. GGUF/MLX 글의 OG 이미지가 기존 R2 썸네일 URL을 유지하는 것도 확인했다.
+- 운영 메인 Portfolio 장면의 바로가기에서 새 `/projects` 진입 동작을 확인했다.
+- 원본 checkout과 원격 Git branch는 변경하지 않았다. 후속 Git 기반 배포 전 이 작업 브랜치의
+  변경을 통합해야 수동 배포한 작업실이 유지된다.
