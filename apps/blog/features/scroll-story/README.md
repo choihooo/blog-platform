@@ -1,6 +1,13 @@
-# 호조리카 스크롤 시안
+# 호조리카 스크롤 홈
 
-미리보기: `/experiments/scroll-story`. 운영 홈을 교체하지 않는 독립 시안입니다.
+정식 주소: `/`. 이전 `/experiments/scroll-story`는 `/`로 영구 이동합니다.
+픽셀룸은 `/experiments/pixel-room`에서 noindex로 보관합니다.
+
+`/#about`, `/#blog`, `/#work`로 장면에 직접 진입합니다. 장면 이동은 hash를 replace하며 Next의
+history state를 유지합니다. 상세 방문 후 뒤로 가기나 화면 회전에서는 해당 장면을 복원합니다.
+전환 실패·재생 거절·4초 지연은 목적 장면의 JPG/CTA로 복구하며 오래된 전환 이벤트는 무시합니다.
+JavaScript 미실행용 일반 링크와 reduced-motion 정지 화면을 제공합니다.
+챗봇은 최초 열기 전에는 모델을 불러오지 않습니다. 원본 생성 기록은 아래에 보존합니다.
 
 인사와 About → 글쓰기와 Blog → 작업과 Work 순서입니다. 링크는 기존 `/resume`, `/blog`, `/projects`로
 연결합니다. 스크롤 스냅으로 이동할 장면을 선택하면 1초짜리 전환 MP4를 한 번 재생합니다. 첨부된 Lena
