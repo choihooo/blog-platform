@@ -62,16 +62,20 @@ export function PortfolioChat({ diagnostics = false }: { diagnostics?: boolean }
     const supported =
       !mobile && /Chrome|Chromium|Edg\//.test(navigator.userAgent) && "gpu" in navigator;
     setModelState(supported ? "idle" : "unsupported");
-    // Defer one task so Strict Mode's setup/cleanup probe cannot start a second download.
-    const automaticLoad = supported ? setTimeout(startAutomaticLoad, 0) : undefined;
     return () => {
-      clearTimeout(automaticLoad);
       alive.current = false;
       operation.current?.abort();
       void model.current?.exit().catch(() => {});
       model.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (!open || modelState !== "idle") return;
+    // Defer one task so Strict Mode's effect probe cannot start a second download.
+    const automaticLoad = setTimeout(startAutomaticLoad, 0);
+    return () => clearTimeout(automaticLoad);
+  }, [open, modelState]);
 
   async function loadModel(variant: "q8" | "q4" = CHAT_MODEL.quantization, forceDownload = false) {
     if (busy.current || modelState === "unsupported") return;
