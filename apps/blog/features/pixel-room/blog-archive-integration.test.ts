@@ -62,10 +62,10 @@ describe("pixel-room blog archive integration", () => {
     ])
       expect(() => read(route)).toThrow();
     expect(read("app/layout.tsx")).not.toContain("{modal}");
-    const projects = read("features/projects/projects-page.tsx");
+    const projects = read("features/projects/desktop/desktop-portfolio.tsx");
     expect(projects).not.toContain("replaceLinks");
-    expect(projects).toContain("id={project.slug}");
-    expect(projects).toContain('href="/"');
+    expect(read("app/projects/page.tsx")).toContain("<DesktopPortfolio />");
+    expect(projects).toContain("projectIdFromHash");
     expect(read("features/projects/project-detail-page.tsx")).toContain(
       "href={`/projects#${project.slug}`}",
     );

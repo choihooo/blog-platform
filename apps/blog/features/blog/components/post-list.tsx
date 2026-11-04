@@ -8,7 +8,6 @@ type PostListProps = {
   posts: PublicPost[];
   analyticsContext?: PostAnalyticsContext;
   postClickEvent?: "post_card_click" | "search_result_click";
-  replaceLinks?: boolean;
   view?: "tile" | "list";
 };
 
@@ -16,7 +15,6 @@ export function PostList({
   analyticsContext,
   postClickEvent = "post_card_click",
   posts,
-  replaceLinks = false,
   view = "list",
 }: PostListProps) {
   if (posts.length === 0) {
@@ -41,7 +39,6 @@ export function PostList({
             post={post}
             postClickEvent={postClickEvent}
             priority={index === 0}
-            replaceLinks={replaceLinks}
           />
         ))}
       </div>
@@ -57,7 +54,6 @@ export function PostList({
           post={post}
           postClickEvent={postClickEvent}
           priority={index === 0}
-          replaceLinks={replaceLinks}
         />
       ))}
     </div>

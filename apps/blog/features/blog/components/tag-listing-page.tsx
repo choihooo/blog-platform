@@ -9,15 +9,7 @@ export function tagListingHrefForPage(slug: string, page: number) {
   return page > 1 ? `/blog/tags/${slug}/page/${page}` : `/blog/tags/${slug}`;
 }
 
-export async function TagListingPage({
-  page,
-  replaceLinks = false,
-  slug,
-}: {
-  page: number;
-  replaceLinks?: boolean;
-  slug: string;
-}) {
+export async function TagListingPage({ page, slug }: { page: number; slug: string }) {
   const [tag, posts, site] = await Promise.all([
     getTag(slug),
     getPublishedPostPage({ tagSlug: slug, page, limit: POSTS_PER_PAGE, analyzeBody: false }),
@@ -44,7 +36,6 @@ export async function TagListingPage({
           { label: tag.label },
         ]}
         label="태그 위치"
-        replace={replaceLinks}
       />
       <section className="mb-10 grid gap-4">
         <p className="text-sm font-semibold uppercase text-muted-foreground">Tag</p>
@@ -59,7 +50,6 @@ export async function TagListingPage({
         <PostListView
           analyticsContext={analyticsContext}
           posts={posts.items}
-          replaceLinks={replaceLinks}
           summary={`${posts.total}개의 글`}
         />
         <PostPagination
