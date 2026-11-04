@@ -502,6 +502,10 @@ body {
 }
 
 @media (max-width: 639px) {
+  .work-feed {
+    padding: 1.5rem 12px 4rem;
+  }
+
   .work-feed__loading-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
