@@ -56,7 +56,7 @@
 - Consumes: 기존 `ScrollStory(): JSX.Element`, `PortfolioChat(...)`, `PixelRoom()`, `getSiteConfig()`, `personJsonLd(site)`.
 - Produces: `ScrollStoryHome(): React.JSX.Element`; `/` 정식 홈, `/experiments/pixel-room` 보관, 이전 시안 주소→`/` 308.
 
-- [ ] **Step 1: 홈/라우트 테스트를 먼저 작성한다.** `home-routes.test.tsx`에서 async Home을 실제 SSR로 렌더해 인사 제목·About 링크·Person JSON-LD를 검사하고 metadata canonical `/` 및 noindex 부재를 확인한다. 콘텐츠 공급자만 fixture로 대체한다. 다음 라우트 계약을 실행해 검사한다:
+- [x] **Step 1: 홈/라우트 테스트를 먼저 작성한다.** `home-routes.test.tsx`에서 async Home을 실제 SSR로 렌더해 인사 제목·About 링크·Person JSON-LD를 검사하고 metadata canonical `/` 및 noindex 부재를 확인한다. 콘텐츠 공급자만 fixture로 대체한다. 다음 라우트 계약을 실행해 검사한다:
 
 ```ts
 expect(metadata.alternates).toMatchObject({ canonical: "/" });
@@ -68,10 +68,10 @@ expect(archiveMetadata.robots).toEqual({ index: false, follow: false });
 
 기존 integration 테스트의 `home`에 PixelRoom 소스가 있어야 한다는 검사만 제거/대체한다. 보관된 픽셀룸의 실제 이미지 존재·hotspot·콘텐츠 일반 라우트 검증은 유지한다.
 
-- [ ] **Step 2: RED 확인.** `pnpm --filter @blog-platform/blog test app/home-routes.test.tsx features/pixel-room/integration.test.ts` → 새 홈/보관 route 또는 리디렉션 미구현으로 FAIL.
-- [ ] **Step 3: 홈을 연결한다.** `ScrollStoryHome()`은 현 실험 페이지와 같은 스토리/챗봇 조합을 렌더한다. 루트에서 PixelRoom만 교체하고 기존 SEO script는 보존한다. 보관 route는 기존 PixelRoom을 렌더하며 noindex를 지정한다. 실험 route는 `permanentRedirect("/")`만 실행한다. shell은 `/`, `/experiments/pixel-room`에서 공용 헤더를 숨긴다.
-- [ ] **Step 4: GREEN 확인.** Step 2 명령 재실행 → PASS. 홈 HTML에 보관 픽셀룸 이미지가 출력되지 않는지도 확인한다.
-- [ ] **Step 5: Commit.** 이 태스크 소스/테스트만 stage → `feat(blog): promote scroll story to home and archive pixel room`.
+- [x] **Step 2: RED 확인.** `pnpm --filter @blog-platform/blog test app/home-routes.test.tsx features/pixel-room/integration.test.ts` → 새 홈/보관 route 또는 리디렉션 미구현으로 FAIL.
+- [x] **Step 3: 홈을 연결한다.** `ScrollStoryHome()`은 현 실험 페이지와 같은 스토리/챗봇 조합을 렌더한다. 루트에서 PixelRoom만 교체하고 기존 SEO script는 보존한다. 보관 route는 기존 PixelRoom을 렌더하며 noindex를 지정한다. 실험 route는 `permanentRedirect("/")`만 실행한다. shell은 `/`, `/experiments/pixel-room`에서 공용 헤더를 숨긴다.
+- [x] **Step 4: GREEN 확인.** Step 2 명령 재실행 → PASS. 홈 HTML에 보관 픽셀룸 이미지가 출력되지 않는지도 확인한다.
+- [x] **Step 5: Commit.** 이 태스크 소스/테스트만 stage → `feat(blog): promote scroll story to home and archive pixel room`.
 
 ### Task 2: 영상 전환 실패와 접근성 보강
 
@@ -82,13 +82,13 @@ expect(archiveMetadata.robots).toEqual({ index: false, follow: false });
 - Produces: `type SceneIndex = 0 | 1 | 2`; `type StoryState = { displayed: SceneIndex; target: SceneIndex; transition: { id: number; from: SceneIndex; to: SceneIndex } | null }`.
 - Produces: `reduceStory(state: StoryState, event: StoryEvent): StoryState`, `StoryEvent`는 `{type:"select";to:SceneIndex;id:number;immediate:boolean}` 또는 `{type:"complete";id:number}`. timeout/error/play 거절은 같은 complete 이벤트로 처리한다.
 
-- [ ] **Step 1: 상태 테스트 작성.** `0→1` 선택 시 displayed 0/target 1/전환 from 0 to 1; 같은 전환 ID complete 시 displayed 1/transition null. `0→1(id1)→0(id2)` 뒤 complete(id1)는 displayed 0을 유지한다. immediate 선택은 영상 없이 target 장면으로 바뀐다. 같은 장면 재선택은 전환을 제거한다. 실제 reducer에 literal 값을 넣어 검사한다.
-- [ ] **Step 2: RED 확인.** `pnpm --filter @blog-platform/blog test features/scroll-story/story-controller.test.ts` → reducer 미구현으로 FAIL.
-- [ ] **Step 3: 전환 상태를 통합한다.** reducer를 기존 효과의 상태 변경 지점에 연결한다. 전환 시작마다 최대 4초 watchdog을 설정하고 완료·취소·unmount에서 해제한다. 오래된 DOM 이벤트는 ID가 다르면 무시한다. 모든 실패 경로에서 inert/전환 overlay가 해제되어 CTA를 다시 누를 수 있어야 한다.
-- [ ] **Step 4: SSR 접근성 테스트를 추가하고 먼저 실패를 확인한다.** `renderToStaticMarkup(<ScrollStory />)` 결과에서 `<h1>` 1개, 나머지 제목 `<h2>` 2개, 접근 가능한 인사 제목, JS 미실행용 `/resume`·`/blog`·`/projects` 일반 링크를 검사한다. 테스트는 소스 문자열 대신 실제 생성 HTML을 검사한다.
-- [ ] **Step 5: 출력·미디어를 보강한다.** main 이름을 `호조리카 소개`로 바꾸고 공통 제목 class로 h1/h2 스타일을 유지한다. noscript 일반 링크를 추가한다. 초기 media-query 판정 전/모션 줄이기에는 JPG가 보이도록 하며 비활성 동영상 preload는 `none`, 활성 영상만 로드한다. 현재 활성 링크만 포커스를 받고 문구·레이아웃은 승인안과 동일해야 한다.
-- [ ] **Step 6: GREEN 및 브라우저 확인.** 위 두 test 파일 PASS. 실제 브라우저에서 전환 MP4 차단, play 거절, 빠른 0→1→0, 4초 stalled 재현 → 마지막 선택의 제목/CTA가 복구됨. reduced motion 및 탭 숨김에서 영상 정지 확인.
-- [ ] **Step 7: Commit.** 태스크 파일만 stage → `fix(blog): harden home scene transitions and static fallback`.
+- [x] **Step 1: 상태 테스트 작성.** `0→1` 선택 시 displayed 0/target 1/전환 from 0 to 1; 같은 전환 ID complete 시 displayed 1/transition null. `0→1(id1)→0(id2)` 뒤 complete(id1)는 displayed 0을 유지한다. immediate 선택은 영상 없이 target 장면으로 바뀐다. 같은 장면 재선택은 전환을 제거한다. 실제 reducer에 literal 값을 넣어 검사한다.
+- [x] **Step 2: RED 확인.** `pnpm --filter @blog-platform/blog test features/scroll-story/story-controller.test.ts` → reducer 미구현으로 FAIL.
+- [x] **Step 3: 전환 상태를 통합한다.** reducer를 기존 효과의 상태 변경 지점에 연결한다. 전환 시작마다 최대 4초 watchdog을 설정하고 완료·취소·unmount에서 해제한다. 오래된 DOM 이벤트는 ID가 다르면 무시한다. 모든 실패 경로에서 inert/전환 overlay가 해제되어 CTA를 다시 누를 수 있어야 한다.
+- [x] **Step 4: SSR 접근성 테스트를 추가하고 먼저 실패를 확인한다.** `renderToStaticMarkup(<ScrollStory />)` 결과에서 `<h1>` 1개, 나머지 제목 `<h2>` 2개, 접근 가능한 인사 제목, JS 미실행용 `/resume`·`/blog`·`/projects` 일반 링크를 검사한다. 테스트는 소스 문자열 대신 실제 생성 HTML을 검사한다.
+- [x] **Step 5: 출력·미디어를 보강한다.** main 이름을 `호조리카 소개`로 바꾸고 공통 제목 class로 h1/h2 스타일을 유지한다. noscript 일반 링크를 추가한다. 초기 media-query 판정 전/모션 줄이기에는 JPG가 보이도록 하며 비활성 동영상 preload는 `none`, 활성 영상만 로드한다. 현재 활성 링크만 포커스를 받고 문구·레이아웃은 승인안과 동일해야 한다.
+- [x] **Step 6: GREEN 및 브라우저 확인.** 위 두 test 파일 PASS. 실제 브라우저에서 전환 MP4 차단, play 거절, 빠른 0→1→0, 4초 stalled 재현 → 마지막 선택의 제목/CTA가 복구됨. reduced motion 및 탭 숨김에서 영상 정지 확인.
+- [x] **Step 7: Commit.** 태스크 파일만 stage → `fix(blog): harden home scene transitions and static fallback`.
 
 ### Task 3: 장면 주소·헤더·뒤로 가기·모바일
 
@@ -98,12 +98,12 @@ expect(archiveMetadata.robots).toEqual({ index: false, follow: false });
 - Consumes: Task 2 `SceneIndex`, 기존 스크롤 컨테이너 ref.
 - Produces: `sceneFromHash(hash: string): SceneIndex` (동일 hook 파일 export); `useStoryNavigation(root: RefObject<HTMLElement | null>, reducedMotion: boolean): { target: SceneIndex; goTo: (index: SceneIndex) => void }`.
 
-- [ ] **Step 1: literal 계약 테스트 작성.** `sceneFromHash("")/"#about"/"#unknown"`→0, `"#blog"`→1, `"#work"`→2. shell 테스트는 Next `usePathname`만 대체하고 실제 SSR 결과에 전달한 `<header>메뉴</header>`가 `/`·보관 경로에서 없고 `/blog`·`/projects`·`/resume`·일반 미존재 경로에서는 있는지 검사한다.
-- [ ] **Step 2: RED 확인.** 두 새 test 파일을 Vitest로 실행 → hash 함수 미구현 등 예상 FAIL 확인.
-- [ ] **Step 3: hook을 연결한다.** 초기 hash 장면은 즉시 복원한다. 확정한 장면을 hash로 replace하며 기존 `history.state`를 보존한다. 일반 `/`는 인사로 시작한다. 사용자 이동만 기존 휠/버튼/touch/키보드 스크롤 정책을 적용한다. ResizeObserver에서는 변경 전 장면 인덱스에 맞춰 새 높이로 즉시 정렬하고 미디어 비율 변경 시 정지 이미지부터 복원한다. effect listener를 정리한다.
-- [ ] **Step 4: GREEN 확인.** 두 test 파일 PASS. `360×800`, `390×844`, `1440×900`에서 가로 넘침·CTA/챗봇 겹침 없음. 모바일 세로→가로 회전 후 동일 장면 유지. Tab/Shift+Tab/Enter/PageDown으로 탐색하고 숨겨진 장면 링크에 포커스가 가지 않는지 확인한다.
-- [ ] **Step 5: 탐색 QA.** `/#blog` 직접 진입→Blog, CTA `/blog`→글 상세→뒤로 가기 두 번→Blog 장면 복원; `/#work` 새로고침→Work. 헤더/영상/버튼이 중복되지 않고 상세에서는 문서 스크롤이 정상 동작해야 한다. 각 장면을 오가도 브라우저 기록이 장면별로 늘지 않는지 확인한다.
-- [ ] **Step 6: Commit.** 태스크 파일만 stage → `fix(blog): preserve home scene navigation across routes and resize`.
+- [x] **Step 1: literal 계약 테스트 작성.** `sceneFromHash("")/"#about"/"#unknown"`→0, `"#blog"`→1, `"#work"`→2. shell 테스트는 Next `usePathname`만 대체하고 실제 SSR 결과에 전달한 `<header>메뉴</header>`가 `/`·보관 경로에서 없고 `/blog`·`/projects`·`/resume`·일반 미존재 경로에서는 있는지 검사한다.
+- [x] **Step 2: RED 확인.** 두 새 test 파일을 Vitest로 실행 → hash 함수 미구현 등 예상 FAIL 확인.
+- [x] **Step 3: hook을 연결한다.** 초기 hash 장면은 즉시 복원한다. 확정한 장면을 hash로 replace하며 기존 `history.state`를 보존한다. 일반 `/`는 인사로 시작한다. 사용자 이동만 기존 휠/버튼/touch/키보드 스크롤 정책을 적용한다. ResizeObserver에서는 변경 전 장면 인덱스에 맞춰 새 높이로 즉시 정렬하고 미디어 비율 변경 시 정지 이미지부터 복원한다. effect listener를 정리한다.
+- [x] **Step 4: GREEN 확인.** 두 test 파일 PASS. `360×800`, `390×844`, `1440×900`에서 가로 넘침·CTA/챗봇 겹침 없음. 모바일 세로→가로 회전 후 동일 장면 유지. Tab/Shift+Tab/Enter/PageDown으로 탐색하고 숨겨진 장면 링크에 포커스가 가지 않는지 확인한다.
+- [x] **Step 5: 탐색 QA.** `/#blog` 직접 진입→Blog, CTA `/blog`→글 상세→뒤로 가기 두 번→Blog 장면 복원; `/#work` 새로고침→Work. 헤더/영상/버튼이 중복되지 않고 상세에서는 문서 스크롤이 정상 동작해야 한다. 각 장면을 오가도 브라우저 기록이 장면별로 늘지 않는지 확인한다.
+- [x] **Step 6: Commit.** 태스크 파일만 stage → `fix(blog): preserve home scene navigation across routes and resize`.
 
 ### Task 4: 챗봇을 유지하면서 초기 모델 다운로드 지연
 
@@ -113,11 +113,11 @@ expect(archiveMetadata.robots).toEqual({ index: false, follow: false });
 - Consumes: 기존 `PortfolioChat({diagnostics?})`, 기존 open/close/loadModel 및 RAG 계약.
 - Produces: 공개 props 변경 없음. 지원되는 브라우저에서 최초 open 때만 기존 모델 로드가 시작된다.
 
-- [ ] **Step 1: 네트워크 RED 재현.** 새 브라우저 프로필/캐시 비우기 후 홈을 열고 채팅을 열지 않는다. 현재 mount의 GGUF 요청을 기록한다. 이 브라우저 회귀 체크를 테스트로 사용하며 Node 환경에 DOM 라이브러리를 추가하지 않는다.
-- [ ] **Step 2: 자동 로드 시점만 변경한다.** mount의 브라우저 지원 판정·정리 효과는 유지하고 모델 시작을 최초 open 후 effect로 이동한다. effect의 취소/중복 방지로 Strict Mode와 빠른 열기·닫기에서 다운로드가 중복되지 않게 한다. 열기 전에는 동적 kanana import도 실행하지 않는다. 챗봇은 고정 스토리 컨테이너 밖에 둔다.
-- [ ] **Step 3: GREEN 브라우저 QA.** 홈 진입만으로 GGUF 요청 0개; 첫 열기에서 로드 1회; 닫았다 열면 기존 모델 유지; 지원하지 않는 환경에서는 기존 안내. 챗봇 안 스크롤이 장면을 바꾸지 않고 Escape 후 트리거에 포커스가 돌아오는지 확인한다.
-- [ ] **Step 4: 회귀 검사.** `pnpm --filter @blog-platform/blog test features/pixel-room` → PASS. 장면 전환 중 열린 채팅 UI가 유지되고 상세 이동 후 모델 작업이 정리되는지 확인한다.
-- [ ] **Step 5: Commit.** 태스크 파일만 stage → `perf(blog): load portfolio chat model after user opens chat`.
+- [x] **Step 1: 네트워크 RED 재현.** 실행 중 결정: 대용량 캐시를 보존한 새 문서에서 홈을 열고 채팅을 열지 않는다. 현재 mount의 모델 모듈 자동 요청을 기록한다. 이 브라우저 회귀 체크를 테스트로 사용하며 Node 환경에 DOM 라이브러리를 추가하지 않는다. cold-cache 전체 다운로드 검증은 별도로 남긴다.
+- [x] **Step 2: 자동 로드 시점만 변경한다.** mount의 브라우저 지원 판정·정리 효과는 유지하고 모델 시작을 최초 open 후 effect로 이동한다. effect의 취소/중복 방지로 Strict Mode와 빠른 열기·닫기에서 다운로드가 중복되지 않게 한다. 열기 전에는 동적 kanana import도 실행하지 않는다. 챗봇은 고정 스토리 컨테이너 밖에 둔다.
+- [x] **Step 3: GREEN 브라우저 QA.** 홈 진입만으로 GGUF 요청 0개; 첫 열기에서 로드 1회; 닫았다 열면 기존 모델 유지; 지원하지 않는 환경에서는 기존 안내. 챗봇 안 스크롤이 장면을 바꾸지 않고 Escape 후 트리거에 포커스가 돌아오는지 확인한다.
+- [x] **Step 4: 회귀 검사.** `pnpm --filter @blog-platform/blog test features/pixel-room` → PASS. 장면 전환 중 열린 채팅 UI가 유지되고 상세 이동 후 모델 작업이 정리되는지 확인한다.
+- [x] **Step 5: Commit.** 태스크 파일만 stage → `perf(blog): load portfolio chat model after user opens chat`.
 
 ### Task 5: 전체 검증·문서·배포·롤백
 
@@ -127,12 +127,12 @@ expect(archiveMetadata.robots).toEqual({ index: false, follow: false });
 - Consumes: Tasks 1–4 변경, 기존 Vercel `hochois-projects/blog` (`apps/blog` root) 배포 경로.
 - Produces: 검증 결과·직전/신규 배포 ID·포함 파일/미디어 목록·롤백 명령을 담은 runbook.
 
-- [ ] **Step 1: 문서를 갱신한다.** 정식 홈/시안 리디렉션/픽셀룸 보관 위치를 기록하고 AGENTS의 픽셀룸=현행 홈 문구를 새 계약으로 바꾼다. 기존 `plates-centered`만 정식 홈의 미디어 의존임을 기록한다. 다른 미완료 변경의 포함/제외 목록을 확정한다.
-- [ ] **Step 2: 전체 검사 실행.** Blog `format:check`, `lint`, `typecheck`, `test`, `build`를 각각 실행 → 모든 종료 코드 0. 사용하지 않는 픽셀룸 홈 강제 검사가 남아 실패하지 않아야 한다. 현재 미커밋 SEO 작업의 통과 여부와 이번 변경을 구분해 기록한다.
-- [ ] **Step 3: 운영 전 미리보기 확인.** 격리 배포에 승인된 소스와 `plates-centered` MP4 18개/JPG 6개를 포함한다. 원본 생성물·예전 plates/loop 미디어는 기존 시안 백업에 보존하되 신규 홈에서 요청하지 않는다. 실제 Vercel 보호 배포에서 데스크톱/모바일·전체 링크·영상 MIME/Range·정지 이미지·키보드·모션 줄이기·챗봇 첫 열기를 확인한다.
-- [ ] **Step 4: SEO/라우트 HTTP 확인.** `/` 200/canonical `/`/noindex 없음/Person JSON-LD/기존 OG·Twitter, `/experiments/scroll-story` 308 Location `/`, 보관 페이지 200/noindex, `/blog`·`/projects`·`/resume` 200. 기존 글 35개의 R2 썸네일과 공유 OG URL이 바뀌지 않았는지도 대표 글로 확인한다.
-- [ ] **Step 5: Commit 및 운영 전환.** 검증된 변경만 최종 커밋한다. 사용자 실행 요청 범위가 배포까지 포함되면 직전 배포 ID를 기록한 뒤 검증한 배포를 promote한다. 계획 승인만 받은 단계에서는 여기까지 자동 실행하지 않는다.
-- [ ] **Step 6: 운영 검증·롤백 기록.** 운영 도메인에서 Step 4와 대표 장면/상세 왕복을 확인한다. 장애 시 직전 배포 URL을 `vercel promote <previous-url> --scope hochois-projects --yes`로 복원한다. DB/R2 변경이 없어 데이터 롤백은 없다. 픽셀룸 원본은 보관하며 삭제는 후속 작업이다.
+- [x] **Step 1: 문서를 갱신한다.** 정식 홈/시안 리디렉션/픽셀룸 보관 위치를 기록하고 AGENTS의 픽셀룸=현행 홈 문구를 새 계약으로 바꾼다. 기존 `plates-centered`만 정식 홈의 미디어 의존임을 기록한다. 다른 미완료 변경의 포함/제외 목록을 확정한다.
+- [x] **Step 2: 전체 검사 실행.** Blog `format:check`, `lint`, `typecheck`, `test`, `build`를 각각 실행 → 모든 종료 코드 0. 사용하지 않는 픽셀룸 홈 강제 검사가 남아 실패하지 않아야 한다. 현재 미커밋 SEO 작업의 통과 여부와 이번 변경을 구분해 기록한다.
+- [x] **Step 3: 운영 전 미리보기 확인.** 격리 배포에 승인된 소스와 `plates-centered` MP4 18개/JPG 6개를 포함한다. 원본 생성물·예전 plates/loop 미디어는 기존 시안 백업에 보존하되 신규 홈에서 요청하지 않는다. 실제 Vercel 보호 배포에서 데스크톱/모바일·전체 링크·영상 MIME/Range·정지 이미지·키보드·모션 줄이기·챗봇 첫 열기를 확인한다.
+- [x] **Step 4: SEO/라우트 HTTP 확인.** `/` 200/canonical `/`/noindex 없음/Person JSON-LD/기존 OG·Twitter, `/experiments/scroll-story` 308 Location `/`, 보관 페이지 200/noindex, `/blog`·`/projects`·`/resume` 200. 기존 글 35개의 R2 썸네일과 공유 OG URL이 바뀌지 않았는지도 대표 글로 확인한다.
+- [x] **Step 5: Commit 및 운영 전환.** 검증된 변경만 최종 커밋한다. 사용자 실행 요청 범위가 배포까지 포함되면 직전 배포 ID를 기록한 뒤 검증한 배포를 promote한다. 계획 승인만 받은 단계에서는 여기까지 자동 실행하지 않는다.
+- [x] **Step 6: 운영 검증·롤백 기록.** 운영 도메인에서 Step 4와 대표 장면/상세 왕복을 확인한다. 장애 시 직전 배포 URL을 `vercel promote <previous-url> --scope hochois-projects --yes`로 복원한다. DB/R2 변경이 없어 데이터 롤백은 없다. 픽셀룸 원본은 보관하며 삭제는 후속 작업이다.
 
 ## 계획 자체 검토 결과
 
