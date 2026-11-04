@@ -29,5 +29,14 @@
 - [x] 2. `features/projects/desktop/desktop-state.ts` 및 테스트: 중복 열기/포커스/닫기/최소화/최대화/좌표 제한 RED→GREEN.
 - [x] 3. `desktop-data.ts`, `desktop-portfolio.tsx`, `desktop-portfolio.css`: 6개 대표 아이콘, 승인된 캐릭터 배경, 창과 Dock, 11개 SSR 링크. 자산 맵은 `project-card-assets.ts`로 공유.
 - [x] 4. 실험 route와 정확한 경로에만 공통 헤더 숨김. SSR 및 shell 테스트 RED→GREEN.
-- [ ] 5. 실제 브라우저에서 가로·세로·드래그·창 제어·접근성·영상/네트워크·테스트/타입/빌드 확인, 독립 코드 리뷰.
-- [ ] 6. 사용자에게 레퍼런스 영상과 검토 가능한 실험 화면 전달. 운영 교체는 시안 검토 후 별도 진행.
+- [x] 5. 실제 브라우저에서 가로·세로·드래그·창 제어·접근성·영상·테스트/타입/빌드 확인, 독립 코드 리뷰. 400 tests, lint/typecheck 통과. JS 미실행 링크는 SSR 테스트로 검증했고 별도 브라우저 JS-off 실험은 하지 않았다.
+- [x] 6. 원본 미리보기를 MP4로 저장하고 독립 실험 화면을 Codex 브라우저에 열었다. 사용자 추가 요청에 따라 기존 메인과 `/projects`는 교체하지 않는다.
+
+## 검증 기록
+
+- 페이지: `/experiments/interactive-portfolio` (noindex), 기존 `/`, `/projects`, `/projects/[slug]`는 유지.
+- 1440×900, 390×844 브라우저 화면에서 가로 넘침 없음; 844×390은 아이콘 겹침 RED→한 줄 배치로 GREEN.
+- 아이콘 drag 후 창이 잘못 열리지 않음, 최소화→Dock 포커스/Enter 복원, 최대화, Escape 닫기/launcher 포커스 검증.
+- 새 창을 열면 기존 비활성 영상 pause, reduced-motion에서 모든 영상 pause 검증.
+- 독립 리뷰 Important 1건: 뒤쪽 창의 키보드 포커스가 활성 창을 바꾸지 않아 Escape가 다른 창을 닫음. 브라우저 재현 RED→onFocusCapture + 포커스 보존으로 GREEN, suite 400/400.
+- 원본 Vante 리본 참고문서/계획은 이력으로 보관한다. 사용자 최신 선택과 이 계획이 우선한다.

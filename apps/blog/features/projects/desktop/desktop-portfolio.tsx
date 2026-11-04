@@ -229,10 +229,9 @@ export function DesktopPortfolio() {
     return () => observer.disconnect();
   }, []);
   useEffect(() => {
-    if (active)
-      workspace.current
-        ?.querySelector<HTMLElement>(`[data-window="${active}"]`)
-        ?.focus({ preventScroll: true });
+    if (!active) return;
+    const dialog = workspace.current?.querySelector<HTMLElement>(`[data-window="${active}"]`);
+    if (dialog && !dialog.contains(document.activeElement)) dialog.focus({ preventScroll: true });
   }, [active]);
   useEffect(() => {
     const pending = pendingFocus.current;
@@ -290,7 +289,7 @@ export function DesktopPortfolio() {
   ) {
     if (
       event.button !== 0 ||
-      (kind === "icon" && space.width < 760) ||
+      (kind === "icon" && (space.width < 760 || space.height < 450)) ||
       (kind === "window" && (event.target as HTMLElement).closest("button,a"))
     )
       return;
@@ -439,6 +438,9 @@ export function DesktopPortfolio() {
                   zIndex: 20 + windows.indexOf(item),
                 }}
                 onPointerDown={() => {
+                  if (!isActive) dispatch({ type: "focus", id: item.id });
+                }}
+                onFocusCapture={() => {
                   if (!isActive) dispatch({ type: "focus", id: item.id });
                 }}
               >

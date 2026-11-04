@@ -11,3 +11,6 @@ Task 1: data extraction passed 14 tests with project-content suite. Task 2 pure 
 Ruling: User explicitly chose Interactive Portfolio instead of ribbon. Cancel remaining ribbon implementation. Archive source/patch at task outputs/abandoned-ribbon; remove unused Three dependencies. Preserve shared project asset extraction.
 New plan: docs/superpowers/plans/2026-11-05-desktop-portfolio.md.
 Desktop: state tests RED→GREEN (4 tests), SSR page RED→GREEN, experimental shell RED then fix. Proceed to browser validation.
+Desktop validation: 400/400 suite, lint/typecheck/format and 149-page production build pass. Browser 1440x900/390x844, pointer icon drag, min/restore/max/close, modeless keyboard focus, inactive/reduced-motion videos verified.
+Final: fixed keyboard activation finding — browser A/B focus and Escape RED→GREEN, suite 400/400. Review declined visuals/browser/full-suite/cancelled-ribbon/deployment; parent performed visuals/browser/full checks; ribbon and production deployment intentionally excluded by user.
+Ruling: User requested separate pages; retain existing home and projects, deliver independent interactive-portfolio experiment only. No merge/push/promote.
