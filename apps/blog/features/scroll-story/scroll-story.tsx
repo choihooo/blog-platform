@@ -2,45 +2,42 @@
 
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { storyScenes } from "./story-data";
+import { reduceStory, type SceneIndex } from "./story-controller";
 import "./scroll-story.css";
 
 export function ScrollStory() {
   const root = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(true);
+  const [motionKnown, setMotionKnown] = useState(false);
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
   const [videoReady, setVideoReady] = useState([false, false, false]);
-  const [displayed, setDisplayed] = useState(0);
+  const [story, dispatch] = useReducer(reduceStory, { displayed: 0, target: 0, transition: null });
+  const { displayed, transition } = story;
+  const requestId = useRef(0);
   const [format, setFormat] = useState("wide");
-  const [transition, setTransition] = useState<{ from: number; to: number } | null>(null);
-  const [transitionReady, setTransitionReady] = useState(false);
+  const [playingTransitionId, setPlayingTransitionId] = useState<number | null>(null);
+  const transitionReady = transition !== null && playingTransitionId === transition.id;
   const transitionVideo = useRef<HTMLVideoElement>(null);
   const current = Math.min(2, Math.round(progress));
   const currentScene = storyScenes[displayed] ?? storyScenes[0];
 
   useEffect(() => {
-    if (reducedMotion) {
-      setDisplayed(current);
-      setTransition(null);
-      setTransitionReady(false);
-      return;
-    }
-    if (current === displayed) {
-      setTransition(null);
-      setTransitionReady(false);
-    } else if (transition?.to !== current) {
-      setTransitionReady(false);
-      setTransition({ from: displayed, to: current });
-    }
-  }, [current, displayed, reducedMotion, transition?.to]);
+    dispatch({ type: "select", to: current as SceneIndex, id: ++requestId.current, immediate: reducedMotion });
+  }, [current, reducedMotion]);
 
-  function finishTransition() {
-    if (transition) setDisplayed(transition.to);
-    setTransition(null);
-    setTransitionReady(false);
+  function finishTransition(id: number) {
+    dispatch({ type: "complete", id });
   }
+
+  useEffect(() => {
+    if (!transition) return;
+    const id = transition.id;
+    const timeout = window.setTimeout(() => dispatch({ type: "complete", id }), 4000);
+    return () => window.clearTimeout(timeout);
+  }, [transition]);
 
   useEffect(() => {
     function updatePlayback() {
@@ -68,7 +65,7 @@ export function ScrollStory() {
     if (!container) return;
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const portrait = window.matchMedia("(max-aspect-ratio: 1/1)");
-    const updateMotion = () => setReducedMotion(media.matches);
+    const updateMotion = () => { setReducedMotion(media.matches); setMotionKnown(true); };
     const updateFormat = () => {
       setFormat(portrait.matches ? "tall" : "wide");
       setVideoReady([false, false, false]);
@@ -123,7 +120,14 @@ export function ScrollStory() {
   }
 
   return (
-    <main className="scroll-story" ref={root} tabIndex={0} aria-label="호조리카 스크롤 시안">
+    <main className="scroll-story" ref={root} tabIndex={0} aria-label="호조리카 소개">
+      <noscript>
+        <nav className="story-static-links" aria-label="바로가기">
+          <a href="/resume">About 바로가기</a>
+          <a href="/blog">블로그 바로가기</a>
+          <a href="/projects">포트폴리오 바로가기</a>
+        </nav>
+      </noscript>
       <div className="story-track">
         <div
           className="story-stage"
@@ -131,8 +135,9 @@ export function ScrollStory() {
           data-transitioning={(transition !== null && transitionReady) || undefined}
         >
           {storyScenes.map((scene, index) => {
-            const showVideo = videoReady[index] && !reducedMotion;
+            const showVideo = videoReady[index] && !reducedMotion && motionKnown;
             const plate = `/brand/scroll-story/plates-centered/${scene.plate}-${format}`;
+            const Heading = index === 0 ? "h1" : "h2";
             return (
               <section
                 key={scene.id}
@@ -144,7 +149,7 @@ export function ScrollStory() {
                 style={{ visibility: displayed === index ? "visible" : "hidden" }}
               >
                 <div className="story-copy">
-                  <h1 id={`story-title-${scene.id}`} aria-label={scene.title}>
+                  <Heading className="story-title" id={`story-title-${scene.id}`} aria-label={scene.title}>
                     {Array.from(scene.title).map((letter, i) =>
                       letter === "\n" ? (
                         <br key={i} aria-hidden="true" />
@@ -158,7 +163,7 @@ export function ScrollStory() {
                         </span>
                       ),
                     )}
-                  </h1>
+                  </Heading>
                   {scene.intro && <p className="story-intro">{scene.intro}</p>}
                   {scene.note && <p className="story-note">{scene.note}</p>}
                   <Link className="story-action" href={scene.href} prefetch={false}>
@@ -173,7 +178,7 @@ export function ScrollStory() {
                   style={{ backgroundImage: `url(${plate}.jpg)` }}
                 >
                   <video
-                    key={plate}
+                    key={`${plate}-${motionKnown && !reducedMotion && index === displayed}`}
                     ref={(element) => {
                       videos.current[index] = element;
                     }}
@@ -183,7 +188,7 @@ export function ScrollStory() {
                     muted
                     loop
                     playsInline
-                    preload={index === displayed ? "auto" : "metadata"}
+                    preload={motionKnown && !reducedMotion && index === displayed ? "auto" : "none"}
                     tabIndex={-1}
                     onLoadedData={() =>
                       setVideoReady((ready) =>
@@ -196,7 +201,7 @@ export function ScrollStory() {
                       )
                     }
                   >
-                    <source src={`${plate}.mp4`} type="video/mp4" />
+                    {motionKnown && !reducedMotion && index === displayed && <source src={`${plate}.mp4`} type="video/mp4" />}
                   </video>
                 </div>
               </section>
@@ -204,7 +209,7 @@ export function ScrollStory() {
           })}
           {transition && (
             <video
-              key={`${transition.from}-${transition.to}-${format}`}
+              key={`${transition.id}-${format}`}
               ref={transitionVideo}
               className="story-transition"
               style={{ opacity: transitionReady ? 1 : 0 }}
@@ -215,11 +220,11 @@ export function ScrollStory() {
               aria-hidden="true"
               tabIndex={-1}
               onLoadedData={(event) => {
-                if (!document.hidden) void event.currentTarget.play().catch(finishTransition);
+                if (!document.hidden) void event.currentTarget.play().catch(() => finishTransition(transition.id));
               }}
-              onPlaying={() => setTransitionReady(true)}
-              onEnded={finishTransition}
-              onError={finishTransition}
+              onPlaying={() => setPlayingTransitionId(transition.id)}
+              onEnded={() => finishTransition(transition.id)}
+              onError={() => finishTransition(transition.id)}
             />
           )}
           <header className="story-header">
@@ -231,7 +236,7 @@ export function ScrollStory() {
                 <button
                   key={scene.id}
                   type="button"
-                  aria-current={current === index ? "step" : undefined}
+                  aria-current={displayed === index ? "step" : undefined}
                   onClick={() => goTo(index)}
                 >
                   {scene.label}
