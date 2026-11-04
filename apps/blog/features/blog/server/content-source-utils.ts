@@ -1,5 +1,6 @@
 import {
   analyzeEditorNodes,
+  calculateReadingTime,
   loadPostContent,
   textFromEditorNodes,
   type EditorNode,
@@ -47,8 +48,7 @@ export function toPublicSourcePost(
   const analysis = shouldAnalyzeBody ? analyzeEditorNodes(bodyNodes) : undefined;
   const textBody = textFromEditorNodes(bodyNodes);
   const toc = analysis?.headings ?? [];
-  const readingTimeLabel =
-    analysis?.readingTime.label ?? `${Math.max(1, Math.ceil(textBody.length / 1000))} min read`;
+  const readingTimeLabel = analysis?.readingTime.label ?? calculateReadingTime(textBody).label;
   const heroMedia =
     post.mediaRefs?.find((media) => media.kind === "hero") ??
     post.mediaRefs?.find((media) => media.kind === "og");

@@ -3,6 +3,10 @@
 `packages/editor`는 CMS editor document model, 지원 서식, validation, MDX load/serialize,
 round-trip, preview analysis를 소유한다.
 
+`calculateReadingTime(text)`는 본문의 Unicode 단어를 분당 220개 기준으로 계산한다(최소 1분). 전체
+노드 분석과 가벼운 공개 목록이 같은 함수를 사용하므로 목차 분석 여부에 따라 읽기 시간이 달라지지
+않는다. 빈 문서 preview의 기존 0분 결과는 그대로 유지한다.
+
 MVP supported format:
 
 - Blocks: paragraph, heading, bullet list, ordered list, blockquote, horizontal rule, image

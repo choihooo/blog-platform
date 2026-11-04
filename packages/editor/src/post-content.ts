@@ -235,6 +235,12 @@ function slugify(value: string) {
   return ascii || "section";
 }
 
+export function calculateReadingTime(text: string): PreviewResult["readingTime"] {
+  const words = [...text.matchAll(WORD_RE)].length;
+  const minutes = Math.max(1, Math.ceil(words / 220));
+  return { minutes, words, label: `${minutes} min read` };
+}
+
 export function analyzeEditorNodes(nodes: EditorNode[]): PreviewResult {
   const headings: PreviewResult["headings"] = [];
   const codeBlocks: PreviewResult["codeBlocks"] = [];
@@ -257,17 +263,11 @@ export function analyzeEditorNodes(nodes: EditorNode[]): PreviewResult {
   }
 
   const text = textFromEditorNodes(nodes);
-  const words = [...text.matchAll(WORD_RE)].length;
-  const minutes = Math.max(1, Math.ceil(words / 220));
 
   return {
     headings,
     codeBlocks,
-    readingTime: {
-      minutes,
-      words,
-      label: `${minutes} min read`,
-    },
+    readingTime: calculateReadingTime(text),
     warnings: [],
   };
 }

@@ -21,23 +21,19 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: site.siteUrl,
       types: { "application/rss+xml": `${site.siteUrl.replace(/\/+$/, "")}/blog/rss.xml` },
     },
-    icons: {
-      icon: "/icon.png",
-      apple: "/apple-icon.png",
-    },
     openGraph: {
       title: site.siteName,
       description: site.description,
       url: site.siteUrl,
       siteName: site.siteName,
-      images: [{ url: "/brand/hozorica-card.webp", width: 1200, height: 630 }],
+      images: [{ url: "/brand/hozorica-card-v2.webp", width: 1200, height: 630 }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: site.siteName,
       description: site.description,
-      images: ["/brand/hozorica-card.webp"],
+      images: ["/brand/hozorica-card-v2.webp"],
     },
   };
 }

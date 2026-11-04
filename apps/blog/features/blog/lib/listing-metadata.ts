@@ -5,7 +5,7 @@ export function homeListingMetadata(input: { siteUrl: string; page: number }): M
   const canonical = input.page > 1 ? `${baseUrl}/blog/page/${input.page}` : `${baseUrl}/blog`;
 
   return {
-    title: input.page > 1 ? `글 목록 - ${input.page}페이지` : undefined,
+    title: input.page > 1 ? `글 목록 - ${input.page}페이지` : "블로그",
     alternates: { canonical },
   };
 }
