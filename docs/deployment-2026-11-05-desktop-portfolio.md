@@ -46,3 +46,5 @@
 - Blog Preview에는 콘텐츠 소스 설정이 없어 빌드가 실패했다. 공개 읽기 전용 API가 HTTP 200으로
   응답하는 것을 확인하고 Preview에만 `BLOG_CONTENT_PROXY_URL=https://cms.hozorica.com`을 설정한다.
   운영 D1/R2 설정과 콘텐츠 데이터는 변경하지 않는다.
+- GitHub CI의 Build 단계도 같은 공개 읽기 전용 API를 사용한다. CI에 운영 D1 비밀키를 복사하지 않고
+  실제 발행 콘텐츠로 정적 페이지 생성을 검증한다. 테스트 단계의 콘텐츠 fixture 설정은 유지한다.
