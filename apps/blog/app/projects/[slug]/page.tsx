@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ProjectDetailPage } from "@/features/projects/project-detail-page";
 import { getProject, projects } from "@/features/projects/project-data";
+import "@/features/projects/project-document.css";
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;

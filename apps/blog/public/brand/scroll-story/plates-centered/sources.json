@@ -1,0 +1,32 @@
+{
+  "greeting": {
+    "idle": {
+      "path": "/Users/choiho/Documents/Codex/2026-11-01/1-figma-https-www-figma-com/outputs/hozorica-hq/greeting-idle.mp4",
+      "regenerated": true
+    },
+    "orbit": {
+      "path": "/Users/choiho/Documents/Codex/2026-11-01/1-figma-https-www-figma-com/outputs/hozorica-hq/greeting-orbit.mp4",
+      "regenerated": true
+    }
+  },
+  "writing": {
+    "idle": {
+      "path": "/Users/choiho/Documents/Codex/2026-11-01/1-figma-https-www-figma-com/outputs/hozorica-loops/writing-raw.mp4",
+      "regenerated": false
+    },
+    "orbit": {
+      "path": "/Users/choiho/Documents/Codex/2026-11-01/1-figma-https-www-figma-com/outputs/hozorica-turns/writing-orbit.mp4",
+      "regenerated": false
+    }
+  },
+  "working": {
+    "idle": {
+      "path": "/Users/choiho/Documents/Codex/2026-11-01/1-figma-https-www-figma-com/outputs/hozorica-loops/working-raw.mp4",
+      "regenerated": false
+    },
+    "orbit": {
+      "path": "/Users/choiho/Documents/Codex/2026-11-01/1-figma-https-www-figma-com/outputs/hozorica-turns/working-orbit.mp4",
+      "regenerated": false
+    }
+  }
+}

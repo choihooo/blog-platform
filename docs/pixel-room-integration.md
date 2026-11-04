@@ -1,5 +1,8 @@
 # 픽셀룸 루트 이식 — 2026-09-06
 
+> 2026-11-04: 정식 홈은 캐릭터 스크롤 스토리로 교체했다. 픽셀룸은 `/experiments/pixel-room`의
+> noindex 보관 페이지에서 유지한다. 아래 내용은 이전 이식 기록이다.
+
 ## 적용
 
 - apps/blog/app/page.tsx의 기존 HomeExperience 대신 PixelRoom 렌더링. 기존

@@ -8,5 +8,7 @@ describe("evaluateSeo", () => {
     expect(report.status).toBe("pass");
     expect(report.searchPreview.url).toBe("https://example.com/posts/hello-world");
     expect(report.jsonLdPreview).toHaveLength(2);
+    expect(report.socialPreview.image).toBe("https://example.com/media/cover.webp");
+    expect(report.generatedUrls.ogImage).toBe(report.socialPreview.image);
   });
 });

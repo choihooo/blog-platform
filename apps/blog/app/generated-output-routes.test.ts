@@ -30,6 +30,7 @@ const publishedPost: PublicPost = {
 
 const longPost: PublicPost = {
   ...publishedPost,
+  coverImage: undefined,
   path: "db/posts/long",
   slug: "long",
   title: "A Very Long Generated Output Title That Must Wrap Cleanly Inside The Social Image",
@@ -104,6 +105,15 @@ describe("generated output routes", () => {
     expect(ok.headers.get("content-type")).toBe("image/png");
     expect((await ok.arrayBuffer()).byteLength).toBeGreaterThan(1000);
     expect(missing.status).toBe(404);
+  });
+
+  it("points existing OG URLs at the post thumbnail when a cover is available", async () => {
+    const { GET } = await import("./og/[slug]/route");
+    const response = await GET(new Request("https://example.com"), {
+      params: Promise.resolve({ slug: "hello" }),
+    });
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(publishedPost.coverImage);
   });
 
   it("serves JSON search results", async () => {

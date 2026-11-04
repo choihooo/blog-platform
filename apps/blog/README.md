@@ -12,7 +12,12 @@
 
 ## Navigation
 
-- 홈 픽셀룸의 Work, Blog, About은 각각 `/projects`, `/blog`, `/resume` 전체 페이지로 이동한다.
+- 홈은 인사/About → Blog → Portfolio 순서의 스크롤 스토리다. 바로가기는 각각 `/resume`, `/blog`,
+  `/projects` 전체 페이지로 이동한다. `/#about`, `/#blog`, `/#work`로 장면에 직접 진입한다.
+- 이전 시안 `/experiments/scroll-story`는 `/`로 308 이동한다. 픽셀룸은 `/experiments/pixel-room`에서
+  noindex 보관하며 메인에서 픽셀룸 이미지를 로드하지 않는다.
+- 영상 실패/4초 지연은 정지 이미지로 복구한다. 모션 줄이기에서는 정지 이미지만 표시한다.
+- 챗봇은 홈 진입 시 모델을 다운로드하지 않고 최초 열기에서 기존 런타임을 시작한다.
 - 프로젝트 카드는 `/projects/[slug]`로 이동하고, 상세의 목록 링크는 해당 카드 위치로 돌아간다.
 - 가로채기 라우트와 모달 슬롯은 사용하지 않는다. 링크 이동은 방문 기록을 남겨 브라우저 뒤로 가기를
   지원한다.
@@ -29,6 +34,13 @@
   모바일 390×844 화면이며 AFTERIMAGE 영상은 실제 스크롤·컬러 선택 녹화다.
 
 ## Generated Outputs
+
+- 승인된 썸네일 파일은 R2에 저장하고 D1의 `posts.hero_image_key` 및 `media_refs`의 hero/og 참조로
+  연결한다. 목록·본문·추천글·공유 이미지는 CMS의 동일한 표지를 사용한다. slug별 로컬 override는
+  사용하지 않는다. 2026-11-03 일괄 교체·백업·롤백 기록은
+  `docs/deployment-2026-11-03-thumbnails.md`를 참고한다.
+- 글 표지가 있으면 OG·Twitter 이미지에 같은 절대 URL을 사용한다. 기존 `/og/:slug` URL도 해당 표지로
+  307 이동한다. 표지가 없는 글은 기존 텍스트 카드 생성과 비공개·미존재 글의 404를 유지한다.
 
 - `/blog/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`는 repository에 파일을 commit하지 않고
   route handler에서 현재 published content와 `@blog-platform/seo-engine` 결과를 기준으로 응답한다.

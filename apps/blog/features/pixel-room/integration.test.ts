@@ -5,12 +5,6 @@ import { describe, expect, it } from "vitest";
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("pixel room integration contracts", () => {
-  it("replaces only the home experience and preserves SEO", () => {
-    const home = read("../../app/page.tsx");
-    expect(home).toContain("<PixelRoom />");
-    expect(home).toContain("personJsonLd(site)");
-    expect(home).toContain('canonical: "/"');
-  });
   it("links hotspots to existing routes without placeholder modals", () => {
     const room = read("./pixel-room.tsx");
     for (const href of ["/projects", "/blog", "/resume"]) {
@@ -37,8 +31,7 @@ describe("pixel room integration contracts", () => {
     expect(shell).not.toContain('pathname.startsWith("/projects")');
     expect(shell).not.toContain('pathname.startsWith("/blog")');
     expect(shell).not.toContain('pathname.startsWith("/resume")');
-    expect(shell).toContain('const isHome = pathname === "/"');
-    expect(shell).toContain("{!isHome && header}");
+    expect(shell).toMatch(/const isHome =\s*pathname === "\/"/);
   });
   it("uses client navigation without modal bypasses", () => {
     const navigation = read("../navigation/desktop-navigation.tsx");

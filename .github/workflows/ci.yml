@@ -114,6 +114,9 @@ jobs:
           fi
 
       - name: Build
+        env:
+          # Read published content without copying production D1 credentials into CI.
+          BLOG_CONTENT_PROXY_URL: https://cms.hozorica.com
         run: |
           if [ "${{ steps.turbo-scope.outputs.mode }}" = "full" ]; then
             pnpm build

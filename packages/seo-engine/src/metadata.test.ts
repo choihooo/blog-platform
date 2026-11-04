@@ -14,4 +14,13 @@ describe("generatePageMetadata", () => {
   it("keeps article metadata for subjects with slugs", () => {
     expect(generatePageMetadata(seoSubject()).openGraph.type).toBe("article");
   });
+
+  it.each([
+    ["/media/thumbnails/v1/example.png", "https://example.com/media/thumbnails/v1/example.png"],
+    ["https://cdn.example.com/cover.png", "https://cdn.example.com/cover.png"],
+  ])("uses the post cover for both social previews: %s", (coverImage, expected) => {
+    const metadata = generatePageMetadata(seoSubject({ coverImage }));
+    expect(metadata.openGraph.images).toEqual([expected]);
+    expect(metadata.twitter.images).toEqual([expected]);
+  });
 });

@@ -1,6 +1,6 @@
 import { generateJsonLd } from "./json-ld.js";
 import { generatePageMetadata } from "./metadata.js";
-import { ogImageUrl, publicPostUrl } from "./subject.js";
+import { publicPostUrl } from "./subject.js";
 import { scoreSeo } from "./score.js";
 import type { SeoReport, SeoSubject } from "./types.js";
 
@@ -12,9 +12,7 @@ export function evaluateSeo(
   const metadata = generatePageMetadata(subject);
   const warnings = result.checks.filter((item) => item.severity === "warning");
   const publicUrl = subject.slug ? publicPostUrl(subject.site, subject.slug) : undefined;
-  const ogImage = subject.slug
-    ? ogImageUrl(subject.site, subject.slug)
-    : (metadata.openGraph.images[0] ?? subject.site.siteUrl);
+  const ogImage = metadata.openGraph.images[0] ?? subject.site.siteUrl;
   const status = result.blocking.length > 0 ? "blocking" : warnings.length > 0 ? "warning" : "pass";
 
   return {
