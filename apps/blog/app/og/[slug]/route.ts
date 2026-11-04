@@ -15,6 +15,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   ]);
   if (!post) return new Response("Not found", { status: 404 });
 
+  if (post.coverImage) {
+    return Response.redirect(new URL(post.coverImage, `${site.siteUrl}/`), 307);
+  }
+
   const payload = createOgImagePayload(postToSeoSubject(post, siteForSeo(site)));
   const image = createElement(
     "div",

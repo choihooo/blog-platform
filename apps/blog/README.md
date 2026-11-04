@@ -30,6 +30,13 @@
 
 ## Generated Outputs
 
+- 승인된 썸네일 파일은 R2에 저장하고 D1의 `posts.hero_image_key` 및 `media_refs`의 hero/og 참조로
+  연결한다. 목록·본문·추천글·공유 이미지는 CMS의 동일한 표지를 사용한다. slug별 로컬 override는
+  사용하지 않는다. 2026-11-03 일괄 교체·백업·롤백 기록은 `docs/deployment-2026-11-03-thumbnails.md`를
+  참고한다.
+- 글 표지가 있으면 OG·Twitter 이미지에 같은 절대 URL을 사용한다. 기존 `/og/:slug` URL도 해당
+  표지로 307 이동한다. 표지가 없는 글은 기존 텍스트 카드 생성과 비공개·미존재 글의 404를 유지한다.
+
 - `/blog/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`는 repository에 파일을 commit하지 않고
   route handler에서 현재 published content와 `@blog-platform/seo-engine` 결과를 기준으로 응답한다.
 - Draft와 archived 글은 홈, 상세, taxonomy route, RSS, Sitemap, OG route에서 제외된다.
