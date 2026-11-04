@@ -183,23 +183,6 @@
     font-size: clamp(12px, 1.8dvh, 17px);
   }
 }
-.story-backdrop {
-  position: absolute;
-  bottom: 9%;
-  left: -1%;
-  color: #202631;
-  opacity: 0.055;
-  font-size: clamp(140px, 22vw, 350px);
-  line-height: 1;
-  font-weight: 850;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-  user-select: none;
-}
-.story-scene--blog .story-backdrop {
-  color: #fff;
-  opacity: 0.13;
-}
 .story-footer {
   bottom: 30px;
   font-size: 12px;
@@ -294,10 +277,6 @@
     white-space: nowrap;
     font-size: 12px;
     padding: 8px 0;
-  }
-  .story-backdrop {
-    bottom: 15%;
-    font-size: 31vw;
   }
   .story-footer {
     bottom: 15px;

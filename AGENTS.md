@@ -2,7 +2,7 @@
 
 ## 저장소 구조
 
-- `apps/blog`: 픽셀룸 기반 공개 포트폴리오·블로그
+- `apps/blog`: 캐릭터 스크롤 홈 기반 공개 포트폴리오·블로그
 - `apps/cms`: 비공개 운영자용 CMS
 - `apps/rag-worker`: Cloudflare Worker 기반 검색·RAG API
 - `packages/*`: 여러 앱에서 공유하는 TypeScript 패키지
