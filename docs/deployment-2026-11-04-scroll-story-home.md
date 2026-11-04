@@ -53,6 +53,10 @@
 - 2558×974 및 1600×610의 미디어 프레임/CTA 위치, 844×390 가로 및 기본 세로 화면 확인.
 - 전체 Blog 테스트 393개, CSS 포맷 검사 및 lint 통과. 새 단위 테스트 대신 실제 뷰포트의
   잘림 재현과 CSS computed geometry로 RED→GREEN 검증했다.
+- 후속 배포 `dpl_E9L6iqbDzuosS8Tv9uXF7kJSMyE2`,
+  `https://blog-4kzj826rb-hochois-projects.vercel.app`를 운영에 promote했다. 148페이지 빌드 통과 및
+  운영 1664×634 뷰포트에서 contain/1127×634 중앙 프레임 확인. 후속 보정만 되돌리려면
+  직전 `https://blog-ibzmilqyh-hochois-projects.vercel.app`를 promote한다.
 
 - 실행 스킬의 보조 스크립트가 누락돼 동일 브리프·진행 기록을 수동으로 유지했다.
   자동 기록과 달리 검증 증거를 사람이 대조해야 하는 비용이 있다.
