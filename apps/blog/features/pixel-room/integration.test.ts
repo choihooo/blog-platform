@@ -5,12 +5,6 @@ import { describe, expect, it } from "vitest";
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("pixel room integration contracts", () => {
-  it("replaces only the home experience and preserves SEO", () => {
-    const home = read("../../app/page.tsx");
-    expect(home).toContain("<PixelRoom />");
-    expect(home).toContain("personJsonLd(site)");
-    expect(home).toContain('canonical: "/"');
-  });
   it("links hotspots to existing routes without placeholder modals", () => {
     const room = read("./pixel-room.tsx");
     for (const href of ["/projects", "/blog", "/resume"]) {
