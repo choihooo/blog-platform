@@ -28,11 +28,9 @@ function PostMeta({ post }: { post: PublicPost }) {
 function PostTaxonomy({
   analyticsContext,
   post,
-  replaceLinks,
 }: {
   analyticsContext?: PostAnalyticsContext;
   post: PublicPost;
-  replaceLinks?: boolean;
 }) {
   return (
     <ChipGroup aria-label={`${post.title} taxonomy`} className="flex flex-wrap gap-2">
@@ -41,7 +39,6 @@ function PostTaxonomy({
           analyticsContext={analyticsContext}
           eventName="category_click"
           href={`/blog/categories/${post.categoryEntry.slug}`}
-          replace={replaceLinks}
           target={post.categoryEntry.slug}
         >
           <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
@@ -53,7 +50,6 @@ function PostTaxonomy({
           eventName="tag_click"
           href={`/blog/tags/${tag.slug}`}
           key={tag.slug}
-          replace={replaceLinks}
           target={tag.slug}
         >
           <Chip label={tag.label} size="sm" tone="neutral" />
@@ -114,7 +110,6 @@ type PostItemProps = {
   post: PublicPost;
   postClickEvent?: "post_card_click" | "search_result_click";
   priority?: boolean;
-  replaceLinks?: boolean;
 };
 
 export function PostTile({
@@ -122,7 +117,6 @@ export function PostTile({
   post,
   postClickEvent = "post_card_click",
   priority,
-  replaceLinks,
 }: PostItemProps) {
   return (
     <article className="flex h-full flex-col overflow-hidden bg-card shadow-sm transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md">
@@ -131,7 +125,6 @@ export function PostTile({
         className="block flex-1"
         eventName={postClickEvent}
         href={`/blog/${post.slug}`}
-        replace={replaceLinks}
         target={post.slug}
       >
         <Cover post={post} priority={priority} size="tile" />
@@ -148,7 +141,7 @@ export function PostTile({
         </div>
       </AnalyticsLink>
       <div className="mt-auto px-5 pb-5 pt-0">
-        <PostTaxonomy analyticsContext={analyticsContext} post={post} replaceLinks={replaceLinks} />
+        <PostTaxonomy analyticsContext={analyticsContext} post={post} />
       </div>
     </article>
   );
@@ -159,7 +152,6 @@ export function PostListItem({
   post,
   postClickEvent = "post_card_click",
   priority,
-  replaceLinks,
 }: PostItemProps) {
   return (
     <article className="border-b border-border last:border-b-0">
@@ -169,7 +161,6 @@ export function PostListItem({
           className="block h-full"
           eventName={postClickEvent}
           href={`/blog/${post.slug}`}
-          replace={replaceLinks}
           target={post.slug}
         >
           <Cover post={post} priority={priority} size="list" />
@@ -181,7 +172,6 @@ export function PostListItem({
               analyticsContext={analyticsContext}
               eventName={postClickEvent}
               href={`/blog/${post.slug}`}
-              replace={replaceLinks}
               target={post.slug}
             >
               {post.title}
@@ -193,11 +183,7 @@ export function PostListItem({
             </p>
           ) : null}
           <div className="mt-auto pt-3">
-            <PostTaxonomy
-              analyticsContext={analyticsContext}
-              post={post}
-              replaceLinks={replaceLinks}
-            />
+            <PostTaxonomy analyticsContext={analyticsContext} post={post} />
           </div>
         </div>
       </div>

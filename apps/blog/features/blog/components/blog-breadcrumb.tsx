@@ -14,15 +14,7 @@ type BreadcrumbEntry = {
   label: string;
 };
 
-export function BlogBreadcrumb({
-  entries,
-  label,
-  replace = false,
-}: {
-  entries: BreadcrumbEntry[];
-  label: string;
-  replace?: boolean;
-}) {
+export function BlogBreadcrumb({ entries, label }: { entries: BreadcrumbEntry[]; label: string }) {
   return (
     <Breadcrumb aria-label={label} className="mb-6" size="sm">
       <BreadcrumbList>
@@ -30,7 +22,7 @@ export function BlogBreadcrumb({
           <BreadcrumbItem key={`${entry.href ?? "current"}:${entry.label}`}>
             {index > 0 ? <BreadcrumbSeparator /> : null}
             {entry.href ? (
-              <Link className="hods-breadcrumb__link" href={entry.href} replace={replace}>
+              <Link className="hods-breadcrumb__link" href={entry.href}>
                 {entry.label}
               </Link>
             ) : (

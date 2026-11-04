@@ -14,7 +14,7 @@ function slugify(value: string) {
   );
 }
 
-function renderInlineMarkdown(text: string, replaceLinks = false) {
+function renderInlineMarkdown(text: string) {
   const parts: ReactNode[] = [];
   const inlineMarkdown = /(\*\*([^*]+)\*\*|_([^_]+)_|`([^`]+)`|\[([^\]]+)\]\(([^)]+)\))/g;
   let cursor = 0;
@@ -31,7 +31,7 @@ function renderInlineMarkdown(text: string, replaceLinks = false) {
     else if (label && href)
       parts.push(
         href.startsWith("/") ? (
-          <Link href={href} key={key} replace={replaceLinks}>
+          <Link href={href} key={key}>
             {label}
           </Link>
         ) : (
@@ -48,7 +48,7 @@ function renderInlineMarkdown(text: string, replaceLinks = false) {
   return parts.length > 0 ? parts : text;
 }
 
-function inlineContent(node: EditorTextNode, replaceLinks = false) {
+function inlineContent(node: EditorTextNode) {
   let content: ReactNode =
     node.marks?.length || node.href ? node.text : renderInlineMarkdown(node.text);
   for (const mark of node.marks ?? []) {
@@ -58,9 +58,7 @@ function inlineContent(node: EditorTextNode, replaceLinks = false) {
   }
   if (node.href) {
     content = node.href.startsWith("/") ? (
-      <Link href={node.href} replace={replaceLinks}>
-        {content}
-      </Link>
+      <Link href={node.href}>{content}</Link>
     ) : (
       <a href={node.href} rel="noopener noreferrer" target="_blank">
         {content}
@@ -82,11 +80,9 @@ function headingTag(depth?: number) {
 export function PostBodyRenderer({
   analyticsContext,
   nodes,
-  replaceLinks = false,
 }: {
   analyticsContext: Parameters<typeof CodeCopyButton>[0]["context"];
   nodes: EditorNode[];
-  replaceLinks?: boolean;
 }) {
   const seen = new Map<string, number>();
   return (
@@ -112,7 +108,7 @@ export function PostBodyRenderer({
           const count = seen.get(base) ?? 0;
           seen.set(base, count + 1);
           const id = count === 0 ? base : `${base}-${count + 1}`;
-          const content = inlineContent(node, replaceLinks);
+          const content = inlineContent(node);
           const Heading = headingTag(node.depth);
           return (
             <Heading id={id} key={index}>
@@ -121,7 +117,7 @@ export function PostBodyRenderer({
           );
         }
         if (node.type === "blockquote")
-          return <blockquote key={index}>{inlineContent(node, replaceLinks)}</blockquote>;
+          return <blockquote key={index}>{inlineContent(node)}</blockquote>;
         if (node.type === "codeBlock") {
           return (
             <div className="group relative" key={index}>
@@ -141,16 +137,16 @@ export function PostBodyRenderer({
         if (node.type === "bulletList")
           return (
             <ul key={index}>
-              <li>{inlineContent(node, replaceLinks)}</li>
+              <li>{inlineContent(node)}</li>
             </ul>
           );
         if (node.type === "orderedList")
           return (
             <ol key={index}>
-              <li>{inlineContent(node, replaceLinks)}</li>
+              <li>{inlineContent(node)}</li>
             </ol>
           );
-        return <p key={index}>{inlineContent(node, replaceLinks)}</p>;
+        return <p key={index}>{inlineContent(node)}</p>;
       })}
     </>
   );

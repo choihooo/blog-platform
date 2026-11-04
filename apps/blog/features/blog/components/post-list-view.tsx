@@ -15,7 +15,6 @@ type PostListViewProps = {
   analyticsContext?: PostAnalyticsContext;
   postClickEvent?: "post_card_click" | "search_result_click";
   posts: PublicPost[];
-  replaceLinks?: boolean;
   summary: string;
 };
 
@@ -23,7 +22,6 @@ export function PostListView({
   analyticsContext,
   postClickEvent,
   posts,
-  replaceLinks = false,
   summary,
 }: PostListViewProps) {
   const [view, setView] = useState<ListView>("tile");
@@ -83,7 +81,6 @@ export function PostListView({
         analyticsContext={analyticsContext}
         postClickEvent={postClickEvent}
         posts={posts}
-        replaceLinks={replaceLinks}
         view={view}
       />
     </div>
