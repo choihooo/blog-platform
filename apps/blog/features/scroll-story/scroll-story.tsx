@@ -76,21 +76,24 @@ export function ScrollStory() {
     if (!container) return;
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const portrait = window.matchMedia("(max-aspect-ratio: 1/1)");
+    const short = window.matchMedia("(max-height: 500px) and (min-aspect-ratio: 1/1)");
     const updateMotion = () => {
       setReducedMotion(media.matches);
       setMotionKnown(true);
     };
     const updateFormat = () => {
-      setFormat(portrait.matches ? "tall" : "wide");
+      setFormat(portrait.matches ? "tall" : short.matches ? "short" : "wide");
       setVideoReady([false, false, false]);
     };
     updateMotion();
     updateFormat();
     media.addEventListener("change", updateMotion);
     portrait.addEventListener("change", updateFormat);
+    short.addEventListener("change", updateFormat);
     return () => {
       media.removeEventListener("change", updateMotion);
       portrait.removeEventListener("change", updateFormat);
+      short.removeEventListener("change", updateFormat);
     };
   }, []);
 
@@ -111,7 +114,7 @@ export function ScrollStory() {
         >
           {storyScenes.map((scene, index) => {
             const showVideo = videoReady[index] && !reducedMotion && motionKnown;
-            const plate = `/brand/scroll-story/plates-centered/${scene.plate}-${format}`;
+            const plate = `/brand/scroll-story/plates-ultrawide-v2/${scene.plate}-${format}`;
             const Heading = index === 0 ? "h1" : "h2";
             return (
               <section
@@ -194,7 +197,7 @@ export function ScrollStory() {
               ref={transitionVideo}
               className="story-transition"
               style={{ opacity: transitionReady ? 1 : 0 }}
-              src={`/brand/scroll-story/plates-centered/${transition.from}-${transition.to}-${format}.mp4`}
+              src={`/brand/scroll-story/plates-ultrawide-v2/${transition.from}-${transition.to}-${format}.mp4`}
               muted
               playsInline
               preload="auto"

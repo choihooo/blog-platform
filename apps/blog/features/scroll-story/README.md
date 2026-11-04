@@ -1,5 +1,21 @@
 # 호조리카 스크롤 홈
 
+## 현재 영상: 무료 ZeroGPU 고해상도 재생성 (2026-11-04)
+
+현재 미디어 경로는 `public/brand/scroll-story/plates-ultrawide-v2/`입니다. 인사·글쓰기·작업의
+반복 영상 3개와 양방향 전환 6개를 wide/tall/short 각각 제공하며 JPG 정지 화면도 포함합니다.
+wide/short는 3840×1080, tall은 1080×1620, 모두 30fps 무음 H.264/faststart입니다.
+배경색·바닥·사선 전환을 전체 프레임 안에 합성했으므로 CSS 양옆 확장이나 마스크를 사용하지 않습니다.
+`cover`로 중앙을 유지하며 일반 가로 화면에서는 양옆만 자릅니다. 높이 500px 이하의 가로 화면은
+캐릭터를 작게 배치한 short, 세로 화면은 tall을 선택합니다.
+
+모션 원본은 Hugging Face 무료 ZeroGPU에서 생성했습니다. Lightricks/LTX-2-3으로 인사·글쓰기의
+idle/orbit를 1024×1536, 작업 idle을 1024×1024로 만들었습니다. 작업 orbit은 남은 무료 한도에
+맞춰 Saravutw/WAN2.2_I2V_LIGHTNING_4-8step_custom에서 832×816으로 생성했습니다.
+3840×1080은 배경을 포함한 합성 크기이며 캐릭터 자체가 4K로 생성된 것은 아닙니다.
+캐릭터 소스는 확대하지 않으며 작업 장면은 낮은 쪽 원본 높이에 맞춰 반복/전환 크기를 통일합니다.
+기존 16:9 중앙 프레임과 CSS 배경 확장 방식은 전환 중 배경 불일치 때문에 폐기했습니다.
+
 정식 주소: `/`. 이전 `/experiments/scroll-story`는 `/`로 영구 이동합니다.
 픽셀룸은 `/experiments/pixel-room`에서 noindex로 보관합니다.
 
