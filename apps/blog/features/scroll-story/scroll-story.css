@@ -22,13 +22,13 @@
 }
 .story-track {
   position: relative;
-  height: 300svh;
+  height: 300dvh;
 }
 .story-snap {
   position: absolute;
   left: 0;
   width: 1px;
-  height: 100svh;
+  height: 100dvh;
   pointer-events: none;
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -36,7 +36,7 @@
 .story-stage {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: 100dvh;
   isolation: isolate;
   overflow: hidden;
   background: #f5f3ed;
@@ -339,10 +339,42 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .story-loop,
+  .story-transition {
+    display: none;
+  }
   .story-scene[data-active] .story-copy .story-title span,
   .story-scene[data-active] .story-copy p,
   .story-scene[data-active] .story-action {
     animation: none;
+  }
+}
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .story-header {
+    top: 8px;
+    left: 24px;
+    right: 24px;
+  }
+  .story-brand {
+    font-size: 17px;
+  }
+  .story-header nav {
+    gap: 8px;
+  }
+  .story-copy {
+    top: 64px;
+    gap: 4px;
+    left: 24px;
+    right: 24px;
+  }
+  .story-copy .story-title {
+    font-size: 26px;
+  }
+  .story-copy p {
+    font-size: 12px;
+  }
+  .story-footer {
+    bottom: 8px;
   }
 }
 .story-static-links {

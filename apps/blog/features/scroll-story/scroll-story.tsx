@@ -5,11 +5,11 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { storyScenes } from "./story-data";
 import { reduceStory, type SceneIndex } from "./story-controller";
+import { useStoryNavigation } from "./use-story-navigation";
 import "./scroll-story.css";
 
 export function ScrollStory() {
   const root = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(true);
   const [motionKnown, setMotionKnown] = useState(false);
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
@@ -21,12 +21,23 @@ export function ScrollStory() {
   const [playingTransitionId, setPlayingTransitionId] = useState<number | null>(null);
   const transitionReady = transition !== null && playingTransitionId === transition.id;
   const transitionVideo = useRef<HTMLVideoElement>(null);
-  const current = Math.min(2, Math.round(progress));
+  const {
+    target: current,
+    immediate,
+    ready: navigationReady,
+    goTo,
+  } = useStoryNavigation(root, reducedMotion, displayed);
   const currentScene = storyScenes[displayed] ?? storyScenes[0];
 
   useEffect(() => {
-    dispatch({ type: "select", to: current as SceneIndex, id: ++requestId.current, immediate: reducedMotion });
-  }, [current, reducedMotion]);
+    if (!navigationReady) return;
+    dispatch({
+      type: "select",
+      to: current,
+      id: ++requestId.current,
+      immediate: reducedMotion || immediate,
+    });
+  }, [current, reducedMotion, immediate, navigationReady]);
 
   function finishTransition(id: number) {
     dispatch({ type: "complete", id });
@@ -65,59 +76,23 @@ export function ScrollStory() {
     if (!container) return;
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const portrait = window.matchMedia("(max-aspect-ratio: 1/1)");
-    const updateMotion = () => { setReducedMotion(media.matches); setMotionKnown(true); };
+    const updateMotion = () => {
+      setReducedMotion(media.matches);
+      setMotionKnown(true);
+    };
     const updateFormat = () => {
       setFormat(portrait.matches ? "tall" : "wide");
       setVideoReady([false, false, false]);
     };
-    const updateProgress = () => {
-      setProgress(Math.min(2, Math.max(0, container.scrollTop / container.clientHeight)));
-    };
-    let lastWheel = 0;
-    let wheelLockedUntil = 0;
-    const advanceOneScene = (event: WheelEvent) => {
-      if (!event.deltaY || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-      event.preventDefault();
-      const now = performance.now();
-      const gap = now - lastWheel;
-      lastWheel = now;
-      // Trackpad momentum belongs to the same gesture, not the next scene.
-      if (now < wheelLockedUntil || gap < 160) return;
-      const from = Math.round(container.scrollTop / container.clientHeight);
-      const to = Math.min(2, Math.max(0, from + Math.sign(event.deltaY)));
-      if (from === to) return;
-      wheelLockedUntil = now + 1300;
-      container.scrollTo({
-        top: to * container.clientHeight,
-        behavior: media.matches ? "instant" : "smooth",
-      });
-    };
     updateMotion();
     updateFormat();
-    updateProgress();
-    container.addEventListener("scroll", updateProgress, { passive: true });
-    container.addEventListener("wheel", advanceOneScene, { passive: false });
-    const observer = new ResizeObserver(updateProgress);
-    observer.observe(container);
     media.addEventListener("change", updateMotion);
     portrait.addEventListener("change", updateFormat);
     return () => {
-      container.removeEventListener("scroll", updateProgress);
-      container.removeEventListener("wheel", advanceOneScene);
-      observer.disconnect();
       media.removeEventListener("change", updateMotion);
       portrait.removeEventListener("change", updateFormat);
     };
   }, []);
-
-  function goTo(index: number) {
-    const container = root.current;
-    if (!container) return;
-    container.scrollTo({
-      top: index * container.clientHeight,
-      behavior: reducedMotion ? "instant" : "smooth",
-    });
-  }
 
   return (
     <main className="scroll-story" ref={root} tabIndex={0} aria-label="호조리카 소개">
@@ -149,7 +124,11 @@ export function ScrollStory() {
                 style={{ visibility: displayed === index ? "visible" : "hidden" }}
               >
                 <div className="story-copy">
-                  <Heading className="story-title" id={`story-title-${scene.id}`} aria-label={scene.title}>
+                  <Heading
+                    className="story-title"
+                    id={`story-title-${scene.id}`}
+                    aria-label={scene.title}
+                  >
                     {Array.from(scene.title).map((letter, i) =>
                       letter === "\n" ? (
                         <br key={i} aria-hidden="true" />
@@ -201,7 +180,9 @@ export function ScrollStory() {
                       )
                     }
                   >
-                    {motionKnown && !reducedMotion && index === displayed && <source src={`${plate}.mp4`} type="video/mp4" />}
+                    {motionKnown && !reducedMotion && index === displayed && (
+                      <source src={`${plate}.mp4`} type="video/mp4" />
+                    )}
                   </video>
                 </div>
               </section>
@@ -220,7 +201,8 @@ export function ScrollStory() {
               aria-hidden="true"
               tabIndex={-1}
               onLoadedData={(event) => {
-                if (!document.hidden) void event.currentTarget.play().catch(() => finishTransition(transition.id));
+                if (!document.hidden)
+                  void event.currentTarget.play().catch(() => finishTransition(transition.id));
               }}
               onPlaying={() => setPlayingTransitionId(transition.id)}
               onEnded={() => finishTransition(transition.id)}
@@ -237,7 +219,7 @@ export function ScrollStory() {
                   key={scene.id}
                   type="button"
                   aria-current={displayed === index ? "step" : undefined}
-                  onClick={() => goTo(index)}
+                  onClick={() => goTo(index as SceneIndex)}
                 >
                   {scene.label}
                 </button>
@@ -248,21 +230,21 @@ export function ScrollStory() {
             <button
               className="story-next"
               type="button"
-              onClick={() => goTo(current === 2 ? 0 : current + 1)}
+              onClick={() => goTo((current === 2 ? 0 : current + 1) as SceneIndex)}
             >
               {current === 2 ? "처음으로" : "스크롤해서 다음 이야기"}
               <ArrowDown size={18} aria-hidden="true" />
             </button>
           </footer>
           <div className="story-progress" aria-hidden="true">
-            <span style={{ transform: `scaleX(${(progress + 1) / 3})` }} />
+            <span style={{ transform: `scaleX(${(current + 1) / 3})` }} />
           </div>
         </div>
         {storyScenes.map((scene, index) => (
           <div
             key={scene.id}
             className="story-snap"
-            style={{ top: `${index * 100}svh` }}
+            style={{ top: `${index * 100}dvh` }}
             aria-hidden="true"
           />
         ))}

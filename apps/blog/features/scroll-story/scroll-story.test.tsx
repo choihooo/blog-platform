@@ -13,7 +13,8 @@ describe("home story document", () => {
   it("provides ordinary destination links when JavaScript cannot run", () => {
     const html = renderToStaticMarkup(<ScrollStory />);
     const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/)?.[1];
-    for (const href of ["/resume", "/blog", "/projects"]) expect(fallback).toContain(`href="${href}"`);
+    for (const href of ["/resume", "/blog", "/projects"])
+      expect(fallback).toContain(`href="${href}"`);
     expect(html).not.toContain('preload="auto"');
   });
 });
