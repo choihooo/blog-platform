@@ -7,7 +7,10 @@ import type { ReactNode } from "react";
 // occupy the entire home viewport. Re-evaluate on client-side navigation.
 export function HomeAwareShell({ children, header }: { children: ReactNode; header: ReactNode }) {
   const pathname = usePathname();
-  const isHome = pathname === "/" || pathname === "/experiments/pixel-room";
+  const isHome =
+    pathname === "/" ||
+    pathname === "/experiments/pixel-room" ||
+    pathname === "/experiments/interactive-portfolio";
 
   return (
     <div className="min-h-screen bg-background">
