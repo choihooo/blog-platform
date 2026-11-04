@@ -112,7 +112,7 @@ export function ProjectBlockRenderer({
     case "video-comparison":
       return (
         <figure className={widthClass} id={anchorId}>
-          <div className="grid grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-2">
+          <div className="project-video-comparison grid grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-2">
             <div className="relative overflow-hidden rounded-lg border border-border bg-black">
               <span className="absolute left-3 top-3 z-10 rounded bg-background/90 px-2 py-1 text-xs font-semibold text-muted-foreground backdrop-blur-sm">
                 {block.beforeLabel}

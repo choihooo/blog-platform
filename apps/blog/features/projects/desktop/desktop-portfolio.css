@@ -210,6 +210,7 @@
   background: rgba(61, 110, 213, 0.08);
 }
 .desktop-file {
+  transform: rotate(var(--desktop-file-rotation, 0deg));
   position: relative;
   display: flex;
   align-items: center;
@@ -239,7 +240,7 @@
   background: #c4cbd5;
 }
 .desktop-shortcut:hover .desktop-file {
-  transform: translateY(-3px) rotate(-3deg);
+  transform: translateY(-3px) rotate(calc(var(--desktop-file-rotation, 0deg) + 2deg));
 }
 .desktop-shortcut-name {
   display: -webkit-box;

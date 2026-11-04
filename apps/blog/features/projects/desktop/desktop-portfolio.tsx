@@ -18,6 +18,7 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
+  type CSSProperties,
 } from "react";
 import { projects } from "../project-data";
 import { desktopProjects, projectPoster, projectPreviews, windowTitle } from "./desktop-data";
@@ -43,7 +44,19 @@ const resizeEdgeLabels: Record<ResizeEdge, string> = {
   w: "왼쪽",
   nw: "왼쪽 위",
 };
-const iconColumns = [0.05, 0.19, 0.73, 0.86];
+const iconPlacements = [
+  { x: 0.08, y: 0.12, rotation: -4 },
+  { x: 0.235, y: 0.27, rotation: 3 },
+  { x: 0.72, y: 0.11, rotation: -2 },
+  { x: 0.87, y: 0.28, rotation: 5 },
+  { x: 0.055, y: 0.49, rotation: -3 },
+  { x: 0.24, y: 0.6, rotation: -5 },
+  { x: 0.76, y: 0.45, rotation: 3 },
+  { x: 0.865, y: 0.7, rotation: -3 },
+  { x: 0.095, y: 0.79, rotation: 4 },
+  { x: 0.28, y: 0.85, rotation: -2 },
+  { x: 0.7, y: 0.79, rotation: 3 },
+];
 
 function ProjectPreview({ id, active }: { id: string; active: boolean }) {
   const media = projectPreviews[id];
@@ -281,9 +294,10 @@ export function DesktopPortfolio() {
   const windowPosition = (item: DesktopWindow) => getWindowRect(item, windowBounds);
   const iconPosition = (id: string, index: number) => {
     const saved = positions[id];
+    const place = iconPlacements[index % iconPlacements.length]!;
     return clampPosition(
-      saved?.x ?? iconColumns[index % 4]! * space.width,
-      saved?.y ?? (0.12 + Math.floor(index / 4) * 0.27) * (space.height - 150),
+      saved?.x ?? place.x * space.width,
+      saved?.y ?? place.y * (space.height - 150),
       space.width,
       space.height - 110,
       100,
@@ -407,7 +421,13 @@ export function DesktopPortfolio() {
                 key={project.slug}
                 className={`desktop-shortcut desktop-shortcut--${index}`}
                 data-shortcut={project.slug}
-                style={{ left: point.x, top: point.y }}
+                style={
+                  {
+                    left: point.x,
+                    top: point.y,
+                    "--desktop-file-rotation": `${iconPlacements[index % iconPlacements.length]!.rotation}deg`,
+                  } as CSSProperties
+                }
                 aria-label={`${project.name} 프로젝트 열기`}
                 title={project.name}
                 onPointerDown={(e) => startDrag(e, "icon", project.slug, point)}
@@ -554,7 +574,6 @@ export function DesktopPortfolio() {
               </section>
             );
           })}
-        <p className="desktop-instruction">프로젝트 아이콘을 눌러서 열어보세요.</p>
         <nav className="desktop-dock" aria-label="작업실 Dock">
           <Link href="/" aria-label="홈">
             <House />
