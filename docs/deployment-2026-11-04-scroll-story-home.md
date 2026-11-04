@@ -56,7 +56,13 @@
   전체 뷰포트 너비로 재생되고 목적 장면으로 완료됐다. 인사 장면은 CTA/발과 하단 안내 사이
   간격을 확보하도록 최종 크기를 축소했다.
 - Blog 테스트 393개, lint/typecheck 및 포맷 검사 통과. 27개 파일의 크기·길이·30fps·무음·
-  faststart를 ffprobe/MP4 atom 검사로 확인했다. 운영 배포 기록은 아래에 추가한다.
+  faststart를 ffprobe/MP4 atom 검사로 확인했다. 모션 줄이기는 동영상 없이 새 JPG를 표시한다.
+- 운영 배포: `dpl_7vwZ7eiJpRWDVb71VHA7Rf22sUHd`,
+  `https://blog-kylwobfxr-hochois-projects.vercel.app`. 148페이지 빌드 통과 후 운영 promote 완료.
+  운영에서 1664×634의 인사→블로그→작업과 390×844 세로 재생/가로 overflow 없음 확인.
+  영상 `Range: bytes=0-1023` 응답은 HTTP 206, `video/mp4`이며 홈 HTTP 200 확인.
+  롤백은 직전 `https://blog-4kzj826rb-hochois-projects.vercel.app` promote로 가능하지만 해당 버전은
+  전환 중 CSS 양옆 배경 불일치 문제가 남아 있다. 작업 브랜치는 원본 미커밋 checkout과 분리해 유지한다.
 
 ### 울트라와이드 보정 후속 작업
 
