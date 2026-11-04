@@ -25,7 +25,8 @@
 ## 홈과 보관 픽셀룸 UI
 
 - 기존 Hozui 토큰과 승인된 스토리 장면/색상 체계를 우선 사용한다.
-- 홈 미디어는 `public/brand/scroll-story/plates-ultrawide-v2`이며 픽셀룸 에셋은 메인에서 사용하지 않는다.
+- 홈 미디어는 `public/brand/scroll-story/plates-ultrawide-v2`이며 픽셀룸 에셋은 메인에서 사용하지
+  않는다.
 - 홈 hash 변경은 history state를 보존하는 replace로 처리하며 상세에서 뒤로 가면 장면을 복원한다.
 - 챗봇 모델 로드는 최초 사용자 열기 이후 시작한다. 홈 mount에서 자동 다운로드하지 않는다.
 - 배경 에셋과 캐릭터 레이어의 위치 기준을 임의로 바꾸지 않는다.

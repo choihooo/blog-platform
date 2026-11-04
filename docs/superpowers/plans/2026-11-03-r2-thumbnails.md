@@ -1,10 +1,13 @@
 # R2 썸네일·DB 표지 교체 Implementation Plan
 
-> **For agentic workers:** Execute inline in this session using the existing approved deployment workflow.
+> **For agentic workers:** Execute inline in this session using the existing approved deployment
+> workflow.
 
-**Goal:** 승인된 35개 썸네일을 R2에 저장하고 D1의 표지 참조를 변경해 CMS와 공개 Blog가 같은 이미지를 사용한다.
+**Goal:** 승인된 35개 썸네일을 R2에 저장하고 D1의 표지 참조를 변경해 CMS와 공개 Blog가 같은 이미지를
+사용한다.
 
-**Architecture:** 기존 `hero_image_key`와 `media_refs` 계약을 유지한다. 로컬 slug별 이미지 override를 제거하며 OG·Twitter는 DB에서 읽은 coverImage를 사용한다.
+**Architecture:** 기존 `hero_image_key`와 `media_refs` 계약을 유지한다. 로컬 slug별 이미지
+override를 제거하며 OG·Twitter는 DB에서 읽은 coverImage를 사용한다.
 
 **Tech Stack:** Cloudflare R2/D1, Wrangler CLI, Next.js, Vitest, Vercel.
 

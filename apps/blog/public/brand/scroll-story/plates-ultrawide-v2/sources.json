@@ -1,8 +1,5 @@
 {
-  "master_size": [
-    3840,
-    1080
-  ],
+  "master_size": [3840, 1080],
   "fps": 30,
   "character_upscaled": false,
   "sources": {
@@ -38,18 +35,9 @@
     }
   },
   "formats": {
-    "wide": [
-      3840,
-      1080
-    ],
-    "tall": [
-      1080,
-      1620
-    ],
-    "short": [
-      3840,
-      1080
-    ]
+    "wide": [3840, 1080],
+    "tall": [1080, 1620],
+    "short": [3840, 1080]
   },
   "notes": "Full background and tilted-floor/color transitions are encoded in every frame. Wide/short 32:9 masters are cropped at the sides by the website. LTX-2.3 sources except working orbit (Wan2.2 832x816 within the remaining free quota)."
 }

@@ -29,8 +29,8 @@
 - D1 70개 SQL 실행 성공. 재조회로 posts 표지 35개·hero/og 참조 35개 일치 확인.
 - 비공개 글 4개 및 body media_refs, 모든 글의 updated_at 보존 확인.
 - 보호된 배포에서 본문·OG·Twitter의 동일 R2 URL 확인 후 promote 성공.
-- 운영 도메인에서 글 35개 본문 이미지·og:image·twitter:image 전부 일치 및 목록 5페이지의
-  썸네일 35개 확인. 기존 `/og/regular-expression`의 307과 미존재 OG 404 확인.
+- 운영 도메인에서 글 35개 본문 이미지·og:image·twitter:image 전부 일치 및 목록 5페이지의 썸네일 35개
+  확인. 기존 `/og/regular-expression`의 307과 미존재 OG 404 확인.
 - 배포 ID: `dpl_GPbMU18BJ5wk7K5dKvYNp24n81QQ`.
 - 배포 URL: `https://blog-cslvab8mb-hochois-projects.vercel.app`; 운영 `https://hozorica.com`.
 - 기존 Vercel AUTH/SLACK 환경변수의 Turbo allowlist 경고가 있으나 빌드는 성공했다. 이번 이미지·SEO
@@ -46,7 +46,7 @@
   `https://blog-o2cwhxl7p-hochois-projects.vercel.app`.
 - 코드 롤백: 위 URL을 같은 프로젝트에서 `vercel promote`한다.
 - 데이터 롤백: 백업의 `rollback.sql`을 같은 D1에 원격 실행한다. 이번 업로드 URL을 여전히 가리키는
-  레코드만 복원한다. 이후 운영자가 변경한 표지는 보존한다. 새 R2 파일은 남겨도 무방하며 기존
-  파일이 유지되어 이전 표지가 즉시 복원된다. 콘텐츠 캐시는 300초 후 갱신 또는 재배포한다.
-- 이후 디자인 변경은 새 해시 URL로 업로드한다. 외부 공유 서비스의 기존 미리보기에는 재수집
-  시간이 필요할 수 있다.
+  레코드만 복원한다. 이후 운영자가 변경한 표지는 보존한다. 새 R2 파일은 남겨도 무방하며 기존 파일이
+  유지되어 이전 표지가 즉시 복원된다. 콘텐츠 캐시는 300초 후 갱신 또는 재배포한다.
+- 이후 디자인 변경은 새 해시 URL로 업로드한다. 외부 공유 서비스의 기존 미리보기에는 재수집 시간이
+  필요할 수 있다.
