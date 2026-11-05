@@ -327,22 +327,24 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  color: #234b99;
-  font-size: 13px;
-  font-weight: 600;
+  color: var(--round-muted);
+  font-size: 12px;
+  font-weight: 500;
   line-height: 1.6;
 }
 .rounded-blog-tags li {
   min-width: 0;
-  padding: 4px 10px;
-  border: 1px solid #ccdafa;
-  border-radius: 8px;
-  background: #edf3ff;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: #f3f4f6;
   overflow-wrap: anywhere;
+}
+.rounded-blog-card-copy .rounded-blog-tags {
+  margin-top: 16px;
 }
 .rounded-blog-article-heading .rounded-blog-tags {
   margin-top: 18px;
-  font-size: 14px;
+  font-size: 12px;
 }
 .rounded-blog-card-meta {
   display: flex;
