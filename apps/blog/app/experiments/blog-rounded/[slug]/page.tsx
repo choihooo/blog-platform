@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { MainHeader } from "@/features/navigation/main-header";
 import {
   getPostBySlug,
+  getAllPublishedPosts,
   getSiteConfig,
   listCategories,
 } from "@/features/blog/server/content-source";
@@ -14,6 +15,7 @@ import { PostBodyRenderer } from "@/app/posts/[slug]/post-body-renderer";
 import { blogPreviewPath, canOptimizePreviewImage } from "@/features/blog-rounded/preview-model";
 import "@/features/blog-rounded/rounded-blog.css";
 import { preparePreviewArticle } from "@/features/blog-rounded/preview-article";
+import { ArticleNavigationPanel } from "@/features/blog-rounded/article-navigation-panel";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -29,11 +31,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function RoundedBlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const [post, site, parents, children] = await Promise.all([
+  const [post, site, parents, children, posts] = await Promise.all([
     getPostBySlug(slug),
     getSiteConfig(),
     listCategories({ depth: 1 }),
     listCategories({ depth: 2 }),
+    getAllPublishedPosts({ analyzeBody: false }),
   ]);
   if (!post) notFound();
   const category = [...parents, ...children].find((item) => item.slug === post.category);
@@ -96,8 +99,9 @@ export default async function RoundedBlogPostPage({ params }: Props) {
               </aside>
             )}
           </div>
+          <ArticleNavigationPanel posts={posts} currentSlug={post.slug} />
           <footer className="rounded-blog-article-bottom">
-            <Link href={blogPreviewPath}>다른 기록도 읽어보기</Link>
+            <span>HOZORICA · BLOG</span>
             <Link href={`/blog/${post.slug}`}>
               현재 디자인으로 보기
               <ArrowUpRight size={15} aria-hidden="true" />
