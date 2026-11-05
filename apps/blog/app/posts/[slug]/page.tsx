@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Chip, ChipGroup } from "@hozui/react";
+import { ArrowLeft } from "lucide-react";
+import { MainHeader } from "@/features/navigation/main-header";
+import { ArticleNavigationPanel } from "@/features/blog-rounded/article-navigation-panel";
+import { PostTags } from "@/features/blog-rounded/post-tags";
+import { preparePreviewArticle } from "@/features/blog-rounded/preview-article";
+import "@/features/blog-rounded/rounded-blog.css";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
 
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
@@ -10,12 +15,11 @@ import { PostAnalyticsEvents } from "@/features/blog/components/post-analytics-e
 import { serializeJsonLd } from "@/shared/seo/person-json-ld";
 import { PostAuthorMeta } from "@/features/blog/components/post-author-meta";
 import { PostShareActions } from "@/features/blog/components/post-share-actions";
-import { RecommendedPosts } from "@/features/blog/components/recommended-posts";
 import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
 import {
   getPostBySlug,
   getPublishedPosts,
-  getRecommendedPosts,
+  getAllPublishedPosts,
   getSiteConfig,
 } from "@/features/blog/server/content-source";
 import { formatPostDateTime } from "@/shared/date/date-format";
@@ -62,9 +66,9 @@ export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const [post, site] = await Promise.all([getPostBySlug(slug), getSiteConfig()]);
   if (!post) notFound();
-  const [jsonLd, recommendedPosts] = await Promise.all([
+  const [jsonLd, posts] = await Promise.all([
     Promise.resolve(generateJsonLd(postToSeoSubject(post, siteForSeo(site)))),
-    getRecommendedPosts(post, 3),
+    getAllPublishedPosts({ analyzeBody: false }),
   ]);
   const postUrl = `${site.siteUrl.replace(/\/$/, "")}/blog/${post.slug}`;
   const analyticsContext = {
@@ -86,108 +90,98 @@ export default async function PostPage({ params }: PostPageProps) {
         name: site.defaultAuthorName || site.defaultAuthor,
       };
 
+  const article = preparePreviewArticle(post);
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
-      <PostAnalyticsEvents context={analyticsContext} />
-      <script
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
-        type="application/ld+json"
-      />
-      <BlogBreadcrumb
-        entries={[
-          { href: "/blog", label: "글" },
-          ...(post.categoryEntry
-            ? [
-                {
-                  href: `/blog/categories/${post.categoryEntry.slug}`,
-                  label: post.categoryEntry.label,
-                },
-              ]
-            : []),
-          { label: post.title },
-        ]}
-        label="글 위치"
-      />
-      <article className="grid gap-12 lg:grid-cols-[minmax(0,68ch)_220px] lg:justify-center lg:gap-16">
-        <div className="min-w-0">
-          <header className="mb-12 grid gap-5 bg-card pb-10">
-            {post.coverImage ? (
-              canUseOptimizedImage(post.coverImage) ? (
-                <div className="relative aspect-[16/9] w-full overflow-hidden">
-                  <Image
-                    alt=""
-                    className="object-cover"
-                    fill
-                    fetchPriority="high"
-                    priority
-                    sizes="(min-width: 1024px) 68ch, calc(100vw - 40px)"
-                    src={post.coverImage}
-                  />
-                </div>
-              ) : (
-                <img
-                  alt=""
-                  className="aspect-[16/9] w-full object-cover"
-                  decoding="async"
-                  fetchPriority="high"
-                  loading="eager"
-                  src={post.coverImage}
-                />
-              )
-            ) : null}
-            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
-              {post.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-6 text-muted-foreground">
-              <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
-              <span>·</span>
-              <span>{post.readingTimeLabel}</span>
-              <PostAuthorMeta author={author} size="md" />
-            </div>
-            <ChipGroup aria-label="글 분류" className="flex flex-wrap gap-2">
+    <div className="rounded-blog">
+      <MainHeader active="blog" />
+      <main className="rounded-blog-article-wrap">
+        <PostAnalyticsEvents context={analyticsContext} />
+        <script
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+          type="application/ld+json"
+        />
+        <Link className="rounded-blog-back" href="/blog">
+          <ArrowLeft size={16} aria-hidden="true" />글 목록으로
+        </Link>
+        <BlogBreadcrumb
+          entries={[
+            { href: "/blog", label: "글" },
+            ...(post.categoryEntry
+              ? [
+                  {
+                    href: `/blog/categories/${post.categoryEntry.slug}`,
+                    label: post.categoryEntry.label,
+                  },
+                ]
+              : []),
+            { label: post.title },
+          ]}
+          label="글 위치"
+        />
+        <article className="rounded-blog-document">
+          <header className="rounded-blog-article-heading">
+            <div className="rounded-blog-taxonomy">
               {post.categoryEntry ? (
-                <Link href={`/blog/categories/${post.categoryEntry.slug}`}>
-                  <Chip label={post.categoryEntry.label} size="sm" tone="accent" />
-                </Link>
-              ) : null}
-              {post.tagEntries.map((tag) => (
-                <Link href={`/blog/tags/${tag.slug}`} key={tag.slug}>
-                  <Chip label={tag.label} size="sm" tone="neutral" />
-                </Link>
-              ))}
-            </ChipGroup>
-          </header>
-          <div
-            className="prose"
-            data-analytics-category={post.category}
-            data-analytics-slug={post.slug}
-          >
-            <PostBodyRenderer analyticsContext={analyticsContext} nodes={post.bodyNodes} />
-          </div>
-          <RecommendedPosts analyticsContext={analyticsContext} posts={recommendedPosts} />
-          <PostShareActions context={analyticsContext} />
-        </div>
-        {post.toc.length > 0 ? (
-          <aside
-            className="hidden h-fit border-0 bg-card shadow-sm lg:sticky lg:top-6 lg:block"
-            aria-label="Table of contents"
-          >
-            <div className="grid gap-3 p-4 text-sm leading-6">
-              <strong className="text-foreground">On this page</strong>
-              {post.toc.map((item) => (
-                <a
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                  data-analytics-toc
-                  href={`#${item.slug}`}
-                  key={item.slug}
+                <Link
+                  className="rounded-blog-badge"
+                  href={`/blog/categories/${post.categoryEntry.slug}`}
                 >
-                  {item.text}
-                </a>
-              ))}
+                  {post.categoryEntry.label}
+                </Link>
+              ) : (
+                <span className="rounded-blog-badge">기록</span>
+              )}
+              <PostTags tags={post.tagEntries} linkBasePath="/blog/tags" />
             </div>
-          </aside>
-        ) : null}
-      </article>
-    </main>
+            <h1>{post.title}</h1>
+            <div className="rounded-blog-article-meta">
+              <PostAuthorMeta author={author} size="md" />
+              <span aria-hidden="true">·</span>
+              <time dateTime={post.publishedAt}>{formatPostDateTime(post.publishedAt)}</time>
+              <span aria-hidden="true">·</span>
+              <span>{post.readingTimeLabel}</span>
+            </div>
+          </header>
+          {post.coverImage && (
+            <Image
+              className="rounded-blog-article-cover"
+              src={post.coverImage}
+              alt=""
+              width={1280}
+              height={720}
+              priority
+              fetchPriority="high"
+              unoptimized={!canUseOptimizedImage(post.coverImage)}
+              sizes="(max-width: 759px) calc(100vw - 72px), 992px"
+            />
+          )}
+          <div className="rounded-blog-reading-layout">
+            <div
+              className="prose"
+              data-analytics-category={post.category}
+              data-analytics-slug={post.slug}
+            >
+              <PostBodyRenderer analyticsContext={analyticsContext} nodes={article.nodes} />
+            </div>
+            {article.toc.length > 0 && (
+              <aside className="rounded-blog-toc" aria-label="이 글의 목차">
+                <h2>이 글의 목차</h2>
+                {article.toc.map((item) => (
+                  <Link href={`#${item.slug}`} key={item.slug} data-analytics-toc>
+                    {item.text}
+                  </Link>
+                ))}
+              </aside>
+            )}
+          </div>
+          <PostShareActions context={analyticsContext} />
+          <ArticleNavigationPanel posts={posts} currentSlug={post.slug} />
+          <footer className="rounded-blog-article-bottom">
+            <span>HOZORICA · BLOG</span>
+            <Link href="/blog">전체 글 보기</Link>
+          </footer>
+        </article>
+      </main>
+    </div>
   );
 }
