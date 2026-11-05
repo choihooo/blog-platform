@@ -43,13 +43,8 @@ export function RoundedBlog({
     <div className="rounded-blog">
       <MainHeader active="blog" />
       <main className="rounded-blog-wrap">
+        <h1 className="sr-only">블로그 글 목록</h1>
         <header className="rounded-blog-intro">
-          <div>
-            <h1>
-              Blog<span aria-hidden="true">.</span>
-            </h1>
-            <p>배운 것들을 기록합니다.</p>
-          </div>
           <form
             className="rounded-blog-search"
             role="search"
