@@ -62,6 +62,20 @@ write 경로와 공개 read 경로는 모두 동일한 인터페이스를 통해
 
 ## Runtime Switch
 
+### Rich structured content (2026-11-05)
+
+- `PostRecord.content`는 `{ version: 1, nodes }` JSON이다. Markdown fallback은 공유 editor
+  패키지에서 처리한다. remote와 d1r2는 같은 `toPublicSourcePost`로 매핑하여 구조를 보존한다.
+- 텍스트의 `content` inline runs, 목록의 `items`/`start`, 인용문의 `children`, 표의 `rows`/cell
+  `body`/`header`/`colspan`/`rowspan`, 이미지의 `captionContent`/`href`는 additive v1 필드다.
+- `text`는 검색·SEO용 평문이며, inline runs가 있는 문장을 Markdown으로 재파싱하지 않는다.
+- CMS 편집 및 저장·발행 경계는 새 필드를 round-trip하고 중첩 validation을 적용한다.
+- 기존 앱은 table을 지원하지 않으므로 Blog/CMS 호환 배포가 원격 콘텐츠 복구보다 먼저다. Blog 본문
+  `data-content-schema="1-rich"`는 복구 스크립트의 배포 확인 지표다.
+- 복구는 content만 변경하고 id/slug/상태/표지/카테고리/태그/게시일/수정일을 보존한다. 원문·기존
+  content·hash를 백업하며, 이전 content와 updated_at이 일치할 때만 쓴다. rollback은 새 content와
+  일치하는 글만 복원한다. Runbook: `docs/runbooks/2026-11-05-content-recovery.md`.
+
 - CMS의 기본 adapter는 `d1r2`다. Blog는 `BLOG_CONTENT_PROXY_URL`이 있으면 `remote`, 없으면 `d1r2`를
   사용한다. legacy 파일 모드는 현재 공개 Blog의 runtime 선택지가 아니다.
 

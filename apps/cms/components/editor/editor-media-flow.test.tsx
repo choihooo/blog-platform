@@ -38,6 +38,7 @@ describe("EditorScreen body media flow", () => {
           type: "image",
           src: "/media/posts/hello/pasted.webp",
           alt: "clipboard-image",
+          caption: "Uploaded caption",
         },
       },
       message: "Image uploaded",
@@ -73,6 +74,7 @@ describe("EditorScreen body media flow", () => {
         screen.getByText("Image uploaded. Save the post to keep this reference."),
       ).toBeTruthy();
     });
+    expect(editor!.querySelector("figcaption")?.textContent).toBe("Uploaded caption");
   });
 
   it("blocks pasted attachment-only body images", () => {

@@ -10,6 +10,7 @@ export const SUPPORTED_BLOCKS = [
   "horizontalRule",
   "codeBlock",
   "image",
+  "table",
 ] as const satisfies readonly EditorNodeType[];
 
 export const SUPPORTED_MARKS = [
@@ -29,6 +30,7 @@ export const TOOLBAR_COMMANDS = [
   "blockquote",
   "codeBlock",
   "image",
+  "table",
   "preview",
   "save",
 ] as const satisfies readonly EditorToolbarCommand[];

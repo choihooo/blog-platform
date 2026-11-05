@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
 import "./env";
+import {
+  htmlToEditorNodes,
+  serializePostContent,
+  loadPostContent,
+  textFromEditorNodes,
+} from "../../packages/editor/src/index";
 
 import { createHash, createHmac } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -314,60 +320,20 @@ function extractImages(html: string, slug: string): TistoryImage[] {
   return images;
 }
 
-function htmlToMarkdown(html: string, images: TistoryImage[]) {
+function htmlToStructuredContent(html: string, images: TistoryImage[]) {
   const imageBySource = new Map(images.map((image) => [image.sourceUrl, image]));
-  let next = html
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/gi, (_, caption: string) => {
-      const text = stripTags(caption);
-      return text ? `\n_${text}_\n` : "";
-    })
-    .replace(/<pre[^>]*>\s*<code[^>]*>([\s\S]*?)<\/code>\s*<\/pre>/gi, (_, code: string) => {
-      return `\n\n\`\`\`\n${decodeHtml(code).trim()}\n\`\`\`\n\n`;
-    })
-    .replace(/<img\b[^>]*>/gi, (tag: string) => {
-      const image = imageBySource.get(absoluteUrl(tag.match(/\ssrc=["']([^"']+)["']/i)?.[1] ?? ""));
-      return image ? `\n\n![](${image.r2Url})\n\n` : "";
-    });
-
-  next = next
-    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, "\n\n## $1\n\n")
-    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, "\n\n### $1\n\n")
-    .replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, "\n\n#### $1\n\n")
-    .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, "\n\n> $1\n\n")
-    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "\n- $1")
-    .replace(/<\/?(ul|ol)[^>]*>/gi, "\n")
-    .replace(
-      /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi,
-      (_, href: string, text: string) => {
-        const label = stripTags(text);
-        return label ? `[${label}](${absoluteUrl(href)})` : "";
-      },
-    )
-    .replace(
-      /<code[^>]*>([\s\S]*?)<\/code>/gi,
-      (_, code: string) => `\`${decodeHtml(code).trim()}\``,
-    )
-    .replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**")
-    .replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, "_$2_")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/p>/gi, "\n\n")
-    .replace(/<p[^>]*>/gi, "")
-    .replace(/<[^>]+>/g, " ");
-
-  return decodeHtml(next)
-    .split(/\n{2,}/)
-    .map((block) => block.replace(/[ \t]+/g, " ").trim())
-    .filter((block) => block && block !== "&nbsp;")
-    .join("\n\n")
-    .trim();
+  const nodes = htmlToEditorNodes(html, {
+    mapImage: (src) => {
+      const image = imageBySource.get(absoluteUrl(src));
+      if (!image) throw new Error("Missing image mapping during Tistory import");
+      return image.r2Url;
+    },
+  });
+  return serializePostContent({ version: 1, nodes });
 }
 
 function summarize(title: string, metaSummary: string, content: string) {
-  const text = (
-    metaSummary || content.replace(/!\[[^\]]*\]\([^)]+\)/g, "").replace(/[#`>*_-]/g, " ")
-  )
+  const text = (metaSummary || textFromEditorNodes(loadPostContent(content).nodes))
     .replace(/\s+/g, " ")
     .trim();
   return (text || title).slice(0, 180);
@@ -387,7 +353,7 @@ async function extractPost(id: number, rssItems: RssItem[]): Promise<TistoryPost
   const contentHtml = rss?.description || extractArticleHtml(pageHtml);
   const slug = `tistory-${info.entryId ?? id}`;
   const images = extractImages(contentHtml, slug);
-  const content = htmlToMarkdown(contentHtml, images);
+  const content = htmlToStructuredContent(contentHtml, images);
   const tagNames = extractTags(pageHtml);
   const tagSlugs = tagNames.map(slugForTag);
   return {

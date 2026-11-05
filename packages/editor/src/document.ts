@@ -7,6 +7,7 @@ export type EditorNodeType =
   | "blockquote"
   | "horizontalRule"
   | "codeBlock"
+  | "table"
   | "image";
 
 export type EditorMark = "bold" | "italic" | "link" | "inlineCode";
@@ -36,18 +37,39 @@ export type EditorFrontmatter = {
 };
 
 export type EditorTextNode = {
-  type: Exclude<EditorNodeType, "horizontalRule" | "image">;
+  type: Exclude<EditorNodeType, "horizontalRule" | "image" | "table">;
   text: string;
   depth?: number;
   language?: string;
   marks?: EditorMark[];
   href?: string;
+  content?: EditorInline[];
+  items?: EditorNode[][];
+  start?: number;
+  children?: EditorNode[];
+};
+
+export type EditorInline = { text: string; marks?: EditorMark[]; href?: string };
+export type EditorTableCell = {
+  body: EditorNode[];
+  header?: boolean;
+  colspan?: number;
+  rowspan?: number;
 };
 
 export type EditorNode =
   | EditorTextNode
   | { type: "horizontalRule" }
-  | { type: "image"; src: string; alt?: string; title?: string; caption?: string };
+  | { type: "table"; rows: EditorTableCell[][] }
+  | {
+      type: "image";
+      src: string;
+      alt?: string;
+      title?: string;
+      caption?: string;
+      captionContent?: EditorInline[];
+      href?: string;
+    };
 
 export type EditorDocument = {
   id: string;

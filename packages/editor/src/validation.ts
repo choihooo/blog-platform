@@ -1,6 +1,7 @@
 import type { EditorDocument, EditorIssue, EditorNode } from "./document.js";
 import { createEditorIssue } from "./document.js";
 import { isSupportedBlock, isSupportedMark } from "./supported-format.js";
+import { isSafeContentUrl } from "./html-content.js";
 
 function isUnsafeUrl(value: string): boolean {
   return /^\s*(javascript|data|blob|file|attachment):/i.test(value);
@@ -12,6 +13,43 @@ function isLocalPath(value: string): boolean {
 
 function validateNode(node: EditorNode, index: number): EditorIssue[] {
   const issues: EditorIssue[] = [];
+  if (node.type === "table") {
+    for (const row of node.rows)
+      for (const cell of row) {
+        for (const span of [cell.colspan, cell.rowspan])
+          if (span !== undefined && (!Number.isInteger(span) || span < 1 || span > 100))
+            issues.push(
+              createEditorIssue("editor.table.span", "Invalid table span", ["body", String(index)]),
+            );
+        cell.body.forEach((child, i) => issues.push(...validateNode(child, i)));
+      }
+  }
+  if ("items" in node)
+    node.items?.forEach((item) =>
+      item.forEach((child, i) => issues.push(...validateNode(child, i))),
+    );
+  if ("children" in node)
+    node.children?.forEach((child, i) => issues.push(...validateNode(child, i)));
+  const content =
+    "content" in node ? node.content : node.type === "image" ? node.captionContent : undefined;
+  for (const run of content ?? []) {
+    if (run.href && !isSafeContentUrl(run.href))
+      issues.push(
+        createEditorIssue("editor.link.unsafe", "Unsafe link URL", [
+          "body",
+          String(index),
+          "content",
+        ]),
+      );
+    if (run.marks?.some((mark) => !isSupportedMark(mark)))
+      issues.push(
+        createEditorIssue("editor.mark.unsupported", "Unsupported inline mark", [
+          "body",
+          String(index),
+          "content",
+        ]),
+      );
+  }
   if (!isSupportedBlock(node.type)) {
     issues.push(
       createEditorIssue("editor.node.unsupported", "Unsupported editor node", [
@@ -33,7 +71,7 @@ function validateNode(node: EditorNode, index: number): EditorIssue[] {
       }
     }
   }
-  if ("href" in node && node.href && isUnsafeUrl(node.href)) {
+  if ("href" in node && node.href && !isSafeContentUrl(node.href)) {
     issues.push(
       createEditorIssue("editor.link.unsafe", "Unsafe link URL", ["body", String(index), "href"]),
     );

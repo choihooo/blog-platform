@@ -26,6 +26,34 @@ function adapter(existing?: PostRecord | null) {
 }
 
 describe("editor-save", () => {
+  it("rejects invalid nested content before touching storage", async () => {
+    const doc = document();
+    doc.body = [
+      {
+        type: "table",
+        rows: [
+          [
+            {
+              body: [
+                {
+                  type: "paragraph",
+                  text: "bad",
+                  content: [{ text: "bad", href: "javascript:alert(1)" }],
+                },
+              ],
+            },
+          ],
+        ],
+      },
+    ];
+    const api = adapter();
+    expect(await saveEditorDraft(doc, api)).toMatchObject({
+      ok: false,
+      code: "validation-failure",
+    });
+    expect(api.createPost).not.toHaveBeenCalled();
+    expect(api.updatePost).not.toHaveBeenCalled();
+  });
   it("creates new drafts as structured JSON posts", async () => {
     const api = adapter();
     await expect(saveEditorDraft(document(), api)).resolves.toMatchObject({

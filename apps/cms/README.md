@@ -5,6 +5,11 @@
 
 ## Publish Workflow
 
+현재 저장소는 D1/R2 adapter이며 editor 본문은 공유 패키지의 version-1 structured JSON을 사용한다.
+아래 MDX/repository 설명은 legacy 운영 설명이다. 표·중첩 목록·부분 강조·이미지 캡션의 현재 계약은
+`packages/editor/README.md`를 따른다. Markdown 블록은 편집기에 붙여넣으면 구조로 변환되며, 코드 블록
+안에 붙여넣은 텍스트는 원문으로 유지한다. Save/Publish는 중첩 콘텐츠 validation 후 저장한다.
+
 - Save는 draft 저장만 수행하고 public refresh를 실행하지 않는다.
 - Publish는 slug와 `publishedAt`을 보정한 뒤 `prepare-publish` intent로 post MDX를 저장한다.
 - Unpublish와 Archive는 repository 파일을 유지한 채 status만 `draft` 또는 `archived`로 바꾼다.
