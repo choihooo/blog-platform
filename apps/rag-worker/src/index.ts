@@ -1,14 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
-import {
-  chunkDocuments,
-  currentMatches,
-  EMBEDDING_MODEL,
-  embeddingText,
-  postDocument,
-  staticDocuments,
-  type PublicPostRow,
-} from "../../blog/features/rag/corpus";
+import { embeddingText } from "../../blog/features/rag/corpus";
 import { boundedJson, queryFrom } from "../../blog/features/rag/contracts";
+import { corpus, embed, indexFor, profileFor, searchPublished } from "./retrieval";
+import { generateGeminiAnswer } from "./gemini";
 
 function json(body: unknown, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -61,44 +55,12 @@ async function localD1Query(request: Request, env: Env) {
   }
 }
 
-async function corpus(env: Env, slug?: string) {
-  // Fresh primary session: no cached or replicated publication status.
-  const db = env.DB.withSession("first-primary");
-  const sql = `SELECT p.id, p.slug, p.title, p.summary, p.content,
-    c.name AS category_name, c.slug AS category_slug,
-    parent.name AS parent_category_name, parent.slug AS parent_category_slug,
-    (SELECT json_group_array(json_object('name', t.name, 'slug', t.slug))
-      FROM post_tags pt JOIN tags t ON t.id = pt.tag_id
-      WHERE pt.post_id = p.id) AS tags_json
-    FROM posts p
-    LEFT JOIN categories c ON c.id = p.category_id
-    LEFT JOIN categories parent ON parent.id = c.parent_id
-    WHERE p.is_published = 1`;
-  const result = slug
-    ? await db.prepare(`${sql} AND p.slug = ?`).bind(slug).all<PublicPostRow>()
-    : await db.prepare(`${sql} ORDER BY p.id LIMIT 1001`).all<PublicPostRow>();
-  if (!result.success || result.results.length > 1000) throw new Error("corpus_unavailable");
-  return chunkDocuments([...(slug ? [] : staticDocuments()), ...result.results.map(postDocument)]);
-}
-
-async function embed(env: Env, text: string[]) {
-  const result = await env.AI.run(EMBEDDING_MODEL, { text });
-  if (
-    !("data" in result) ||
-    !Array.isArray(result.data) ||
-    result.data.length !== text.length ||
-    result.data.some((v) => v.length !== 1024 || v.some((n) => !Number.isFinite(n)))
-  )
-    throw new Error("embedding_shape");
-  return result.data;
-}
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const path = new URL(request.url).pathname;
     if (path === "/health" && request.method === "GET") return json({ ok: true });
     if (path === "/__local/d1" && request.method === "POST") return localD1Query(request, env);
-    if (request.method !== "POST" || !["/search", "/sync"].includes(path))
+    if (request.method !== "POST" || !["/search", "/answer", "/sync"].includes(path))
       return json({ error: "not_found" }, 404);
     if (!authorized(request, path === "/sync" ? env.RAG_ADMIN_TOKEN : env.RAG_SEARCH_TOKEN))
       return json({ error: "unauthorized" }, 401);
@@ -133,17 +95,36 @@ export default {
         ).join("");
         if (offset > 0 && b.revision !== revision)
           return json({ error: "corpus_changed_restart_sync" }, 409);
+        if (b.dryRun !== undefined && typeof b.dryRun !== "boolean")
+          return json({ error: "invalid_body" }, 400);
+        if (b.dryRun === true)
+          return json({
+            total: chunks.length,
+            revision,
+            profile: profileFor(env).id,
+            requests: chunks.length,
+            nextOffset: null,
+          });
         const batch = chunks.slice(offset, offset + 16);
         stage = "vector_lookup";
-        const existing = batch.length ? await env.INDEX.getByIds(batch.map((c) => c.id)) : [];
+        const existing = batch.length ? await indexFor(env).getByIds(batch.map((c) => c.id)) : [];
         const ids = new Set(existing.map((v) => v.id));
         const missing = batch.filter((c) => !ids.has(c.id));
         if (missing.length) {
           stage = "embedding";
-          const values = await embed(env, missing.map(embeddingText));
+          const values = await embed(
+            env,
+            missing.map(embeddingText),
+            "RETRIEVAL_DOCUMENT",
+            request.signal,
+          );
           stage = "vector_upsert";
-          await env.INDEX.upsert(
-            missing.map((c, i) => ({ id: c.id, values: values[i]!, namespace: "public-v1" })),
+          await indexFor(env).upsert(
+            missing.map((c, i) => ({
+              id: c.id,
+              values: values[i]!,
+              namespace: profileFor(env).namespace,
+            })),
           );
         }
         return json({
@@ -158,19 +139,19 @@ export default {
       // Aggregate cap also works behind the Next proxy without trusting a client IP header.
       if (!(await env.SEARCH_LIMIT.limit({ key: "portfolio-search" })).success)
         return json({ error: "rate_limited" }, 429);
-      stage = "embedding";
-      const vectors = await embed(env, [query]);
-      stage = "vector_query";
-      const matches = await env.INDEX.query(vectors[0]!, {
-        // Leave headroom for superseded IDs retained during incremental reindexing.
-        topK: 100,
-        namespace: "public-v1",
-        returnMetadata: "none",
-      });
-      // Re-read AFTER search; stale vectors never supply deleted/unpublished/old text.
-      stage = "corpus";
-      const chunks = await corpus(env);
-      return json({ sources: currentMatches(chunks, matches.matches, query) });
+      stage = "search";
+      const result = await searchPublished(query, env, request.signal);
+      if (path === "/answer" && result.sources.length) {
+        stage = "generation";
+        result.answer = await generateGeminiAnswer({
+          query,
+          sources: result.sources,
+          apiKey: env.GEMINI_API_KEY ?? "",
+          model: env.GEMINI_GENERATION_MODEL ?? "",
+          signal: request.signal,
+        });
+      }
+      return json(result);
     } catch (error) {
       console.error(
         JSON.stringify({
@@ -185,7 +166,15 @@ export default {
           errorType: error instanceof Error ? error.name : "Unknown",
         }),
       );
-      return json({ error: "retrieval_unavailable" }, 503);
+      return json(
+        {
+          error:
+            error instanceof Error && error.message === "rate_limited"
+              ? "rate_limited"
+              : "retrieval_unavailable",
+        },
+        error instanceof Error && error.message === "rate_limited" ? 429 : 503,
+      );
     }
   },
 } satisfies ExportedHandler<Env>;

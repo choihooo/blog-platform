@@ -15,4 +15,10 @@
 
 - Baseline: Worker 5 tests passed; Blog initially failed on absent dist exports, resolved by package builds (environment preparation).
 - Task 1: complete. Missing profile RED; profile isolation and existing rag tests GREEN: 13 tests. Legacy SHA pinned to independent literal.
-- Task 2: in progress.
+- Baseline after package build: Blog 435 tests passed.
+- Task 2: complete. Embedding module missing RED → vector normalization/task type/HTTP/cancel GREEN. Worker typegen/typecheck/build dry-run passed.
+- Task 3: complete. /answer missing (404) and Next /search routing/missing-answer RED → Worker 25 tests and Blog targeted 166 tests GREEN.
+- Ruling: commit Tasks 2 and 3 together because their Worker pipeline and Gemini transport share the same new files; tests exercise both independently.
+- Task 4: complete. Missing remote component RED → 5 UI tests GREEN; existing answer rendering tests preserved. No new UI dependency.
+- Task 5: complete locally. Missing sync/evaluation modules RED → sync pacing/resume and evaluation tests GREEN; 48 fixtures (10 calibration, 30 retrieval holdout, 5 follow-up, 3 injection).
+- Task 6: local full tests Blog 447/447, Worker 28/28; Blog lint/typecheck, Worker typecheck and remote-mode Next production build passed. Remote steps and live Gemini remain pending.
