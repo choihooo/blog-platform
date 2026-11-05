@@ -1,5 +1,13 @@
 # 포트폴리오 RAG 연결 — 2026-09-06
 
+## Gemini 전환 구현 — 2026-11-06
+
+Gemini 임베딩·서버 생성 경로를 추가했다. 기본값은 기존 Workers AI·브라우저 Kanana이며 아직 운영
+전환·재임베딩을 수행하지 않았다. Gemini는 별도 768차원 인덱스와 Worker secret을 사용한다. 현재
+설정·검증·롤백은 [Gemini runbook](./runbooks/2026-11-06-gemini-rag.md), 앱 간 계약은
+[RAG API 계약](../specs/016-gemini-rag/contracts/rag-api.md)을 따른다. 아래의 과거 `sync` 실행
+예시는 현재 CLI에서 dry-run이다. 실제 쓰기는 명시적 실행 옵션이 필요하다.
+
 최신 검색·후속 질문 개선 및 525개 임베딩 점검 결과는
 [RAG 품질 개선 기록](./rag-quality-improvements.md)을 참고한다. 아래에는 초기 연결과 이전 실험
 기록도 포함돼 있다.

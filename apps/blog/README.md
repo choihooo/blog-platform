@@ -1,5 +1,13 @@
 # Blog App
 
+## Gemini 채팅 전환
+
+기본은 기존 local 모드다. Worker의 Gemini 임베딩 인덱스·secret·생성 모델을 먼저 준비한 다음 서버
+`RAG_ANSWER_PROVIDER=gemini`와 빌드 `NEXT_PUBLIC_RAG_CHAT_MODE=remote`를 함께 적용한다. remote
+모드는 서버 JSON 답변을 표시하고 Kanana·GGUF·WebGPU를 로드하지 않는다. Gemini 키는 Worker에만 둔다.
+공개 콘텐츠 소스와 출처 URL 계약은 유지한다. 전환·무료 quota·재실행·롤백은
+[runbook](../../docs/runbooks/2026-11-06-gemini-rag.md)을 따른다.
+
 공개 읽기 전용 블로그 앱이다. 기본 콘텐츠 소스는 D1/R2이며, `BLOG_CONTENT_PROXY_URL`이 있으면 CMS의
 `/api/public-content`를 읽는 remote 소스를 사용한다. 공개된 글만 노출한다.
 
