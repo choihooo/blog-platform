@@ -156,7 +156,7 @@ export function RoundedBlog({
                           </span>
                           <ArrowUpRight size={20} aria-hidden="true" />
                         </div>
-                        <h3>{post.title}</h3>
+                        <h3 title={post.title}>{post.title}</h3>
                         {post.excerpt && <p className="rounded-blog-excerpt">{post.excerpt}</p>}
                         <div className="rounded-blog-card-meta">
                           <time dateTime={post.publishedAt}>

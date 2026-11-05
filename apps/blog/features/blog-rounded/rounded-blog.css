@@ -346,6 +346,13 @@
   min-width: 0;
   padding: 22px 26px;
 }
+.rounded-blog-grid[data-view="list"] .rounded-blog-card h3 {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: unset;
+}
 .rounded-blog-more {
   display: flex;
   align-items: center;
