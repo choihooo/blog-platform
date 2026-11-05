@@ -6,6 +6,8 @@
   시간이 달랐다. editor 패키지의 `calculateReadingTime(text)`로 계산을 통일했다. 목록은 목차·코드
   블록 분석을 여전히 생략하며 기존 상세 계산과 빈 문서 preview 동작을 유지한다.
 - 실제 공개 Nest 글 데이터에서 목록·상세 모두 `8 min read`로 일치함을 확인했다. DB 수정은 없다.
+- D1/R2 공개 읽기 캐시의 namespace를 갱신해 배포 전 계산된 읽기 시간 문자열을 재사용하지 않는다.
+  기존 cache tag와 300초 재검증 간격은 유지하며 콘텐츠 저장이나 발행 작업은 실행하지 않는다.
 - 기본 OG 카드는 현재 사이트의 아이보리 배경에 남색 `Hozorica`와 흰색 옷 캐릭터만 남긴 구성이다.
   1200×630 WebP, `/brand/hozorica-card-v2.webp`로 새 URL을 사용한다. 글별 표지 썸네일과 `/og/:slug`
   fallback은 유지한다.
