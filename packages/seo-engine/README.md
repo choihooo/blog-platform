@@ -8,6 +8,7 @@
 - page metadata, JSON-LD, RSS, Sitemap, robots, OG image payload 생성
 - 글 표지가 있으면 Open Graph·Twitter·SEO report에 같은 절대 이미지 URL을 사용하고, 표지가 없으면
   `/og/:slug` 생성 이미지로 fallback
+- slug 없는 사이트 공유는 현재 캐릭터의 `/brand/hozorica-card-v2.webp` 기본 카드를 사용
 - 0-100 rule-based SEO score와 blocking/warning/pass report 생성
 
 ## 검증

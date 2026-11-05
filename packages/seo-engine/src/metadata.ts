@@ -19,7 +19,7 @@ export function generatePageMetadata(subject: SeoSubject): PageMetadata {
     ? new URL(subject.coverImage, `${subject.site.siteUrl}/`).toString()
     : subject.slug
       ? ogImageUrl(subject.site, subject.slug)
-      : `${subject.site.siteUrl.replace(/\/+$/g, "")}/brand/hozorica-card.webp`;
+      : `${subject.site.siteUrl.replace(/\/+$/g, "")}/brand/hozorica-card-v2.webp`;
   return {
     title,
     description,

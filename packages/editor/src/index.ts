@@ -6,6 +6,7 @@ export {
 } from "./document.js";
 export {
   analyzeEditorNodes,
+  calculateReadingTime,
   editorDocumentToPostContent,
   legacyMarkdownToPostContent,
   loadPostContent,

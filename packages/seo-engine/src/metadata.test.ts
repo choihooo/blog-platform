@@ -3,6 +3,10 @@ import { generatePageMetadata } from "./metadata.js";
 import { missingCoverSubject, seoSubject } from "./test-fixtures.js";
 
 describe("generatePageMetadata", () => {
+  it("uses the current brand card for website subjects", () => {
+    const metadata = generatePageMetadata(seoSubject({ slug: undefined, coverImage: undefined }));
+    expect(metadata.openGraph.images).toEqual(["https://example.com/brand/hozorica-card-v2.webp"]);
+  });
   it("creates canonical and social metadata with fallbacks", () => {
     const metadata = generatePageMetadata(missingCoverSubject({ excerpt: undefined }));
     expect(metadata.canonical).toBe("https://example.com/posts/hello-world");
