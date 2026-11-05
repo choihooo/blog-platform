@@ -12,6 +12,8 @@ export function HomeAwareShell({ children, header }: { children: ReactNode; head
     pathname === "/" ||
     pathname === "/projects" ||
     pathname === "/experiments/pixel-room" ||
+    pathname === "/experiments/blog-rounded" ||
+    pathname.startsWith("/experiments/blog-rounded/") ||
     pathname === "/experiments/interactive-portfolio";
 
   return (
