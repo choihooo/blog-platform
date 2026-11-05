@@ -119,3 +119,8 @@ CMS도 호환 배포로 복원했다. 통합 소스는
 `codex/content-preservation-recovery` 브랜치로 분리해 전달한다. 다음 배포는 이 변경을 포함해야 하며,
 구형 editor/parser만 다시 배포하면 table을 포함한 본문을 처리할 수 없다. 사용자 작업 브랜치의 다른
 UI 변경은 보존했다.
+
+전달 PR: https://github.com/choihooo/blog-platform/pull/8. 최초 전달 커밋은 `ff61f27`이다. Git 연동
+미리보기 빌드에서 콘텐츠 API 주소 누락을 확인하여 Blog 프로젝트의 Production 및 이번 Preview
+브랜치에 `BLOG_CONTENT_PROXY_URL=https://cms.hozorica.com`을 설정했다. 다음 main 배포도 동일한 공개
+CMS 경로를 사용한다. 이 설정에는 비밀값이 없으며 운영 데이터는 변경하지 않는다.
