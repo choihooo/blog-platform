@@ -320,6 +320,25 @@
   font-size: 13px;
   line-height: 1.7;
 }
+.rounded-blog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--round-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.rounded-blog-tags li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.rounded-blog-article-heading .rounded-blog-tags {
+  margin-top: 18px;
+  font-size: 14px;
+}
 .rounded-blog-card-meta {
   display: flex;
   flex-wrap: wrap;

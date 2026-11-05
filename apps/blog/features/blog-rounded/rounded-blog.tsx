@@ -15,6 +15,7 @@ import {
   type PreviewPost,
 } from "./preview-model";
 import "./rounded-blog.css";
+import { PostTags } from "./post-tags";
 
 export function RoundedBlog({
   posts,
@@ -158,6 +159,7 @@ export function RoundedBlog({
                         </div>
                         <h3 title={post.title}>{post.title}</h3>
                         {post.excerpt && <p className="rounded-blog-excerpt">{post.excerpt}</p>}
+                        <PostTags tags={post.tagEntries} />
                         <div className="rounded-blog-card-meta">
                           <time dateTime={post.publishedAt}>
                             {formatPostDate(post.publishedAt)}

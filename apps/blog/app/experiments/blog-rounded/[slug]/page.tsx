@@ -16,6 +16,7 @@ import { blogPreviewPath, canOptimizePreviewImage } from "@/features/blog-rounde
 import "@/features/blog-rounded/rounded-blog.css";
 import { preparePreviewArticle } from "@/features/blog-rounded/preview-article";
 import { ArticleNavigationPanel } from "@/features/blog-rounded/article-navigation-panel";
+import { PostTags } from "@/features/blog-rounded/post-tags";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -62,6 +63,7 @@ export default async function RoundedBlogPostPage({ params }: Props) {
               <span aria-hidden="true">·</span>
               <span>{post.readingTimeLabel}</span>
             </div>
+            <PostTags tags={post.tagEntries} />
           </header>
           {post.coverImage && (
             <Image
