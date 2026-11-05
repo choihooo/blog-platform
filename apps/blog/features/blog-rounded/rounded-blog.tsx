@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowDown, ArrowUpRight, Check, Grid2X2, List, Search, X } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Check, Search, X } from "lucide-react";
 import { useState } from "react";
 import { MainHeader } from "../navigation/main-header";
 import { formatPostDate } from "@/shared/date/date-format";
@@ -26,7 +26,6 @@ export function RoundedBlog({
 }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
-  const [view, setView] = useState<"tile" | "list">("tile");
   const [visible, setVisible] = useState(8);
   const filtered = filterPreviewPosts(posts, query, category);
   const selectedLabel = categories.find((item) => item.slug === category)?.label ?? "전체 글";
@@ -112,25 +111,9 @@ export function RoundedBlog({
                 {selectedLabel}
                 <span aria-live="polite">{filtered.length}</span>
               </h2>
-              <div className="rounded-blog-view" role="group" aria-label="보기 방식">
-                <button
-                  aria-label="타일 보기"
-                  aria-pressed={view === "tile"}
-                  onClick={() => setView("tile")}
-                >
-                  <Grid2X2 size={17} />
-                </button>
-                <button
-                  aria-label="목록 보기"
-                  aria-pressed={view === "list"}
-                  onClick={() => setView("list")}
-                >
-                  <List size={19} />
-                </button>
-              </div>
             </div>
             {filtered.length ? (
-              <div className="rounded-blog-grid" data-view={view}>
+              <div className="rounded-blog-grid">
                 {filtered.slice(0, visible).map((post, index) => (
                   <article className="rounded-blog-card" key={post.slug}>
                     <Link

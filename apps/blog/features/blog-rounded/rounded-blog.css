@@ -192,29 +192,6 @@
   font-size: 12px;
   font-weight: 700;
 }
-.rounded-blog-view {
-  display: flex;
-  gap: 3px;
-  padding: 4px;
-  border: 1px solid var(--round-line);
-  border-radius: 12px;
-  background: #fff;
-}
-.rounded-blog-view button {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 32px;
-  padding: 0;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--round-muted);
-}
-.rounded-blog-view button[aria-pressed="true"] {
-  background: var(--round-soft);
-  color: var(--round-blue);
-}
 .rounded-blog-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -356,29 +333,6 @@
   color: var(--round-muted);
   font-size: 11px;
   line-height: 1.6;
-}
-.rounded-blog-grid[data-view="list"] {
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-.rounded-blog-grid[data-view="list"] .rounded-blog-card-link {
-  flex-direction: row;
-}
-.rounded-blog-grid[data-view="list"] .rounded-blog-cover {
-  width: 33%;
-  aspect-ratio: auto;
-  min-height: 210px;
-}
-.rounded-blog-grid[data-view="list"] .rounded-blog-card-copy {
-  min-width: 0;
-  padding: 22px 26px;
-}
-.rounded-blog-grid[data-view="list"] .rounded-blog-card h3 {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: unset;
 }
 .rounded-blog-more {
   display: flex;
@@ -823,30 +777,6 @@ a.rounded-article-list-row:hover {
   }
   .rounded-blog-toolbar h2 {
     font-size: 17px;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-cover {
-    width: 104px;
-    min-height: 155px;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-card-copy {
-    padding: 15px;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-card h3 {
-    font-size: 16px;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-excerpt {
-    display: none;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-card-meta {
-    gap: 5px;
-    padding-top: 14px;
-    font-size: 10px;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-card-top {
-    margin-bottom: 8px;
-  }
-  .rounded-blog-grid[data-view="list"] .rounded-blog-card-top > svg {
-    display: none;
   }
   .rounded-blog-document {
     padding: 24px 20px;
