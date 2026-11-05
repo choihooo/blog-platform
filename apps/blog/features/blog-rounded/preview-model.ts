@@ -1,6 +1,8 @@
 import type { PublicPost } from "../blog/server/content-source-types";
 
 export const blogPreviewPath = "/experiments/blog-rounded";
+export const previewImageSizes =
+  "(max-width: 759px) calc(100vw - 48px), (max-width: 1100px) calc((100vw - 156px) / 2), (max-width: 1440px) calc((100vw - 386px) / 2), 528px";
 
 export function canOptimizePreviewImage(src: string) {
   if (src.startsWith("/")) return true;

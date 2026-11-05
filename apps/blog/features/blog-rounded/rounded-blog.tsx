@@ -1,21 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowDown, ArrowUpRight, Check, Search, X } from "lucide-react";
+import { ArrowUpRight, Search, X } from "lucide-react";
 import { useState } from "react";
 import { MainHeader } from "../navigation/main-header";
-import { formatPostDate } from "@/shared/date/date-format";
 import {
-  blogPreviewPath,
-  canOptimizePreviewImage,
   filterPreviewPosts,
   matchesCategory,
   type PreviewCategory,
   type PreviewPost,
 } from "./preview-model";
 import "./rounded-blog.css";
-import { PostTags } from "./post-tags";
+import { VirtualPostGrid } from "./virtual-post-grid";
 
 export function RoundedBlog({
   posts,
@@ -26,7 +22,6 @@ export function RoundedBlog({
 }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
-  const [visible, setVisible] = useState(8);
   const filtered = filterPreviewPosts(posts, query, category);
   const selectedLabel = categories.find((item) => item.slug === category)?.label ?? "전체 글";
   const available = categories.filter((item) =>
@@ -36,7 +31,6 @@ export function RoundedBlog({
 
   function selectCategory(slug: string) {
     setCategory(slug);
-    setVisible(8);
   }
 
   return (
@@ -61,7 +55,6 @@ export function RoundedBlog({
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
-                setVisible(8);
               }}
             />
             {query && (
@@ -70,7 +63,6 @@ export function RoundedBlog({
                 aria-label="검색어 지우기"
                 onClick={() => {
                   setQuery("");
-                  setVisible(8);
                 }}
               >
                 <X size={18} />
@@ -113,50 +105,7 @@ export function RoundedBlog({
               </h2>
             </div>
             {filtered.length ? (
-              <div className="rounded-blog-grid">
-                {filtered.slice(0, visible).map((post, index) => (
-                  <article className="rounded-blog-card" key={post.slug}>
-                    <Link
-                      href={`${blogPreviewPath}/${post.slug}`}
-                      className="rounded-blog-card-link"
-                      prefetch={false}
-                    >
-                      <div className="rounded-blog-cover">
-                        <Image
-                          src={post.coverImage || "/brand/no-thumbnail.webp"}
-                          alt=""
-                          fill
-                          priority={index < 2}
-                          unoptimized={
-                            !canOptimizePreviewImage(post.coverImage || "/brand/no-thumbnail.webp")
-                          }
-                          sizes="(max-width: 759px) calc(100vw - 48px), (max-width: 1100px) calc((100vw - 156px) / 2), (max-width: 1440px) calc((100vw - 386px) / 2), 528px"
-                        />
-                      </div>
-                      <div className="rounded-blog-card-copy">
-                        <div className="rounded-blog-card-top">
-                          <div className="rounded-blog-taxonomy">
-                            <span className="rounded-blog-badge">
-                              {labels[post.category ?? ""] ?? "기록"}
-                            </span>
-                            <PostTags tags={post.tagEntries} />
-                          </div>
-                          <ArrowUpRight size={20} aria-hidden="true" />
-                        </div>
-                        <h3 title={post.title}>{post.title}</h3>
-                        {post.excerpt && <p className="rounded-blog-excerpt">{post.excerpt}</p>}
-                        <div className="rounded-blog-card-meta">
-                          <time dateTime={post.publishedAt}>
-                            {formatPostDate(post.publishedAt)}
-                          </time>
-                          <span aria-hidden="true">·</span>
-                          <span>{post.readingTimeLabel}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  </article>
-                ))}
-              </div>
+              <VirtualPostGrid key={`${category}:${query}`} posts={filtered} labels={labels} />
             ) : (
               <div className="rounded-blog-empty">
                 <Search size={28} aria-hidden="true" />
@@ -171,21 +120,6 @@ export function RoundedBlog({
                   전체 글 보기
                 </button>
               </div>
-            )}
-            {visible < filtered.length ? (
-              <button
-                className="rounded-blog-more"
-                onClick={() => setVisible((count) => count + 8)}
-              >
-                글 더 보기
-                <ArrowDown size={17} aria-hidden="true" />
-              </button>
-            ) : (
-              filtered.length > 0 && (
-                <p className="rounded-blog-end">
-                  <Check size={14} aria-hidden="true" /> 모든 기록을 읽었어요.
-                </p>
-              )
             )}
           </section>
         </div>
