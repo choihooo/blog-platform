@@ -152,14 +152,16 @@ export function RoundedBlog({
                       </div>
                       <div className="rounded-blog-card-copy">
                         <div className="rounded-blog-card-top">
-                          <span className="rounded-blog-badge">
-                            {labels[post.category ?? ""] ?? "기록"}
-                          </span>
+                          <div className="rounded-blog-taxonomy">
+                            <span className="rounded-blog-badge">
+                              {labels[post.category ?? ""] ?? "기록"}
+                            </span>
+                            <PostTags tags={post.tagEntries} />
+                          </div>
                           <ArrowUpRight size={20} aria-hidden="true" />
                         </div>
                         <h3 title={post.title}>{post.title}</h3>
                         {post.excerpt && <p className="rounded-blog-excerpt">{post.excerpt}</p>}
-                        <PostTags tags={post.tagEntries} />
                         <div className="rounded-blog-card-meta">
                           <time dateTime={post.publishedAt}>
                             {formatPostDate(post.publishedAt)}

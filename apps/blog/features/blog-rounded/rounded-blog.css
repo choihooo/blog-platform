@@ -276,6 +276,7 @@
   margin-bottom: 13px;
 }
 .rounded-blog-card-top > svg {
+  flex-shrink: 0;
   color: #8692a4;
   transition:
     color 180ms,
@@ -320,6 +321,16 @@
   font-size: 13px;
   line-height: 1.7;
 }
+.rounded-blog-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+}
+.rounded-blog-taxonomy > .rounded-blog-badge {
+  flex-shrink: 0;
+}
 .rounded-blog-tags {
   display: flex;
   flex-wrap: wrap;
@@ -334,17 +345,7 @@
 }
 .rounded-blog-tags li {
   min-width: 0;
-  padding: 2px 7px;
-  border-radius: 5px;
-  background: #f3f4f6;
   overflow-wrap: anywhere;
-}
-.rounded-blog-card-copy .rounded-blog-tags {
-  margin-top: 16px;
-}
-.rounded-blog-article-heading .rounded-blog-tags {
-  margin-top: 18px;
-  font-size: 12px;
 }
 .rounded-blog-card-meta {
   display: flex;

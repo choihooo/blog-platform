@@ -53,7 +53,10 @@ export default async function RoundedBlogPostPage({ params }: Props) {
         </Link>
         <article className="rounded-blog-document">
           <header className="rounded-blog-article-heading">
-            <span className="rounded-blog-badge">{category?.label || "기록"}</span>
+            <div className="rounded-blog-taxonomy">
+              <span className="rounded-blog-badge">{category?.label || "기록"}</span>
+              <PostTags tags={post.tagEntries} />
+            </div>
             <h1>{post.title}</h1>
             <div className="rounded-blog-article-meta">
               <img src="/icon.png" alt="" width={30} height={30} />
@@ -63,7 +66,6 @@ export default async function RoundedBlogPostPage({ params }: Props) {
               <span aria-hidden="true">·</span>
               <span>{post.readingTimeLabel}</span>
             </div>
-            <PostTags tags={post.tagEntries} />
           </header>
           {post.coverImage && (
             <Image
