@@ -1,6 +1,7 @@
 import type { EditorDocument, EditorFrontmatter, EditorNode, PreviewResult } from "./document.js";
 import { createEditorIssue } from "./document.js";
 import { validateEditorDocument } from "./validation.js";
+import { markdownToEditorNodes } from "./rich-content.js";
 
 export type StructuredPostContent = {
   version: 1;
@@ -32,11 +33,29 @@ function isEditorNode(value: unknown): value is EditorNode {
   if (!isObject(value) || typeof value.type !== "string") return false;
   if (value.type === "horizontalRule") return true;
   if (value.type === "image") return typeof value.src === "string";
+  if (value.type === "table")
+    return (
+      Array.isArray(value.rows) &&
+      value.rows.every(
+        (row) =>
+          Array.isArray(row) &&
+          row.every(
+            (cell) => isObject(cell) && Array.isArray(cell.body) && cell.body.every(isEditorNode),
+          ),
+      )
+    );
   return typeof value.text === "string";
 }
 
 function normalizeNode(node: EditorNode): EditorNode {
   if (node.type === "horizontalRule") return { type: "horizontalRule" };
+  if (node.type === "table")
+    return {
+      type: "table",
+      rows: node.rows.map((row) =>
+        row.map((cell) => ({ ...cell, body: cell.body.map(normalizeNode) })),
+      ),
+    };
   if (node.type === "image") {
     return {
       type: "image",
@@ -44,6 +63,8 @@ function normalizeNode(node: EditorNode): EditorNode {
       alt: node.alt,
       title: node.title,
       caption: node.caption,
+      captionContent: node.captionContent,
+      href: node.href,
     };
   }
   return {
@@ -53,6 +74,10 @@ function normalizeNode(node: EditorNode): EditorNode {
     language: node.language,
     marks: node.marks,
     href: node.href,
+    content: node.content,
+    items: node.items?.map((item) => item.map(normalizeNode)),
+    start: node.start,
+    children: node.children?.map(normalizeNode),
   };
 }
 
@@ -107,73 +132,8 @@ export function parsePostContent(source: string): StructuredPostContent | undefi
   return undefined;
 }
 
-function parseInline(
-  line: string,
-): Pick<Extract<EditorNode, { text: string }>, "text" | "marks" | "href"> {
-  const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(line);
-  if (link?.[1] && link[2]) return { text: link[1], href: link[2] };
-  if (/^\*\*.*\*\*$/.test(line)) return { text: line.slice(2, -2), marks: ["bold"] };
-  if (/^_.*_$/.test(line)) return { text: line.slice(1, -1), marks: ["italic"] };
-  if (/^`.*`$/.test(line)) return { text: line.slice(1, -1), marks: ["inlineCode"] };
-  return { text: line };
-}
-
-function parseImage(line: string): Extract<EditorNode, { type: "image" }> | undefined {
-  const match = /^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)$/.exec(line);
-  if (!match?.[2]) return;
-  return { type: "image", alt: match[1] ?? "", src: match[2], title: match[3] };
-}
-
 export function legacyMarkdownToPostContent(source: string): StructuredPostContent {
-  const nodes: EditorNode[] = [];
-  const body = source.replace(/^---\n[\s\S]*?\n---\n?/, "");
-  const blocks = body.split(/\n{2,}/);
-
-  for (let index = 0; index < blocks.length; index++) {
-    const block = (blocks[index] ?? "").trim();
-    if (!block) continue;
-
-    const image = parseImage(block);
-    if (image) {
-      const next = blocks[index + 1]?.trim();
-      if (next && !parseImage(next) && !/^```/.test(next) && !/^(#{1,6})\s+/.test(next)) {
-        image.caption = next;
-        index++;
-      }
-      nodes.push(image);
-      continue;
-    }
-
-    const code = /^```([^\n]*)\n([\s\S]*?)\n```$/.exec(block);
-    if (code) {
-      nodes.push({ type: "codeBlock", language: code[1] || undefined, text: code[2] ?? "" });
-      continue;
-    }
-    if (/^---+$/.test(block)) {
-      nodes.push({ type: "horizontalRule" });
-      continue;
-    }
-    const heading = /^(#{1,6})\s+(.+)$/.exec(block);
-    if (heading?.[1] && heading[2]) {
-      nodes.push({ type: "heading", depth: heading[1].length, ...parseInline(heading[2]) });
-      continue;
-    }
-    if (block.startsWith("> ")) {
-      nodes.push({ type: "blockquote", ...parseInline(block.slice(2)) });
-      continue;
-    }
-    if (block.startsWith("- ")) {
-      nodes.push({ type: "bulletList", ...parseInline(block.slice(2)) });
-      continue;
-    }
-    if (/^\d+\.\s+/.test(block)) {
-      nodes.push({ type: "orderedList", ...parseInline(block.replace(/^\d+\.\s+/, "")) });
-      continue;
-    }
-    nodes.push({ type: "paragraph", ...parseInline(block) });
-  }
-
-  return { version: 1, nodes };
+  return { version: 1, nodes: markdownToEditorNodes(source) };
 }
 
 export function loadPostContent(source: string): StructuredPostContent {
@@ -218,6 +178,12 @@ export function textFromEditorNodes(nodes: EditorNode[]): string {
   return nodes
     .map((node) => {
       if (node.type === "horizontalRule") return "";
+      if (node.type === "table")
+        return node.rows
+          .map((row) => row.map((cell) => textFromEditorNodes(cell.body)).join(" | "))
+          .join("\n");
+      if ("items" in node && node.items) return node.items.map(textFromEditorNodes).join("\n");
+      if ("children" in node && node.children) return textFromEditorNodes(node.children);
       if (node.type === "image")
         return [node.alt, node.title, node.caption].filter(Boolean).join(" ");
       return node.text;
@@ -246,7 +212,18 @@ export function analyzeEditorNodes(nodes: EditorNode[]): PreviewResult {
   const codeBlocks: PreviewResult["codeBlocks"] = [];
   const seen = new Map<string, number>();
 
-  for (const node of nodes) {
+  const flatten = (body: EditorNode[]): EditorNode[] =>
+    body.flatMap((node) => [
+      node,
+      ...(node.type === "table"
+        ? node.rows.flatMap((row) => row.flatMap((cell) => flatten(cell.body)))
+        : "items" in node && node.items
+          ? node.items.flatMap(flatten)
+          : "children" in node && node.children
+            ? flatten(node.children)
+            : []),
+    ]);
+  for (const node of flatten(nodes)) {
     if (node.type === "heading") {
       const base = slugify(node.text);
       const count = seen.get(base) ?? 0;

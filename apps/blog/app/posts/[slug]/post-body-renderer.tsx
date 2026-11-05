@@ -1,7 +1,13 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
-import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
-
+import { Fragment, type ReactNode } from "react";
+import {
+  editorNodeInline,
+  groupEditorLists,
+  isSafeContentUrl,
+  parseInlineMarkdown,
+  type EditorInline,
+  type EditorNode,
+} from "@blog-platform/editor";
 import { CodeCopyButton } from "@/features/blog/components/code-copy-button";
 
 function slugify(value: string) {
@@ -13,68 +19,31 @@ function slugify(value: string) {
       .replace(/^-+|-+$/g, "") || "section"
   );
 }
-
-function renderInlineMarkdown(text: string) {
-  const parts: ReactNode[] = [];
-  const inlineMarkdown = /(\*\*([^*]+)\*\*|_([^_]+)_|`([^`]+)`|\[([^\]]+)\]\(([^)]+)\))/g;
-  let cursor = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = inlineMarkdown.exec(text))) {
-    const [raw, , bold, italic, code, label, href] = match;
-    if (match.index > cursor) parts.push(text.slice(cursor, match.index));
-    const key = `${match.index}-${raw}`;
-
-    if (bold) parts.push(<strong key={key}>{bold}</strong>);
-    else if (italic) parts.push(<em key={key}>{italic}</em>);
-    else if (code) parts.push(<code key={key}>{code}</code>);
-    else if (label && href)
-      parts.push(
-        href.startsWith("/") ? (
-          <Link href={href} key={key}>
-            {label}
-          </Link>
-        ) : (
-          <a href={href} key={key} rel="noopener noreferrer" target="_blank">
-            {label}
-          </a>
-        ),
-      );
-
-    cursor = match.index + raw.length;
-  }
-
-  if (cursor < text.length) parts.push(text.slice(cursor));
-  return parts.length > 0 ? parts : text;
+function contentLink(href: string, content: ReactNode) {
+  if (!isSafeContentUrl(href)) return content;
+  return href.startsWith("/") || href.startsWith("#") ? (
+    <Link href={href}>{content}</Link>
+  ) : (
+    <a href={href} rel="noopener noreferrer" target="_blank">
+      {content}
+    </a>
+  );
 }
-
-function inlineContent(node: EditorTextNode) {
-  let content: ReactNode =
-    node.marks?.length || node.href ? node.text : renderInlineMarkdown(node.text);
-  for (const mark of node.marks ?? []) {
-    if (mark === "bold") content = <strong>{content}</strong>;
-    if (mark === "italic") content = <em>{content}</em>;
-    if (mark === "inlineCode") content = <code>{content}</code>;
-  }
-  if (node.href) {
-    content = node.href.startsWith("/") ? (
-      <Link href={node.href}>{content}</Link>
+function inlineContent(runs: EditorInline[]) {
+  return runs.map((run, index) => {
+    let content: ReactNode = run.text.includes("\n") ? (
+      <span style={{ whiteSpace: "pre-wrap" }}>{run.text}</span>
     ) : (
-      <a href={node.href} rel="noopener noreferrer" target="_blank">
-        {content}
-      </a>
+      run.text
     );
-  }
-  return content;
-}
-
-function headingTag(depth?: number) {
-  if (depth === 1) return "h1" as const;
-  if (depth === 3) return "h3" as const;
-  if (depth === 4) return "h4" as const;
-  if (depth === 5) return "h5" as const;
-  if (depth === 6) return "h6" as const;
-  return "h2" as const;
+    for (const mark of run.marks ?? []) {
+      if (mark === "bold") content = <strong>{content}</strong>;
+      if (mark === "italic") content = <em>{content}</em>;
+      if (mark === "inlineCode") content = <code>{content}</code>;
+    }
+    if (run.href) content = contentLink(run.href, content);
+    return <Fragment key={index}>{content}</Fragment>;
+  });
 }
 
 export function PostBodyRenderer({
@@ -85,69 +54,106 @@ export function PostBodyRenderer({
   nodes: EditorNode[];
 }) {
   const seen = new Map<string, number>();
-  return (
-    <>
-      {nodes.map((node, index) => {
-        if (node.type === "horizontalRule") return <hr key={index} />;
-        if (node.type === "image") {
-          return (
-            <figure key={index}>
-              <img
-                alt={node.alt ?? ""}
-                decoding="async"
-                loading="lazy"
-                src={node.src}
-                title={node.title}
-              />
-              {node.caption ? <figcaption>{node.caption}</figcaption> : null}
-            </figure>
-          );
-        }
-        if (node.type === "heading") {
-          const base = slugify(node.text);
-          const count = seen.get(base) ?? 0;
-          seen.set(base, count + 1);
-          const id = count === 0 ? base : `${base}-${count + 1}`;
-          const content = inlineContent(node);
-          const Heading = headingTag(node.depth);
-          return (
-            <Heading id={id} key={index}>
-              {content}
-            </Heading>
-          );
-        }
-        if (node.type === "blockquote")
-          return <blockquote key={index}>{inlineContent(node)}</blockquote>;
-        if (node.type === "codeBlock") {
-          return (
-            <div className="group relative" key={index}>
-              <div className="absolute right-3 top-3 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
-                <CodeCopyButton
-                  context={analyticsContext}
-                  target={`code-${index}`}
-                  text={node.text}
-                />
-              </div>
-              <pre>
-                <code>{node.text}</code>
-              </pre>
+  function renderBlocks(body: EditorNode[], path = "body"): ReactNode {
+    return groupEditorLists(body).map((node, index) => {
+      const key = path + "-" + index;
+      if (node.type === "horizontalRule") return <hr key={key} />;
+      if (node.type === "image") {
+        if (!isSafeContentUrl(node.src, true)) return null;
+        let image: ReactNode = (
+          <img
+            alt={node.alt ?? ""}
+            decoding="async"
+            loading="lazy"
+            src={node.src}
+            title={node.title}
+          />
+        );
+        if (node.href) image = contentLink(node.href, image);
+        return (
+          <figure key={key}>
+            {image}
+            {node.caption ? (
+              <figcaption>
+                {inlineContent(node.captionContent ?? parseInlineMarkdown(node.caption))}
+              </figcaption>
+            ) : null}
+          </figure>
+        );
+      }
+      if (node.type === "table")
+        return (
+          <div className="post-table-scroll" key={key} role="region" aria-label="표" tabIndex={0}>
+            <table>
+              <tbody>
+                {node.rows.map((row, r) => (
+                  <tr key={r}>
+                    {row.map((cell, c) => {
+                      const Cell = cell.header ? "th" : "td";
+                      return (
+                        <Cell
+                          key={c}
+                          colSpan={cell.colspan}
+                          rowSpan={cell.rowspan}
+                          scope={cell.header ? "col" : undefined}
+                        >
+                          {renderBlocks(cell.body, key + "-" + r + "-" + c)}
+                        </Cell>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      if (node.type === "heading") {
+        const base = slugify(node.text),
+          count = seen.get(base) ?? 0;
+        seen.set(base, count + 1);
+        const depth = Math.max(1, Math.min(6, node.depth ?? 2));
+        const Heading = ("h" + depth) as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+        return (
+          <Heading id={count === 0 ? base : base + "-" + (count + 1)} key={key}>
+            {inlineContent(editorNodeInline(node))}
+          </Heading>
+        );
+      }
+      if (node.type === "codeBlock")
+        return (
+          <div className="group relative" key={key}>
+            <div className="absolute right-3 top-3 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+              <CodeCopyButton context={analyticsContext} target={key} text={node.text} />
             </div>
-          );
-        }
-        if (node.type === "bulletList")
-          return (
-            <ul key={index}>
-              <li>{inlineContent(node)}</li>
-            </ul>
-          );
-        if (node.type === "orderedList")
-          return (
-            <ol key={index}>
-              <li>{inlineContent(node)}</li>
-            </ol>
-          );
-        return <p key={index}>{inlineContent(node)}</p>;
-      })}
-    </>
-  );
+            <pre>
+              <code className={node.language ? "language-" + node.language : undefined}>
+                {node.text}
+              </code>
+            </pre>
+          </div>
+        );
+      if (node.type === "blockquote")
+        return (
+          <blockquote key={key}>
+            {node.children
+              ? renderBlocks(node.children, key)
+              : inlineContent(editorNodeInline(node))}
+          </blockquote>
+        );
+      if (node.type === "bulletList" || node.type === "orderedList") {
+        const items = (node.items ?? []).map((item, i) => (
+          <li key={i}>{renderBlocks(item, key + "-" + i)}</li>
+        ));
+        return node.type === "orderedList" ? (
+          <ol key={key} start={node.start}>
+            {items}
+          </ol>
+        ) : (
+          <ul key={key}>{items}</ul>
+        );
+      }
+      return <p key={key}>{inlineContent(editorNodeInline(node))}</p>;
+    });
+  }
+  return <>{renderBlocks(nodes)}</>;
 }

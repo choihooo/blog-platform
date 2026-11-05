@@ -10,6 +10,7 @@ import {
   ListOrdered,
   Quote,
   Save,
+  Table,
   Send,
   Undo2,
 } from "lucide-react";
@@ -20,6 +21,12 @@ import type { UploadEditorMediaResult } from "../../lib/editor";
 import { MediaUploadControl } from "./media-upload-control";
 
 const tools = [
+  {
+    label: "Insert table",
+    icon: Table,
+    run: (editor: Editor) =>
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+  },
   {
     label: "Heading",
     icon: Heading2,

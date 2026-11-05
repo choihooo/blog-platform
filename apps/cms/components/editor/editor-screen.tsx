@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
-import StarterKit from "@tiptap/starter-kit";
-import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
-import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
+import { contentExtensions } from "./content-extensions";
+import { EditorContent, useEditor } from "@tiptap/react";
+import {
+  editorNodesToTiptap as nodesToTiptap,
+  tiptapToEditorNodes as tiptapToNodes,
+  legacyMarkdownToPostContent,
+  type EditorDocument,
+  type EditorNode,
+} from "@blog-platform/editor";
 import {
   Button,
   Modal,
@@ -48,6 +52,7 @@ type SelectedImageState = {
   src: string;
   alt: string;
   title: string;
+  caption: string;
 };
 
 type EditorToastState = {
@@ -56,137 +61,6 @@ type EditorToastState = {
   description?: string;
   tone: "success" | "error" | "info";
 };
-
-function textContent(node: JSONContent): string {
-  return (node.content ?? []).map((child) => child.text ?? textContent(child)).join("");
-}
-
-function marksFromTiptap(node: JSONContent): EditorMark[] | undefined {
-  const marks: EditorMark[] = [];
-  for (const mark of node.marks ?? []) {
-    if (mark.type === "bold") marks.push("bold");
-    if (mark.type === "italic") marks.push("italic");
-    if (mark.type === "code") marks.push("inlineCode");
-  }
-  return marks.length > 0 ? marks : undefined;
-}
-
-function firstLink(node: JSONContent): string | undefined {
-  const link = node.marks?.find((mark) => mark.type === "link");
-  return typeof link?.attrs?.href === "string" ? link.attrs.href : undefined;
-}
-
-function paragraphNode(type: Extract<EditorNode, { text: string }>["type"], node: JSONContent) {
-  const firstText = node.content?.find((child) => child.type === "text");
-  return {
-    type,
-    text: textContent(node),
-    marks: firstText ? marksFromTiptap(firstText) : undefined,
-    href: firstText ? firstLink(firstText) : undefined,
-  };
-}
-
-function tiptapToNodes(content: JSONContent): EditorNode[] {
-  const nodes: EditorNode[] = [];
-  for (const node of content.content ?? []) {
-    if (node.type === "heading") {
-      nodes.push({ ...paragraphNode("heading", node), depth: Number(node.attrs?.level ?? 2) });
-    } else if (node.type === "paragraph") {
-      const text = textContent(node);
-      if (text) nodes.push(paragraphNode("paragraph", node));
-    } else if (node.type === "blockquote") {
-      nodes.push({ type: "blockquote", text: textContent(node) });
-    } else if (node.type === "horizontalRule") {
-      nodes.push({ type: "horizontalRule" });
-    } else if (node.type === "codeBlock") {
-      nodes.push({
-        type: "codeBlock",
-        text: textContent(node),
-        language: typeof node.attrs?.language === "string" ? node.attrs.language : undefined,
-      });
-    } else if (node.type === "image" && typeof node.attrs?.src === "string") {
-      nodes.push({
-        type: "image",
-        src: node.attrs.src,
-        alt: typeof node.attrs.alt === "string" ? node.attrs.alt : undefined,
-        title: typeof node.attrs.title === "string" ? node.attrs.title : undefined,
-      });
-    } else if (node.type === "bulletList" || node.type === "orderedList") {
-      for (const item of node.content ?? []) {
-        nodes.push({
-          type: node.type,
-          text: textContent(item),
-        });
-      }
-    }
-  }
-  return nodes;
-}
-
-function textMarks(node: Extract<EditorNode, { text: string }>) {
-  const marks: JSONContent["marks"] = [];
-  for (const mark of node.marks ?? []) {
-    if (mark === "bold") marks.push({ type: "bold" });
-    if (mark === "italic") marks.push({ type: "italic" });
-    if (mark === "inlineCode") marks.push({ type: "code" });
-  }
-  if (node.href) marks.push({ type: "link", attrs: { href: node.href } });
-  return marks.length > 0 ? marks : undefined;
-}
-
-function textChild(node: Extract<EditorNode, { text: string }>): JSONContent {
-  return { type: "text", text: node.text, marks: textMarks(node) };
-}
-
-function nodesToTiptap(nodes: EditorNode[]): JSONContent {
-  return {
-    type: "doc",
-    content:
-      nodes.length > 0
-        ? nodes.map((node): JSONContent => {
-            if (node.type === "horizontalRule") return { type: "horizontalRule" };
-            if (node.type === "image") {
-              return {
-                type: "image",
-                attrs: { src: node.src, alt: node.alt ?? "", title: node.title ?? null },
-              };
-            }
-            if (node.type === "heading") {
-              return {
-                type: "heading",
-                attrs: { level: node.depth ?? 2 },
-                content: node.text ? [textChild(node)] : undefined,
-              };
-            }
-            if (node.type === "bulletList" || node.type === "orderedList") {
-              return {
-                type: node.type,
-                content: [
-                  {
-                    type: "listItem",
-                    content: [{ type: "paragraph", content: node.text ? [textChild(node)] : [] }],
-                  },
-                ],
-              };
-            }
-            if (node.type === "blockquote") {
-              return {
-                type: "blockquote",
-                content: [{ type: "paragraph", content: node.text ? [textChild(node)] : [] }],
-              };
-            }
-            if (node.type === "codeBlock") {
-              return {
-                type: "codeBlock",
-                attrs: { language: node.language ?? null },
-                content: node.text ? [{ type: "text", text: node.text }] : undefined,
-              };
-            }
-            return { type: "paragraph", content: node.text ? [textChild(node)] : [] };
-          })
-        : [{ type: "paragraph" }],
-  };
-}
 
 function slugCandidate(document: EditorDocument): string {
   const titleSlug = document.frontmatter.title
@@ -256,15 +130,13 @@ export function EditorScreen({
       src: selectedNode.node.attrs.src,
       alt: typeof selectedNode.node.attrs.alt === "string" ? selectedNode.node.attrs.alt : "",
       title: typeof selectedNode.node.attrs.title === "string" ? selectedNode.node.attrs.title : "",
+      caption:
+        typeof selectedNode.node.attrs.caption === "string" ? selectedNode.node.attrs.caption : "",
     });
   }
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({ link: false }),
-      Link.configure({ openOnClick: false }),
-      Image.configure({ allowBase64: false }),
-    ],
+    extensions: contentExtensions,
     content: nodesToTiptap(initialDocument.body),
     immediatelyRender: false,
     editorProps: {
@@ -275,6 +147,20 @@ export function EditorScreen({
         role: "textbox",
       },
       handlePaste: (_view, event) => {
+        const plain = event.clipboardData?.getData("text/plain") ?? "";
+        if (
+          !editor?.isActive("codeBlock") &&
+          !event.clipboardData?.getData("text/html") &&
+          /^(?:#{1,6}\s|`{3,}|~{3,}|[-*+]\s|\d+\.\s|\|.+\|)/m.test(plain)
+        ) {
+          event.preventDefault();
+          editor
+            ?.chain()
+            .focus()
+            .insertContent(nodesToTiptap(legacyMarkdownToPostContent(plain).nodes).content ?? [])
+            .run();
+          return true;
+        }
         const file = normalizedImageFile(event.clipboardData);
         if (!file) {
           if (!hasAttachmentImage(event.clipboardData)) return false;
@@ -520,15 +406,16 @@ export function EditorScreen({
     reference: { target: "body"; node: Extract<EditorNode, { type: "image" }> };
   }) {
     const node = result.reference.node;
-    editor
-      ?.chain()
-      .focus()
-      .setImage({ src: node.src, alt: node.alt ?? "", title: node.title })
-      .run();
-    const nextBody = [
-      ...(editor ? tiptapToNodes(editor.getJSON()) : body),
-      ...(node.caption ? [{ type: "paragraph" as const, text: node.caption }] : []),
-    ];
+    const imageAttributes = {
+      src: node.src,
+      alt: node.alt ?? "",
+      title: node.title,
+      caption: node.caption,
+      captionContent: node.captionContent,
+      href: node.href,
+    };
+    editor?.chain().focus().setImage(imageAttributes).run();
+    const nextBody = [...(editor ? tiptapToNodes(editor.getJSON()) : body)];
     markDirty(documentRef.current, nextBody);
     setMessage("Image uploaded. Save the post to keep this reference.");
     showToast({ title: "Image uploaded", description: "Save the post to keep it.", tone: "info" });
@@ -564,12 +451,13 @@ export function EditorScreen({
     });
   }
 
-  function applySelectedImageAttributes(next: { alt?: string; title?: string }) {
+  function applySelectedImageAttributes(next: { alt?: string; title?: string; caption?: string }) {
     if (!editor || !selectedImage) return;
     const nextImage = {
       ...selectedImage,
       alt: next.alt ?? selectedImage.alt,
       title: next.title ?? selectedImage.title,
+      caption: next.caption ?? selectedImage.caption,
     };
     editor
       .chain()
@@ -578,6 +466,11 @@ export function EditorScreen({
       .updateAttributes("image", {
         alt: nextImage.alt,
         title: nextImage.title || null,
+        caption: nextImage.caption || null,
+        captionContent:
+          nextImage.caption === editor.state.doc.nodeAt(selectedImage.pos)?.attrs.caption
+            ? editor.state.doc.nodeAt(selectedImage.pos)?.attrs.captionContent
+            : null,
       })
       .run();
     setSelectedImage(nextImage);
@@ -659,7 +552,7 @@ export function EditorScreen({
               <ModalTitleStack>
                 <ModalTitle>Image attributes</ModalTitle>
                 <ModalDescription>
-                  Set alt text and title for the selected body image.
+                  Set alt text, title and caption for the selected body image.
                 </ModalDescription>
               </ModalTitleStack>
             </ModalHeader>
@@ -707,6 +600,14 @@ export function EditorScreen({
                       value={selectedImage.title}
                     />
                   </div>
+                  <CmsTextField
+                    id="selected-image-caption"
+                    label="Caption"
+                    value={selectedImage.caption}
+                    onValueChange={(caption) =>
+                      setSelectedImage((current) => (current ? { ...current, caption } : current))
+                    }
+                  />
                   <div className="flex justify-end gap-2">
                     <Button
                       label="Cancel"
@@ -720,6 +621,7 @@ export function EditorScreen({
                         applySelectedImageAttributes({
                           alt: selectedImage.alt,
                           title: selectedImage.title,
+                          caption: selectedImage.caption,
                         })
                       }
                       type="button"

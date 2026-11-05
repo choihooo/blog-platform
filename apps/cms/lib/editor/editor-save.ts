@@ -4,6 +4,7 @@ import {
   editorDocumentToPostContent,
   serializePostContent,
   textFromEditorNodes,
+  validateEditorDocument,
   type EditorDocument,
 } from "@blog-platform/editor";
 
@@ -153,12 +154,12 @@ export async function saveEditorDraft(
   adapter: Pick<ContentAdapter, "createPost" | "updatePost" | "getPostBySlug">,
   now = new Date(),
 ): Promise<SaveEditorDraftResult> {
-  if (!document.frontmatter.title.trim()) {
+  if (validateEditorDocument(document).length > 0) {
     return {
       ok: false,
       code: "validation-failure",
       retryable: false,
-      message: "Title is required before saving",
+      message: validateEditorDocument(document)[0]?.message ?? "Invalid editor document",
       submittedDocument: document,
     };
   }

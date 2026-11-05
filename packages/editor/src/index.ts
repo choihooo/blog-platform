@@ -26,8 +26,13 @@ export {
   isSupportedMark,
 } from "./supported-format.js";
 export { validateEditorDocument } from "./validation.js";
+export { htmlToEditorNodes, isSafeContentUrl } from "./html-content.js";
+export { groupEditorLists, parseInlineMarkdown } from "./rich-content.js";
+export { editorNodesToTiptap, tiptapToEditorNodes, editorNodeInline } from "./tiptap-content.js";
 export type {
   EditorDocument,
+  EditorInline,
+  EditorTableCell,
   EditorFailureCode,
   EditorFrontmatter,
   EditorIssue,

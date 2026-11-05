@@ -38,10 +38,7 @@ describe("pixel-room blog archive integration", () => {
 
   it("renders article links through the extracted body renderer", () => {
     const postPage = read("app/posts/[slug]/page.tsx");
-    const renderer = read("app/posts/[slug]/post-body-renderer.tsx");
     expect(postPage).toContain("<PostBodyRenderer");
-    expect(renderer).toContain('node.href.startsWith("/")');
-    expect(renderer).toContain('href.startsWith("/")');
     expect(read("features/blog/components/recommended-posts.tsx")).toContain("AnalyticsLink");
   });
 
