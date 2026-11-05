@@ -39,14 +39,12 @@ describe("remote chat", () => {
   it("accepts questions without WebGPU and displays the answer with sources", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          Response.json({
-            answer: "검증된 답변",
-            sources: [{ title: "원문", url: "/resume", text: "경력", score: 1 }],
-          }),
-        ),
+      vi.fn().mockResolvedValue(
+        Response.json({
+          answer: "검증된 답변",
+          sources: [{ title: "원문", url: "/resume", text: "경력", score: 1 }],
+        }),
+      ),
     );
     await open();
     await suggest();

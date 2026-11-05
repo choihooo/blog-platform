@@ -86,6 +86,7 @@ export async function runSync(
       total: result.total,
       nextOffset: result.nextOffset,
       revision: result.revision,
+      contentRevision: result.contentRevision,
       profile: result.profile,
       requests: result.requests,
     });

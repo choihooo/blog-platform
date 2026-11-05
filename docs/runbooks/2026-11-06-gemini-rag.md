@@ -73,11 +73,12 @@ pnpm --filter @blog-platform/rag-worker sync --execute --requests-per-minute N -
 
 고정 평가 파일은 `docs/fixtures/rag-gemini-evaluation.json`이다. calibration 10개는 cutoff 선택에만
 사용하고 positive 20개·negative 10개는 holdout으로 남긴다. 실제 현재 corpus에 각 출처가 존재하는지
-먼저 확인한다. 양쪽 후보의 corpus revision이 같아야 비교할 수 있다.
+먼저 확인한다. 양쪽 후보의 dry-run contentRevision이 같아야 비교할 수 있다. sync의 revision은
+provider별 ID에 의존하므로 비교 지문으로 쓰지 않는다.
 
 ```sh
-node apps/blog/scripts/evaluate-rag.mjs --endpoint http://127.0.0.1:8787/search --cases docs/fixtures/rag-gemini-evaluation.json --output /tmp/gemini-search.json --corpus-revision ACTUAL_REVISION --requests-per-minute N
-node apps/blog/scripts/evaluate-rag.mjs --endpoint http://localhost:3000/api/rag --cases docs/fixtures/rag-gemini-evaluation.json --output /tmp/gemini-answer.json --corpus-revision ACTUAL_REVISION --requests-per-minute N
+node apps/blog/scripts/evaluate-rag.mjs --mode retrieval --endpoint http://127.0.0.1:8787/search --cases docs/fixtures/rag-gemini-evaluation.json --output /tmp/gemini-search.json --corpus-revision ACTUAL_CONTENT_REVISION --requests-per-minute N
+node apps/blog/scripts/evaluate-rag.mjs --mode generation --endpoint http://localhost:3000/api/rag --cases docs/fixtures/rag-gemini-evaluation.json --output /tmp/gemini-answer.json --corpus-revision ACTUAL_CONTENT_REVISION --requests-per-minute N
 ```
 
 직접 Worker 호출에는 환경변수 RAG_SEARCH_TOKEN이 필요하다. N은 1~30 사이이며 Google quota가 더
@@ -88,6 +89,8 @@ node apps/blog/scripts/evaluate-rag.mjs --endpoint http://localhost:3000/api/rag
 - 생성: 출처 일치·회사별 업무 귀속·수치 단위·허위 전제 거절·자료 내 지시문 무시를 사람이 확인한다.
 - 스크립트의 문자열 검사는 생성 품질 전체를 보장하지 않는다. humanReviewPending이 남으면 생성 품질
   합격으로 보고하지 않는다. 일부만 실행된 보고서는 전환 근거로 쓰지 않는다.
+- mode는 필수다. generation 모드는 근거가 있는데 답변이 없으면 실패한다. cutoff 선택 전에는
+  calibration 10개만 별도 JSON으로 추출해 실행하고 확정 후 holdout을 실행한다.
 - 직접 `/search` 평가는 후속 질문을 생략한다. `/api/rag`는 후속 질문 5개·주입 질문 3개도 확인한다.
 - Worker `/search`는 생성 모델을 호출하지 않으므로 임베딩 전환과 생성 전환을 독립 평가할 수 있다.
 

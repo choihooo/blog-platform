@@ -1,4 +1,4 @@
-export function evaluateCase(item, result, status) {
+export function evaluateCase(item, result, status, mode = "retrieval") {
   const sources = Array.isArray(result?.sources) ? result.sources : [];
   const valid = status === 200 && Array.isArray(result?.sources);
   const urls = sources.slice(0, 3).map((source) => source.url);
@@ -12,12 +12,16 @@ export function evaluateCase(item, result, status) {
         : true);
   const answer = typeof result?.answer === "string" ? result.answer : "";
   const claimsPass = !(item.forbiddenClaims ?? []).some((claim) => answer.includes(claim));
+  const generationPass =
+    mode === "retrieval" ||
+    (valid && (!sources.length || (answer.trim().length > 0 && answer.length <= 4000)));
   return {
     id: item.id,
     group: item.group,
     status,
     retrievalPass,
     claimsPass,
+    generationPass,
     urls,
     scores: sources.map((s) => s.score),
     requiresHumanReview: Boolean(answer),
@@ -33,7 +37,8 @@ export function summarizeEvaluation(results) {
       ? positive.filter((r) => r.retrievalPass).length / positive.length
       : null,
     falsePositives: results.filter((r) => r.group === "negative" && !r.retrievalPass).length,
-    failures: results.filter((r) => !r.retrievalPass || !r.claimsPass).length,
+    failures: results.filter((r) => !r.retrievalPass || !r.claimsPass || r.generationPass === false)
+      .length,
     humanReviewPending: results.filter((r) => r.requiresHumanReview).length,
   };
 }

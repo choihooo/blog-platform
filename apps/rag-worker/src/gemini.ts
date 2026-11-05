@@ -154,5 +154,8 @@ export async function generateGeminiAnswer(input: {
     .join("")
     .trim();
   if (!answer || answer.length > 4000) throw new Error("gemini_invalid_answer");
-  return answer;
+  const allowedUrls = new Set(input.sources.map((source) => source.url));
+  return answer.replace(/\[([^\]\n]+)\]\(([^\s)]+)\)/g, (link, label: string, url: string) =>
+    allowedUrls.has(url) ? link : label,
+  );
 }

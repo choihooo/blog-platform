@@ -5,15 +5,22 @@ import { evaluateCase, summarizeEvaluation } from "./rag-evaluation.mjs";
 const { values } = parseArgs({
   options: {
     endpoint: { type: "string" },
+    mode: { type: "string" },
     cases: { type: "string" },
     output: { type: "string" },
     "corpus-revision": { type: "string" },
     "requests-per-minute": { type: "string" },
   },
 });
-if (!values.endpoint || !values.cases || !values.output || !values["corpus-revision"])
+if (
+  !values.endpoint ||
+  !values.cases ||
+  !values.output ||
+  !values["corpus-revision"] ||
+  !["retrieval", "generation"].includes(values.mode)
+)
   throw new Error(
-    "Provide --endpoint --cases --output --corpus-revision; this command makes live requests.",
+    "Provide --mode retrieval|generation --endpoint --cases --output --corpus-revision; this command makes live requests.",
   );
 const endpoint = new URL(values.endpoint);
 const rpm = Number(values["requests-per-minute"]);
@@ -30,6 +37,8 @@ if (
 )
   throw new Error("Invalid endpoint or --requests-per-minute (1..30 required)");
 const direct = endpoint.pathname !== "/api/rag";
+if (values.mode === "generation" && endpoint.pathname === "/search")
+  throw new Error("generation evaluation requires /answer or /api/rag");
 const token = direct ? process.env.RAG_SEARCH_TOKEN : undefined;
 if (direct && !token)
   throw new Error("Direct Worker evaluation needs RAG_SEARCH_TOKEN in the environment");
@@ -71,7 +80,7 @@ for (const [index, item] of cases.entries()) {
   } catch {
     /* Record an explicit failed measurement without provider errors. */
   }
-  results.push(evaluateCase(item, data, status));
+  results.push(evaluateCase(item, data, status, values.mode));
   if (status === 429) break;
 }
 const summary = summarizeEvaluation(results);
@@ -80,6 +89,7 @@ await writeFile(
   JSON.stringify(
     {
       corpusRevision: values["corpus-revision"],
+      mode: values.mode,
       endpoint: endpoint.href,
       recordedAt: new Date().toISOString(),
       complete: results.length === cases.filter((c) => !direct || c.group !== "follow-up").length,

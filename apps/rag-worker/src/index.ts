@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { embeddingText } from "../../blog/features/rag/corpus";
 import { boundedJson, queryFrom } from "../../blog/features/rag/contracts";
-import { corpus, embed, indexFor, profileFor, searchPublished } from "./retrieval";
+import { corpus, embed, evidenceIds, indexFor, profileFor, searchPublished } from "./retrieval";
 import { generateGeminiAnswer } from "./gemini";
 
 function json(body: unknown, status = 200) {
@@ -93,6 +93,22 @@ export default {
         const revision = Array.from(new Uint8Array(version), (b) =>
           b.toString(16).padStart(2, "0"),
         ).join("");
+        const contentHash = await crypto.subtle.digest(
+          "SHA-256",
+          new TextEncoder().encode(
+            JSON.stringify(
+              chunks.map((chunk) => ({
+                key: chunk.key,
+                title: chunk.title,
+                url: chunk.url,
+                text: embeddingText(chunk),
+              })),
+            ),
+          ),
+        );
+        const contentRevision = Array.from(new Uint8Array(contentHash), (byte) =>
+          byte.toString(16).padStart(2, "0"),
+        ).join("");
         if (offset > 0 && b.revision !== revision)
           return json({ error: "corpus_changed_restart_sync" }, 409);
         if (b.dryRun !== undefined && typeof b.dryRun !== "boolean")
@@ -101,6 +117,7 @@ export default {
           return json({
             total: chunks.length,
             revision,
+            contentRevision,
             profile: profileFor(env).id,
             requests: chunks.length,
             nextOffset: null,
@@ -131,6 +148,7 @@ export default {
           indexed: missing.length,
           total: chunks.length,
           revision,
+          contentRevision,
           nextOffset: offset + batch.length < chunks.length ? offset + batch.length : null,
         });
       }
@@ -140,7 +158,7 @@ export default {
       if (!(await env.SEARCH_LIMIT.limit({ key: "portfolio-search" })).success)
         return json({ error: "rate_limited" }, 429);
       stage = "search";
-      const result = await searchPublished(query, env, request.signal);
+      const { evidence, ...result } = await searchPublished(query, env, request.signal);
       if (path === "/answer" && result.sources.length) {
         stage = "generation";
         result.answer = await generateGeminiAnswer({
@@ -150,6 +168,10 @@ export default {
           model: env.GEMINI_GENERATION_MODEL ?? "",
           signal: request.signal,
         });
+        stage = "evidence_revalidation";
+        request.signal.throwIfAborted();
+        const currentEvidence = evidenceIds(await corpus(env), result.sources);
+        if (evidence.join(",") !== currentEvidence.join(",")) throw new Error("evidence_changed");
       }
       return json(result);
     } catch (error) {

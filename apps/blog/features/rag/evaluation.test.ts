@@ -2,6 +2,16 @@ import { describe, expect, it } from "vitest";
 import { evaluateCase, summarizeEvaluation } from "../../scripts/rag-evaluation.mjs";
 
 describe("RAG quality evaluation", () => {
+  it("fails generation evaluation when evidence is returned without an answer", () => {
+    const result = evaluateCase(
+      { id: "p", group: "positive", expectedUrls: ["/resume"] },
+      { sources: [{ url: "/resume" }] },
+      200,
+      "generation",
+    );
+    expect(result.generationPass).toBe(false);
+    expect(summarizeEvaluation([result]).failures).toBe(1);
+  });
   it("counts allowed evidence, false positives and forbidden claims separately", () => {
     expect(
       evaluateCase(

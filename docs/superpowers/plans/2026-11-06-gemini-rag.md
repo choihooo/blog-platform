@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development
 > (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use
-> checkbox (`- [ ]`) syntax for tracking.
+> checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 무료 등급부터 시험할 수 있도록 임베딩·답변 생성을 Gemini API로 전환하고 기존 검색과
 독립적으로 롤백한다.
@@ -69,18 +69,18 @@ Gemini 호출을 담당하며 기존 `/search`·`/sync` 외에 인증된 `/answe
 - legacy 기본 프로필은 기존 ID 직렬화를 그대로 유지한다. Gemini minScore 미설정은 검색 활성화 시
   오류다.
 
-- [ ] **1. 실패 테스트 작성:** 기존 문서의 legacy ID snapshot은 동일하고 Gemini ID는 다르며,
+- [x] **1. 실패 테스트 작성:** 기존 문서의 legacy ID snapshot은 동일하고 Gemini ID는 다르며,
       dimensions·입력 버전 변경도 ID를 바꾼다. 같은 프로필 재실행은 같은 ID다. 예:
       `expect(legacyAfter.id).toBe(legacyBefore.id); expect(gemini.id).not.toBe(legacyAfter.id)`.
-- [ ] **2. 실패 확인:**
+- [x] **2. 실패 확인:**
       `pnpm --filter @blog-platform/blog test -- features/rag/embedding-profile.test.ts` — 새 프로필
       미구현으로 실패해야 한다.
-- [ ] **3. 구현:** 청크 경계 500자·중첩 50자와 taxonomy 입력은 유지한다. Gemini 지문에 document task
+- [x] **3. 구현:** 청크 경계 500자·중첩 50자와 taxonomy 입력은 유지한다. Gemini 지문에 document task
       type과 L2 정규화 버전도 포함한다. 프로필은 캐시된 전역 상태가 아닌 요청별 값으로 전달한다.
-- [ ] **4. 통과 확인:** 위 테스트 및
+- [x] **4. 통과 확인:** 위 테스트 및
       `pnpm --filter @blog-platform/blog test -- features/rag/rag.test.ts` — 기존
       cutoff·stale·taxonomy 회귀 포함 통과.
-- [ ] **5. Commit:** Task 1의 실제 변경 파일만 선택해 `feat(rag): version embedding profiles`.
+- [x] **5. Commit:** Task 1의 실제 변경 파일만 선택해 `feat(rag): version embedding profiles`.
 
 ## Task 2: Gemini 임베딩과 Worker의 두 인덱스 지원
 
@@ -95,23 +95,23 @@ Gemini 호출을 담당하며 기존 `/search`·`/sync` 외에 인증된 `/answe
   `GEMINI_EMBED_DELAY_MS`.
 - 기존 `INDEX`·`AI` 유지, 새 `INDEX_GEMINI` binding 추가. `GEMINI_API_KEY`는 secret.
 
-- [ ] **1. 실패 테스트 작성:** mock HTTP에서 모델·768·두 task type을 확인한다. `[3,4,...0]` 벡터는
+- [x] **1. 실패 테스트 작성:** mock HTTP에서 모델·768·두 task type을 확인한다. `[3,4,...0]` 벡터는
       `[0.6,0.8,...0]`으로 정규화한다. 0벡터·767차원·NaN·벡터 누락·401·429·타임아웃은 실패하고
       upsert하지 않는다.
-- [ ] **2. 실패 확인:**
+- [x] **2. 실패 확인:**
       `pnpm --filter @blog-platform/rag-worker test -- src/gemini.test.ts src/index.test.ts` —
       Gemini 모듈/분기 부재로 실패.
-- [ ] **3. 구현:** `batchEmbedContents`나 유료 Batch API 대신 표준 `embedContent`를 청크별 순차
+- [x] **3. 구현:** `batchEmbedContents`나 유료 Batch API 대신 표준 `embedContent`를 청크별 순차
       호출한다. 요청 timeout 10초, 무자동재시도. 취소 시 남은 청크 호출 중단. sync batch 도중
       실패하면 페이지 전체를 upsert하지 않아 같은 offset으로 재실행할 수 있게 한다.
-- [ ] **4. Worker 연결:** sync·검색·currentMatches가 동일 프로필을 사용하도록 연결한다. `/sync`에
+- [x] **4. Worker 연결:** sync·검색·currentMatches가 동일 프로필을 사용하도록 연결한다. `/sync`에
       선택적 `dryRun: true`를 추가해 total·revision·profile만 반환하고 AI/upsert를 호출하지 않는다.
       검색 후 primary D1 공개 원문 재조회 순서를 유지한다. 부분 sync 재시도는 기존 ID를 건너뛴다.
-- [ ] **5. 회귀 테스트:** legacy namespace 유지, Gemini namespace 분리, 잘못된 provider 설정 실패,
+- [x] **5. 회귀 테스트:** legacy namespace 유지, Gemini namespace 분리, 잘못된 provider 설정 실패,
       sync revision 변경 409, 검색 뒤 삭제/비공개/수정 청크 제외, auth 전 AI 호출 0회 확인.
-- [ ] **6. 통과 확인:** Worker test·typegen·typecheck·build 실행. build는
+- [x] **6. 통과 확인:** Worker test·typegen·typecheck·build 실행. build는
       `wrangler deploy --dry-run`만 수행하며 원격 배포하지 않는다.
-- [ ] **7. Commit:** `feat(rag): support Gemini embeddings in a separate index`.
+- [x] **7. Commit:** `feat(rag): support Gemini embeddings in a separate index`.
 
 ## Task 3: Worker 답변 생성과 Next API 연결
 
@@ -131,23 +131,23 @@ Gemini 호출을 담당하며 기존 `/search`·`/sync` 외에 인증된 `/answe
 - Public `/api/rag` remains JSON; no new stream/payload type. Successful Gemini retrieval must have
   an answer; missing answer is 503.
 
-- [ ] **1. 실패 테스트 작성:** factual·clarification·no-evidence results bypass generation; normal
+- [x] **1. 실패 테스트 작성:** factual·clarification·no-evidence results bypass generation; normal
       evidence makes exactly one generation call. `expect(generate).not.toHaveBeenCalled()` for no
       evidence. Provider 429→429, timeout/blocked/empty/MAX_TOKENS→503, never no-evidence. Oversized
       answer rejected; no silent truncation.
-- [ ] **2. 실패 확인:**
+- [x] **2. 실패 확인:**
       `pnpm --filter @blog-platform/blog test -- features/rag/generation.test.ts`와 Worker 대상
       테스트 — 새 endpoint/provider가 없어 실패해야 한다.
-- [ ] **3. 구현:** Worker에서 server-owned 검색 결과만 prompt에 넣는다. 기존 grounded 지시를
+- [x] **3. 구현:** Worker에서 server-owned 검색 결과만 prompt에 넣는다. 기존 grounded 지시를
       재사용하고 최대 3×550자 자료·1024 출력토큰·생성 timeout 20초를 설정한다. 제목과 출처 링크는
       원본 배열을 그대로 반환하며 모델이 만든 출처를 파싱하지 않는다. Next 전체 Worker 호출
       timeout은 Gemini 모드에서 35초로 명시한다.
-- [ ] **4. 입력·상태 회귀:** same-origin·bounded JSON·600자·no-store·취소·후속 질문 계약 유지.
+- [x] **4. 입력·상태 회귀:** same-origin·bounded JSON·600자·no-store·취소·후속 질문 계약 유지.
       변조된 client context가 본문 근거로 전달되지 않는지와 자료 내 악성 지시가 system 지시와
       분리되는지 검증한다. 실제 환각 여부는 Task 6의 실응답 평가로 확인한다.
-- [ ] **5. 통과 확인:** Worker tests 및 Blog의 `generation`, `rag`, `follow-up-api`,
+- [x] **5. 통과 확인:** Worker tests 및 Blog의 `generation`, `rag`, `follow-up-api`,
       `visitor-coverage` 테스트. API 문서에 provider 설정과 400/429/503·실패 시 무대체 정책 기록.
-- [ ] **6. Commit:** `feat(rag): generate grounded answers through Gemini`.
+- [x] **6. Commit:** `feat(rag): generate grounded answers through Gemini`.
 
 ## Task 4: 다운로드 없는 채팅 모드
 
@@ -163,17 +163,17 @@ Gemini 호출을 담당하며 기존 `/search`·`/sync` 외에 인증된 `/answe
 - remote 컴포넌트는 `/api/rag`에 `{ query, context }`를 보내고 검증된 `answer`·`sources`를 표시한다.
 - local 경로는 dynamic import로 분리하고 remote 경로에서 Kanana·WASM·WebGPU 감지를 실행하지 않는다.
 
-- [ ] **1. 실패 테스트 작성:** 서버 답변·출처 표시, 429 안내, 중복 전송 차단, 중단/닫기/언마운트 후
+- [x] **1. 실패 테스트 작성:** 서버 답변·출처 표시, 429 안내, 중복 전송 차단, 중단/닫기/언마운트 후
       늦은 응답 무시, 조작된 응답 거절을 검증한다. `navigator.gpu`가 없어도 remote 입력이 가능하고
       모델 loader 호출이 0회임을 확인한다.
-- [ ] **2. 실패 확인:**
+- [x] **2. 실패 확인:**
       `pnpm --filter @blog-platform/blog test -- features/pixel-room/portfolio-chat-remote.test.tsx`.
-- [ ] **3. 구현:** 기존 Hozui 채팅 UI·키보드 포커스·출처 표시를 재사용한다. JSON 응답을 기다리는
+- [x] **3. 구현:** 기존 Hozui 채팅 UI·키보드 포커스·출처 표시를 재사용한다. JSON 응답을 기다리는
       로딩 상태를 제공하고 token streaming처럼 표시하지 않는다. remote에서 로컬 모델 진단·Q4/Q8
       선택·다운로드 문구를 표시하지 않는다.
-- [ ] **4. 통과 확인:** 신규 테스트·기존 chat-answer·Kanana 관련 테스트 실행. 기존 의존성과
+- [x] **4. 통과 확인:** 신규 테스트·기존 chat-answer·Kanana 관련 테스트 실행. 기존 의존성과
       prebuild는 롤백 기간 유지하되 브라우저 다운로드가 없는지 실제 네트워크로 Task 6에서 확인한다.
-- [ ] **5. Commit:** `feat(chat): add server-generated chat without model downloads`.
+- [x] **5. Commit:** `feat(chat): add server-generated chat without model downloads`.
 
 ## Task 5: 할당량을 고려한 동기화·평가·운영 문서
 
@@ -189,25 +189,25 @@ Blog `scripts/evaluate-rag.mjs`, `docs/fixtures/rag-gemini-evaluation.json`, 운
 - `evaluate-rag.mjs --endpoint URL --cases FILE --output FILE`은 명시된 endpoint만 호출한다. 운영
   endpoint를 기본값으로 넣지 않는다.
 
-- [ ] **1. 실패 테스트 작성:** 기본 dry-run에서 유료 호출·upsert 0회, remote 실행 옵션 누락 거절,
+- [x] **1. 실패 테스트 작성:** 기본 dry-run에서 유료 호출·upsert 0회, remote 실행 옵션 누락 거절,
       음수 RPM 거절, 429에서 offset/revision을 기록하고 종료, 재시작 시 이미 저장된 ID 재임베딩
       생략.
-- [ ] **2. 실패 확인:** `pnpm --filter @blog-platform/rag-worker test -- src/sync-options.test.ts`.
-- [ ] **3. 구현:** sync 페이지당 16개와 요청당 1개 임베딩을 기준으로 페이지 간 최소 대기시간을
+- [x] **2. 실패 확인:** `pnpm --filter @blog-platform/rag-worker test -- src/sync-options.test.ts`.
+- [x] **3. 구현:** sync 페이지당 16개와 요청당 1개 임베딩을 기준으로 페이지 간 최소 대기시간을
       계산한다. Worker 내부 간격도 별도로 적용한다. Retry-After가 있어도 자동 무한 재시도하지
       않는다. 보고서에는 원문·비밀키 없이 count/profile/revision/offset/실패 단계만 기록한다.
-- [ ] **4. 평가 세트 작성:** 고정 긍정 20문항(경력·프로젝트·기술 글·한국어 변형), 부정 10문항(허위
+- [x] **4. 평가 세트 작성:** 고정 긍정 20문항(경력·프로젝트·기술 글·한국어 변형), 부정 10문항(허위
       경력·없는 글·무관 질문), 후속 질문 5개, prompt injection 3개. 각 질문에 허용 출처 URL·금지
       주장·응답 종류를 기록한다. 임베딩 검색만의 평가와 생성 API 평가를 분리한다.
-- [ ] **5. 품질 기준:** 같은 corpus revision에서 BGE/Gemini 검색을 비교한다. 별도 calibration
+- [x] **5. 품질 기준:** 같은 corpus revision에서 BGE/Gemini 검색을 비교한다. 별도 calibration
       10문항에서 cutoff를 선택하고 Task 5의 긍정 20·부정 10문항은 holdout으로 남긴다. 긍정
       Recall@3는 legacy 이상·90% 이상, 부정 오탐 0, 비공개/stale 노출 0을 전환 기준으로 삼는다.
       holdout을 보고 cutoff를 재조정하면 새 holdout을 준비한다. 생성 답변은 출처 불일치·허위
       경력/수치 추가·주입 지시 수행 0건이어야 한다.
-- [ ] **6. runbook 기록:** 아래 Task 6의 순서·요청 승인 경계·실측 quota·정확한 롤백 설정을 적는다.
+- [x] **6. runbook 기록:** 아래 Task 6의 순서·요청 승인 경계·실측 quota·정확한 롤백 설정을 적는다.
       과거 문서는 삭제하지 않고 현재 흐름을 상단에 추가한다. 무료 데이터 처리 조건과 aggregate
       제한의 한계도 기록한다.
-- [ ] **7. 통과 확인 및 Commit:** Worker 테스트·문서 format 검사 통과 후
+- [x] **7. 통과 확인 및 Commit:** Worker 테스트·문서 format 검사 통과 후
       `chore(rag): add paced indexing and evaluation runbook`.
 
 ## Task 6: 통합 검증과 단계별 전환
@@ -215,7 +215,7 @@ Blog `scripts/evaluate-rag.mjs`, `docs/fixtures/rag-gemini-evaluation.json`, 운
 **Files:** `docs/runbooks/2026-11-06-gemini-rag.md`, 신규 `docs/audits/2026-11-06-gemini-rag.md`.
 원격 실행 전에는 코드와 명령 예시까지만 준비한다.
 
-- [ ] **1. 로컬 회귀:** Worker `typegen`, `typecheck`, `test`, `build`; Blog `format:check`, `lint`,
+- [x] **1. 로컬 회귀:** Worker `typegen`, `typecheck`, `test`, `build`; Blog `format:check`, `lint`,
       `typecheck`, `test`, `build` 실행. 기존 무관한 실패는 분리 기록한다. remote binding을 쓰는
       로컬 서버도 원격 사용량이 발생하므로 mock 통과와 혼동하지 않는다.
 - [ ] **2. 원격 사전 확인:** runbook id `gemini-rag-20261106`, 사용자 실행 요청, 무료 프로젝트·실제
@@ -251,3 +251,6 @@ Blog `scripts/evaluate-rag.mjs`, `docs/fixtures/rag-gemini-evaluation.json`, 운
 - 별도 인덱스·재임베딩·검색 컷오프 평가·발행 동기화·롤백: Task 5/6.
 - 이번 턴은 설계·계획 작성만 수행한다. 앱 구현·API 호출·원격 변경·테스트 성공을 완료한 것으로
   표시하지 않는다.
+
+실행 결과: Tasks 1–5 및 Task 6의 로컬 회귀는 완료했다. 원격 준비·실제 API·운영 전환은 미실행이며
+상세 결과는 [검증 기록](../../audits/2026-11-06-gemini-rag.md)에 남겼다.

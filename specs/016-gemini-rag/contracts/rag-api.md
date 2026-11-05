@@ -24,13 +24,19 @@
 
 `/answer`는 자료가 있을 때만 생성한다. 클라이언트가 보낸 sources·본문은 무시하고 최신 공개 D1 자료로
 근거를 만든다. `/search`와 `/answer`는 같은 aggregate 30회/60초 제한을 공유한다. 출처 URL은 모델
-출력으로부터 생성하지 않는다. JSON 단발 응답이며 SSE는 지원하지 않는다.
+출력으로부터 생성하지 않는다. 생성 본문의 Markdown 링크도 검색된 출처 URL만 활성 링크로 남긴다. 생성
+후 선택 문서의 청크 ID를 primary D1에서 재확인하며 변경·삭제·비공개 전환이 있으면 답변 전체를
+503으로 폐기한다. JSON 단발 응답이며 SSE는 지원하지 않는다.
 
 `/sync`는 페이지당 최대 16청크다. 응답은 `indexed`, `total`, `revision`, `nextOffset`이고 중간에
 corpus가 바뀌면 409다. `dryRun: true`는 AI·Vectorize 쓰기 없이
-`{ total, revision, profile, requests, nextOffset: null }`를 반환한다. requests는 전체 청크 수에
-근거한 상한이며 기존 벡터·TPM/RPD·과금액을 측정한 값이 아니다. 임베딩 페이지 도중 실패하면 해당
-페이지를 upsert하지 않는다. 재실행은 같은 offset/revision이며 409일 때만 offset 0부터 다시 시작한다.
+`{ total, revision, contentRevision, profile, requests, nextOffset: null }`를 반환한다. requests는
+전체 청크 수에 근거한 상한이며 기존 벡터·TPM/RPD·과금액을 측정한 값이 아니다. 임베딩 페이지 도중
+실패하면 해당 페이지를 upsert하지 않는다. 재실행은 같은 offset/revision이며 409일 때만 offset 0부터
+다시 시작한다.
+
+contentRevision은 provider와 무관한 콘텐츠 지문으로 인덱스 비교에 사용한다. revision은 provider별
+청크 ID 기반의 sync 재시작용이므로 provider 사이에서 같지 않다.
 
 ## 임베딩 프로필
 

@@ -8,6 +8,7 @@ import {
 } from "../../blog/features/rag/corpus";
 import { embeddingProfile } from "../../blog/features/rag/embedding-profile";
 import type { RagResult } from "../../blog/features/rag/contracts";
+import type { RagChunk } from "../../blog/features/rag/corpus-types";
 import { embedGemini } from "./gemini";
 
 export function profileFor(env: Env) {
@@ -75,11 +76,19 @@ export async function embed(
   return result.data;
 }
 
+export function evidenceIds(chunks: RagChunk[], sources: RagResult["sources"]): string[] {
+  const urls = new Set(sources.map((source) => source.url));
+  return chunks
+    .filter((chunk) => urls.has(chunk.url))
+    .map((chunk) => chunk.id)
+    .sort();
+}
+
 export async function searchPublished(
   query: string,
   env: Env,
   signal?: AbortSignal,
-): Promise<RagResult> {
+): Promise<RagResult & { evidence: string[] }> {
   const profile = profileFor(env);
   const vectors = await embed(env, [query], "RETRIEVAL_QUERY", signal);
   const matches = await indexFor(env).query(vectors[0]!, {
@@ -88,5 +97,6 @@ export async function searchPublished(
     returnMetadata: "none",
   });
   const chunks = await corpus(env);
-  return { sources: currentMatches(chunks, matches.matches, query, profile.minScore) };
+  const sources = currentMatches(chunks, matches.matches, query, profile.minScore);
+  return { sources, evidence: evidenceIds(chunks, sources) };
 }

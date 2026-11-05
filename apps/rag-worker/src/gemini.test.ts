@@ -61,6 +61,35 @@ describe("Gemini embeddings", () => {
 });
 
 describe("Gemini generation failures", () => {
+  it("keeps only authoritative source links in generated prose", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        Response.json({
+          candidates: [
+            {
+              finishReason: "STOP",
+              content: {
+                parts: [
+                  {
+                    text: "[원문](/blog/fixture) [가짜](https://example.com/fabricated) [관리](/admin)",
+                  },
+                ],
+              },
+            },
+          ],
+        }),
+      ),
+    );
+    expect(
+      await generateGeminiAnswer({
+        query: "질문",
+        sources: [source],
+        model: "gemini-3.8-flash",
+        apiKey: "key",
+      }),
+    ).toBe("[원문](/blog/fixture) 가짜 관리");
+  });
   const source = { title: "原文", url: "/blog/fixture", text: "根拠", score: 0.9 };
   it.each([
     { candidates: [] },

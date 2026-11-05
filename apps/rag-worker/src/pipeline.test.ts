@@ -42,6 +42,27 @@ async function fixture() {
 }
 const vectorResponse = () => Response.json({ embedding: { values: [1, ...Array(767).fill(0)] } });
 describe("Gemini Worker pipeline", () => {
+  it("discards generated answers if selected evidence changes during generation", async () => {
+    const f = await fixture();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockImplementationOnce(async () => vectorResponse())
+        .mockImplementationOnce(async () => {
+          f.all.mockResolvedValue({ success: true, results: [] });
+          return Response.json({
+            candidates: [
+              { finishReason: "STOP", content: { parts: [{ text: "이미 비공개인 자료의 답변" }] } },
+            ],
+          });
+        }),
+    );
+    const response = await worker.fetch(req("/answer", { query: "정보" }), f.env);
+    expect(response.status).toBe(503);
+    expect(JSON.stringify(await response.json())).not.toContain("이미 비공개");
+  });
   it("dry-runs without inference or upsert and rejects changed revisions", async () => {
     const f = await fixture();
     const fetcher = vi.fn();
@@ -60,6 +81,21 @@ describe("Gemini Worker pipeline", () => {
     expect(
       (await worker.fetch(req("/sync", { offset: 16, revision: "old" }, "admin"), f.env)).status,
     ).toBe(409);
+  });
+  it("reports a provider-independent content revision for cross-index evaluation", async () => {
+    const f = await fixture();
+    const gemini = (await (
+      await worker.fetch(req("/sync", { dryRun: true }, "admin"), f.env)
+    ).json()) as { revision: string; contentRevision: string };
+    const legacy = (await (
+      await worker.fetch(req("/sync", { dryRun: true }, "admin"), {
+        ...f.env,
+        RAG_EMBEDDING_PROVIDER: "workers-ai",
+      })
+    ).json()) as typeof gemini;
+    expect(gemini.contentRevision).toMatch(/^[a-f0-9]{64}$/);
+    expect(gemini.contentRevision).toBe(legacy.contentRevision);
+    expect(gemini.revision).not.toBe(legacy.revision);
   });
   it("indexes and queries only the Gemini namespace", async () => {
     const f = await fixture();
