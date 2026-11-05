@@ -4,6 +4,7 @@ export function currentMatches(
   chunks: RagChunk[],
   matches: { id: string; score: number }[],
   query = "",
+  minScore = 0.48,
 ) {
   const articlesOnly = /블로그|\bblog\b|(?:^|\s)글(?:[을은이도만\s?!]|$)/i.test(query);
   const current = new Map(chunks.map((c) => [c.id, c]));
@@ -67,7 +68,7 @@ export function currentMatches(
       !chunk ||
       (metadataIds.size > 0 && !metadataIds.has(match.id)) ||
       (articlesOnly && !chunk.url.startsWith("/blog/")) ||
-      match.score < 0.48 ||
+      match.score < minScore ||
       (counts.get(chunk.url) ?? 0) >= (chunk.url.startsWith("/blog/") ? 1 : 2)
     )
       continue;

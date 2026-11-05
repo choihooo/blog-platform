@@ -1,4 +1,5 @@
 import type { RagChunk, RagDocument } from "./corpus-types";
+import { embeddingProfile, type EmbeddingProfile } from "./embedding-profile";
 
 export const EMBEDDING_MODEL = "@cf/baai/bge-m3" as const;
 
@@ -14,7 +15,10 @@ export function embeddingText(document: RagDocument): string {
     .join("\n");
 }
 
-export async function chunkDocuments(documents: RagDocument[]): Promise<RagChunk[]> {
+export async function chunkDocuments(
+  documents: RagDocument[],
+  profile: EmbeddingProfile = embeddingProfile("workers-ai"),
+): Promise<RagChunk[]> {
   const chunks: RagChunk[] = [];
   for (const document of documents) {
     const text = document.text.replace(/\r\n/g, "\n").trim();
@@ -30,7 +34,17 @@ export async function chunkDocuments(documents: RagDocument[]): Promise<RagChunk
         "SHA-256",
         new TextEncoder().encode(
           JSON.stringify([
-            EMBEDDING_MODEL,
+            ...(profile.provider === "workers-ai"
+              ? [EMBEDDING_MODEL]
+              : [
+                  profile.provider,
+                  profile.model,
+                  profile.dimensions,
+                  profile.namespace,
+                  profile.inputVersion,
+                  "RETRIEVAL_DOCUMENT",
+                  "l2-v1",
+                ]),
             "v1",
             document.key,
             document.title,
