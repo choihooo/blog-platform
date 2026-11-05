@@ -2,30 +2,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { formatPostDate } from "@/shared/date/date-format";
-import {
-  blogPreviewPath,
-  canOptimizePreviewImage,
-  previewImageSizes,
-  type PreviewPost,
-} from "./preview-model";
+import { canOptimizePreviewImage, previewImageSizes, type PreviewPost } from "./preview-model";
 import { PostTags } from "./post-tags";
 
 export function PostCard({
   post,
   label,
   priority = false,
+  basePath = "/blog",
 }: {
   post: PreviewPost;
   label: string;
   priority?: boolean;
+  basePath?: string;
 }) {
   return (
     <article className="rounded-blog-card">
-      <Link
-        href={`${blogPreviewPath}/${post.slug}`}
-        className="rounded-blog-card-link"
-        prefetch={false}
-      >
+      <Link href={`${basePath}/${post.slug}`} className="rounded-blog-card-link" prefetch={false}>
         <div className="rounded-blog-cover">
           <Image
             src={post.coverImage || "/brand/no-thumbnail.webp"}

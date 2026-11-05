@@ -20,6 +20,7 @@ export default async function BlogRoundedPreviewPage() {
   ]);
   return (
     <RoundedBlog
+      basePath="/experiments/blog-rounded"
       categories={categories}
       posts={posts.map(
         ({

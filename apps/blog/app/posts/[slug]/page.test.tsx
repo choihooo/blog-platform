@@ -27,6 +27,11 @@ vi.mock("@/features/blog/server/content-source", () => ({
       : undefined,
   getPublishedPosts: async () => [],
   getRecommendedPosts: async () => [],
+  getAllPublishedPosts: async () => [
+    { slug: "older", title: "Older post", publishedAt: "2026-11-01" },
+    { slug: "readable-post", title: "A readable post", publishedAt: "2026-11-05" },
+    { slug: "newer", title: "Newer post", publishedAt: "2026-11-06" },
+  ],
   getSiteConfig: async () => ({
     siteName: "Hozorica",
     siteUrl: "https://example.com",
@@ -47,6 +52,15 @@ afterEach(() => {
 });
 
 describe("canonical post page", () => {
+  it("uses the approved rounded article and keeps neighboring posts on canonical routes", async () => {
+    const html = renderToStaticMarkup(await PostPage(props));
+    expect(html).toContain('class="rounded-blog-document"');
+    expect(html).toContain('href="/blog/older"');
+    expect(html).toContain('href="/blog/newer"');
+    expect(html).toContain('aria-current="page"');
+    expect(html).not.toContain("/experiments/");
+    expect(html).toContain('aria-label="글 공유"');
+  });
   it("renders the article, breadcrumb, taxonomy, author and table of contents", async () => {
     const html = renderToStaticMarkup(await PostPage(props));
     expect(html.match(/<h1\b/g)).toHaveLength(1);

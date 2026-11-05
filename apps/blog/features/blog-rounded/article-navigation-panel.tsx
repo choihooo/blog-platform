@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { formatPostDate } from "@/shared/date/date-format";
-import { blogPreviewPath } from "./preview-model";
 import { getArticleNavigation, type ArticleListEntry } from "./article-navigation";
 
 export function ArticleNavigationPanel({
   posts,
   currentSlug,
+  basePath = "/blog",
 }: {
   posts: ArticleListEntry[];
   currentSlug: string;
+  basePath?: string;
 }) {
   const { previous, next, items, total } = getArticleNavigation(posts, currentSlug);
   if (!items.length) return null;
@@ -21,7 +22,7 @@ export function ArticleNavigationPanel({
           {previous ? (
             <Link
               className="rounded-article-neighbor"
-              href={`${blogPreviewPath}/${previous.slug}`}
+              href={`${basePath}/${previous.slug}`}
               prefetch={false}
             >
               <span>
@@ -40,7 +41,7 @@ export function ArticleNavigationPanel({
           {next ? (
             <Link
               className="rounded-article-neighbor rounded-article-neighbor--next"
-              href={`${blogPreviewPath}/${next.slug}`}
+              href={`${basePath}/${next.slug}`}
               prefetch={false}
             >
               <span>
@@ -61,7 +62,7 @@ export function ArticleNavigationPanel({
         <h2>
           글 목록<span>{total}</span>
         </h2>
-        <Link href={blogPreviewPath}>
+        <Link href={basePath}>
           전체 글 보기
           <ArrowUpRight size={14} aria-hidden="true" />
         </Link>
@@ -87,7 +88,7 @@ export function ArticleNavigationPanel({
               ) : (
                 <Link
                   className="rounded-article-list-row"
-                  href={`${blogPreviewPath}/${post.slug}`}
+                  href={`${basePath}/${post.slug}`}
                   prefetch={false}
                 >
                   {content}
