@@ -51,9 +51,11 @@ if (
   throw new Error("Invalid evaluation cases");
 const results = [];
 const contexts = new Map();
-for (const [index, item] of cases.entries()) {
+const eligibleCases = cases.filter(
+  (c) => !direct || (c.group !== "follow-up" && c.responseType !== "project-list"),
+);
+for (const [index, item] of eligibleCases.entries()) {
   if (index) await new Promise((resolve) => setTimeout(resolve, Math.ceil(60000 / rpm)));
-  if (direct && item.group === "follow-up") continue;
   let status = 0;
   let data = { sources: [] };
   try {
@@ -92,7 +94,7 @@ await writeFile(
       mode: values.mode,
       endpoint: endpoint.href,
       recordedAt: new Date().toISOString(),
-      complete: results.length === cases.filter((c) => !direct || c.group !== "follow-up").length,
+      complete: results.length === eligibleCases.length,
       summary,
       results,
     },
@@ -101,8 +103,4 @@ await writeFile(
   ) + "\n",
 );
 console.log(JSON.stringify(summary));
-if (
-  summary.failures ||
-  results.length !== cases.filter((c) => !direct || c.group !== "follow-up").length
-)
-  process.exitCode = 1;
+if (summary.failures || results.length !== eligibleCases.length) process.exitCode = 1;

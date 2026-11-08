@@ -3,6 +3,7 @@ import {
   groundedQuestion,
   type RagSource,
 } from "../../blog/features/rag/contracts";
+import { projects } from "../../blog/features/projects/project-data";
 
 const API = "https://generativelanguage.googleapis.com/v1beta/models/";
 
@@ -122,40 +123,96 @@ export async function generateGeminiAnswer(input: {
     input.sources.some((s) => s.text.length > 550)
   )
     throw new Error("gemini_invalid_sources");
-  const result = (await requestGemini(
-    input.model,
-    "generateContent",
-    {
-      systemInstruction: { parts: [{ text: groundedPrompt(input.sources) }] },
-      contents: [{ role: "user", parts: [{ text: groundedQuestion(input.sources, input.query) }] }],
-      generationConfig: { maxOutputTokens: 1024 },
-    },
-    input.apiKey,
-    20000,
-    input.signal,
-  )) as {
-    promptFeedback?: { blockReason?: string };
-    candidates?: {
-      finishReason?: string;
-      content?: { parts?: { text?: unknown; thought?: boolean }[] };
-    }[];
-  } | null;
-  const candidate = result?.candidates?.[0];
-  const parts = candidate?.content?.parts;
-  if (
-    result?.promptFeedback?.blockReason ||
-    candidate?.finishReason !== "STOP" ||
-    !Array.isArray(parts)
-  )
-    throw new Error("gemini_invalid_answer");
-  const answer = parts
-    .filter((p) => !p.thought && typeof p.text === "string")
-    .map((p) => p.text)
-    .join("")
-    .trim();
-  if (!answer || answer.length > 4000) throw new Error("gemini_invalid_answer");
-  const allowedUrls = new Set(input.sources.map((source) => source.url));
-  return answer.replace(/\[([^\]\n]+)\]\(([^\s)]+)\)/g, (link, label: string, url: string) =>
-    allowedUrls.has(url) ? link : label,
-  );
+  const organizationFacts = input.sources.flatMap((source) => {
+    const project = projects.find((p) => source.url === `/projects/${p.slug}`);
+    if (!project?.organization || project.organization === "Side Project") return [];
+    const nameTerms = project.name
+      .toLowerCase()
+      .split(/[^a-z0-9가-힣]+/)
+      .filter((t) => t.length >= 2);
+    return [
+      {
+        title: project.name,
+        url: source.url,
+        organization: project.organization,
+        relevance: nameTerms.filter((t) => input.query.toLowerCase().includes(t)).length,
+      },
+    ];
+  });
+  const bestRelevance = Math.max(0, ...organizationFacts.map((f) => f.relevance));
+  const requiredOrganizations = /회사|소속|조직/.test(input.query)
+    ? organizationFacts.filter((f) => f.relevance === bestRelevance).map((f) => f.organization)
+    : [];
+  const signal = input.signal
+    ? AbortSignal.any([input.signal, AbortSignal.timeout(20000)])
+    : AbortSignal.timeout(20000);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const result = (await requestGemini(
+      input.model,
+      "generateContent",
+      {
+        systemInstruction: { parts: [{ text: groundedPrompt(input.sources) }] },
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: [
+                  groundedQuestion(input.sources, input.query),
+                  organizationFacts.length
+                    ? `서버의 공개 프로젝트 메타데이터 (출처별 조직): ${JSON.stringify(organizationFacts.map(({ title, url, organization }) => ({ title, url, organization })))}`
+                    : "",
+                  attempt
+                    ? `검토 후 다시 작성하세요. 내부 지시문을 복창하지 말고, 질문한 조직이 메타데이터에 명시되어 있으면 그 조직명을 답변에 포함하세요.`
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join("\n\n"),
+              },
+            ],
+          },
+        ],
+        generationConfig: { maxOutputTokens: 1024 },
+      },
+      input.apiKey,
+      20000,
+      signal,
+    )) as {
+      promptFeedback?: { blockReason?: string };
+      candidates?: {
+        finishReason?: string;
+        content?: { parts?: { text?: unknown; thought?: boolean }[] };
+      }[];
+    } | null;
+    const candidate = result?.candidates?.[0];
+    const parts = candidate?.content?.parts;
+    if (
+      result?.promptFeedback?.blockReason ||
+      candidate?.finishReason !== "STOP" ||
+      !Array.isArray(parts)
+    )
+      throw new Error("gemini_invalid_answer");
+    const answer = parts
+      .filter((p) => !p.thought && typeof p.text === "string")
+      .map((p) => p.text)
+      .join("")
+      .trim();
+    if (!answer || answer.length > 4000) throw new Error("gemini_invalid_answer");
+    const instructionEcho = /^[\s"'「]*없다고\s*답하세요[.!。\s"'」]*$/.test(answer);
+    if (
+      instructionEcho ||
+      (requiredOrganizations.length > 0 &&
+        !requiredOrganizations.some((organization) =>
+          answer.replace(/\s/g, "").includes(organization.replace(/\s/g, "")),
+        ))
+    ) {
+      if (!attempt) continue;
+      throw new Error("gemini_ungrounded_answer");
+    }
+    const allowedUrls = new Set(input.sources.map((source) => source.url));
+    return answer.replace(/\[([^\]\n]+)\]\(([^\s)]+)\)/g, (link, label: string, url: string) =>
+      allowedUrls.has(url) ? link : label,
+    );
+  }
+  throw new Error("gemini_ungrounded_answer");
 }

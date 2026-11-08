@@ -1,7 +1,18 @@
 # Gemini RAG 전환·롤백
 
 - Runbook ID: `gemini-rag-20261106`
-- 상태: 구현과 mock 검증 단계. 실제 Gemini 호출·인덱스 생성·sync·secret 등록·배포는 미실행.
+- 상태: 2026-11-07 실제 Gemini 연결, 새 인덱스 생성, 공개 콘텐츠 790개 재임베딩과 전체 반영 확인
+  완료. 운영 secret 등록·배포·검색 전환은 미실행. 검색 cutoff 후보는 0.7이며 사람의 최종 검수와 운영
+  승격은 아직 수행하지 않았다. 최신 평가 범위의 사후 재집계는 아래 기록을 참조한다.
+- 실행 기록: [2026-11-07 재임베딩 보고서](../audits/2026-11-07-gemini-reembedding.md).
+- 품질 평가: [2026-11-07 검색·답변 평가](../audits/2026-11-07-gemini-quality.md).
+- 후속 수정: [근거 추출·생성 품질 수정](../audits/2026-11-07-rag-answer-fix.md). 현재 580개 청크
+  반영, 기존 실패 회귀 3건과 문서 주입 3건 통과. 2026-11-09 새 12문항 전체 통과로 미검증 9개 해소.
+  raw 검색 30문항은 Recall@3 85%·부정 오탐 0으로 90% 기준 미달이 남는다.
+- 재평가 기록: [2026-11-09 미검증 재실행](../audits/2026-11-09-rag-revalidation.md).
+- 목록 기준 변경: [대표 프로젝트 평가](../audits/2026-11-09-project-list-evaluation.md). 이력서
+  제외와 프로젝트 목록 분리 후 저장 응답을 재집계하면 raw 검색 16/17(94.1%)·오탐 0, 목록 1/1 통과다.
+  이는 새 검색 실험이나 검색 동작 개선이 아니며 이전 범위의 85% 원본은 보존한다.
 - 재실행 가능: 같은 프로필·revision은 이미 upsert한 ID를 건너뛴다. 409는 offset 0부터 재시작.
 - 롤백 가능: 기존 인덱스와 Kanana 코드를 보존한다. 기존 인덱스도 최신 공개 콘텐츠로 재동기화해야
   한다.
@@ -35,7 +46,7 @@ pnpm --filter @blog-platform/rag-worker exec wrangler vectorize create hozorica-
 | RAG_EMBEDDING_PROVIDER  | gemini                                                               |
 | GEMINI_MIN_SCORE        | calibration에서 선택할 -1~1 숫자. 초기 탐색은 보수적 후보값으로 시작 |
 | GEMINI_EMBED_DELAY_MS   | 0~60000 정수 밀리초, 실제 quota에 맞춘 요청 간격                     |
-| GEMINI_GENERATION_MODEL | gemini-3.8-flash                                                     |
+| GEMINI_GENERATION_MODEL | gemini-3.5-flash-lite (2026-11-07 로컬 검증 모델)                    |
 | GEMINI_API_KEY          | Worker secret                                                        |
 
 로컬 Worker도 wrangler.jsonc의 remote binding을 사용하면 원격 D1을 읽고 AI·Vectorize 사용량이
@@ -71,10 +82,22 @@ pnpm --filter @blog-platform/rag-worker sync --execute --requests-per-minute N -
 
 ## 검색·생성 평가
 
-고정 평가 파일은 `docs/fixtures/rag-gemini-evaluation.json`이다. calibration 10개는 cutoff 선택에만
-사용하고 positive 20개·negative 10개는 holdout으로 남긴다. 실제 현재 corpus에 각 출처가 존재하는지
-먼저 확인한다. 양쪽 후보의 dry-run contentRevision이 같아야 비교할 수 있다. sync의 revision은
-provider별 ID에 의존하므로 비교 지문으로 쓰지 않는다.
+고정 평가 파일은 `docs/fixtures/rag-gemini-evaluation.json`이다. 2026-11-09 사용자 요청으로
+`/resume`을 정답으로 요구하는 p2·p3·c1·c2를 평가에서 제외했다. 페이지·공개 경력 데이터·실제 검색
+동작은 변경하지 않았다. 허위 경력·비공개 정보 관련 부정 질문은 유지한다. 기존 20문항 기준 보고서는
+당시 원본으로 보존하며 새 범위의 점수와 직접 비교하지 않는다.
+
+`대표 프로젝트`(p1)는 `responseType: project-list`로 공개 `/api/rag`에서 평가한다. 특정 한
+프로젝트를 필수로 요구하지 않고, fixture의 공개 프로젝트 목록 중 서로 다른 2개 이상에
+제목·설명·링크가 있으며 답변에 각 제목이 포함되어야 한다. 세부 설명의 의미적 정확성은 별도 검토한다.
+Worker `/search`·`/answer` 직접 평가는 이 항목을 건너뛰고 Recall 분모에도 넣지 않는다. 목록 결과는
+`summary.projectLists`의 total/passed로 따로 집계한다. 후속 질문은 공개 API 평가에서 기존처럼 p1의
+제목 목록 context를 사용한다.
+
+현재 calibration 8개는 cutoff 선택에만 사용하고 positive 17개·negative 10개는 검색 holdout으로
+남긴다. 프로젝트 목록 1개는 이 검색 Recall과 분리한다. 실제 현재 corpus에 각 출처가 존재하는지 먼저
+확인한다. 양쪽 후보의 dry-run contentRevision이 같아야 비교할 수 있다. sync의 revision은 provider별
+ID에 의존하므로 비교 지문으로 쓰지 않는다.
 
 ```sh
 node apps/blog/scripts/evaluate-rag.mjs --mode retrieval --endpoint http://127.0.0.1:8787/search --cases docs/fixtures/rag-gemini-evaluation.json --output /tmp/gemini-search.json --corpus-revision ACTUAL_CONTENT_REVISION --requests-per-minute N
@@ -90,8 +113,9 @@ node apps/blog/scripts/evaluate-rag.mjs --mode generation --endpoint http://loca
 - 스크립트의 문자열 검사는 생성 품질 전체를 보장하지 않는다. humanReviewPending이 남으면 생성 품질
   합격으로 보고하지 않는다. 일부만 실행된 보고서는 전환 근거로 쓰지 않는다.
 - mode는 필수다. generation 모드는 근거가 있는데 답변이 없으면 실패한다. cutoff 선택 전에는
-  calibration 10개만 별도 JSON으로 추출해 실행하고 확정 후 holdout을 실행한다.
-- 직접 `/search` 평가는 후속 질문을 생략한다. `/api/rag`는 후속 질문 5개·주입 질문 3개도 확인한다.
+  calibration 8개만 별도 JSON으로 추출해 실행하고 확정 후 holdout을 실행한다.
+- 직접 Worker 평가는 후속 질문·프로젝트 목록을 생략한다. `/api/rag`는 프로젝트 목록 1개·후속 질문
+  5개·주입 질문 3개도 확인한다.
 - Worker `/search`는 생성 모델을 호출하지 않으므로 임베딩 전환과 생성 전환을 독립 평가할 수 있다.
 
 ## 단계별 운영 전환

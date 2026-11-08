@@ -1,26 +1,14 @@
-import { projects } from "../projects/project-data";
 import { workExperiences, activities, awards, skillGroups } from "../resume/resume-data";
 import type { RagResult, RagSource } from "./contracts";
 import { profile } from "../resume/profile-data";
 import { isIntroduction } from "./identity";
+import { referencedProjects } from "./project-identity";
 
 const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9가-힣]/g, "");
 const careerIntent =
   /경력|근무|재직|인턴|계약직|회사|어디.*(?:일|다녔)|일했|일했다|담당|기간|몇\s*년|몇\s*개월/;
 const resultIntent =
   /성과|결과|수치|성공률|검증률|몇\s*(?:개|종)|얼마나|단축|절감|개선율|퍼센트|%|배\s*빨/;
-// Distinctive product identifiers only: React/API/AI alone cannot select a project.
-const aliases: Record<string, string[]> = {
-  "nexacro-react-poc": ["nexacro", "넥사크로"],
-  kusting: ["kusting", "커스팅"],
-  comma: ["comma", "콤마"],
-  geobugirin: ["거부기린", "geobugirin"],
-  "forensic-agent": ["포렌식", "forensic"],
-  "i18n-validation": ["i18n", "다국어"],
-  "typescript-migration": ["typescript마이그레이션", "타입스크립트마이그레이션"],
-  "api-data-transition": ["api기반데이터전환", "운영변경절차"],
-  "ai-workflow": ["ai프론트엔드수정", "ai수정워크플로"],
-};
 
 function source(title: string, url: string, text: string): RagSource {
   return { title, url, text: text.slice(0, 550), score: 1 };
@@ -65,9 +53,7 @@ export function factualAnswer(query: string): RagResult | null {
   }
   const q = normalize(query);
   const companies = workExperiences.filter((w) => q.includes(normalize(w.company)));
-  const selectedProjects = projects.filter((p) =>
-    [p.name, p.slug, ...(aliases[p.slug] ?? [])].some((name) => q.includes(normalize(name))),
-  );
+  const selectedProjects = referencedProjects(query);
   if (selectedProjects.length === 1 && (resultIntent.test(query) || careerIntent.test(query))) {
     const project = selectedProjects[0]!;
     const metrics = project.metrics.map((m) => `- ${m.label}: ${m.value} — ${m.detail}`).join("\n");

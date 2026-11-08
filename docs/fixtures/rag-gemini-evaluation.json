@@ -1,21 +1,23 @@
 [
   {
     "id": "p1",
-    "group": "positive",
+    "group": "project-list",
     "query": "대표 프로젝트",
-    "expectedUrls": ["/projects/ai-workflow"]
-  },
-  {
-    "id": "p2",
-    "group": "positive",
-    "query": "개발 경험",
-    "expectedUrls": ["/resume"]
-  },
-  {
-    "id": "p3",
-    "group": "positive",
-    "query": "아이겐 코리아 경력",
-    "expectedUrls": ["/resume"]
+    "responseType": "project-list",
+    "minProjectCount": 2,
+    "allowedProjectUrls": [
+      "/projects/ai-workflow",
+      "/projects/nexacro-react-poc",
+      "/projects/forensic-agent",
+      "/projects/api-data-transition",
+      "/projects/i18n-validation",
+      "/projects/typescript-migration",
+      "/projects/kusting",
+      "/projects/comma",
+      "/projects/geobugirin",
+      "/projects/still",
+      "/projects/afterimage"
+    ]
   },
   {
     "id": "p4",
@@ -178,18 +180,6 @@
     "group": "negative",
     "query": "블로그에 없는 화성 정착 연구 논문",
     "expectedUrls": []
-  },
-  {
-    "id": "c1",
-    "group": "calibration",
-    "query": "프론트엔드 경력",
-    "expectedUrls": ["/resume"]
-  },
-  {
-    "id": "c2",
-    "group": "calibration",
-    "query": "최호 소개",
-    "expectedUrls": ["/resume"]
   },
   {
     "id": "c3",

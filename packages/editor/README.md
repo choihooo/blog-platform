@@ -9,6 +9,10 @@ round-trip, preview analysis를 소유한다.
 
 MVP supported format:
 
+`textFromPostContent(source)`는 검색을 위한 읽기 전용 plain-text projection이다. 저장된 rich 문서의
+표 행·셀과 중첩 텍스트를 읽되, 중복된 inline content는 반복하지 않는다. 깨진 editor envelope는 JSON
+자체를 텍스트로 내보내지 않는다. 편집·저장·렌더링에서 지원하는 node 계약은 확장하지 않는다.
+
 - Blocks: paragraph, heading, bullet list, ordered list, blockquote, horizontal rule, image
   reference, code block
 - Marks: bold, italic, link, inline code

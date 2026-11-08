@@ -54,3 +54,23 @@
   downloads verified in actual browser. No deferred minor code findings.
 - SEO: bundled runtime missing, so source HTML plus regression tests used; pre-existing duplicate H1
   in Nest article recorded separately. No API keys or remote writes performed.
+
+## 2026-11-07 authorized live evaluation
+
+- Subsequent explicit user requests authorized local API setup, remote candidate index creation and
+  reembedding, then calibration and quality evaluation. The earlier implementation-only boundary
+  above describes the previous phase; production deployment remains outside the current scope.
+- Candidate index: 790 vectors fully reflected; see `docs/audits/2026-11-07-gemini-reembedding.md`.
+- Calibration: 10 separate cases, cutoff frozen at 0.7 before holdout. Positive 6/7, negative 0/3.
+- Raw retrieval holdout: Gemini 17/20 positive, 0/10 negative false positives; BGE 16/20, 1/10. All
+  60 requests HTTP 200, identical current contentRevision, all expected URLs exist.
+- Public API: 38/38 HTTP 200, positive URLs 20/20, one strict empty-URL failure for an intentional
+  false-premise correction. Agent semantic review found a GGUF article instruction echo and
+  insufficient detail in one follow-up. Some source excerpts contain editor JSON.
+- Synthetic source injection: marker/link ignored in 3/3, but explicit company attribution omitted
+  in 2/3. Raw evidence and unchanged automatic human-review flags are retained in the quality JSON.
+- Ruling: keep 0.7 as a local candidate and report failed rollout gates, rather than retuning on
+  holdout or relabeling expected URLs — the evaluation request does not justify hiding failures;
+  cost is deferring production activation until retrieval/context/generation fixes and new holdout.
+- Task 6 live evaluation complete; production transition, publication-state mutation tests, human
+  sign-off and rollback rehearsal remain pending. No application source changes in this phase.

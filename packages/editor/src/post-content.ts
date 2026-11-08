@@ -180,6 +180,43 @@ export function loadPostContent(source: string): StructuredPostContent {
   return parsePostContent(source) ?? legacyMarkdownToPostContent(source);
 }
 
+/** Read-only projection of persisted rich content; does not widen the editable model. */
+export function textFromPostContent(source: string): string {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(source);
+  } catch {
+    // A broken editor envelope is not Markdown prose.
+    if (/^\s*\{/.test(source) && /"nodes"\s*:/.test(source)) return "";
+  }
+  if (!isObject(parsed) || (!("nodes" in parsed) && parsed.version !== 1))
+    return textFromEditorNodes(loadPostContent(source).nodes);
+  if (parsed.version !== 1 || !Array.isArray(parsed.nodes)) return "";
+  function text(value: unknown, depth = 0): string {
+    if (depth > 40) return "";
+    if (Array.isArray(value))
+      return value
+        .map((v) => text(v, depth + 1))
+        .filter(Boolean)
+        .join("\n\n");
+    if (!isObject(value) || value.type === "horizontalRule") return "";
+    if (value.type === "table" && Array.isArray(value.rows))
+      return value.rows
+        .map((row) =>
+          Array.isArray(row)
+            ? row.map((cell) => text(cell, depth + 1).replace(/\s+/g, " ")).join(" | ")
+            : "",
+        )
+        .filter(Boolean)
+        .join("\n");
+    if (value.type === "image")
+      return [value.alt, value.title, value.caption].filter((v) => typeof v === "string").join(" ");
+    if (typeof value.text === "string") return value.text;
+    return text(value.body ?? value.content ?? value.items ?? value.children, depth + 1);
+  }
+  return text(parsed.nodes);
+}
+
 function postStatus(post: PostRecordLike): EditorFrontmatter["status"] {
   if (post.isPublished === 1) return "published";
   return post.publishedAt ? "archived" : "draft";

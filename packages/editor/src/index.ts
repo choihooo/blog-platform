@@ -15,6 +15,7 @@ export {
   previewEditorDocumentFromNodes,
   serializePostContent,
   textFromEditorNodes,
+  textFromPostContent,
 } from "./post-content.js";
 export { previewEditorDocument } from "./preview.js";
 export {

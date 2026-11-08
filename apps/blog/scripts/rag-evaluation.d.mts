@@ -3,6 +3,9 @@ export type EvaluationCase = {
   group: string;
   expectedUrls?: string[];
   forbiddenClaims?: string[];
+  responseType?: "project-list";
+  minProjectCount?: number;
+  allowedProjectUrls?: string[];
 };
 export type EvaluationResult = {
   group: string;
@@ -10,6 +13,7 @@ export type EvaluationResult = {
   claimsPass?: boolean;
   generationPass?: boolean;
   requiresHumanReview?: boolean;
+  projectListPass?: boolean;
 };
 export function evaluateCase(
   item: EvaluationCase,
@@ -23,4 +27,5 @@ export function summarizeEvaluation(results: EvaluationResult[]): {
   falsePositives: number;
   failures: number;
   humanReviewPending: number;
+  projectLists: { total: number; passed: number };
 };

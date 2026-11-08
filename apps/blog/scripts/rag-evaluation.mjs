@@ -3,7 +3,7 @@ export function evaluateCase(item, result, status, mode = "retrieval") {
   const valid = status === 200 && Array.isArray(result?.sources);
   const urls = sources.slice(0, 3).map((source) => source.url);
   const expected = item.expectedUrls;
-  const retrievalPass =
+  let retrievalPass =
     valid &&
     (expected?.length
       ? urls.some((url) => expected.includes(url))
@@ -11,6 +11,31 @@ export function evaluateCase(item, result, status, mode = "retrieval") {
         ? urls.length === 0
         : true);
   const answer = typeof result?.answer === "string" ? result.answer : "";
+  const isProjectList = item.responseType === "project-list";
+  if (isProjectList) {
+    const minimum = item.minProjectCount ?? 2;
+    const allowed = new Set(item.allowedProjectUrls ?? []);
+    const listed = sources.slice(0, 3);
+    retrievalPass =
+      valid &&
+      Number.isInteger(minimum) &&
+      minimum >= 2 &&
+      minimum <= 3 &&
+      answer.trim().length > 0 &&
+      answer.length <= 4000 &&
+      listed.length >= minimum &&
+      new Set(urls).size === listed.length &&
+      listed.every(
+        (source) =>
+          allowed.has(source.url) &&
+          /^\/projects\/[a-z0-9-]+$/.test(source.url) &&
+          typeof source.title === "string" &&
+          source.title.trim().length > 0 &&
+          typeof source.text === "string" &&
+          source.text.trim().length > 0 &&
+          answer.includes(source.title.trim()),
+      );
+  }
   const claimsPass = !(item.forbiddenClaims ?? []).some((claim) => answer.includes(claim));
   const generationPass =
     mode === "retrieval" ||
@@ -20,6 +45,7 @@ export function evaluateCase(item, result, status, mode = "retrieval") {
     group: item.group,
     status,
     retrievalPass,
+    ...(isProjectList ? { projectListPass: retrievalPass } : {}),
     claimsPass,
     generationPass,
     urls,
@@ -30,7 +56,8 @@ export function evaluateCase(item, result, status, mode = "retrieval") {
 }
 
 export function summarizeEvaluation(results) {
-  const positive = results.filter((r) => r.group === "positive");
+  const positive = results.filter((r) => r.group === "positive" && r.projectListPass === undefined);
+  const projectLists = results.filter((r) => r.projectListPass !== undefined);
   return {
     total: results.length,
     recallAt3: positive.length
@@ -40,5 +67,9 @@ export function summarizeEvaluation(results) {
     failures: results.filter((r) => !r.retrievalPass || !r.claimsPass || r.generationPass === false)
       .length,
     humanReviewPending: results.filter((r) => r.requiresHumanReview).length,
+    projectLists: {
+      total: projectLists.length,
+      passed: projectLists.filter((r) => r.projectListPass).length,
+    },
   };
 }
