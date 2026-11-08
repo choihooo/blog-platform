@@ -19,6 +19,18 @@ function source(title: string, url: string, text: string): RagSource {
   return { title, url, text: text.slice(0, 550), score: 1 };
 }
 
+function entrySections(entries: readonly (readonly [string, string])[]): string {
+  return entries
+    .map(([title, detail]) => {
+      const [metadata, ...lines] = detail.split("\n");
+      const details = lines.filter((line) => line.trim() && line !== title);
+      return [`### ${title}\n${metadata}`, details.map((line) => `- ${line}`).join("\n")]
+        .filter(Boolean)
+        .join("\n\n");
+    })
+    .join("\n\n");
+}
+
 /** High-risk facts bypass generation entirely. All prose below comes from public structured data. */
 export function factualAnswer(query: string): RagResult | null {
   // Do not let biography keywords hijack a request to find blog posts.
@@ -37,17 +49,13 @@ export function factualAnswer(query: string): RagResult | null {
         `## 기술 스택\n${skillGroups.map(([name, skills]) => `- ${name}: ${skills.join(", ")}`).join("\n")}`,
       );
     } else if (/수상/.test(query)) {
-      parts.push(
-        `## 수상\n${awards.map(([title, detail]) => `- ${title} — ${detail}`).join("\n")}`,
-      );
+      parts.push(`## 수상\n\n${entrySections(awards)}`);
     } else {
       if (/경험/.test(query))
         parts.push(
           `## 개발 경험\n${workExperiences.map((w) => `- ${w.company} · ${w.role} — ${w.period}`).join("\n")}`,
         );
-      parts.push(
-        `## 활동\n${activities.map(([title, detail]) => `- ${title} — ${detail}`).join("\n")}`,
-      );
+      parts.push(`## 활동\n\n${entrySections(activities)}`);
     }
     const answer = `공개 이력서에서 확인되는 내용을 정리했어요.\n\n${parts.join("\n\n")}`;
     return { answer, sources: [source("최호 이력서", "/resume", answer)] };

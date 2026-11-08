@@ -6,6 +6,13 @@ import { staticDocuments } from "@blog-platform/core/search";
 
 afterEach(() => vi.unstubAllGlobals());
 describe("structured factual answers", () => {
+  it("formats each activity with a title, period and separate details", () => {
+    const answer = factualAnswer("활동")!.answer!;
+    expect(answer).toContain("### CMC 19기 프론트엔드 개발자\n2026.05 ~ 2026.08 · CMC");
+    expect(answer).not.toContain("\nCMC 19기 프론트엔드 개발자\n");
+    expect(answer).toContain("\n- ‘브라우저를 AI의 런타임 환경으로 볼 수 있을까’ 세션 발표 진행");
+    expect(answer).toContain("### 한국대학생IT경영학회");
+  });
   it.each(["STILL", "AFTERIMAGE"])("omits unknown dates and empty metrics for %s", (name) => {
     const result = factualAnswer(`${name} 작업 기간과 성과`)!;
     expect(result.answer).toContain(name);
@@ -18,8 +25,8 @@ describe("structured factual answers", () => {
     const result = factualAnswer("개발 경험")!;
     expect(result.answer).toContain("## 개발 경험");
     expect(result.answer).toContain("## 활동");
-    expect(result.answer).toContain("- 유데미 러닝크루 2기 리더 — 2025.03 ~ 2025.04 · 유데미");
-    expect(result.answer).toContain("- CMC 19기 프론트엔드 개발자 — 2026.05 ~ 2026.08 · CMC");
+    expect(result.answer).toContain("### 유데미 러닝크루 2기 리더\n2025.03 ~ 2025.04 · 유데미");
+    expect(result.answer).toContain("### CMC 19기 프론트엔드 개발자\n2026.05 ~ 2026.08 · CMC");
     expect(isRagResult(result)).toBe(true);
   });
   it("formats skills and awards from structured records, not generated facts", () => {

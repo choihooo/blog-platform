@@ -4,6 +4,17 @@ import { describe, expect, it } from "vitest";
 import { ChatAnswer } from "./chat-answer";
 
 describe("readable chat answers", () => {
+  it("separates headings and lists even without blank lines", () => {
+    const html = renderToStaticMarkup(
+      createElement(ChatAnswer, {
+        text: "## 활동\n### CMC 19기\n2026.05 ~ 2026.08 · CMC\n- 세션 발표\n- 프론트엔드 개발\n### 학회\n2021.09 ~ 2025.12\n- 홈페이지 개선",
+      }),
+    );
+    expect(html).toContain("<h4>CMC 19기</h4>");
+    expect(html).toContain("<h4>학회</h4>");
+    expect(html.match(/<li>/g)).toHaveLength(3);
+    expect(html).not.toContain("###");
+  });
   it("renders comparison data as an accessible table", () => {
     const html = renderToStaticMarkup(
       createElement(ChatAnswer, {

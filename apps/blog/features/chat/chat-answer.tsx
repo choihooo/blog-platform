@@ -50,7 +50,10 @@ export function ChatAnswer({ text, articles }: { text: string; articles?: ChatAr
         ))}
       </ol>
     );
-  const blocks = text.split(/\n\s*\n/).filter(Boolean);
+  const blocks = text
+    .replace(/\n(?=#{2,3} )/g, "\n\n")
+    .split(/\n\s*\n/)
+    .filter(Boolean);
   return (
     <div className="chat-answer">
       {blocks.length ? (
@@ -97,19 +100,37 @@ export function ChatAnswer({ text, articles }: { text: string; articles?: ChatAr
               </div>
             );
           }
+          const heading = /^(#{2,3}) (.+)$/.exec(lines[0] ?? "");
+          if (heading) lines.shift();
+          const groups: { list: boolean; lines: string[] }[] = [];
+          for (const line of lines) {
+            const list = line.startsWith("- ");
+            const previous = groups.at(-1);
+            if (previous?.list === list) previous.lines.push(line);
+            else groups.push({ list, lines: [line] });
+          }
           return (
             <div className="chat-answer-block" key={i}>
-              {lines[0]?.startsWith("## ") && <h3>{lines.shift()!.slice(3)}</h3>}
-              {lines.length > 0 &&
-                (lines.every((line) => line.startsWith("- ")) ? (
-                  <ul>
-                    {lines.map((line, j) => (
+              {heading?.[1] === "##" && <h3>{heading[2]}</h3>}
+              {heading?.[1] === "###" && <h4>{heading[2]}</h4>}
+              {groups.map((group, groupIndex) =>
+                group.list ? (
+                  <ul key={groupIndex}>
+                    {group.lines.map((line, j) => (
                       <li key={j}>{inlineLinks(line.slice(2))}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p>{inlineLinks(lines.join("\n"))}</p>
-                ))}
+                  <p
+                    key={groupIndex}
+                    className={
+                      heading?.[1] === "###" && groupIndex === 0 ? "chat-answer-meta" : undefined
+                    }
+                  >
+                    {inlineLinks(group.lines.join("\n"))}
+                  </p>
+                ),
+              )}
             </div>
           );
         })

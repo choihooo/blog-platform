@@ -24,12 +24,28 @@
     text-wrap: pretty;
   }
   .chat-answer-block + .chat-answer-block {
-    margin-top: 16px;
+    margin-top: 20px;
+  }
+  .chat-answer {
+    font-size: 1rem;
+    line-height: 1.75;
   }
   .chat-answer h3 {
-    margin: 0 0 8px;
+    margin: 0 0 12px;
     font-size: inherit;
     font-weight: 650;
+  }
+  .chat-answer h4 {
+    margin: 0 0 4px;
+    font-size: inherit;
+    font-weight: 650;
+    line-height: 1.5;
+    text-wrap: balance;
+  }
+  .chat-answer .chat-answer-meta {
+    color: var(--hods-sys-color-fg-muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
   }
   .chat-answer p {
     margin: 0;
@@ -41,7 +57,11 @@
     list-style: disc;
   }
   .chat-answer li + li {
-    margin-top: 10px;
+    margin-top: 12px;
+  }
+  .chat-answer p + ul,
+  .chat-answer ul + p {
+    margin-top: 12px;
   }
   .chat-articles {
     margin: 0;
