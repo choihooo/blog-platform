@@ -22,6 +22,10 @@
 | 실제 콘텐츠를 읽는 공개 빌드       | `BLOG_CONTENT_PROXY_URL=https://cms.hozorica.com pnpm --dir /Users/choiho/coding/blog build` 통과 | `integrated-build.log`                                                 |
 | 후속 비공개 노출 수정              | CMS test 117개 통과·1개 건너뜀, lint·typecheck·format·build 확인                                  | `final-cms-*.log`, `final-format.log`                                  |
 
+후속 수정까지 원래 브랜치에 통합한 뒤 전체 `pnpm test`와 `pnpm format:check`를 다시 실행했다.
+최종 테스트는 648개 통과·1개 건너뜀이며 포맷 검사도 통과했다. 로그는
+`final-integrated-test.log`, `final-integrated-format.log`다.
+
 최초 단순화의 HTTP 30개·HTML/SEO 13개 페이지와 브라우저 검증은
 [최초 감사](2026-11-08-platform-simplification.md)에 있다. 후속 수정은 `seo-technical` 스킬의 공개
 접근·색인 경계를 적용해 실제 Request/Response 기반 로컬 route 회귀 테스트로 확인했다. 발행 글의
@@ -59,4 +63,4 @@ Unpublish는 D1을 비공개로 바꿨지만 공개 CMS API의 slug 조회가 �
 
 로컬에서 새 core의 원격 D1/R2 REST 인증은 Vercel의 민감 변수 다운로드 제한 때문에 검증하지 못했다.
 이를 통과로 처리하지 않았으며, 실제 운영 연결 확인은 기존 CMS와 CLI OAuth로 수행했다. 임시로 받은
-환경 파일은 검사 후 삭제하며 비밀값과 `.env` 파일은 커밋하지 않는다.
+환경 파일은 검사 후 삭제했고 비밀값과 `.env` 파일은 커밋하지 않았다.
