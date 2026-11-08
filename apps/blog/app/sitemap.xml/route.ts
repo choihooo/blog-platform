@@ -15,6 +15,7 @@ export async function GET() {
   const entries = generateSitemapOutput(seoSite, postsToSeoSubjects(posts, seoSite));
   entries.unshift(
     { loc: trimSlash(site.siteUrl) },
+    { loc: `${trimSlash(site.siteUrl)}/about` },
     { loc: `${trimSlash(site.siteUrl)}/projects` },
     ...projects.map((project) => ({
       loc: `${trimSlash(site.siteUrl)}/projects/${project.slug}`,

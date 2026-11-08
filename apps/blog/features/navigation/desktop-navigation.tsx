@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navigationItems = [
+  { href: "/about", label: "소개" },
   { href: "/projects", label: "프로젝트" },
   { href: "/blog", label: "블로그" },
   { href: "/resume", label: "이력서" },

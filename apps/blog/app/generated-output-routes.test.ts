@@ -79,6 +79,7 @@ describe("generated output routes", () => {
     expect(response.headers.get("content-type")).toBe("application/xml; charset=utf-8");
     expect(body).toContain("https://example.com/blog/hello");
     expect(body).toContain("https://example.com/blog/categories/engineering");
+    expect(body).toContain("https://example.com/about");
     expect(body).toContain("https://example.com/blog/tags/content-json");
     expect(body).not.toContain("/cms");
     expect(body).not.toContain("/preview");

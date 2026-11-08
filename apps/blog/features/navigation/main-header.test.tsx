@@ -5,7 +5,7 @@ import { MainHeader } from "./main-header";
 describe("shared main header", () => {
   it("uses real page destinations and marks the active portfolio", () => {
     const html = renderToStaticMarkup(<MainHeader active="work" />);
-    for (const href of ["/", "/resume", "/blog", "/projects"])
+    for (const href of ["/", "/about", "/blog", "/projects"])
       expect(html).toContain(`href="${href}"`);
     for (const label of ["HOZORICA", "About", "Blog", "Portfolio"]) expect(html).toContain(label);
     expect(html).toContain('aria-current="page"');

@@ -3,7 +3,7 @@ import "./main-header.css";
 
 export type MainSection = "about" | "blog" | "work";
 const items: readonly { id: MainSection; label: string; href: string }[] = [
-  { id: "about", label: "About", href: "/resume" },
+  { id: "about", label: "About", href: "/about" },
   { id: "blog", label: "Blog", href: "/blog" },
   { id: "work", label: "Portfolio", href: "/projects" },
 ];

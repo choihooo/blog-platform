@@ -29,7 +29,7 @@ function cacheContentSourceRead<Args extends unknown[], T>(
   fn: (...args: Args) => Promise<T>,
 ) {
   // Cached values include rendered reading-time labels from the public mapper.
-  return unstable_cache(fn, ["blog-content-reading-time-v2", name], {
+  return unstable_cache(fn, ["blog-content-rich-v1", name], {
     revalidate: CONTENT_CACHE_REVALIDATE_SECONDS,
     tags: [...tags],
   });

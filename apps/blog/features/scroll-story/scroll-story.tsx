@@ -102,7 +102,7 @@ export function ScrollStory() {
     <main className="scroll-story" ref={root} tabIndex={0} aria-label="호조리카 소개">
       <noscript>
         <nav className="story-static-links" aria-label="바로가기">
-          <a href="/resume">About 바로가기</a>
+          <a href="/about">About 바로가기</a>
           <a href="/blog">블로그 바로가기</a>
           <a href="/projects">포트폴리오 바로가기</a>
         </nav>

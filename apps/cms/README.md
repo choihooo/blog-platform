@@ -4,7 +4,10 @@
 
 ## Publish Workflow
 
-현재 저장소는 D1/R2이며 본문 모델·직렬화 계약은 `packages/core/README.md`를 따른다.
+현재 저장소는 D1/R2 adapter이며 editor 본문은 공유 패키지의 version-1 structured JSON을 사용한다.
+표·중첩 목록·부분 강조·이미지 캡션의 현재 계약은 `packages/core/README.md`를 따른다. Markdown 블록은
+편집기에 붙여넣으면 구조로 변환되며, 코드 블록 안에 붙여넣은 텍스트는 원문으로 유지한다.
+Save/Publish는 중첩 콘텐츠 validation 후 저장한다.
 
 - Save는 D1에 draft 변경을 저장하며 공개 갱신을 실행하지 않는다.
 - Publish·Unpublish·Archive는 기존 상태 전이와 `publishedAt`·slug 검증을 유지한다.

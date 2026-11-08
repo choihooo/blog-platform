@@ -7,6 +7,7 @@ import { Check } from "lucide-react";
 import { canOptimizePreviewImage, previewImageSizes, type PreviewPost } from "./preview-model";
 import { getPostRows } from "./post-rows";
 import { PostCard } from "./post-card";
+import { createScrollLoadGate } from "./scroll-load-gate";
 
 const batchSize = 8;
 
@@ -19,6 +20,9 @@ export function VirtualPostGrid({
 }) {
   const listRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const loadGate = useRef(createScrollLoadGate());
+  const pendingAnchor = useRef<{ index: string; top: number } | null>(null);
+  const pendingCompletion = useRef(false);
   const [visible, setVisible] = useState(batchSize);
   const [columns, setColumns] = useState(2);
   const [margin, setMargin] = useState(0);
@@ -68,18 +72,52 @@ export function VirtualPostGrid({
     virtualizer.measure();
   }, [columns, virtualizer]);
 
+  useLayoutEffect(() => {
+    const anchor = pendingAnchor.current;
+    if (!pendingCompletion.current) return;
+    const row = anchor && listRef.current?.querySelector(`[data-index="${anchor.index}"]`);
+    if (row && anchor) {
+      const offset = row.getBoundingClientRect().top - anchor.top;
+      if (offset !== 0) window.scrollBy({ top: offset, behavior: "instant" });
+    }
+    pendingAnchor.current = null;
+    pendingCompletion.current = false;
+    loadGate.current.complete(window.scrollY);
+  }, [visible]);
+
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel || !hasMore) return;
+    const requestNext = () => {
+      const bounds = sentinel.getBoundingClientRect();
+      if (
+        bounds.top <= window.innerHeight + 600 &&
+        bounds.bottom >= -600 &&
+        loadGate.current.request(
+          window.scrollY,
+          document.documentElement.scrollHeight - window.innerHeight,
+        )
+      )
+        setLoading(true);
+    };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) setLoading(true);
+        if (entry?.isIntersecting) requestNext();
       },
       { rootMargin: "600px 0px" },
     );
     observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasMore, visible]);
+    const resizeObserver = new ResizeObserver(requestNext);
+    if (listRef.current) resizeObserver.observe(listRef.current);
+    window.addEventListener("scroll", requestNext, { passive: true });
+    window.addEventListener("resize", requestNext);
+    return () => {
+      observer.disconnect();
+      resizeObserver.disconnect();
+      window.removeEventListener("scroll", requestNext);
+      window.removeEventListener("resize", requestNext);
+    };
+  }, [hasMore]);
 
   useEffect(() => {
     if (!loading || !hasMore) return;
@@ -106,6 +144,17 @@ export function VirtualPostGrid({
     Promise.race([Promise.all(images), deadline]).then(() => {
       clearTimeout(timeout);
       if (cancelled) return;
+      pendingCompletion.current = true;
+      const mountedRows = Array.from(
+        listRef.current?.querySelectorAll<HTMLElement>("[data-index]") ?? [],
+      );
+      const anchorRow =
+        mountedRows.find((row) => row.getBoundingClientRect().bottom > 0) ?? mountedRows.at(-1);
+      if (anchorRow)
+        pendingAnchor.current = {
+          index: anchorRow.dataset.index!,
+          top: anchorRow.getBoundingClientRect().top,
+        };
       setVisible((count) => Math.min(count + batchSize, posts.length));
       setLoading(false);
     });

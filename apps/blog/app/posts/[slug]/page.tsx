@@ -159,6 +159,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
           <div
             className="prose"
+            data-content-schema="1-rich"
             data-analytics-category={post.category}
             data-analytics-slug={post.slug}
           >

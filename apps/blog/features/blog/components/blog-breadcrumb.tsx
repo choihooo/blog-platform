@@ -16,7 +16,7 @@ type BreadcrumbEntry = {
 
 export function BlogBreadcrumb({ entries, label }: { entries: BreadcrumbEntry[]; label: string }) {
   return (
-    <Breadcrumb aria-label={label} className="mb-6" size="sm">
+    <Breadcrumb aria-label={label} className="post-breadcrumb mb-6" size="sm">
       <BreadcrumbList>
         {entries.map((entry, index) => (
           <BreadcrumbItem key={`${entry.href ?? "current"}:${entry.label}`}>

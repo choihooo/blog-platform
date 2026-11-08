@@ -1,4 +1,4 @@
-import { type EditorDocument } from "@blog-platform/core/content";
+import { validateEditorDocument, type EditorDocument } from "@blog-platform/core/content";
 
 import type { ContentAdapter, ContentFailure } from "@blog-platform/core/content";
 import { documentToPostRecord, pathForDocument, slugFromPath } from "./editor-save";
@@ -152,13 +152,13 @@ export async function runPublicationOperation(input: {
 }): Promise<PublicationResult> {
   const now = input.now ?? new Date();
   const next = withStatus(input.document, input.operation, now.toISOString());
-  if (!next.frontmatter.title.trim()) {
+  if (validateEditorDocument(next).length > 0) {
     return {
       ok: false,
       operation: input.operation,
       code: "validation-failure",
       retryable: false,
-      message: "Title is required before publishing",
+      message: validateEditorDocument(next)[0]?.message ?? "Invalid editor document",
       submittedDocument: input.document,
     };
   }

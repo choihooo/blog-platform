@@ -181,6 +181,7 @@ body {
 }
 
 .prose table {
+  min-width: 100%;
   display: block;
   width: 100%;
   margin: 1.6em 0;
@@ -191,6 +192,30 @@ body {
   font-size: 0.94em;
   line-height: 1.55;
   box-shadow: 0 10px 26px color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+
+.post-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-block: 1.5rem;
+}
+
+.post-breadcrumb,
+.post-breadcrumb .hods-breadcrumb__list,
+.post-breadcrumb .hods-breadcrumb__item {
+  max-width: 100%;
+  min-width: 0;
+}
+.post-breadcrumb .hods-breadcrumb__current {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.post-table-scroll table {
+  margin-block: 0;
+}
+.post-table-scroll td > p,
+.post-table-scroll th > p {
+  margin-block: 0.4em;
 }
 
 .prose th,

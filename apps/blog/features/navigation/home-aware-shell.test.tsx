@@ -13,6 +13,7 @@ describe("public header policy", () => {
     "/blog",
     "/projects",
     "/projects/kusting",
+    "/about",
     "/resume",
     "/unknown",
   ])("renders the correct shell for %s", (path) => {
@@ -31,6 +32,7 @@ describe("public header policy", () => {
         "/experiments/blog-rounded/nest-di-ioc",
         "/projects",
         "/projects/kusting",
+        "/about",
       ].includes(path),
     );
     if (path === "/projects/kusting") {

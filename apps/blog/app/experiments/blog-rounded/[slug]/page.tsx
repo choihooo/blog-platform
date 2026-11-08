@@ -80,7 +80,7 @@ export default async function RoundedBlogPostPage({ params }: Props) {
             />
           )}
           <div className="rounded-blog-reading-layout">
-            <div className="prose">
+            <div className="prose" data-content-schema="1-rich">
               <PostBodyRenderer
                 analyticsContext={{
                   provider: "none",

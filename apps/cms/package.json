@@ -17,6 +17,7 @@
     "@hozui/tokens": "^0.1.0",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",
+    "@tiptap/extension-table": "^3.29.2",
     "@tiptap/react": "^3.29.2",
     "@tiptap/starter-kit": "^3.29.2",
     "lucide-react": "^1.27.0",

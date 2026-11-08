@@ -10,6 +10,7 @@ export function HomeAwareShell({ children, header }: { children: ReactNode; head
   const pathname = usePathname();
   const isHome =
     pathname === "/" ||
+    pathname === "/about" ||
     pathname === "/projects" ||
     pathname === "/experiments/pixel-room" ||
     pathname === "/experiments/blog-rounded" ||

@@ -30,7 +30,7 @@ history state를 유지합니다. 상세 방문 후 뒤로 가기나 화면 회�
 미실행용 일반 링크와 reduced-motion 정지 화면을 제공합니다. 챗봇은 최초 열기 전에는 모델을 불러오지
 않습니다. 현재 미디어의 생성 정보는 `plates-ultrawide-v2/sources.json`에 보존합니다.
 
-인사와 About → 글쓰기와 Blog → 작업과 Work 순서입니다. 링크는 기존 `/resume`, `/blog`, `/projects`로
+인사와 About → 글쓰기와 Blog → 작업과 Work 순서입니다. 링크는 `/about`, `/blog`, `/projects`로
 연결합니다. 스크롤 스냅으로 이동할 장면을 선택하면 1초짜리 전환 MP4를 한 번 재생합니다. 첨부된 Lena
 Varga Hero 화면 기록을 참고해 카메라 시점이 바뀌는 캐릭터 영상, 기울어지는 바닥과 사선 장면 교체를
 영상 안에 합성했습니다. HTML 화면 전체를 회전하지 않습니다. 메뉴는 고정하고 제목은 도착 후 글자마다
