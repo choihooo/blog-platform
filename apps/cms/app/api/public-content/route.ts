@@ -36,7 +36,9 @@ export async function GET(request: Request) {
   if (slug) {
     const result = await adapter.getPostBySlug(slug);
     if (!result.ok) return Response.json({ error: "upstream_failure" }, { status: 502 });
-    if (!result.data) return Response.json({ error: "not_found" }, { status: 404 });
+    if (!result.data || !result.data.isPublished) {
+      return Response.json({ error: "not_found" }, { status: 404 });
+    }
     return Response.json({ post: result.data }, { headers: cacheHeaders });
   }
 
