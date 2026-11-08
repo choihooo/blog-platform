@@ -1,5 +1,8 @@
 # 플랫폼 단순화 후속 통합·운영 검증
 
+아래는 배포 전 통합 기록이다. 이후 사용자 요청으로 운영 배포와 배포 후 검증도 완료했으며,
+[운영 배포 감사](2026-11-09-platform-deployment.md)에 결과를 기록했다.
+
 ## 통합과 사용자 변경 보존
 
 - 리팩터링만 `f4d0754` (`refactor: consolidate platform core and remove legacy storage bridges`)로
