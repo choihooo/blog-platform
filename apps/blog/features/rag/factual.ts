@@ -1,8 +1,13 @@
-import { projects } from "../projects/project-data";
-import { workExperiences, activities, awards, skillGroups } from "../resume/resume-data";
-import type { RagResult, RagSource } from "./contracts";
-import { profile } from "../resume/profile-data";
-import { isIntroduction } from "./identity";
+import { projects } from "@blog-platform/core/content/catalog";
+import {
+  workExperiences,
+  activities,
+  awards,
+  skillGroups,
+} from "@blog-platform/core/content/catalog";
+import type { RagResult, RagSource } from "@blog-platform/core/search";
+import { profile } from "@blog-platform/core/content/catalog";
+import { isIntroduction } from "@blog-platform/core/search";
 
 const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9가-힣]/g, "");
 const careerIntent =

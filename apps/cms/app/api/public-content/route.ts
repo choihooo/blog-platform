@@ -1,5 +1,5 @@
-import { createContentAdapter } from "../../../lib/content-adapter/content-adapter";
-import type { CategoryRecord } from "../../../lib/content-adapter/content-adapter.interface";
+import { createContentAdapter } from "@blog-platform/core/storage";
+import type { CategoryRecord } from "@blog-platform/core/content";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,7 +30,7 @@ function publicCategory(category: CategoryRecord) {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const slug = optionalParam(url.searchParams.get("slug"));
 
   if (slug) {

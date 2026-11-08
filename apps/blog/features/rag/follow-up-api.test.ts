@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { POST } from "../../app/api/rag/route";
-import { isRagResult } from "./contracts";
+import { isRagResult } from "@blog-platform/core/search";
 
 const request = (body: unknown) =>
   new Request("http://localhost/api/rag", {

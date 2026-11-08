@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { factualAnswer } from "./factual";
-import { isRagResult } from "./contracts";
+import { isRagResult } from "@blog-platform/core/search";
 import { retrieve } from "./server";
-import { staticDocuments } from "./corpus-documents";
+import { staticDocuments } from "@blog-platform/core/search";
 
 afterEach(() => vi.unstubAllGlobals());
 describe("structured factual answers", () => {

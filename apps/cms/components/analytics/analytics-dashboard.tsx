@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import type { AnalyticsDashboardView } from "@blog-platform/analytics";
+import type { AnalyticsDashboardView } from "@blog-platform/core/analytics";
 
 import { AnalyticsEmptyState } from "./analytics-empty-state";
 import { MetricSummary } from "./metric-summary";

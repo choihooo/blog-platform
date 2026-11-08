@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ProjectBlockRenderer } from "./project-block-renderer";
-import type { ProjectRelatedPost, ProjectSection } from "./project-types";
+import type { ProjectRelatedPost, ProjectSection } from "@blog-platform/core/content/catalog";
 
 export function ProjectSections({ sections }: { sections: readonly ProjectSection[] }) {
   return (

@@ -9,7 +9,7 @@ import {
   type AnalyticsProviderResult,
   type PostPerformance,
   type PublicationPerformanceWindow,
-} from "@blog-platform/analytics";
+} from "@blog-platform/core/analytics";
 
 type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 

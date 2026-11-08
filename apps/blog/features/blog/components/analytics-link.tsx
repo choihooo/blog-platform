@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { ComponentProps, MouseEvent, ReactNode } from "react";
-import type { BlogEventName } from "@blog-platform/analytics";
+import type { BlogEventName } from "@blog-platform/core/analytics";
 
 import { trackPostEvent, type PostAnalyticsContext } from "./post-analytics-events";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { preparePreviewArticle } from "./preview-article";
-import type { EditorNode } from "@blog-platform/editor";
+import type { EditorNode } from "@blog-platform/core/content";
 
 describe("preview article title", () => {
   it("shows the page title once and keeps body anchors consistent without editing source content", () => {

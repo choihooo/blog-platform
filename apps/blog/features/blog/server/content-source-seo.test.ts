@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { PostRecord } from "../../../../cms/lib/content-adapter/content-adapter.interface";
+import type { PostRecord } from "@blog-platform/core/content";
 
 const state = vi.hoisted(() => ({ posts: [] as PostRecord[], failed: false }));
 vi.mock("next/cache", () => ({ unstable_cache: (fn: unknown) => fn }));
-vi.mock("../../../../cms/lib/site-config", () => ({
+vi.mock("@/shared/config/site-config", () => ({
   loadSiteConfig: async () => ({
     siteName: "Test",
     siteUrl: "https://example.com",
     analytics: { provider: "none" },
   }),
 }));
-vi.mock("../../../../cms/lib/content-adapter/content-adapter", () => ({
+vi.mock("@blog-platform/core/storage", () => ({
   createContentAdapter: () => ({
     listPosts: async (input: {
       page: number;

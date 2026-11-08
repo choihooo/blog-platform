@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { POST } from "../../app/api/rag/route";
 import { allVisitorQuestions } from "./visitor-questions";
-import { isRagResult } from "./contracts";
-import { projects } from "../projects/project-data";
+import { isRagResult } from "@blog-platform/core/search";
+import { projects } from "@blog-platform/core/content/catalog";
 import { isSearchContext, resolveFollowUp } from "./follow-up";
 import { conversationAnswer } from "./conversation";
 

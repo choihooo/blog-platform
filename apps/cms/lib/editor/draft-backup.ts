@@ -1,4 +1,4 @@
-import type { EditorDocument } from "@blog-platform/editor";
+import type { EditorDocument } from "@blog-platform/core/content";
 
 export type DraftBackupRecord = {
   backupKey: string;

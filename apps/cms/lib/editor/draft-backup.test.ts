@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEmptyEditorDocument } from "@blog-platform/editor";
+import { createEmptyEditorDocument } from "@blog-platform/core/content";
 
 import { backupKey, createDraftBackup, isExpiredBackup, isRestoreCandidate } from "./draft-backup";
 

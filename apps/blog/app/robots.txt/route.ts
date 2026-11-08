@@ -1,4 +1,4 @@
-import { generateRobotsPolicy, serializeRobots } from "@blog-platform/seo-engine";
+import { generateRobotsPolicy, serializeRobots } from "@blog-platform/core/seo";
 
 import { siteForSeo } from "@/features/blog/lib/seo";
 import { getSiteConfig } from "@/features/blog/server/content-source";

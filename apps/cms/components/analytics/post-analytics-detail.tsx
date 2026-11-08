@@ -4,7 +4,7 @@ import type {
   AnalyticsDashboardView,
   PostPerformance,
   PublicationPerformanceWindow,
-} from "@blog-platform/analytics";
+} from "@blog-platform/core/analytics";
 
 type PostAnalyticsDetailProps = {
   dashboard: AnalyticsDashboardView;

@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { projects } from "../../apps/blog/features/projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 
 const outputPath = resolve(process.argv[2] ?? "tmp/pdfs/project-portfolio-data.json");
 

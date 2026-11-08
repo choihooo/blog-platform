@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createEmptyEditorDocument } from "@blog-platform/editor";
+import { createEmptyEditorDocument } from "@blog-platform/core/content";
 
 import { saveEditorDraft } from "./editor-save";
 

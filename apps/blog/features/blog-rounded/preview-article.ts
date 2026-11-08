@@ -1,4 +1,4 @@
-import { analyzeEditorNodes } from "@blog-platform/editor";
+import { analyzeEditorNodes } from "@blog-platform/core/content";
 import type { PublicPost } from "../blog/server/content-source-types";
 
 export function preparePreviewArticle(post: Pick<PublicPost, "title" | "bodyNodes" | "toc">) {

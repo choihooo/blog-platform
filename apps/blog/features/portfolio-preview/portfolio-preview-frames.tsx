@@ -1,6 +1,6 @@
 import { AspectRatio, Badge, Chip, ChipGroup } from "@hozui/react";
 
-import { aiWorkflowProject } from "@/features/projects/data/ai-workflow";
+import { aiWorkflowProject } from "@blog-platform/core/content/catalog";
 
 import { AssetPlaceholder, FrameMeta, Metric } from "./portfolio-preview-primitives";
 import styles from "./portfolio-preview.module.css";

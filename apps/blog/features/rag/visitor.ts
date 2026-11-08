@@ -1,6 +1,6 @@
-import { projects } from "../projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import { factualAnswer } from "./factual";
-import type { RagResult } from "./contracts";
+import type { RagResult } from "@blog-platform/core/search";
 
 const reply = (answer: string): RagResult => ({ answer, sources: [] });
 

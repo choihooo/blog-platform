@@ -1,5 +1,5 @@
-import { createExternalConsoleLinks } from "@blog-platform/analytics";
-import type { EditorDocument } from "@blog-platform/editor";
+import { createExternalConsoleLinks } from "@blog-platform/core/analytics";
+import type { EditorDocument } from "@blog-platform/core/content";
 
 export function analyticsLinksForEditorDocument(
   document: EditorDocument,

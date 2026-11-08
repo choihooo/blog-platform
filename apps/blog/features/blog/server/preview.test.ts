@@ -1,13 +1,13 @@
 import { createHmac } from "node:crypto";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { serializePostContent } from "@blog-platform/editor";
+import { serializePostContent } from "@blog-platform/core/content";
 
 import { loadDraftPreview } from "./preview";
 
 const getPostBySlug = vi.fn();
 
-vi.mock("../../../../cms/lib/content-adapter/content-adapter", () => ({
+vi.mock("@blog-platform/core/storage", () => ({
   createContentAdapter: () => ({ getPostBySlug }),
 }));
 

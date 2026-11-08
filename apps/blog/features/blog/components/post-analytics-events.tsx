@@ -9,7 +9,7 @@ import {
   toProviderPayload,
   type AnalyticsConfig,
   type BlogEventName,
-} from "@blog-platform/analytics";
+} from "@blog-platform/core/analytics";
 
 export type PostAnalyticsContext = {
   provider: string;

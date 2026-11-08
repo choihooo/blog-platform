@@ -1,0 +1,47 @@
+{
+  "name": "@blog-platform/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./content": {
+      "types": "./dist/content/index.d.ts",
+      "default": "./dist/content/index.js"
+    },
+    "./seo": {
+      "types": "./dist/seo/index.d.ts",
+      "default": "./dist/seo/index.js"
+    },
+    "./analytics": {
+      "types": "./dist/analytics/index.d.ts",
+      "default": "./dist/analytics/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "default": "./dist/storage/index.js"
+    },
+    "./content/catalog": {
+      "types": "./dist/content/catalog/index.d.ts",
+      "default": "./dist/content/catalog/index.js"
+    },
+    "./search": {
+      "types": "./dist/search/index.d.ts",
+      "default": "./dist/search/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "format:check": "prettier \"src/**/*.ts\" package.json tsconfig.json vitest.config.ts --check",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "markdown-it": "^15.0.3",
+    "parse5": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.2.0",
+    "vitest": "^4.1.10"
+  }
+}

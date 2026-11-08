@@ -4,12 +4,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 
-import { createContentAdapter } from "../../apps/cms/lib/content-adapter/content-adapter";
+import { createContentAdapter } from "@blog-platform/core/storage";
 import {
   loadPostContent,
   parsePostContent,
   serializePostContent,
-} from "../../packages/editor/src/post-content";
+} from "@blog-platform/core/content";
 
 const execFileAsync = promisify(execFile);
 
@@ -110,7 +110,7 @@ async function main() {
     return;
   }
 
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   let page = 1;
   let converted = 0;
 

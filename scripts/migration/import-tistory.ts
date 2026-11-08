@@ -6,13 +6,13 @@ import { createHash, createHmac } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { createD1R2ContentAdapter } from "../../apps/cms/lib/content-adapter/d1-r2-adapter";
+import { createD1R2ContentAdapter } from "@blog-platform/core/storage";
 import type {
   CategoryRecord,
   MediaReference,
   PostRecord,
   TagRecord,
-} from "../../apps/cms/lib/content-adapter/content-adapter.interface";
+} from "@blog-platform/core/content";
 import type { MediaMappingRecord } from "../../apps/cms/lib/migration/map-media";
 
 const BLOG_ORIGIN = "https://hochoi.tistory.com";

@@ -1,4 +1,4 @@
-import type { MetricComparison, SitePerformanceSummary } from "@blog-platform/analytics";
+import type { MetricComparison, SitePerformanceSummary } from "@blog-platform/core/analytics";
 
 const metricLabels: Record<keyof Omit<SitePerformanceSummary, "comparison">, string> = {
   pageViews: "Page views",

@@ -1,5 +1,5 @@
-import type { EditorDocument } from "@blog-platform/editor";
-import { previewEditorDocument } from "@blog-platform/editor";
+import type { EditorDocument } from "@blog-platform/core/content";
+import { previewEditorDocument } from "@blog-platform/core/content";
 
 type PreviewPanelProps = {
   document: EditorDocument;

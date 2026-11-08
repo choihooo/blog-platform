@@ -1,8 +1,8 @@
-import { generateSitemapOutput, serializeSitemap, trimSlash } from "@blog-platform/seo-engine";
+import { generateSitemapOutput, serializeSitemap, trimSlash } from "@blog-platform/core/seo";
 
 import { postsToSeoSubjects, siteForSeo } from "@/features/blog/lib/seo";
 import { getAllPublishedPosts, getSiteConfig } from "@/features/blog/server/content-source";
-import { projects } from "@/features/projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 
 export const revalidate = 900;
 

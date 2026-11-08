@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createContentAdapter } from "../../lib/content-adapter/content-adapter";
+import { createContentAdapter } from "@blog-platform/core/storage";
 import { evaluateAccess, getCmsSession } from "../../lib/auth/index";
 import { guardMutation } from "../../lib/auth/mutation-guard";
 import { repositoryRoot } from "../../lib/editor/root";
@@ -36,7 +36,7 @@ export async function createCategoryAction(formData: FormData) {
   }
 
   const result = await withTaxonomyAccess(() =>
-    createContentAdapter("d1r2").createCategory({
+    createContentAdapter().createCategory({
       category: {
         id: idFromSlug("cat", slug),
         name,
@@ -65,7 +65,7 @@ export async function updateCategoryAction(formData: FormData) {
   }
 
   const result = await withTaxonomyAccess(() =>
-    createContentAdapter("d1r2").updateCategory({
+    createContentAdapter().updateCategory({
       categoryId,
       category: {
         name,
@@ -89,7 +89,7 @@ export async function deleteCategoryAction(formData: FormData) {
   }
 
   const result = await withTaxonomyAccess(() =>
-    createContentAdapter("d1r2").deleteCategory({
+    createContentAdapter().deleteCategory({
       categoryId,
       authorIdentity: "cms-editor",
     }),
@@ -108,7 +108,7 @@ export async function createTagAction(formData: FormData) {
   }
 
   const result = await withTaxonomyAccess(() =>
-    createContentAdapter("d1r2").createTag({
+    createContentAdapter().createTag({
       tag: {
         id: idFromSlug("tag", slug),
         name,

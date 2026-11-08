@@ -4,8 +4,8 @@ import {
   loadPostContent,
   textFromEditorNodes,
   type EditorNode,
-} from "@blog-platform/editor";
-import type { PostRecord } from "../../../../cms/lib/content-adapter/content-adapter.interface";
+} from "@blog-platform/core/content";
+import type { PostRecord } from "@blog-platform/core/content";
 import type { CategoryHierarchy, ContentListInput, PublicPost, Tag } from "./content-source-types";
 
 const CATEGORY_PATH_RE = /^([a-z0-9-]+)(?:\/([a-z0-9-]+))?$/;

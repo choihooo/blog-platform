@@ -5,7 +5,7 @@ import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
-import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/editor";
+import type { EditorDocument, EditorMark, EditorNode } from "@blog-platform/core/content";
 import {
   Button,
   Modal,

@@ -23,10 +23,10 @@ describe("pixel room integration contracts", () => {
       );
     }
     expect(read("./pixel-room.css")).toContain(".pixel-room-page {");
-    expect(read("./pixel-room.css")).toContain("@keyframes chat-ai-shimmer");
+    expect(read("../chat/chat.css")).toContain("@keyframes chat-ai-shimmer");
   });
   it("shows the site header on content pages and keeps the room headerless", () => {
-    expect(read("./portfolio-chat.tsx")).not.toContain("/models/");
+    expect(read("../chat/portfolio-chat.tsx")).not.toContain("/models/");
     const shell = read("../navigation/home-aware-shell.tsx");
     expect(shell).not.toContain('pathname.startsWith("/projects")');
     expect(shell).not.toContain('pathname.startsWith("/blog")');

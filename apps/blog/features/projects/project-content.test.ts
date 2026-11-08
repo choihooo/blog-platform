@@ -2,16 +2,16 @@ import { describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { apiDataTransitionProject } from "./data/api-data-transition";
-import { aiWorkflowProject } from "./data/ai-workflow";
-import { commaProject } from "./data/comma";
-import { forensicAgentProject } from "./data/forensic-agent";
-import { geobugirinProject } from "./data/geobugirin";
-import { i18nValidationProject } from "./data/i18n-validation";
-import { kustingProject } from "./data/kusting";
-import { nexacroReactPocProject } from "./data/nexacro-react-poc";
-import { typescriptMigrationProject } from "./data/typescript-migration";
-import { projects } from "./project-data";
+import { apiDataTransitionProject } from "@blog-platform/core/content/catalog";
+import { aiWorkflowProject } from "@blog-platform/core/content/catalog";
+import { commaProject } from "@blog-platform/core/content/catalog";
+import { forensicAgentProject } from "@blog-platform/core/content/catalog";
+import { geobugirinProject } from "@blog-platform/core/content/catalog";
+import { i18nValidationProject } from "@blog-platform/core/content/catalog";
+import { kustingProject } from "@blog-platform/core/content/catalog";
+import { nexacroReactPocProject } from "@blog-platform/core/content/catalog";
+import { typescriptMigrationProject } from "@blog-platform/core/content/catalog";
+import { projects } from "@blog-platform/core/content/catalog";
 import { getProjectSections, getProjectToc } from "./project-content";
 
 describe("project content", () => {

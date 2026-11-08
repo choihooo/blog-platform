@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { projectCatalog, noEvidence } from "./discovery";
 import { factualAnswer } from "./factual";
 import { isSearchContext, resolveFollowUp } from "./follow-up";
-import { chunkDocuments, currentMatches } from "./corpus";
-import { isRagResult } from "./contracts";
+import { chunkDocuments, currentMatches } from "@blog-platform/core/search";
+import { isRagResult } from "@blog-platform/core/search";
 
 describe("portfolio question regression set", () => {
   it.each([

@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
-import { projects } from "../project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import { DesktopPortfolio } from "./desktop-portfolio";
 it("shows all desktop icons without a duplicate lower catalogue and provides a no-script escape", () => {
   const html = renderToStaticMarkup(<DesktopPortfolio />);

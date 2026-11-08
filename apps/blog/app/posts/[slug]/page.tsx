@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Chip, ChipGroup } from "@hozui/react";
-import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
+import { generateJsonLd, generatePageMetadata } from "@blog-platform/core/seo";
 
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
 import { PostAnalyticsEvents } from "@/features/blog/components/post-analytics-events";

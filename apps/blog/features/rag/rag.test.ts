@@ -5,10 +5,10 @@ import {
   embeddingText,
   postDocument,
   staticDocuments,
-} from "./corpus";
-import { boundedJson, groundedPrompt, isRagResult, queryFrom } from "./contracts";
+} from "@blog-platform/core/search";
+import { boundedJson, groundedPrompt, isRagResult, queryFrom } from "@blog-platform/core/search";
 import { POST } from "../../app/api/rag/route";
-import { projects } from "../projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 
 afterEach(() => {
   vi.unstubAllGlobals();

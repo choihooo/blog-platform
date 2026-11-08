@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { ProjectSections, RelatedPosts } from "./project-detail-body";
 import { getProjectSections, getProjectToc } from "./project-content";
-import type { ProjectCaseStudy } from "./project-data";
+import type { ProjectCaseStudy } from "@blog-platform/core/content/catalog";
 
 export function ProjectDetailPage({ project }: { project: ProjectCaseStudy }) {
   const sections = getProjectSections(project);

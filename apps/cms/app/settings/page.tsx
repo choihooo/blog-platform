@@ -6,11 +6,8 @@ import { AccessState, CmsShell } from "../../components/shell/index";
 import { CategoryManager } from "../../components/settings/category-manager";
 import { CmsTextField } from "../../components/ui/text-field";
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
-import { createContentAdapter } from "../../lib/content-adapter/content-adapter";
-import type {
-  CategoryRecord,
-  TagRecord,
-} from "../../lib/content-adapter/content-adapter.interface";
+import { createContentAdapter } from "@blog-platform/core/storage";
+import type { CategoryRecord, TagRecord } from "@blog-platform/core/content";
 import { loadSiteConfig, type SiteConfig } from "../../lib/site-config";
 
 type TaxonomyData = {
@@ -34,7 +31,7 @@ function categoryTree(categories: CategoryWithCount[]) {
 }
 
 async function loadSettingsTaxonomy(): Promise<TaxonomyData> {
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const [depth1Result, depth2Result, tagsResult, postsResult] = await Promise.allSettled([
     adapter.listCategories({ depth: 1 }),
     adapter.listCategories({ depth: 2 }),

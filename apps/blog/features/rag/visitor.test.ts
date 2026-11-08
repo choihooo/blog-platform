@@ -2,9 +2,9 @@ import { describe, expect, it, vi, afterEach } from "vitest";
 import { visitorAnswer, projectDetail } from "./visitor";
 import { projectCatalog } from "./discovery";
 import { factualAnswer } from "./factual";
-import { isRagResult } from "./contracts";
+import { isRagResult } from "@blog-platform/core/search";
 import { resolveFollowUp } from "./follow-up";
-import { projects } from "../projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import { POST } from "../../app/api/rag/route";
 
 describe("visitor intents without invented facts", () => {

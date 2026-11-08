@@ -13,9 +13,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@blog-platform/analytics": "workspace:^",
-    "@blog-platform/editor": "workspace:^",
-    "@blog-platform/seo-engine": "workspace:^",
     "@hozui/react": "^0.4.1",
     "@hozui/tokens": "^0.1.0",
     "@tiptap/extension-image": "^3.29.2",
@@ -26,7 +23,8 @@
     "next": "^16.2.12",
     "next-auth": "^4.24.15",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "@blog-platform/core": "workspace:^"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

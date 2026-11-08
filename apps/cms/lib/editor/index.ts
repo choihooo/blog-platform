@@ -19,7 +19,7 @@ export { mapAuthFailure, pathForDocument, saveEditorDraft } from "./editor-save"
 export {
   authToUploadCode,
   imageNode,
-  repositoryToUploadCode,
+  contentToUploadCode,
   targetFromForm,
   uploadStateFromResult,
 } from "./editor-media";

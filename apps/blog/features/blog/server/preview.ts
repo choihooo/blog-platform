@@ -1,6 +1,10 @@
-import { analyzeEditorNodes, loadPostContent, textFromEditorNodes } from "@blog-platform/editor";
-import { createContentAdapter } from "../../../../cms/lib/content-adapter/content-adapter";
-import type { PostRecord } from "../../../../cms/lib/content-adapter/content-adapter.interface";
+import {
+  analyzeEditorNodes,
+  loadPostContent,
+  textFromEditorNodes,
+} from "@blog-platform/core/content";
+import { createContentAdapter } from "@blog-platform/core/storage";
+import type { PostRecord } from "@blog-platform/core/content";
 
 import { verifyPreviewToken } from "./preview-token";
 
@@ -41,7 +45,7 @@ export async function loadDraftPreview(input: {
   const secret = input.secret ?? process.env.PREVIEW_TOKEN_SECRET;
   if (!slug || !secret || !input.token) return { ok: false, reason: "invalid-token" };
 
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const loaded = await adapter.getPostBySlug(slug, { includeUnpublished: true });
   if (!loaded.ok || !loaded.data) return { ok: false, reason: "missing" };
   if (postStatus(loaded.data) === "published") return { ok: false, reason: "published" };

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
+import { generateJsonLd, generatePageMetadata } from "@blog-platform/core/seo";
 import type { PublicPost } from "@/features/blog/server/content-source";
 import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
 

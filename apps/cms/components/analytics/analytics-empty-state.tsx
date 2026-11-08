@@ -1,5 +1,5 @@
 import { EmptyState } from "@hozui/react";
-import type { AnalyticsConnection } from "@blog-platform/analytics";
+import type { AnalyticsConnection } from "@blog-platform/core/analytics";
 
 const copy: Record<AnalyticsConnection["status"], { title: string; description: string }> = {
   connected: {

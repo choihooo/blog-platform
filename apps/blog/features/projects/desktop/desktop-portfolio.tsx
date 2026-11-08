@@ -20,7 +20,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type CSSProperties,
 } from "react";
-import { projects } from "../project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import {
   desktopProjects,
   projectPoster,

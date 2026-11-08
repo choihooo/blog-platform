@@ -11,8 +11,8 @@ import {
   skillGroups,
   education,
   certifications,
-} from "./resume-data";
-import { profile } from "./profile-data";
+} from "@blog-platform/core/content/catalog";
+import { profile } from "@blog-platform/core/content/catalog";
 import { AchievementCard, CompactList, SectionHeading, TechChips } from "./resume-components";
 
 export function ResumePage() {

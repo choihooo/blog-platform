@@ -1,6 +1,6 @@
-import { type EditorDocument } from "@blog-platform/editor";
+import { type EditorDocument } from "@blog-platform/core/content";
 
-import type { ContentAdapter, ContentFailure } from "../content-adapter/content-adapter.interface";
+import type { ContentAdapter, ContentFailure } from "@blog-platform/core/content";
 import { documentToPostRecord, pathForDocument, slugFromPath } from "./editor-save";
 import {
   createPublicRefreshRetryToken,

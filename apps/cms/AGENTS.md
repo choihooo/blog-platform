@@ -8,11 +8,11 @@ CMS는 인증된 운영자만 사용하는 비공개 앱이다. 콘텐츠 편집
 
 - 저장은 draft 변경이고 공개 새로고침과 혼동하지 않는다.
 - Publish, Unpublish, Archive의 상태 전이를 기존 runbook과 함께 확인한다.
-- editor 문서는 `@blog-platform/editor`의 native document model과 serializer를 통과시킨다.
+- editor 문서는 `@blog-platform/core/content`의 native document model과 serializer를 통과시킨다.
 - slug, `publishedAt`, SEO 점수와 preview 데이터를 발행 경계에서 검증한다.
 - 생성된 공개 콘텐츠 파일을 수동으로 고치지 않는다.
-- `createContentAdapter()`의 기본 구현은 현재 D1/R2 adapter다. adapter mode 인자를 추가하거나 바꿀
-  때는 local, repository, D1/R2 adapter의 계약과 fixture를 함께 확인한다.
+- `createContentAdapter()`는 core의 D1/R2 저장소다. 글 CRUD와 미디어 `createMediaStore()`를 분리하며
+  저장소 계약을 바꾸면 공개 Blog의 d1r2·remote fixture를 함께 확인한다.
 - `runPublicationOperation()`은 repository 저장과 public refresh를 분리해 결과를 반환한다. commit
   성공 뒤 refresh가 실패할 수 있으므로 retry token, 재시도 대상, 사용자에게 표시할 상태를 보존한다.
 - `CONTENT_SOURCE_MODE`나 migration report를 바꾸면 현재 content adapter와 migration script 계약을
@@ -38,3 +38,11 @@ pnpm --filter @blog-platform/cms build
 ```
 
 인증·발행·마이그레이션을 바꾼 경우에는 관련 security와 migration script 테스트를 반드시 확인한다.
+
+## 공통 지침 연결
+
+- 콘텐츠 저장·발행·앱 간 계약 변경은
+  [콘텐츠 권위와 계약](../../docs/development-guide.md#콘텐츠-권위와-계약)을 함께 확인한다.
+- 공개 URL·메타데이터·본문 렌더링을 바꾸면
+  [SEO 검증 루프](../../docs/development-guide.md#seo-검증-루프)를 적용한다.
+- 검증 범위와 완료 보고는 [개발 작업 가이드](../../docs/development-guide.md#검증)를 따른다.

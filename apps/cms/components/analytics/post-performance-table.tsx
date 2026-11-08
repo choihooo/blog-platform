@@ -1,4 +1,4 @@
-import type { PostPerformance } from "@blog-platform/analytics";
+import type { PostPerformance } from "@blog-platform/core/analytics";
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("ko-KR").format(value);

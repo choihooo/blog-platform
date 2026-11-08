@@ -1,5 +1,5 @@
-import type { EditorNode } from "@blog-platform/editor";
-import type { PostRecord } from "../../../../cms/lib/content-adapter/content-adapter.interface";
+import type { EditorNode } from "@blog-platform/core/content";
+import type { PostRecord } from "@blog-platform/core/content";
 
 export type ContentSourceMode = "d1r2" | "remote";
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
-import type { ProjectCaseStudy } from "../project-types";
+import type { ProjectCaseStudy } from "@blog-platform/core/content/catalog";
 import { getProjectSections } from "../project-content";
 
 export function ProjectWindowSummary({

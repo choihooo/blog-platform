@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { EditorNode, EditorTextNode } from "@blog-platform/editor";
+import type { EditorNode, EditorTextNode } from "@blog-platform/core/content";
 
 import { CodeCopyButton } from "@/features/blog/components/code-copy-button";
 

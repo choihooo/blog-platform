@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { projects } from "@/features/projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 vi.mock("next/navigation", () => ({
   permanentRedirect: (path: string) => {
     throw new Error(`redirect:${path}`);

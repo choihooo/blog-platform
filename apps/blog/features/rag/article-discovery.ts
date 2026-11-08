@@ -1,4 +1,4 @@
-import type { RagResult } from "./contracts";
+import type { RagResult } from "@blog-platform/core/search";
 import type { PublicPost } from "../blog/server/content-source";
 
 export function articleDiscovery(

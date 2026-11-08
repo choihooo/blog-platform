@@ -1,7 +1,7 @@
 "use client";
 
-import { aiWorkflowProject } from "@/features/projects/data/ai-workflow";
-import type { ProjectContentBlock, ProjectSection } from "@/features/projects/project-types";
+import { aiWorkflowProject } from "@blog-platform/core/content/catalog";
+import type { ProjectContentBlock, ProjectSection } from "@blog-platform/core/content/catalog";
 
 import {
   PrintCoverSheet,

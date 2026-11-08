@@ -68,3 +68,11 @@ pnpm --filter @blog-platform/blog build
 
 라우팅 변경이면 직접 URL, 모달 열기, 닫기, backdrop 클릭, Escape, 브라우저 뒤로 가기, 새로고침을
 확인한다.
+
+## 공통 지침 연결
+
+- 콘텐츠 저장·발행·앱 간 계약 변경은
+  [콘텐츠 권위와 계약](../../docs/development-guide.md#콘텐츠-권위와-계약)을 함께 확인한다.
+- 공개 URL·메타데이터·본문 렌더링을 바꾸면
+  [SEO 검증 루프](../../docs/development-guide.md#seo-검증-루프)를 적용한다.
+- 검증 범위와 완료 보고는 [개발 작업 가이드](../../docs/development-guide.md#검증)를 따른다.

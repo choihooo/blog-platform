@@ -1,6 +1,6 @@
-import { projects } from "../projects/project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import type { SearchContext } from "./follow-up";
-import type { RagResult, RagSource } from "./contracts";
+import type { RagResult, RagSource } from "@blog-platform/core/search";
 import { retrieve } from "./server";
 import { projectCatalog } from "./discovery";
 import { articleDiscovery } from "./article-discovery";
