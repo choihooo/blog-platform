@@ -22,9 +22,9 @@
 | 실제 콘텐츠를 읽는 공개 빌드       | `BLOG_CONTENT_PROXY_URL=https://cms.hozorica.com pnpm --dir /Users/choiho/coding/blog build` 통과 | `integrated-build.log`                                                 |
 | 후속 비공개 노출 수정              | CMS test 117개 통과·1개 건너뜀, lint·typecheck·format·build 확인                                  | `final-cms-*.log`, `final-format.log`                                  |
 
-후속 수정까지 원래 브랜치에 통합한 뒤 전체 `pnpm test`와 `pnpm format:check`를 다시 실행했다.
-최종 테스트는 648개 통과·1개 건너뜀이며 포맷 검사도 통과했다. 로그는
-`final-integrated-test.log`, `final-integrated-format.log`다.
+후속 수정까지 원래 브랜치에 통합한 뒤 전체 `pnpm test`와 `pnpm format:check`를 다시 실행했다. 최종
+테스트는 648개 통과·1개 건너뜀이며 포맷 검사도 통과했다. 로그는 `final-integrated-test.log`,
+`final-integrated-format.log`다.
 
 최초 단순화의 HTTP 30개·HTML/SEO 13개 페이지와 브라우저 검증은
 [최초 감사](2026-11-08-platform-simplification.md)에 있다. 후속 수정은 `seo-technical` 스킬의 공개
