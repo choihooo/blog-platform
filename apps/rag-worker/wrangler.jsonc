@@ -15,7 +15,10 @@
     },
   ],
   "ai": { "binding": "AI", "remote": true },
-  "vectorize": [{ "binding": "INDEX", "index_name": "hozorica-portfolio-rag", "remote": true }],
+  "vectorize": [
+    { "binding": "INDEX", "index_name": "hozorica-portfolio-rag", "remote": true },
+    { "binding": "INDEX_GEMINI", "index_name": "hozorica-rag-gemini-001-768-v1", "remote": true },
+  ],
   "ratelimits": [
     { "name": "SEARCH_LIMIT", "namespace_id": "9020601", "simple": { "limit": 30, "period": 60 } },
   ],

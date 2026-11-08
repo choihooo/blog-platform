@@ -53,3 +53,8 @@ pnpm --filter @blog-platform/core test
 
 저장소는 mock/임시 디렉터리로 검사한다. 실제 D1/R2 쓰기·발행·동기화·배포를 테스트에서 실행하지
 않는다.
+
+검색용 `textFromPostContent`는 저장된 표·중첩 본문을 읽기 전용 텍스트로 투영한다. 손상된 editor
+JSON은 빈 텍스트로 처리하며 편집·저장 모델을 확장하지 않는다. Gemini 검색은 별도 768차원
+프로필·인덱스로 격리하고 legacy Workers AI 1024차원·public-v1 기본값을 유지한다. 재색인·전환·롤백은
+`docs/runbooks/2026-11-06-gemini-rag.md`를 따른다.

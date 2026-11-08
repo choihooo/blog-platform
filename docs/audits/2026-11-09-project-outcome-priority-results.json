@@ -1,0 +1,490 @@
+{
+  "retrieval": {
+    "corpusRevision": "848fbfbf432aaf6af9184b6aef17cad8ce765764fe567192b9684d8b6ba21f2f",
+    "mode": "retrieval",
+    "endpoint": "http://127.0.0.1:8791/search",
+    "recordedAt": "2026-11-08T17:42:31.460Z",
+    "complete": true,
+    "summary": {
+      "total": 27,
+      "recallAt3": 1,
+      "falsePositives": 0,
+      "failures": 0,
+      "humanReviewPending": 0,
+      "projectLists": {
+        "total": 0,
+        "passed": 0
+      }
+    },
+    "results": [
+      {
+        "id": "p4",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/projects/nexacro-react-poc"],
+        "scores": [2],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p5",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/projects/geobugirin", "/blog/geobugirin-10000-users-retrospective"],
+        "scores": [1.3333333333333333, 1.6666666666666665],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p6",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [
+          "/projects/kusting",
+          "/resume",
+          "/blog/tag-recommendation-to-embedding-recommendation"
+        ],
+        "scores": [1.5, 1.5, 1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p7",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [
+          "/projects/forensic-agent",
+          "/blog/verifiable-ai-ui-design",
+          "/blog/hozui-with-ai"
+        ],
+        "scores": [2, 1.5, 1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p8",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/projects/i18n-validation", "/blog/verifiable-ai-ui-design"],
+        "scores": [2, 1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p9",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [
+          "/projects/typescript-migration",
+          "/blog/electron-webview-to-tauri-native-ui-migration"
+        ],
+        "scores": [1.5, 1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p10",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/projects/api-data-transition"],
+        "scores": [2],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p11",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/nest-di-ioc"],
+        "scores": [2],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p12",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/gguf-mlx-explained"],
+        "scores": [1.6666666666666665],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p13",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/react-router-loader-action"],
+        "scores": [1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p14",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/nextjs-server-client-components"],
+        "scores": [2],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p15",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [
+          "/blog/typescript-compiler-internals",
+          "/blog/typescript-compiler-performance-39-vs-58"
+        ],
+        "scores": [1.6666666666666665, 1.6666666666666665],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p16",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/react-memoization-timing", "/blog/react-devtools-guide"],
+        "scores": [1.5, 1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p17",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/ssl-tls-certificate-manager"],
+        "scores": [2],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p18",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/github-actions-ci"],
+        "scores": [2],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p19",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/react-ssr-explained"],
+        "scores": [1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "p20",
+        "group": "positive",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": ["/blog/regular-expression"],
+        "scores": [1.5],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n1",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n2",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n3",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n4",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n5",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n6",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n7",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n8",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n9",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      },
+      {
+        "id": "n10",
+        "group": "negative",
+        "status": 200,
+        "retrievalPass": true,
+        "claimsPass": true,
+        "generationPass": true,
+        "urls": [],
+        "scores": [],
+        "requiresHumanReview": false,
+        "answer": ""
+      }
+    ]
+  },
+  "variants": [
+    {
+      "case": {
+        "query": "거부기린 사용자 성과",
+        "first": "/projects/geobugirin",
+        "metrics": true
+      },
+      "status": 200,
+      "pass": true,
+      "sources": [
+        {
+          "title": "거부기린",
+          "url": "/projects/geobugirin",
+          "text": "WebView와 자세 추론을 분리한 Tauri 데스크톱 앱을 구축하고 사용자별 자세 점수와 플랫폼별 릴리스 체계를 설계했습니다.\n\nSide Project · 2026.04 ~ 2026.08 · Frontend Engineer (Desktop & Posture Engine)\n\nReact, Tauri, Rust, Python, MediaPipe, Turborepo, GitHub Actions, Cloudflare R2\n\n베타 사용자: 43명. 최근 한 달 · DB·PostHog 기준\n\n베타 사용 시간: 약 1,300시간. 최근 한 달 합산\n\n창 상태별 결과 전달: 100%. 고정 입력 · 상태별 10분 × 3회\n\nWebView 백그라운드 스로틀링과 자세 추론의 실행 경로를 분리\n문제",
+          "score": 1.3333333333333333
+        },
+        {
+          "title": "거부기린 - 만 명의 사용자가 내 서비스를 이용해봤다고?",
+          "url": "/blog/geobugirin-10000-users-retrospective",
+          "text": "소개: 1. 인트로며칠 전 aaru라는 해외 스타트업에 대한 글을 봤다. 이 회사는 가상의 페르소나 수천 명을 만들어서 실제 세계의 현상을 예측한다. 선거 결과, 제품 반응, 여론 동향까지. 실제 사람을 인터뷰하지 않고도 꽤 높은 정확도로 맞춘다는 얘기였다. \"가상의 사람한테 물어보면 진짜랑 비슷하게 나온다고?\"반신반의하면서도 \n\n1. 인트로\n\n며칠 전 aaru라\n관련 본문: \n- 학력: 4년제 대학교\n- 페르소나 요약: \"이미란 씨는 공학적 전문성과 비서의 유연함을 겸비한 34세 구직자로...\"\n\n## 서비스 설명\n「거부기린」은 웹캠으로 사용자의 실시간 거북목과 자세 변화를 분석하고...\n\n## 질문",
+          "score": 1.6666666666666665
+        }
+      ]
+    },
+    {
+      "case": {
+        "query": "거부기린 사용자 수",
+        "first": "/projects/geobugirin",
+        "metrics": true
+      },
+      "status": 200,
+      "pass": true,
+      "sources": [
+        {
+          "title": "거부기린",
+          "url": "/projects/geobugirin",
+          "text": "소개: WebView와 자세 추론을 분리한 Tauri 데스크톱 앱을 구축하고 사용자별 자세 점수와 플랫폼별 릴리스 체계를 설계했습니다.\n\nSide Project · 2026.04 ~ 2026.08 · Frontend Engineer (Desktop & Posture Engine)\n\nReact, Tauri, Rust, Python, MediaPipe, Turbore\n관련 본문: iaPipe 좌표를 사용자별로 보정해 6단계 자세 상태를 React에 전달하는 흐름\n\n결과\n사용자별 calibration을 기준으로 자세를 6단계로 분류하고 나쁜 자세의 진입과 회복 시점에 안정적인 피드백을 제공할 수 있게 됐습니다. 최근 한 달간 베타 사용자 43명이 합산 약 1,300시간 사용했으며 DB와 PostHog로 운영 지표를 확인했습니다.",
+          "score": 1.5
+        },
+        {
+          "title": "거부기린 - 만 명의 사용자가 내 서비스를 이용해봤다고?",
+          "url": "/blog/geobugirin-10000-users-retrospective",
+          "text": "소개: 1. 인트로며칠 전 aaru라는 해외 스타트업에 대한 글을 봤다. 이 회사는 가상의 페르소나 수천 명을 만들어서 실제 세계의 현상을 예측한다. 선거 결과, 제품 반응, 여론 동향까지. 실제 사람을 인터뷰하지 않고도 꽤 높은 정확도로 맞춘다는 얘기였다. \"가상의 사람한테 물어보면 진짜랑 비슷하게 나온다고?\"반신반의하면서도 \n\n1. 인트로\n\n며칠 전 aaru라\n관련 본문: , 자기소개까지 딸려 있었다.\n\n이걸로 내가 만드는 서비스에 대한 가상 사용자 인터뷰를 해볼 수 있지 않을까?\n\n\n그래서 해봤다. 1만 명한테 물어봤다. 내 컴퓨터 안에서.\n\n2. \"그래서 뭘 해봤는데?\"\n\n한 줄로 요약하면 이렇다.\n엔비디아가 만든 한국인 가상 인물 1만 명한테, 내 서비스 써볼래요? 라고 물어봤다.\n\n테스트한 서비스는 내가 개발 중인 거부기린. 웹캠으로 실시간 거북목과 자세를 분석해주는 데스크톱 앱이다. 장시간 PC를 쓰는 직장인, 개발자, 디자이너가 주 타겟이다.",
+          "score": 2
+        },
+        {
+          "title": "최호 · 거부기린",
+          "url": "/resume",
+          "text": "2025.09 ~ 2026.08 · 자세 교정 서비스 · Frontend Engineer\n최근 한 달 베타 사용자 43명이 약 1,300시간 사용한 웹캠 기반 데스크톱 자세 교정 서비스 · pose scoring, Tauri 배포, 상태별 피드백 UI 구현\n추론 파이프라인 분리로 모든 창 상태에서 추론 결과 수신률 100% 유지\nElectron 앱을 백그라운드로 전환하거나 최소화하면 자세 추론이 느려지거나 중단되어 앱을 전면에 유지해야 하는 문제 개선\n데스크톱 앱 전환, 자세 추론 파이프라인 재설계 및 창 상태별 성능 검증 담당\nElectron과 Tauri 실행 구조 비교, 화면과 자세 엔진의 실행 생명주기 분리를 위한 Tauri 전환\nReact는 명령·결과 표시, Rust 네이티브 스레드는 반복 실행, Python sidecar는 카메라 캡처·MediaPipe 추론을 담당하도록 책임 분리",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "case": {
+        "query": "넥사크로 검증 성과",
+        "first": "/projects/nexacro-react-poc"
+      },
+      "status": 200,
+      "pass": true,
+      "sources": [
+        {
+          "title": "Nexacro–React 전환 자동화",
+          "url": "/projects/nexacro-react-poc",
+          "text": "AI 기반 명세 자동화와 Playwright 검증으로 Nexacro 화면 유형 5종의 React 전환 가능성을 확인했습니다.\n\n야근몬스터 · 2026.03 ~ 2026.04 · Frontend Engineer\n\nReact, Nexacro, Playwright, AI, Spec Kit\n\n화면 유형 검증: 5/5. 주요 화면 유형 전환 검증\n\n명세 추출 성공률: 100%. UI 원천 데이터 수동 추출 제거\n\nAI가 구현에 필요한 정보를 판단하지 못함\n문제\n이번 PoC의 목표는 Nexacro로 구현된 화면을 React로 전환하는 과정에서 AI를 최대한 활용하는 것이었습니다.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "case": {
+        "query": "거부기린 사용자 성과 글",
+        "first": "/blog/geobugirin-10000-users-retrospective"
+      },
+      "status": 200,
+      "pass": true,
+      "sources": [
+        {
+          "title": "거부기린 - 만 명의 사용자가 내 서비스를 이용해봤다고?",
+          "url": "/blog/geobugirin-10000-users-retrospective",
+          "text": "소개: 1. 인트로며칠 전 aaru라는 해외 스타트업에 대한 글을 봤다. 이 회사는 가상의 페르소나 수천 명을 만들어서 실제 세계의 현상을 예측한다. 선거 결과, 제품 반응, 여론 동향까지. 실제 사람을 인터뷰하지 않고도 꽤 높은 정확도로 맞춘다는 얘기였다. \"가상의 사람한테 물어보면 진짜랑 비슷하게 나온다고?\"반신반의하면서도 \n\n1. 인트로\n\n며칠 전 aaru라\n관련 본문: \n- 학력: 4년제 대학교\n- 페르소나 요약: \"이미란 씨는 공학적 전문성과 비서의 유연함을 겸비한 34세 구직자로...\"\n\n## 서비스 설명\n「거부기린」은 웹캠으로 사용자의 실시간 거북목과 자세 변화를 분석하고...\n\n## 질문",
+          "score": 1.6666666666666665
+        }
+      ]
+    },
+    {
+      "case": {
+        "query": "거부기린 사용자 성과 회고",
+        "first": "/blog/geobugirin-10000-users-retrospective"
+      },
+      "status": 200,
+      "pass": true,
+      "sources": [
+        {
+          "title": "거부기린 - 만 명의 사용자가 내 서비스를 이용해봤다고?",
+          "url": "/blog/geobugirin-10000-users-retrospective",
+          "text": "소개: 1. 인트로며칠 전 aaru라는 해외 스타트업에 대한 글을 봤다. 이 회사는 가상의 페르소나 수천 명을 만들어서 실제 세계의 현상을 예측한다. 선거 결과, 제품 반응, 여론 동향까지. 실제 사람을 인터뷰하지 않고도 꽤 높은 정확도로 맞춘다는 얘기였다. \"가상의 사람한테 물어보면 진짜랑 비슷하게 나온다고?\"반신반의하면서도 \n\n1. 인트로\n\n며칠 전 aaru라\n관련 본문: \n- 학력: 4년제 대학교\n- 페르소나 요약: \"이미란 씨는 공학적 전문성과 비서의 유연함을 겸비한 34세 구직자로...\"\n\n## 서비스 설명\n「거부기린」은 웹캠으로 사용자의 실시간 거북목과 자세 변화를 분석하고...\n\n## 질문",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "case": {
+        "query": "등록되지 않은 태양광 발전 서비스 매출 성과",
+        "noProjects": true
+      },
+      "status": 200,
+      "pass": true,
+      "sources": []
+    }
+  ],
+  "answer": {
+    "status": 200,
+    "pass": true,
+    "sources": [
+      {
+        "title": "거부기린",
+        "url": "/projects/geobugirin",
+        "text": "WebView와 자세 추론을 분리한 Tauri 데스크톱 앱을 구축하고 사용자별 자세 점수와 플랫폼별 릴리스 체계를 설계했습니다.\n\nSide Project · 2026.04 ~ 2026.08 · Frontend Engineer (Desktop & Posture Engine)\n\nReact, Tauri, Rust, Python, MediaPipe, Turborepo, GitHub Actions, Cloudflare R2\n\n베타 사용자: 43명. 최근 한 달 · DB·PostHog 기준\n\n베타 사용 시간: 약 1,300시간. 최근 한 달 합산\n\n창 상태별 결과 전달: 100%. 고정 입력 · 상태별 10분 × 3회\n\nWebView 백그라운드 스로틀링과 자세 추론의 실행 경로를 분리\n문제",
+        "score": 1.3333333333333333
+      },
+      {
+        "title": "거부기린 - 만 명의 사용자가 내 서비스를 이용해봤다고?",
+        "url": "/blog/geobugirin-10000-users-retrospective",
+        "text": "소개: 1. 인트로며칠 전 aaru라는 해외 스타트업에 대한 글을 봤다. 이 회사는 가상의 페르소나 수천 명을 만들어서 실제 세계의 현상을 예측한다. 선거 결과, 제품 반응, 여론 동향까지. 실제 사람을 인터뷰하지 않고도 꽤 높은 정확도로 맞춘다는 얘기였다. \"가상의 사람한테 물어보면 진짜랑 비슷하게 나온다고?\"반신반의하면서도 \n\n1. 인트로\n\n며칠 전 aaru라\n관련 본문: \n- 학력: 4년제 대학교\n- 페르소나 요약: \"이미란 씨는 공학적 전문성과 비서의 유연함을 겸비한 34세 구직자로...\"\n\n## 서비스 설명\n「거부기린」은 웹캠으로 사용자의 실시간 거북목과 자세 변화를 분석하고...\n\n## 질문",
+        "score": 1.6666666666666665
+      }
+    ],
+    "answer": "「거부기린」 프로젝트의 베타 사용자 관련 성과는 다음과 같습니다.\n\n- 베타 사용자: 43명 (최근 한 달, DB·PostHog 기준)\n- 베타 사용 시간: 약 1,300시간 (최근 한 달 합산)\n- 창 상태별 결과 전달: 100% (고정 입력, 상태별 10분 × 3회)"
+  }
+}

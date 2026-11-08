@@ -1,5 +1,5 @@
 import { projects, type ProjectContentBlock } from "../content/catalog/index.js";
-import { loadPostContent, textFromEditorNodes } from "../content/index.js";
+import { textFromPostContent } from "../content/index.js";
 import {
   awards,
   activities,
@@ -105,8 +105,6 @@ export function postDocument(row: PublicPostRow): RagDocument {
       row.category_name,
       row.category_slug,
     ]),
-    text: [row.summary, textFromEditorNodes(loadPostContent(row.content).nodes)]
-      .filter(Boolean)
-      .join("\n\n"),
+    text: [row.summary, textFromPostContent(row.content)].filter(Boolean).join("\n\n"),
   };
 }

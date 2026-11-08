@@ -1,0 +1,40 @@
+{
+  "recordedDate": "2026-11-09",
+  "kind": "offline_rescore_of_saved_real_responses",
+  "projectList": {
+    "id": "p1",
+    "group": "project-list",
+    "status": 200,
+    "retrievalPass": true,
+    "projectListPass": true,
+    "claimsPass": true,
+    "generationPass": true,
+    "urls": ["/projects/ai-workflow", "/projects/nexacro-react-poc", "/projects/forensic-agent"],
+    "scores": [1, 1, 1],
+    "requiresHumanReview": true,
+    "answer": "공개 포트폴리오의 프로젝트 3개를 먼저 소개할게요.\n\n## 1. AI 수정 workflow 자동화\nDOM Tree 기반 컨텍스트, 멀티 에이전트 부트스트랩, 병렬 라우팅으로 AI 수정 workflow의 정확도와 확장성, 처리 속도를 개선했습니다.\n\n## 2. Nexacro–React 전환 자동화\nAI 기반 명세 자동화와 Playwright 검증으로 Nexacro 화면 유형 5종의 React 전환 가능성을 확인했습니다.\n\n## 3. AI 포렌식 Evidence UI\nAI 검색 결과의 핵심 근거에서 원본 데이터까지 추적할 수 있는 Evidence UI를 설계·구현했습니다.\n\n궁금한 프로젝트명이나 순서를 말해 주면 더 자세히 찾아볼게요."
+  },
+  "projectListSummary": {
+    "total": 1,
+    "recallAt3": null,
+    "falsePositives": 0,
+    "failures": 0,
+    "humanReviewPending": 1,
+    "projectLists": {
+      "total": 1,
+      "passed": 1
+    }
+  },
+  "rawSearchSummary": {
+    "total": 27,
+    "recallAt3": 0.9411764705882353,
+    "falsePositives": 0,
+    "failures": 1,
+    "humanReviewPending": 0,
+    "projectLists": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "remainingFailedIds": ["p5"]
+}
