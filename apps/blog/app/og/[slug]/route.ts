@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { ImageResponse } from "next/og";
-import { createOgImagePayload } from "@blog-platform/seo-engine";
+import { createOgImagePayload } from "@blog-platform/core/seo";
 
 import { postToSeoSubject, siteForSeo } from "@/features/blog/lib/seo";
 import { getPostBySlug, getSiteConfig } from "@/features/blog/server/content-source";

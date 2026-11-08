@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Chip, ChipGroup, EmptyState } from "@hozui/react";
-import { trimSlash } from "@blog-platform/seo-engine";
+import { trimSlash } from "@blog-platform/core/seo";
 
 import { getPublishedPosts, getSiteConfig, getTags } from "@/features/blog/server/content-source";
 

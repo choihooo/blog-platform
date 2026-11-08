@@ -3,7 +3,7 @@ import type {
   ProjectContentBlock,
   ProjectSection,
   ProjectStory,
-} from "./project-types";
+} from "@blog-platform/core/content/catalog";
 
 export type ProjectTocItem = {
   children: readonly {

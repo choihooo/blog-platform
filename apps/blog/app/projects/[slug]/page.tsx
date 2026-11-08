@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ProjectDetailPage } from "@/features/projects/project-detail-page";
-import { getProject, projects } from "@/features/projects/project-data";
+import { getProject, projects } from "@blog-platform/core/content/catalog";
 import "@/features/projects/project-document.css";
 
 type ProjectPageProps = {

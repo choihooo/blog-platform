@@ -1,4 +1,4 @@
-import { generateFeedOutput, serializeFeed } from "@blog-platform/seo-engine";
+import { generateFeedOutput, serializeFeed } from "@blog-platform/core/seo";
 
 import { postsToSeoSubjects, siteForSeo } from "@/features/blog/lib/seo";
 import { getPublishedPosts, getSiteConfig } from "@/features/blog/server/content-source";

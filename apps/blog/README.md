@@ -12,7 +12,7 @@
 
 ## Navigation
 
-- 홈은 인사/About → Blog → Portfolio 순서의 스크롤 스토리다. 바로가기는 각각 `/resume`, `/blog`,
+- 홈은 인사/About → Blog → Portfolio 순서의 스크롤 스토리다. 바로가기는 각각 `/about`, `/blog`,
   `/projects` 전체 페이지로 이동한다. `/#about`, `/#blog`, `/#work`로 장면에 직접 진입한다.
 - 이전 시안 `/experiments/scroll-story`는 `/`로 308 이동한다. 픽셀룸은 `/experiments/pixel-room`에서
   noindex 보관하며 메인에서 픽셀룸 이미지를 로드하지 않는다.
@@ -23,9 +23,22 @@
   지원한다.
 - 프로젝트 목록과 이력서에는 홈 링크를 제공한다.
 
+## About
+
+- `/about`은 승인된 호조리카 영상의 재생 위치를 일반 페이지 스크롤에 연결한다. 아래로 내리면 앞으로,
+  위로 올리면 뒤로 탐색하며 휠·터치·키보드 기본 스크롤을 가로채지 않는다.
+- `features/about/about-data.ts`에 소개와 장면 구간을 관리한다. 공개 연락처는 라우트에서 기존 프로필
+  데이터를 전달한다. 포트폴리오는 `/projects`, 이력서는 기존 `/resume`을 유지한다.
+- `public/brand/about/story.mp4`는 24fps, 4프레임 GOP로 인코딩한 무음 영상이다. 마지막 사진은
+  호조리카 단독 초상이다. 원본 시안의 모임·촬영은 무료 GPU 한도로 정지 이미지에 카메라 전환을
+  적용했으며 모임 내부 흔들림은 제거했다.
+- JS 없음·모션 줄이기·높이 540px 이하 화면·영상 오류/12초 지연 시 전체 소개와 실제 링크가 있는 일반
+  문서를 표시한다. 모션 줄이기에서는 영상 URL을 할당하지 않아 자동 다운로드하지 않는다.
+
 ## Project showcases
 
-- Work 데이터는 `features/projects/data`에서 관리하고 `project-data.ts`에 등록한다.
+- Work 데이터는 `packages/core/src/content/catalog/projects/data`에서 관리하고 `project-data.ts`에
+  등록한다.
 - `format: "showcase"`는 이미지·영상 중심 상세로 표시하며 기존 프로젝트 상세 URL을 재사용한다. 일반
   사례의 목차 대신 본문을 바로 보여준다.
 - STILL과 AFTERIMAGE는 Web Publishing 작업이다. 확인되지 않은 기간·팀·기술 스택과 정량 성과는
@@ -43,7 +56,7 @@
   307 이동한다. 표지가 없는 글은 기존 텍스트 카드 생성과 비공개·미존재 글의 404를 유지한다.
 
 - `/blog/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/og/[slug]`는 repository에 파일을 commit하지 않고
-  route handler에서 현재 published content와 `@blog-platform/seo-engine` 결과를 기준으로 응답한다.
+  route handler에서 현재 published content와 `@blog-platform/core/seo` 결과를 기준으로 응답한다.
 - Draft와 archived 글은 홈, 상세, taxonomy route, RSS, Sitemap, OG route에서 제외된다.
 - Sitemap은 100개씩 모든 페이지를 조회한다. RSS는 최신 20개 글만 제공한다.
 - 블로그·태그·카테고리 목록은 서버에서 페이지당 8개와 전체 개수를 조회하며, 이전/다음은 크롤러가
@@ -68,7 +81,7 @@
   준비한다.
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID`가 있으면 GA4 script를, `NEXT_PUBLIC_GTM_ID`가 있으면 GTM script를
   로드한다.
-- 공개 독자 이벤트는 `@blog-platform/analytics`의 privacy-safe payload 계약을 사용한다.
+- 공개 독자 이벤트는 `@blog-platform/core/analytics`의 privacy-safe payload 계약을 사용한다.
 - GA4/Search Console API 조회나 자체 분석 저장소는 없다.
 
 ## Revalidation

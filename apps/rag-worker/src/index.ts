@@ -7,8 +7,8 @@ import {
   postDocument,
   staticDocuments,
   type PublicPostRow,
-} from "../../blog/features/rag/corpus";
-import { boundedJson, queryFrom } from "../../blog/features/rag/contracts";
+} from "@blog-platform/core/search";
+import { boundedJson, queryFrom } from "@blog-platform/core/search";
 
 function json(body: unknown, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });

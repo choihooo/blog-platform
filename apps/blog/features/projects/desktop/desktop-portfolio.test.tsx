@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
-import { projects } from "../project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import { DesktopPortfolio } from "./desktop-portfolio";
 it("shows all desktop icons without a duplicate lower catalogue and provides a no-script escape", () => {
   const html = renderToStaticMarkup(<DesktopPortfolio />);
@@ -15,7 +15,7 @@ it("shows all desktop icons without a duplicate lower catalogue and provides a n
     expect(html).toContain(project.name);
     expect(html).toContain(`aria-label="${project.name} 프로젝트 열기"`);
   }
-  for (const href of ["/", "/resume", "/blog"]) expect(html).toContain(`href="${href}"`);
+  for (const href of ["/", "/about", "/blog"]) expect(html).toContain(`href="${href}"`);
   expect(html).not.toContain("<canvas");
   expect(html).not.toContain('preload="auto"');
   const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/)?.[1];

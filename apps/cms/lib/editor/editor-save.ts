@@ -6,13 +6,9 @@ import {
   textFromEditorNodes,
   validateEditorDocument,
   type EditorDocument,
-} from "@blog-platform/editor";
+} from "@blog-platform/core/content";
 
-import type {
-  ContentAdapter,
-  ContentFailure,
-  PostRecord,
-} from "../content-adapter/content-adapter.interface";
+import type { ContentAdapter, ContentFailure, PostRecord } from "@blog-platform/core/content";
 
 function normalizeSlug(value: string) {
   return value

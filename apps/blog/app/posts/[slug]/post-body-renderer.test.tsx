@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
 import { PostBodyRenderer } from "./post-body-renderer";
-import type { EditorNode } from "@blog-platform/editor";
+import type { EditorNode } from "@blog-platform/core/content";
 
 const context = {
   provider: "none",

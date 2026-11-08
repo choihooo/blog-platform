@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import type { PostPerformance } from "@blog-platform/analytics";
+import type { PostPerformance } from "@blog-platform/core/analytics";
 
 import { PostPerformanceTable } from "./post-performance-table";
 

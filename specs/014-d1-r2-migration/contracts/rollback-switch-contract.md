@@ -1,5 +1,10 @@
 # Contract: Rollback Switch
 
+> 2026-11-08 구조 단순화: 앱 3개와 `packages/core` 1개를 사용한다. 저장소 구현은
+> `packages/core/src/storage/d1-content-store.ts`, 콘텐츠 모델은 `core/content`가 소유한다.
+> D1/R2·remote 동작과 공개 URL은 유지한다. 아래 초기 legacy/dual switch는 이력이며 현재 runtime 복귀
+> 방법이 아니다. 구조 변경은 단계별 코드 diff를 되돌리고 원격 데이터는 변경하지 않는다.
+
 ## Purpose
 
 전환 중 또는 전환 후 장애 시, 기존 방식과 새 방식 간 빠르게 전환하기 위한 운영 계약이다.

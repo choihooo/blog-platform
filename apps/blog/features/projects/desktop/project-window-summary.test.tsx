@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
-import { getProject } from "../project-data";
+import { getProject } from "@blog-platform/core/content/catalog";
 import { getProjectSections } from "../project-content";
 import { ProjectWindowSummary } from "./project-window-summary";
 

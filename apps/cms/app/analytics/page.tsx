@@ -2,7 +2,7 @@ import { AccessState, CmsShell } from "../../components/shell/index";
 import { AnalyticsDashboard } from "../../components/analytics/index";
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 import { loadAnalyticsDashboard } from "../../lib/analytics/index";
-import type { AnalyticsDashboardView } from "@blog-platform/analytics";
+import type { AnalyticsDashboardView } from "@blog-platform/core/analytics";
 
 type AnalyticsPageSearchParams = {
   range?: string | string[];

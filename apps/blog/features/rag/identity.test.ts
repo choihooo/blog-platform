@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { canonicalQuery, hasOwnerName } from "./identity";
+import { canonicalQuery, hasOwnerName } from "@blog-platform/core/search";
 import { factualAnswer } from "./factual";
-import { groundedQuestion, isRagResult } from "./contracts";
+import { groundedQuestion, isRagResult } from "@blog-platform/core/search";
 import { retrieve } from "./server";
 
 afterEach(() => {

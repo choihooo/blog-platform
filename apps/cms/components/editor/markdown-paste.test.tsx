@@ -1,5 +1,5 @@
 import { createEvent, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { createEmptyEditorDocument } from "@blog-platform/editor";
+import { createEmptyEditorDocument } from "@blog-platform/core/content";
 import { expect, it, vi } from "vitest";
 import { EditorScreen } from "./editor-screen";
 

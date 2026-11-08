@@ -1,6 +1,6 @@
-import { isRagResult, type RagResult } from "./contracts";
+import { isRagResult, type RagResult } from "@blog-platform/core/search";
 import { factualAnswer } from "./factual";
-import { searchQuery } from "./identity";
+import { searchQuery } from "@blog-platform/core/search";
 import { projectCatalog, noEvidence } from "./discovery";
 import { visitorAnswer, projectDetail } from "./visitor";
 import { articleDiscovery } from "./article-discovery";

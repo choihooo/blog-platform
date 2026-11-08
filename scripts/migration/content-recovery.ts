@@ -3,7 +3,7 @@ import {
   serializePostContent,
   validateEditorDocument,
   createEmptyEditorDocument,
-} from "../../packages/editor/src/index";
+} from "@blog-platform/core/content";
 
 export function buildRecoveredContent(input: {
   html: string;

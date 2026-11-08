@@ -18,6 +18,15 @@
 - draft, archived, preview, publishing, analytics-dashboard, CMS behavior를 노출하지 않는다.
 - GitHub credential, content file, authentication setup, deployment configuration을 요구하지 않는다.
 
+## Public About
+
+- `/about`은 별도 canonical 소개 페이지다. 홈 About 바로가기와 공통 About 메뉴는 `/about`으로
+  연결하며 `/resume`은 경력·이력서 페이지로 유지한다.
+- 스크롤 진행률에 따라 영상을 앞뒤로 seek한다. 직접 URL·새로고침·이전 페이지 복귀를 지원하고,
+  포트폴리오(`/projects`)·공개 이메일·GitHub는 실제 링크로 접근할 수 있다.
+- JS 없음·모션 줄이기·영상 실패에서는 일반 문서로 전체 소개를 읽을 수 있어야 한다.
+- 소개는 서버 HTML에 포함되며 sitemap·canonical·Open Graph·ProfilePage 메타데이터를 제공한다.
+
 ## Public project details
 
 - `/projects/still`과 `/projects/afterimage`는 기존 `/projects/[slug]` 상세와 가로채기 모달을

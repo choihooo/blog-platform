@@ -98,3 +98,5 @@ type PublicRefreshRetryToken = {
   or OG image files into the repository.
 - Public blog route behavior remains published-only: `draft` and `archived` posts are absent even if
   a refresh target is requested for their old slug.
+- The CMS public-content API applies the same boundary to slug lookups: an unpublished or missing
+  post returns `404` without its body; published posts keep the existing URL and payload.

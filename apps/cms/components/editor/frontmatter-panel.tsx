@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import type { EditorFrontmatter } from "@blog-platform/editor";
+import type { EditorFrontmatter } from "@blog-platform/core/content";
 import { Button, Combobox, type ComboboxOption } from "@hozui/react";
 
 import { uploadEditorMediaAction } from "../../app/actions/editor-actions";

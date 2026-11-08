@@ -2,28 +2,23 @@
 
 import { createHash } from "node:crypto";
 
-import type { EditorDocument } from "@blog-platform/editor";
+import type { EditorDocument } from "@blog-platform/core/content";
 import { revalidatePath } from "next/cache";
 
-import { createContentAdapter } from "../../lib/content-adapter/content-adapter";
-import { createRuntimeContentAdapter } from "../../lib/content-adapter/index";
-import {
-  createProtectedContentOperations,
-  evaluateAccess,
-  getCmsSession,
-} from "../../lib/auth/index";
+import { createContentAdapter } from "@blog-platform/core/storage";
+import { createMediaStore } from "@blog-platform/core/storage";
+import { guardMutation, evaluateAccess, getCmsSession } from "../../lib/auth/index";
 import {
   authToUploadCode,
   imageNode,
   mapPublishAuthFailure,
   mediaPath,
   prepareMediaFile,
-  publicPath,
   createConfiguredPublicRefresh,
   mapAuthFailure,
   refreshPublicTargets,
   runPublicationOperation,
-  repositoryToUploadCode,
+  contentToUploadCode,
   saveEditorDraft,
   slugForMedia,
   targetFromForm,
@@ -87,7 +82,7 @@ export async function saveEditorDraftAction(document: EditorDocument) {
     });
   }
 
-  const result = await saveEditorDraft(document, createContentAdapter("d1r2"));
+  const result = await saveEditorDraft(document, createContentAdapter());
   if (result.ok) refreshCmsEditorPaths(result.path);
   return result;
 }
@@ -114,7 +109,7 @@ async function publicationAction(
     });
   }
 
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const result = await runPublicationOperation({
     operation,
     document,
@@ -221,16 +216,11 @@ export async function uploadEditorMediaAction(
   }
 
   const root = repositoryRoot();
-  const adapter = await createRuntimeContentAdapter(root);
-  const protectedOperations = createProtectedContentOperations(adapter, async () =>
-    evaluateAccess(await getCmsSession(), root),
-  );
+  const mediaStore = createMediaStore(root);
   const path = mediaPath({ target, slug, hash: prepared.hash, extension: prepared.extension });
-  const result = await protectedOperations.commitMedia({
-    path,
-    contentBase64: prepared.base64,
-    intent: "save-media",
-  });
+  const result = await guardMutation(await evaluateAccess(await getCmsSession(), root), () =>
+    mediaStore.put({ path, contentBase64: prepared.base64 }),
+  );
 
   if (!result.ok) {
     return {
@@ -240,25 +230,23 @@ export async function uploadEditorMediaAction(
       message: redact(result.message),
     };
   }
-  if (!result.value.success) {
+  if (!result.value.ok) {
     return {
       ok: false,
-      code: repositoryToUploadCode(result.value.error.code),
+      code: contentToUploadCode(result.value.error.code),
       retryable: result.value.error.retryable,
       message: redact(result.value.error.message),
     };
   }
 
-  const publicMediaPath = result.value.data.path.startsWith("http")
-    ? result.value.data.path
-    : publicPath(path);
+  const publicMediaPath = result.value.data.publicPath;
   return {
     ok: true,
     media: {
       path,
       publicPath: publicMediaPath,
       sha: result.value.data.sha ?? "",
-      commitId: result.value.data.commitId,
+      commitId: undefined,
       sizeBytes: prepared.sizeBytes,
     },
     reference:
@@ -289,7 +277,7 @@ export async function createPreviewTokenAction(input: { document: EditorDocument
     };
   }
 
-  const saved = await saveEditorDraft(input.document, createContentAdapter("d1r2"));
+  const saved = await saveEditorDraft(input.document, createContentAdapter());
   if (!saved.ok) {
     return {
       ok: false as const,

@@ -17,6 +17,7 @@ import {
   Menu as MenuIcon,
   Newspaper,
   Tags,
+  UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -48,6 +49,9 @@ export function MobileNavigationMenu({ categories }: { categories: MobileNavigat
           className="max-h-[calc(100dvh-5rem)] overflow-y-auto"
           sideOffset={8}
         >
+          <MenuItem icon={<UserRound size={16} />} onSelect={() => navigate("/about")}>
+            소개
+          </MenuItem>
           <MenuItem icon={<BriefcaseBusiness size={16} />} onSelect={() => navigate("/projects")}>
             프로젝트
           </MenuItem>

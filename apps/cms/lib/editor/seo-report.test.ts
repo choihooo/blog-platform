@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEmptyEditorDocument, createTextNode } from "@blog-platform/editor";
+import { createEmptyEditorDocument, createTextNode } from "@blog-platform/core/content";
 import { seoReportForEditorDocument } from "./seo-report";
 
 describe("seoReportForEditorDocument", () => {

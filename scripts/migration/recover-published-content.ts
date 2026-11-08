@@ -9,7 +9,7 @@ import {
   assertRecoveryState,
   contentUpdateStatement,
 } from "./content-recovery";
-import { analyzeEditorNodes, loadPostContent } from "../../packages/editor/src/index";
+import { analyzeEditorNodes, loadPostContent } from "@blog-platform/core/content";
 
 type Row = {
   id: string;

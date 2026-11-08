@@ -14,3 +14,4 @@ research/
 tmp/
 android-screen.png
 pnpm-lock.yaml
+apps/rag-worker/worker-configuration.d.ts

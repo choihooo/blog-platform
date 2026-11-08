@@ -2,8 +2,8 @@ import {
   analyzeEditorNodes,
   textFromEditorNodes,
   type EditorDocument,
-} from "@blog-platform/editor";
-import { createSeoSubject, evaluateSeo, type SeoReport } from "@blog-platform/seo-engine";
+} from "@blog-platform/core/content";
+import { createSeoSubject, evaluateSeo, type SeoReport } from "@blog-platform/core/seo";
 
 type EditorSeoSite = {
   siteName?: string;

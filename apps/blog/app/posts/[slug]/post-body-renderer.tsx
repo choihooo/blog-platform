@@ -7,7 +7,7 @@ import {
   parseInlineMarkdown,
   type EditorInline,
   type EditorNode,
-} from "@blog-platform/editor";
+} from "@blog-platform/core/content";
 import { CodeCopyButton } from "@/features/blog/components/code-copy-button";
 
 function slugify(value: string) {

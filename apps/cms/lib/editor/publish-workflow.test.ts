@@ -3,9 +3,9 @@ import {
   createEmptyEditorDocument,
   serializePostContent,
   type EditorDocument,
-} from "@blog-platform/editor";
+} from "@blog-platform/core/content";
 
-import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
+import type { ContentAdapter, PostRecord } from "@blog-platform/core/content";
 import { runPublicationOperation } from "./publish-workflow";
 
 function document(overrides: Partial<EditorDocument> = {}) {

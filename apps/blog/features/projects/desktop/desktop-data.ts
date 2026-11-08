@@ -1,4 +1,4 @@
-import { projects } from "../project-data";
+import { projects } from "@blog-platform/core/content/catalog";
 import { projectCardAssets } from "../project-card-assets";
 
 export const desktopProjects = projects;

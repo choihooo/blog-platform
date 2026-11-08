@@ -1,6 +1,10 @@
 import { Editor } from "@tiptap/react";
 import { expect, it } from "vitest";
-import { editorNodesToTiptap, htmlToEditorNodes, tiptapToEditorNodes } from "@blog-platform/editor";
+import {
+  editorNodesToTiptap,
+  htmlToEditorNodes,
+  tiptapToEditorNodes,
+} from "@blog-platform/core/content";
 import { contentExtensions } from "./content-extensions";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 import { AutoplayVideo } from "./autoplay-video";
-import type { ProjectContentBlock } from "./project-types";
+import type { ProjectContentBlock } from "@blog-platform/core/content/catalog";
 
 const widthClasses = {
   compact: "max-w-2xl",

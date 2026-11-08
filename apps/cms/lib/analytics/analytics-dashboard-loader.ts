@@ -5,7 +5,7 @@ import {
   type AnalyticsDashboardRange,
   type AnalyticsDashboardView,
   type AnalyticsProviderPost,
-} from "@blog-platform/analytics";
+} from "@blog-platform/core/analytics";
 
 import { listPostSummaries, type PostSummary } from "../editor/editor-loader";
 import { loadSiteConfig } from "../site-config";

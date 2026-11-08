@@ -1,4 +1,4 @@
-import { boundedJson, queryFrom } from "@/features/rag/contracts";
+import { boundedJson, queryFrom } from "@blog-platform/core/search";
 import { retrieve } from "@/features/rag/server";
 import { isSearchContext, resolveFollowUp, type SearchContext } from "@/features/rag/follow-up";
 import { conversationAnswer } from "@/features/rag/conversation";

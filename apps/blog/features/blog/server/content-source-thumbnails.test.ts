@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { PostRecord } from "../../../../cms/lib/content-adapter/content-adapter.interface";
+import type { PostRecord } from "@blog-platform/core/content";
 import { toPublicSourcePost } from "./content-source-utils";
 
 const post: PostRecord = {

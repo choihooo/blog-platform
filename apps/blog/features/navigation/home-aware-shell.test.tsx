@@ -15,6 +15,7 @@ describe("public header policy", () => {
     "/posts/nest-di-ioc",
     "/projects",
     "/projects/kusting",
+    "/about",
     "/resume",
     "/unknown",
   ])("renders the correct shell for %s", (path) => {
@@ -34,6 +35,7 @@ describe("public header policy", () => {
         "/blog",
         "/blog/nest-di-ioc",
         "/posts/nest-di-ioc",
+        "/about",
         "/projects",
         "/projects/kusting",
       ].includes(path),

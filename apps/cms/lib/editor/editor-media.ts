@@ -1,6 +1,5 @@
-import type { EditorNode } from "@blog-platform/editor";
+import type { ContentFailureCode, EditorNode } from "@blog-platform/core/content";
 
-import type { RepositoryFailureCode } from "../content-adapter";
 import type { MediaTarget } from "./media-path";
 
 export type UploadMediaCode =
@@ -56,13 +55,6 @@ export function imageNode(input: {
   };
 }
 
-export function repositoryToUploadCode(code: RepositoryFailureCode): UploadMediaCode {
-  if (code === "unauthorized") return "forbidden";
-  if (code === "temporary-connectivity" || code === "rate-limit") return "temporary-connectivity";
-  if (code === "validation-failure") return "validation-failure";
-  return "unknown";
-}
-
 export function authToUploadCode(code: string): UploadMediaCode {
   if (code === "auth-required") return "auth-required";
   if (code === "session-expired") return "session-expired";
@@ -79,4 +71,13 @@ export function uploadStateFromResult(result: UploadEditorMediaResult): MediaUpl
 
 export function targetFromForm(value: FormDataEntryValue | null): MediaTarget | null {
   return value === "body" || value === "cover" ? value : null;
+}
+
+export function contentToUploadCode(code: ContentFailureCode): UploadMediaCode {
+  if (code === "auth-required") return "auth-required";
+  if (code === "forbidden") return "forbidden";
+  if (code === "validation-failure") return "validation-failure";
+  if (code === "storage-failure" || code === "retryable-failure" || code === "upstream-failure")
+    return "temporary-connectivity";
+  return "unknown";
 }

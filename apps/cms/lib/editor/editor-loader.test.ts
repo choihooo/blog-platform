@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { serializePostContent } from "@blog-platform/editor";
+import { serializePostContent } from "@blog-platform/core/content";
 
-import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
+import type { ContentAdapter, PostRecord } from "@blog-platform/core/content";
 import { createNewEditorDocument, listPostSummaries, loadEditorDocument } from "./editor-loader";
 
 function post(overrides: Partial<PostRecord> = {}): PostRecord {

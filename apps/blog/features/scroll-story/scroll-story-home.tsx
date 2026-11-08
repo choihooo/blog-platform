@@ -1,12 +1,11 @@
-import { PortfolioChat } from "@/features/pixel-room/portfolio-chat";
+import { PortfolioChat } from "@/features/chat/portfolio-chat";
 import { ScrollStory } from "./scroll-story";
-import "@/features/pixel-room/pixel-room.css";
 
 export function ScrollStoryHome() {
   return (
     <>
       <ScrollStory />
-      <div className="pixel-room-page scroll-story-chat">
+      <div className="chat-surface scroll-story-chat">
         <PortfolioChat />
       </div>
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { ProviderInit, ProviderPayload } from "@blog-platform/analytics";
+import type { ProviderInit, ProviderPayload } from "@blog-platform/core/analytics";
 
 declare global {
   interface Window {

@@ -1,7 +1,7 @@
 import { AspectRatio, Avatar, Badge, Chip, ChipGroup } from "@hozui/react";
 
-import { aiWorkflowProject } from "@/features/projects/data/ai-workflow";
-import type { ProjectContentBlock, ProjectSection } from "@/features/projects/project-types";
+import { aiWorkflowProject } from "@blog-platform/core/content/catalog";
+import type { ProjectContentBlock, ProjectSection } from "@blog-platform/core/content/catalog";
 
 import styles from "./portfolio-print.module.css";
 import { PrintMetric, PrintPageFooter } from "./portfolio-print-shared";

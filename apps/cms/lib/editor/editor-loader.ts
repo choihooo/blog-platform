@@ -2,11 +2,11 @@ import {
   createEmptyEditorDocument,
   postRecordToEditorDocument,
   type EditorDocument,
-} from "@blog-platform/editor";
+} from "@blog-platform/core/content";
 
-import { createContentAdapter } from "../content-adapter/content-adapter";
+import { createContentAdapter } from "@blog-platform/core/storage";
 import { loadSiteConfig } from "../site-config";
-import type { ContentAdapter, PostRecord } from "../content-adapter/content-adapter.interface";
+import type { ContentAdapter, PostRecord } from "@blog-platform/core/content";
 import { repositoryRoot } from "./root";
 
 export type PostSummary = {
@@ -96,7 +96,7 @@ export async function listPostSummaries(
   adapter?: ContentAdapter,
   options: ListPostSummariesOptions = {},
 ) {
-  const contentAdapter = adapter ?? createContentAdapter("d1r2");
+  const contentAdapter = adapter ?? createContentAdapter();
   const query = normalizeSearchQuery(options.query);
   const sort = options.sort === "updated" ? "updated" : "published";
   const listed = await contentAdapter.listPosts({
@@ -119,7 +119,7 @@ export async function loadEditorDocument(
   path: string,
   adapter?: ContentAdapter,
 ): Promise<EditorLoadResult> {
-  const contentAdapter = adapter ?? createContentAdapter("d1r2");
+  const contentAdapter = adapter ?? createContentAdapter();
   const loaded = await contentAdapter.getPostBySlug(slugFromPath(path), {
     includeUnpublished: true,
   });
@@ -148,7 +148,7 @@ export async function loadEditorSiteAnalyticsConfig(
 }
 
 export async function loadEditorCategories(): Promise<EditorCategoryOption[]> {
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const [depth1, depth2] = await Promise.all([
     adapter.listCategories({ depth: 1 }),
     adapter.listCategories({ depth: 2 }),

@@ -15,7 +15,7 @@ describe("home migration routes", () => {
     const { default: Home, metadata } = await import("./page");
     const html = renderToStaticMarkup(await Home());
     expect(html).toContain('aria-label="안녕하세요 호조리카입니다"');
-    expect(html).toContain('href="/resume"');
+    expect(html).toContain('href="/about"');
     expect(html).toContain("application/ld+json");
     expect(html).toContain('"@type":"Person"');
     expect(html).not.toContain("/pixel/room-");

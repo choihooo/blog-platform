@@ -1,6 +1,6 @@
-import { projects } from "../projects/project-data";
-import { searchQuery } from "./identity";
-import type { RagResult } from "./contracts";
+import { projects } from "@blog-platform/core/content/catalog";
+import { searchQuery } from "@blog-platform/core/search";
+import type { RagResult } from "@blog-platform/core/search";
 
 /** Catalog requests read the same data as /projects, not an embedding similarity guess. */
 export function projectCatalog(

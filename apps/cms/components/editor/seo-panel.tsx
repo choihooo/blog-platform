@@ -1,7 +1,7 @@
 "use client";
 
-import type { SeoReport } from "@blog-platform/seo-engine";
-import type { ExternalConsoleLinks } from "@blog-platform/analytics";
+import type { SeoReport } from "@blog-platform/core/seo";
+import type { ExternalConsoleLinks } from "@blog-platform/core/analytics";
 import { Badge } from "@hozui/react";
 
 type Props = {

@@ -218,7 +218,7 @@
   background: #202631;
   transform-origin: left;
 }
-.pixel-room-page.scroll-story-chat {
+.chat-surface.scroll-story-chat {
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -228,7 +228,7 @@
   background: transparent;
   pointer-events: none;
 }
-.pixel-room-page.scroll-story-chat .portfolio-chat {
+.chat-surface.scroll-story-chat .portfolio-chat {
   inset: auto 64px 30px auto;
   pointer-events: auto;
 }
@@ -239,11 +239,11 @@
   background: #fff;
 }
 @media (max-aspect-ratio: 1/1) {
-  .pixel-room-page.scroll-story-chat .portfolio-chat {
+  .chat-surface.scroll-story-chat .portfolio-chat {
     right: 24px;
     bottom: 16px;
   }
-  .pixel-room-page.scroll-story-chat .portfolio-chat-panel {
+  .chat-surface.scroll-story-chat .portfolio-chat-panel {
     width: min(400px, calc(100vw - 48px));
     height: min(540px, calc(100dvh - 128px));
     max-height: calc(100dvh - 128px);

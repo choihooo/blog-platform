@@ -7,7 +7,7 @@ export const storyScenes = [
     intro: "잘부탁드립니다",
     note: "",
     action: "About 바로가기",
-    href: "/resume",
+    href: "/about",
     alt: "흰색 옷을 입고 손을 들어 인사하는 호조리카",
   },
   {

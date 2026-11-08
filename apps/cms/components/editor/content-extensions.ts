@@ -7,7 +7,7 @@ import {
   isSafeContentUrl,
   parseInlineMarkdown,
   type EditorInline,
-} from "@blog-platform/editor";
+} from "@blog-platform/core/content";
 
 const CaptionImage = Image.extend({
   parseHTML() {

@@ -1,123 +1,60 @@
 # 블로그 플랫폼
 
-단일 운영자 기술 블로그를 위한 monorepo foundation이다. 공개 블로그, 비공개 CMS, 공유 package, 문서
-영역을 분리해 이후 content, rendering, editor, SEO, analytics, publishing phase가 명확한 ownership
-안에서 진행되도록 한다.
+단일 운영자의 공개 포트폴리오·블로그와 비공개 콘텐츠 관리 도구다. 세 앱은 독립 실행·배포하고, 공유
+콘텐츠·저장소·SEO·분석·검색 로직은 core 패키지가 소유한다.
 
-## Workspace 구조
+## 구성
 
-```text
-apps/
-  blog/
-  cms/
+| 경로              | 책임                                           |
+| ----------------- | ---------------------------------------------- |
+| `apps/blog`       | 공개 화면·Next.js 라우트·캐시·챗봇 UI          |
+| `apps/cms`        | 관리자 인증·편집·미디어 업로드·발행·분석 화면  |
+| `apps/rag-worker` | Cloudflare D1·Workers AI·Vectorize 검색·동기화 |
+| `packages/core`   | 콘텐츠 모델·D1/R2 저장·SEO·analytics·검색 계약 |
+| `content`         | 사이트·taxonomy 설정과 legacy 원본             |
+| `scripts`         | 개발·마이그레이션·포트폴리오 출력 진입점       |
+| `specs`, `docs`   | 기능 계약·현재 작업 가이드·설계 및 운영 이력   |
 
-packages/
-  editor/
-  markdown/
-  seo-engine/
-  design-system/
-  analytics/
-  ai/
+프로젝트·프로필·이력서의 TypeScript 원본은 `packages/core/src/content/catalog`에서 관리한다. 앱끼리
+내부 소스를 가져오지 않는다. 공통 코드는 core의 용도별 subpath로 가져온다.
 
-docs/
-```
-
-## Root command
+## 개발과 검사
 
 ```sh
-pnpm install
-pnpm build
-pnpm typecheck
-pnpm lint
-pnpm format:check
-```
-
-## Local development
-
-```sh
+pnpm install --frozen-lockfile
+pnpm --filter @blog-platform/core build
 pnpm dev:blog
 pnpm dev:cms
 ```
 
-`apps/blog`는 기본적으로 port `3000`에서 시작하고, `apps/cms`는 port `3001`에서 시작한다. CMS 보호
-화면은 GitHub OAuth 설정(`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_SECRET`)과
-`content/site.json`의 `adminGithubLogin`, `adminGithubUserId`가 필요하다.
-
-로컬에서 OAuth 없이 CMS editor를 확인할 때만 다음처럼 개발 bypass를 사용할 수 있다.
+Blog는 기본 3000, CMS는 3001, 로컬 Worker는 8787 포트를 사용한다. `pnpm dev:cms`는 기존 Worker 개발
+설정을 사용하므로 원격 binding 여부를 먼저 확인한다. 운영 자격 증명과 `.env`는 커밋하지 않는다. 공개
+콘텐츠 조회에는 D1 설정 또는 `BLOG_CONTENT_PROXY_URL`이 필요하다.
 
 ```sh
-CMS_DEV_BYPASS_AUTH=1 pnpm dev:cms
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
-이 bypass는 `NODE_ENV=development`에서만 동작한다.
+Turbo는 core를 먼저 빌드한 뒤 앱을 검사한다. Worker build는 `wrangler deploy --dry-run`이며 실제
+배포가 아니다. 상세 규칙은 [개발 작업 가이드](docs/development-guide.md)와 각 앱의 AGENTS를 따른다.
 
-## Shared package ownership
+## 콘텐츠와 공개 경로
 
-- `packages/editor`: CMS editor behavior
-- `packages/markdown`: Markdown/MDX transformation behavior
-- `packages/seo-engine`: rule-based SEO와 generated SEO output behavior
-- `packages/design-system`: blog와 CMS 공유 UI behavior
-- `packages/analytics`: GA4/GTM event emission과 analytics link helper behavior
-- `packages/ai`: AI feature flag와 Post-MVP AI boundary
+CMS 글 CRUD는 D1, 운영 이미지 저장은 R2를 사용한다. 개발 환경에서 R2 업로드 설정이 없을 때만
+미디어를 로컬 `public/media`에 저장한다. 본문은 core의 version-1 structured JSON을 사용하며 Markdown
+fallback·편집·공개 렌더링은 같은 모델을 공유한다.
 
-## Phase 0 validation
+Blog는 `BLOG_CONTENT_PROXY_URL`이 있으면 CMS `/api/public-content`를, 없으면 D1/R2를 직접 조회한다.
+공개 목록·본문·RSS·sitemap·검색에는 발행 글만 포함한다. 저장소 장애를 빈 목록이나 404로 바꾸지
+않는다.
 
-1. workspace boundary가 `apps/blog`, `apps/cms`, 여섯 shared package, `docs/`를 포함하는지 확인한다.
-2. `pnpm install`을 실행한다.
-3. `pnpm build`, `pnpm typecheck`, `pnpm lint`, `pnpm format:check`를 실행한다.
-4. `pnpm dev:blog`와 `pnpm dev:cms`로 app shell을 각각 확인한다.
-5. database, object storage, multi-user permission, scheduled publishing, AI generation, integrated
-   analytics dashboard가 도입되지 않았는지 확인한다.
+기존 `/blog`·소개·프로젝트·이력서와 티스토리/이전 host redirect, 보관 실험 페이지를 유지한다. Save는
+저장만 수행한다. Publish/Unpublish/Archive는 저장 후 공개 갱신을 요청하며 저장 성공과 갱신 실패를
+구분한다. 기존 deploy hook 우선순위·revalidate·재시도 계약을 유지한다.
 
-## Phase 0 validation 결과
-
-2026-07-30 기준으로 다음 검증을 완료했다.
-
-- `pnpm install`: 통과
-- `pnpm build`: 통과
-- `pnpm typecheck`: 통과
-- `pnpm lint`: 통과
-- `pnpm format:check`: 통과
-- `http://localhost:3000/`: blog shell 응답 확인
-- `http://localhost:3001/`: CMS shell 응답 확인
-
-Next.js dev server는 외장 볼륨에서 실행되어 slow filesystem warning을 표시했지만, 두 app 모두
-정상적으로 `200` 응답을 반환했다.
-
-## Blog Rendering
-
-공개 블로그는 `content/` 파일을 읽고 `packages/markdown`의 content validation, published-only
-filtering, MDX analysis를 재사용한다. 공개 route는 `/`, `/posts/[slug]`, `/categories/[slug]`,
-`/tags/[slug]`를 제공하며 draft, archived, invalid, unsafe MDX는 공개 출력에 포함하지 않는다. UI는
-Tailwind CSS와 `packages/design-system`의 shadcn/ui 스타일 `Card`, `Badge`, `Separator` primitive를
-사용한다.
-
-## GitHub Content Adapter
-
-CMS는 `apps/cms/lib/content-adapter`에서 repository content adapter contract를 소유한다. Local
-adapter는 GitHub credential 없이 `content/`와 `public/media/` 경계 안의
-list/read/create/update/delete 및 media commit 동작을 검증하고, GitHub adapter는 Contents API 요청
-payload와 provider error normalization을 담당한다. 기존 파일 update/delete는 마지막 read SHA를
-요구해 stale write overwrite를 막는다.
-
-## CMS Auth + Shell
-
-CMS는 `apps/cms/lib/auth`에서 GitHub OAuth session, 관리자 identity loading, route guard, mutation
-guard를 소유한다. 관리자 기준값은 `content/site.json`의 `adminGithubLogin`과 `adminGithubUserId`이며
-둘 다 일치해야 보호 화면과 mutation이 허용된다. `apps/cms/components/shell`은 sidebar, top bar,
-Posts/Settings 준비 화면을 제공하고 editor, media upload, publish workflow는 아직 노출하지 않는다.
-
-## CMS Editor
-
-CMS Posts 화면은 repository MDX 글 목록, 새 초안 화면, 기존 글 편집 화면을 제공한다.
-`packages/editor`는 editor document model, supported MDX subset, validation, MDX 변환, preview
-analysis를 소유한다. 현재 editor UI는 Tiptap 기반 contenteditable surface와 frontmatter panel을
-사용한다. 저장은 기존 protected content operation과 SHA 기반 adapter를 사용하며, local draft
-backup은 repository 원본을 대체하지 않는 복구 수단으로만 사용한다.
-
-## Media Upload
-
-CMS editor는 본문 이미지와 커버 이미지를 repository의 `public/media` 아래에 commit한다. 업로드는
-서버에서 허용 확장자, 2MB 제한, 이미지 decode 가능 여부를 검증하고 가능한 경우 webp로 정규화한다.
-성공한 업로드만 `/media/...` public path로 editor document 또는 `coverImage`에 반영하며, 실패한
-업로드의 blob/data/local path는 저장될 MDX에 남기지 않는다.
+인증과 서버 action은 CMS가 소유하고 Next.js 캐시는 Blog가 소유한다. Worker의 검색 토큰과 관리자
+동기화 토큰은 구분한다. 원격 발행·데이터 변경·배포·Vectorize 동기화는 별도 명시 요청이 필요하다.

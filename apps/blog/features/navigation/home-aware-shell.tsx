@@ -13,6 +13,7 @@ export function HomeAwareShell({ children, header }: { children: ReactNode; head
     !["search", "tags", "categories", "page", "rss.xml"].includes(pathname.split("/")[2] ?? "");
   const isHome =
     pathname === "/" ||
+    pathname === "/about" ||
     pathname === "/blog" ||
     isBlogArticle ||
     pathname.startsWith("/posts/") ||

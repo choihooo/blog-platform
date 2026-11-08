@@ -9,7 +9,7 @@ import {
   legacyMarkdownToPostContent,
   type EditorDocument,
   type EditorNode,
-} from "@blog-platform/editor";
+} from "@blog-platform/core/content";
 import {
   Button,
   Modal,

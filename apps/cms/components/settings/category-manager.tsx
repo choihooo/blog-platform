@@ -27,7 +27,7 @@ import {
   deleteCategoryAction,
   updateCategoryAction,
 } from "../../app/actions/taxonomy-actions";
-import type { CategoryRecord } from "../../lib/content-adapter/content-adapter.interface";
+import type { CategoryRecord } from "@blog-platform/core/content";
 import { CmsTextField } from "../ui/text-field";
 
 type CategoryWithCount = CategoryRecord & { postCount?: number };

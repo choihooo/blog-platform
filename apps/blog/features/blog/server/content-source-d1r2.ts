@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
-import { createContentAdapter } from "../../../../cms/lib/content-adapter/content-adapter";
-import { loadSiteConfig } from "../../../../cms/lib/site-config";
+import { createContentAdapter } from "@blog-platform/core/storage";
+import { loadSiteConfig } from "@/shared/config/site-config";
 import type {
   BlogContentSource,
   CategoryHierarchy,
@@ -36,7 +36,7 @@ function cacheContentSourceRead<Args extends unknown[], T>(
 }
 
 export async function listCategoriesFromD1(input: CategoryListInput) {
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const result = await adapter.listCategories({ depth: input.depth, parentSlug: input.parentSlug });
   if (!result.ok) throw new Error("content_unavailable");
   const depth = input.depth === 1 ? 1 : 2;
@@ -61,7 +61,7 @@ export async function listPostsFromD1(input: ContentListInput = {}, strict = fal
 }
 
 async function listPostPageFromD1(input: ContentListInput = {}, strict = false) {
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const result = await adapter.listPosts({
     publishedOnly: input.publishedOnly ?? true,
     page: normalizePage(input.page),
@@ -89,7 +89,7 @@ async function getPostsByTagFromD1(input: {
   limit?: number;
   publishedOnly?: boolean;
 }) {
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const result = await adapter.getPostsByTag({
     tagSlug: normalizeSlug(input.tagSlug),
     publishedOnly: input.publishedOnly ?? true,
@@ -108,7 +108,7 @@ async function getPostsByCategoryPathFromD1(input: {
 }) {
   const categoryPath = normalizeCategoryPath(input.categoryPath);
   if (!categoryPath) return [];
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const result = await adapter.getPostsByCategoryPath({
     categoryPath,
     publishedOnly: input.publishedOnly ?? true,
@@ -132,7 +132,7 @@ async function getCategoryByPathFromD1(path: string): Promise<CategoryHierarchy 
 async function getPostBySlugFromD1(slug: string, options?: { analyzeBody?: boolean }) {
   const normalized = normalizeSlug(slug);
   if (!normalized) return;
-  const adapter = createContentAdapter("d1r2");
+  const adapter = createContentAdapter();
   const result = await adapter.getPostBySlug(normalized);
   if (!result.ok) throw new Error("content_unavailable");
   if (!result.data) return;

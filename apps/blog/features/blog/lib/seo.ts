@@ -1,4 +1,4 @@
-import { createSeoSubject, type SeoSite, type SeoSubject } from "@blog-platform/seo-engine";
+import { createSeoSubject, type SeoSite, type SeoSubject } from "@blog-platform/core/seo";
 
 import type { PublicPost } from "../server/content-source";
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./pixel-room.css";
-import { PortfolioChat } from "./portfolio-chat";
+import { PortfolioChat } from "@/features/chat/portfolio-chat";
 
 type RoomTime = "day" | "night" | "dawn";
 type TimeMode = "auto" | RoomTime;
@@ -81,7 +81,7 @@ export function PixelRoom() {
   }, [layersReady]);
 
   return (
-    <main className="pixel-room-page" data-room-time={roomTime}>
+    <main className="pixel-room-page chat-surface" data-room-time={roomTime}>
       <h1 className="sr-only">최호 — 프론트엔드 개발자 포트폴리오</h1>
       <div className="room-shell">
         <div className="room-stage-wrap">

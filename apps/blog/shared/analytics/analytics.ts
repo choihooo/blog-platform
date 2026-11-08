@@ -1,6 +1,10 @@
-import { createBlogEvent, initializeProvider, toProviderPayload } from "@blog-platform/analytics";
+import {
+  createBlogEvent,
+  initializeProvider,
+  toProviderPayload,
+} from "@blog-platform/core/analytics";
 
-import type { AnalyticsConfig, BlogEventName } from "@blog-platform/analytics";
+import type { AnalyticsConfig, BlogEventName } from "@blog-platform/core/analytics";
 
 function cleanEnv(value: string | undefined) {
   return value?.trim() || undefined;

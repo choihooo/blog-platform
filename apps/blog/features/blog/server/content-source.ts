@@ -1,4 +1,4 @@
-import { loadSiteConfig } from "../../../../cms/lib/site-config";
+import { loadSiteConfig } from "@/shared/config/site-config";
 import { createD1R2Source, listPostsFromD1 } from "./content-source-d1r2";
 import { createRemoteSource } from "./content-source-remote";
 import type {

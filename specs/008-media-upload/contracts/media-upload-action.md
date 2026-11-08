@@ -76,6 +76,12 @@ type UploadEditorMediaFailure = {
 - `postSlug`가 비어 있거나 slug 후보를 만들 수 없으면 `slug-required`를 반환한다.
 - 성공 전에는 editor document에 반영할 public path를 반환하지 않는다.
 - 실패 결과는 blob URL, data URL, 로컬 파일 경로를 포함하지 않는다.
-- 성공 결과의 `reference.node.src`와 `coverImage`는 `/media/`로 시작하는 공개 경로여야 한다.
+- 성공 결과의 `reference.node.src`와 `coverImage`는 로컬 `/media/` 또는 설정된 R2의 공개 절대
+  URL이다.
 - `target: "cover"`의 repository path는 `public/media/covers/<slug>-<hash>.webp` 형식을 따른다.
 - `target: "body"`의 repository path는 `public/media/posts/<slug>/<hash>.webp` 형식을 따른다.
+
+## 현재 저장소 소유권 (2026-11-08)
+
+CMS가 인증·이미지 검증을 수행하고 `@blog-platform/core/storage`의 media store가 저장한다. repository
+path 이름은 호환 필드이며 GitHub commit을 뜻하지 않는다. 기존 action 결과와 R2 key를 유지한다.

@@ -1,4 +1,4 @@
-import { loadSiteConfig } from "../../../../cms/lib/site-config";
+import { loadSiteConfig } from "@/shared/config/site-config";
 import type {
   BlogContentSource,
   CategoryHierarchy,

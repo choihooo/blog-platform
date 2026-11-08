@@ -8,7 +8,7 @@ import { ArticleNavigationPanel } from "@/features/blog-rounded/article-navigati
 import { PostTags } from "@/features/blog-rounded/post-tags";
 import { preparePreviewArticle } from "@/features/blog-rounded/preview-article";
 import "@/features/blog-rounded/rounded-blog.css";
-import { generateJsonLd, generatePageMetadata } from "@blog-platform/seo-engine";
+import { generateJsonLd, generatePageMetadata } from "@blog-platform/core/seo";
 
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
 import { PostAnalyticsEvents } from "@/features/blog/components/post-analytics-events";
