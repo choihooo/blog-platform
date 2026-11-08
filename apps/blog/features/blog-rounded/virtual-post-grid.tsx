@@ -14,9 +14,11 @@ const batchSize = 8;
 export function VirtualPostGrid({
   posts,
   labels,
+  basePath = "/blog",
 }: {
   posts: PreviewPost[];
   labels: Record<string, string>;
+  basePath?: string;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -169,6 +171,7 @@ export function VirtualPostGrid({
       <PostCard
         key={post.slug}
         post={post}
+        basePath={basePath}
         label={labels[post.category ?? ""] ?? "기록"}
         priority={index === 0 && column < 2}
       />

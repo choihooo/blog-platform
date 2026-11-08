@@ -16,9 +16,11 @@ import { VirtualPostGrid } from "./virtual-post-grid";
 export function RoundedBlog({
   posts,
   categories,
+  basePath = "/blog",
 }: {
   posts: PreviewPost[];
   categories: PreviewCategory[];
+  basePath?: string;
 }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
@@ -105,7 +107,12 @@ export function RoundedBlog({
               </h2>
             </div>
             {filtered.length ? (
-              <VirtualPostGrid key={`${category}:${query}`} posts={filtered} labels={labels} />
+              <VirtualPostGrid
+                key={`${category}:${query}`}
+                posts={filtered}
+                labels={labels}
+                basePath={basePath}
+              />
             ) : (
               <div className="rounded-blog-empty">
                 <Search size={28} aria-hidden="true" />
@@ -125,8 +132,9 @@ export function RoundedBlog({
         </div>
         <footer className="rounded-blog-footer">
           <span>HOZORICA · BLOG</span>
-          <Link href="/blog">
-            현재 블로그 보기 <ArrowUpRight size={14} aria-hidden="true" />
+          <Link href={basePath === "/blog" ? "/blog/rss.xml" : "/blog"}>
+            {basePath === "/blog" ? "RSS" : "현재 블로그 보기"}{" "}
+            <ArrowUpRight size={14} aria-hidden="true" />
           </Link>
         </footer>
       </main>

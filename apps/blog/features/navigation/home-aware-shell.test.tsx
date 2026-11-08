@@ -11,6 +11,8 @@ describe("public header policy", () => {
     "/experiments/blog-rounded",
     "/experiments/blog-rounded/nest-di-ioc",
     "/blog",
+    "/blog/nest-di-ioc",
+    "/posts/nest-di-ioc",
     "/projects",
     "/projects/kusting",
     "/about",
@@ -30,9 +32,12 @@ describe("public header policy", () => {
         "/experiments/interactive-portfolio",
         "/experiments/blog-rounded",
         "/experiments/blog-rounded/nest-di-ioc",
+        "/blog",
+        "/blog/nest-di-ioc",
+        "/posts/nest-di-ioc",
+        "/about",
         "/projects",
         "/projects/kusting",
-        "/about",
       ].includes(path),
     );
     if (path === "/projects/kusting") {

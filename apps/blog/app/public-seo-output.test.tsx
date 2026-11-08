@@ -34,7 +34,7 @@ describe("public SEO output", () => {
   it("post page renders reading aids from public post data", () => {
     const source = readFileSync(new URL("./posts/[slug]/page.tsx", import.meta.url), "utf8");
     expect(source).toContain("post.readingTimeLabel");
-    expect(source).toContain("post.toc.map");
+    expect(source).toContain("article.toc.map");
     expect(source).toContain("href={`#${item.slug}`}");
   });
 });

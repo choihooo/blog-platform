@@ -103,7 +103,11 @@ export default async function RoundedBlogPostPage({ params }: Props) {
               </aside>
             )}
           </div>
-          <ArticleNavigationPanel posts={posts} currentSlug={post.slug} />
+          <ArticleNavigationPanel
+            posts={posts}
+            currentSlug={post.slug}
+            basePath={blogPreviewPath}
+          />
           <footer className="rounded-blog-article-bottom">
             <span>HOZORICA · BLOG</span>
             <Link href={`/blog/${post.slug}`}>

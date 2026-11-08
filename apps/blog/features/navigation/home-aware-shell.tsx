@@ -4,13 +4,19 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { MainHeader } from "./main-header";
 
-// Home and desktop own their header placement. Portfolio pages share MainHeader;
-// other content pages retain search and category navigation. Re-evaluate on navigation.
+// Home, desktop and rounded blog pages own their header placement. Other portfolio
+// pages share MainHeader; legacy archives retain search and category navigation.
 export function HomeAwareShell({ children, header }: { children: ReactNode; header: ReactNode }) {
   const pathname = usePathname();
+  const isBlogArticle =
+    /^\/blog\/[^/]+\/?$/.test(pathname) &&
+    !["search", "tags", "categories", "page", "rss.xml"].includes(pathname.split("/")[2] ?? "");
   const isHome =
     pathname === "/" ||
     pathname === "/about" ||
+    pathname === "/blog" ||
+    isBlogArticle ||
+    pathname.startsWith("/posts/") ||
     pathname === "/projects" ||
     pathname === "/experiments/pixel-room" ||
     pathname === "/experiments/blog-rounded" ||
