@@ -3,7 +3,7 @@ import { Chip, ChipGroup } from "@hozui/react";
 import { BookOpen } from "lucide-react";
 
 import { formatPostDate } from "@/shared/date/date-format";
-import type { PublicPost } from "../server/content-source";
+import type { PublicPost } from "../model/public-content";
 import type { PostAnalyticsContext } from "./post-analytics-events";
 import { AnalyticsLink } from "./analytics-link";
 

@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { BlogHeaderSearchForm } from "@/features/blog/components/blog-search-form";
 import { DesktopNavigation } from "./desktop-navigation";
 import { MobileNavigationMenu, type MobileNavigationCategory } from "./mobile-navigation-menu";
 import { ThemeSwitch } from "./theme-switch";
@@ -12,9 +11,10 @@ type SiteShellProps = {
   children: ReactNode;
   categories: MobileNavigationCategory[];
   siteName: string;
+  headerSearch?: ReactNode;
 };
 
-export function SiteShell({ categories, children, siteName }: SiteShellProps) {
+export function SiteShell({ categories, children, siteName, headerSearch }: SiteShellProps) {
   return (
     <HomeAwareShell
       header={
@@ -35,7 +35,7 @@ export function SiteShell({ categories, children, siteName }: SiteShellProps) {
               {siteName}
             </Link>
             <div className="hidden items-center gap-4 xl:flex">
-              <BlogHeaderSearchForm />
+              {headerSearch}
               <DesktopNavigation />
               <ThemeSwitch />
             </div>

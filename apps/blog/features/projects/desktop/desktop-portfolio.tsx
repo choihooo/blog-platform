@@ -12,35 +12,20 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import {
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-  type CSSProperties,
-} from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { projects } from "@blog-platform/core/content/catalog";
 import {
   desktopProjects,
   projectPoster,
   projectPreviews,
   windowTitle,
-  projectIdFromHash,
+  iconPlacements,
 } from "./desktop-data";
 import { ProjectWindowSummary } from "./project-window-summary";
+import { useDesktopWorkspace } from "./use-desktop-workspace";
 import { MainHeader } from "../../navigation/main-header";
-import {
-  clampPosition,
-  desktopReducer,
-  getWindowRect,
-  resizeWindow,
-  type DesktopWindow,
-  type ResizeEdge,
-  type WindowRect,
-} from "./desktop-state";
+import { resizeWindow, type ResizeEdge } from "./desktop-state";
 
-type Point = { x: number; y: number };
 const resizeEdges: readonly ResizeEdge[] = ["n", "ne", "e", "se", "s", "sw", "w", "nw"];
 const resizeEdgeLabels: Record<ResizeEdge, string> = {
   n: "위쪽",
@@ -52,20 +37,6 @@ const resizeEdgeLabels: Record<ResizeEdge, string> = {
   w: "왼쪽",
   nw: "왼쪽 위",
 };
-const iconPlacements = [
-  { x: 0.08, y: 0.12, rotation: -4 },
-  { x: 0.235, y: 0.27, rotation: 3 },
-  { x: 0.72, y: 0.11, rotation: -2 },
-  { x: 0.87, y: 0.28, rotation: 5 },
-  { x: 0.055, y: 0.49, rotation: -3 },
-  { x: 0.24, y: 0.6, rotation: -5 },
-  { x: 0.76, y: 0.45, rotation: 3 },
-  { x: 0.865, y: 0.7, rotation: -3 },
-  { x: 0.095, y: 0.79, rotation: 4 },
-  { x: 0.28, y: 0.85, rotation: -2 },
-  { x: 0.7, y: 0.79, rotation: 3 },
-];
-
 function ProjectPreview({ id, active }: { id: string; active: boolean }) {
   const media = projectPreviews[id];
   const video = useRef<HTMLVideoElement>(null);
@@ -212,175 +183,25 @@ function WindowBody({
 }
 
 export function DesktopPortfolio() {
-  const [windows, dispatch] = useReducer(desktopReducer, []);
-  const [positions, setPositions] = useState<Record<string, Point>>({});
-  const [space, setSpace] = useState({ width: 1280, height: 740 });
-  const workspace = useRef<HTMLDivElement>(null);
-  const drag = useRef<{
-    kind: "icon" | "window" | "resize";
-    id: string;
-    px: number;
-    py: number;
-    x: number;
-    y: number;
-    moved: boolean;
-    width: number;
-    height: number;
-    edge?: ResizeEdge;
-  } | null>(null);
-  const suppressClick = useRef<string | null>(null);
-  const focusReturn = useRef<HTMLElement | null>(null);
-  const pendingFocus = useRef<{ kind: "dock" | "launcher"; id: string } | null>(null);
-  const active = windows.filter((w) => !w.minimized).at(-1)?.id;
-  const windowBounds = { width: space.width, height: space.height - 92 };
-  useEffect(() => {
-    const restore = () => {
-      const id = projectIdFromHash(window.location.hash);
-      if (!id) return;
-      const width = workspace.current?.clientWidth ?? 1280;
-      dispatch({ type: "open", id, x: (width - Math.min(720, width - 32)) / 2, y: 38 });
-    };
-    restore();
-    window.addEventListener("hashchange", restore);
-    return () => window.removeEventListener("hashchange", restore);
-  }, []);
-  useEffect(() => {
-    const el = workspace.current;
-    if (!el) return;
-    const observer = new ResizeObserver(() => {
-      const rect = el.getBoundingClientRect();
-      setSpace({ width: rect.width, height: rect.height });
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!active) return;
-    const dialog = workspace.current?.querySelector<HTMLElement>(`[data-window="${active}"]`);
-    if (dialog && !dialog.contains(document.activeElement)) dialog.focus({ preventScroll: true });
-  }, [active]);
-  useEffect(() => {
-    const pending = pendingFocus.current;
-    if (!pending) return;
-    pendingFocus.current = null;
-    const selector =
-      pending.kind === "dock"
-        ? `[data-dock-window="${pending.id}"]`
-        : `[data-shortcut="${pending.id}"]`;
-    const target = workspace.current?.querySelector<HTMLElement>(selector);
-    (
-      target ||
-      (focusReturn.current?.isConnected ? focusReturn.current : null) ||
-      workspace.current?.querySelector<HTMLElement>(".desktop-dock a")
-    )?.focus({ preventScroll: true });
-  }, [windows]);
-  const open = (id: string) => {
-    focusReturn.current = document.activeElement as HTMLElement;
-    const width = Math.min(720, space.width - 32);
-    dispatch({
-      type: "open",
-      id,
-      x: (space.width - width) / 2 + windows.length * 18,
-      y: 38 + windows.length * 12,
-    });
-  };
-  const close = (id: string) => {
-    pendingFocus.current = { kind: "launcher", id };
-    dispatch({ type: "close", id });
-  };
-  const minimize = (id: string) => {
-    pendingFocus.current = { kind: "dock", id };
-    dispatch({ type: "minimize", id });
-  };
-  const windowPosition = (item: DesktopWindow) => getWindowRect(item, windowBounds);
-  const iconPosition = (id: string, index: number) => {
-    const saved = positions[id];
-    const place = iconPlacements[index % iconPlacements.length]!;
-    return clampPosition(
-      saved?.x ?? place.x * space.width,
-      saved?.y ?? place.y * (space.height - 150),
-      space.width,
-      space.height - 110,
-      100,
-      100,
-    );
-  };
-  function startDrag(
-    event: ReactPointerEvent<HTMLElement>,
-    kind: "icon" | "window",
-    id: string,
-    point: Point & Partial<Pick<WindowRect, "width" | "height">>,
-  ) {
-    if (
-      event.button !== 0 ||
-      (kind === "icon" && (space.width < 760 || space.height < 450)) ||
-      (kind === "window" && (event.target as HTMLElement).closest("button,a"))
-    )
-      return;
-    if (kind === "window") dispatch({ type: "focus", id });
-    if (kind === "icon") suppressClick.current = null;
-    drag.current = {
-      kind,
-      id,
-      px: event.clientX,
-      py: event.clientY,
-      x: point.x,
-      y: point.y,
-      moved: false,
-      width: point.width ?? 100,
-      height: point.height ?? 100,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-  function moveDrag(event: ReactPointerEvent<HTMLElement>) {
-    const current = drag.current;
-    if (!current) return;
-    const dx = event.clientX - current.px,
-      dy = event.clientY - current.py;
-    if (Math.hypot(dx, dy) < 5 && !current.moved) return;
-    current.moved = true;
-    if (current.kind === "resize") {
-      const rect = resizeWindow(current, dx, dy, current.edge!, windowBounds);
-      dispatch({ type: "resize", id: current.id, ...rect });
-      return;
-    }
-    const point = clampPosition(
-      current.x + dx,
-      current.y + dy,
-      space.width,
-      space.height - (current.kind === "window" ? 92 : 110),
-      current.width,
-      current.height,
-    );
-    if (current.kind === "window") dispatch({ type: "move", id: current.id, ...point });
-    else setPositions((prev) => ({ ...prev, [current.id]: point }));
-  }
-  function endDrag() {
-    if (drag.current?.moved && drag.current.kind === "icon")
-      suppressClick.current = drag.current.id;
-    drag.current = null;
-  }
-  function startResize(
-    event: ReactPointerEvent<HTMLButtonElement>,
-    id: string,
-    edge: ResizeEdge,
-    rect: WindowRect,
-  ) {
-    if (event.button !== 0) return;
-    event.stopPropagation();
-    dispatch({ type: "focus", id });
-    drag.current = {
-      kind: "resize",
-      id,
-      px: event.clientX,
-      py: event.clientY,
-      ...rect,
-      edge,
-      moved: false,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
+  const {
+    workspaceRef: workspace,
+    windows,
+    active,
+    dispatch,
+    open,
+    close,
+    minimize,
+    openShortcut,
+    clearPositions,
+    windowPosition,
+    iconPosition,
+    startDrag,
+    moveDrag,
+    endDrag,
+    cancelDrag,
+    startResize,
+    windowBounds,
+  } = useDesktopWorkspace();
   return (
     <main className="desktop-portfolio">
       <MainHeader active="work" />
@@ -426,16 +247,8 @@ export function DesktopPortfolio() {
                 onPointerDown={(e) => startDrag(e, "icon", project.slug, point)}
                 onPointerMove={moveDrag}
                 onPointerUp={endDrag}
-                onPointerCancel={() => {
-                  drag.current = null;
-                }}
-                onClick={() => {
-                  if (suppressClick.current === project.slug) {
-                    suppressClick.current = null;
-                    return;
-                  }
-                  open(project.slug);
-                }}
+                onPointerCancel={cancelDrag}
+                onClick={() => openShortcut(project.slug)}
               >
                 <span className="desktop-file">
                   <img
@@ -452,7 +265,7 @@ export function DesktopPortfolio() {
             );
           })}
         </div>
-        <button className="desktop-reset" onClick={() => setPositions({})}>
+        <button className="desktop-reset" onClick={clearPositions}>
           <RotateCcw size={13} /> 아이콘 정리
         </button>
         {windows
@@ -491,9 +304,7 @@ export function DesktopPortfolio() {
                   }}
                   onPointerMove={moveDrag}
                   onPointerUp={endDrag}
-                  onPointerCancel={() => {
-                    drag.current = null;
-                  }}
+                  onPointerCancel={cancelDrag}
                 >
                   <div className="desktop-window-controls">
                     <button
@@ -536,9 +347,7 @@ export function DesktopPortfolio() {
                       onPointerDown={(event) => startResize(event, item.id, edge, point)}
                       onPointerMove={moveDrag}
                       onPointerUp={endDrag}
-                      onPointerCancel={() => {
-                        drag.current = null;
-                      }}
+                      onPointerCancel={cancelDrag}
                       onKeyDown={(event) => {
                         if (
                           !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)

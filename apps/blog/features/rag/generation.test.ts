@@ -13,7 +13,7 @@ const question = (query = "알려지지않은기술") =>
     body: JSON.stringify({ query }),
   });
 function setup() {
-  vi.stubEnv("RAG_ANSWER_PROVIDER", "gemini");
+  vi.stubEnv("RAG_ANSWER_PROVIDER", "");
   vi.stubEnv("RAG_API_URL", "https://worker.test");
   vi.stubEnv("RAG_SEARCH_TOKEN", "key");
 }

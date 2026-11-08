@@ -6,14 +6,9 @@ import { ArrowDown, ArrowUp, ArrowUpRight, Mail } from "lucide-react";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { MainHeader } from "@/features/navigation/main-header";
-import {
-  aboutChapters,
-  aboutMedia,
-  getAboutChapter,
-  getAboutPresentation,
-  type AboutContact,
-} from "./about-data";
-import { createVideoScrubber, getScrollProgress } from "./scroll-video";
+import { aboutChapters, aboutMedia, getAboutPresentation, type AboutContact } from "./about-data";
+import { useAboutScroll } from "./use-about-scroll";
+import { useMediaQuery } from "@/shared/browser/use-media-query";
 import styles from "./about-story.module.css";
 
 export function AboutStory({ contact }: { contact: AboutContact }) {
@@ -21,59 +16,19 @@ export function AboutStory({ contact }: { contact: AboutContact }) {
   const video = useRef<HTMLVideoElement>(null);
   const progressLine = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<"static" | "scroll">("static");
-  const [chapter, setChapter] = useState(0);
+  const chapter = useAboutScroll({ mode, track, video, progressLine });
+  const { matches: reducedMotion } = useMediaQuery("(prefers-reduced-motion: reduce)", true);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () =>
-      setMode(getAboutPresentation(preference.matches, window.innerHeight, failed));
+    const apply = () => setMode(getAboutPresentation(reducedMotion, window.innerHeight, failed));
     apply();
-    preference.addEventListener("change", apply);
     window.addEventListener("resize", apply);
     return () => {
-      preference.removeEventListener("change", apply);
       window.removeEventListener("resize", apply);
     };
-  }, [failed]);
-
-  useEffect(() => {
-    if (mode !== "scroll" || !track.current || !video.current) return;
-    const element = track.current;
-    const scrubber = createVideoScrubber(video.current, {
-      requestFrame: (callback) => window.requestAnimationFrame(callback),
-      cancelFrame: (id) => window.cancelAnimationFrame(id),
-    });
-    let frame: number | null = null;
-    let activeChapter = -1;
-    const measure = () => {
-      frame = null;
-      const rect = element.getBoundingClientRect();
-      const progress = getScrollProgress(rect.top, rect.height, window.innerHeight);
-      scrubber.update(progress);
-      if (progressLine.current) progressLine.current.style.transform = `scaleX(${progress})`;
-      const nextChapter = getAboutChapter(progress);
-      if (nextChapter !== activeChapter) {
-        activeChapter = nextChapter;
-        setChapter(nextChapter);
-      }
-    };
-    const schedule = () => {
-      if (frame === null) frame = window.requestAnimationFrame(measure);
-    };
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    window.addEventListener("pageshow", schedule);
-    schedule();
-    return () => {
-      if (frame !== null) window.cancelAnimationFrame(frame);
-      scrubber.dispose();
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("pageshow", schedule);
-    };
-  }, [mode]);
+  }, [failed, reducedMotion]);
 
   useEffect(() => {
     if (mode !== "scroll" || ready) return;

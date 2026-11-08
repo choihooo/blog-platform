@@ -1,4 +1,4 @@
-import { searchPosts } from "@/features/blog/server/content-source";
+import { searchPublicPosts } from "@/features/blog/server/search-service";
 
 const searchCacheHeaders = {
   "cache-control": "public, s-maxage=60, stale-while-revalidate=300",
@@ -30,26 +30,6 @@ export async function GET(request: Request) {
     return Response.json({ items: [], total: 0, query: "" }, { headers: searchCacheHeaders });
   }
 
-  const posts = await searchPosts({ query, categoryPath, page, limit });
-  return Response.json(
-    {
-      items: posts.map((post) => ({
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt ?? "",
-        category: post.categoryEntry
-          ? { slug: post.categoryEntry.slug, label: post.categoryEntry.label }
-          : null,
-        tags: post.tagEntries.map((tag) => ({ slug: tag.slug, label: tag.label })),
-        publishedAt: post.publishedAt,
-        updatedAt: post.updatedAt ?? "",
-        readingTimeLabel: post.readingTimeLabel,
-        coverImage: post.coverImage ?? "",
-        url: `/blog/${post.slug}`,
-      })),
-      total: posts.length,
-      query,
-    },
-    { headers: searchCacheHeaders },
-  );
+  const result = await searchPublicPosts({ query, categoryPath, page, limit });
+  return Response.json(result, { headers: searchCacheHeaders });
 }

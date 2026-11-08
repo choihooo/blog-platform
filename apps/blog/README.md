@@ -1,12 +1,11 @@
 # Blog App
 
-## Gemini 채팅 전환
+## Gemini 채팅
 
-기본은 기존 local 모드다. Worker의 Gemini 임베딩 인덱스·secret·생성 모델을 먼저 준비한 다음 서버
-`RAG_ANSWER_PROVIDER=gemini`와 빌드 `NEXT_PUBLIC_RAG_CHAT_MODE=remote`를 함께 적용한다. remote
-모드는 서버 JSON 답변을 표시하고 Kanana·GGUF·WebGPU를 로드하지 않는다. Gemini 키는 Worker에만 둔다.
-공개 콘텐츠 소스와 출처 URL 계약은 유지한다. 전환·무료 quota·재실행·롤백은
-[runbook](../../docs/runbooks/2026-11-06-gemini-rag.md)을 따른다.
+챗봇은 `/api/rag`를 통해 Worker의 Gemini `/answer` 응답을 표시한다. 브라우저 로컬 모델·다운로드·
+WebGPU·진단 기능과 모드 선택 환경변수는 제거했다. Blog는 `RAG_API_URL`과 `RAG_SEARCH_TOKEN`을
+사용하며 Gemini 키는 Worker에만 둔다. 공개 콘텐츠 소스와 출처 URL 계약은 유지한다. 무료 quota와
+재실행 절차는 [runbook](../../docs/runbooks/2026-11-06-gemini-rag.md)을 따른다.
 
 공개 읽기 전용 블로그 앱이다. 기본 콘텐츠 소스는 D1/R2이며, `BLOG_CONTENT_PROXY_URL`이 있으면 CMS의
 `/api/public-content`를 읽는 remote 소스를 사용한다. 공개된 글만 노출한다.
@@ -16,16 +15,26 @@
 - `app`: Next.js 라우트, 메타데이터, route handler와 기능 조립만 둔다.
 - `features`: `blog`, `navigation`, `projects`, `resume`처럼 사용자 기능별 코드를 둔다.
 - `shared`: 날짜 포맷과 analytics처럼 여러 기능에서 재사용하는 코드를 둔다.
-- 기능은 다른 기능의 내부 파일을 직접 참조하지 않고, 공통 코드가 필요하면 `shared`로 올린다.
+- `features/blog`는 `listing`, `article`, `model`, `server`로 정식 목록·상세·공개 데이터·조회를
+  구분한다.
+- `features/chat`은 서버 Gemini 응답 UI, `client/rag-client`, `model/search-context`,
+  `hooks/use-remote-chat`으로 나눈다.
+- `shared/browser/use-media-query`는 홈·About의 공통 미디어 구독이다. shared는 feature를 참조하지
+  않는다.
+- 헤더 검색은 layout이 navigation에 슬롯으로 전달한다. RAG의 공개 글 조회는 blog 서버 진입점을
+  사용한다.
+- `/api/search`, `/api/rag`는 기능별 서버 서비스를 호출하며 `/api/revalidate/refresh-service`는
+  앱에서 blog·rag를 조합한다.
+- 서버 컴포넌트는 서비스를 직접 호출한다. 내부 `/api/*`로 HTTP 요청하지 않는다.
 
 ## Navigation
 
 - 홈은 인사/About → Blog → Portfolio 순서의 스크롤 스토리다. 바로가기는 각각 `/about`, `/blog`,
   `/projects` 전체 페이지로 이동한다. `/#about`, `/#blog`, `/#work`로 장면에 직접 진입한다.
-- 이전 시안 `/experiments/scroll-story`는 `/`로 308 이동한다. 픽셀룸은 `/experiments/pixel-room`에서
-  noindex 보관하며 메인에서 픽셀룸 이미지를 로드하지 않는다.
+- 교체가 끝난 `/experiments/*` 라우트와 픽셀룸 전용 코드·이미지는 제거했다. 이전 실험 주소는 404를
+  반환하며 정식 홈·블로그·프로젝트 화면만 제공한다.
 - 영상 실패/4초 지연은 정지 이미지로 복구한다. 모션 줄이기에서는 정지 이미지만 표시한다.
-- 챗봇은 홈 진입 시 모델을 다운로드하지 않고 최초 열기에서 기존 런타임을 시작한다.
+- 챗봇은 사용자 질문 시 서버에 요청한다. 홈 진입이나 채팅 열기에서 모델을 다운로드하지 않는다.
 - 프로젝트 카드는 `/projects/[slug]`로 이동하고, 상세의 목록 링크는 해당 카드 위치로 돌아간다.
 - 가로채기 라우트와 모달 슬롯은 사용하지 않는다. 링크 이동은 방문 기록을 남겨 브라우저 뒤로 가기를
   지원한다.

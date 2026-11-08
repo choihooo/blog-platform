@@ -3,7 +3,7 @@
 import { Grid2X2, List } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import type { PublicPost } from "../server/content-source";
+import type { PublicPost } from "../model/public-content";
 import type { PostAnalyticsContext } from "./post-analytics-events";
 import { PostList } from "./post-list";
 

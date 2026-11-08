@@ -17,11 +17,7 @@ export function HomeAwareShell({ children, header }: { children: ReactNode; head
     pathname === "/blog" ||
     isBlogArticle ||
     pathname.startsWith("/posts/") ||
-    pathname === "/projects" ||
-    pathname === "/experiments/pixel-room" ||
-    pathname === "/experiments/blog-rounded" ||
-    pathname.startsWith("/experiments/blog-rounded/") ||
-    pathname === "/experiments/interactive-portfolio";
+    pathname === "/projects";
 
   return (
     <div className="min-h-screen bg-background">

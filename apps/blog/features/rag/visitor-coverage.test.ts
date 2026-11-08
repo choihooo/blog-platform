@@ -25,6 +25,7 @@ describe("all proposed visitor questions: API routing contract, not model semant
       "fetch",
       vi.fn(async () =>
         Response.json({
+          answer: "공개 테스트 글을 바탕으로 한 서버 답변입니다.",
           sources: [
             {
               title: "공개 테스트 글",

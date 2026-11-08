@@ -8,6 +8,13 @@ import { projects } from "@blog-platform/core/content/catalog";
 import { POST } from "../../app/api/rag/route";
 
 describe("visitor intents without invented facts", () => {
+  it("describes server-side Gemini generation and transmission instead of a device model", () => {
+    expect(visitorAnswer("무슨 모델 쓰고 있어?")?.answer).toContain("Gemini");
+    const privacy = visitorAnswer("질문이 서버로 전송돼?")?.answer;
+    expect(privacy).toContain("Gemini");
+    expect(privacy).not.toContain("기기에서 처리");
+    expect(visitorAnswer("왜 모바일에서는 안 돼?")?.answer).not.toContain("모바일은 지원하지");
+  });
   it.each([
     "안녕",
     "뭐 할 수 있어?",

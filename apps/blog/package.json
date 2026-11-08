@@ -9,15 +9,12 @@
     "format:check": "prettier \"{app,features,shared}/**/*.{ts,tsx}\" package.json next.config.mjs tsconfig.json vitest.config.ts --check",
     "lint": "eslint app features shared next.config.mjs",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
-    "predev": "node scripts/prepare-wllama.mjs",
-    "prebuild": "node scripts/prepare-wllama.mjs"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hozui/react": "^0.4.1",
     "@hozui/tokens": "^0.1.0",
     "@tanstack/react-virtual": "^3.14.26",
-    "@wllama/wllama": "3.6.1",
     "lucide-react": "^1.27.0",
     "next": "^16.2.12",
     "react": "^19.2.8",

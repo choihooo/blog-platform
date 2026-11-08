@@ -8,11 +8,15 @@ import { storyScenes } from "./story-data";
 import { reduceStory, type SceneIndex } from "./story-controller";
 import { useStoryNavigation } from "./use-story-navigation";
 import "./scroll-story.css";
+import { useStoryPlayback } from "./use-story-playback";
+import { useMediaQuery } from "@/shared/browser/use-media-query";
 
 export function ScrollStory() {
   const root = useRef<HTMLElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(true);
-  const [motionKnown, setMotionKnown] = useState(false);
+  const { matches: reducedMotion, ready: motionKnown } = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+    true,
+  );
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
   const [videoReady, setVideoReady] = useState([false, false, false]);
   const [story, dispatch] = useReducer(reduceStory, { displayed: 0, target: 0, transition: null });
@@ -51,48 +55,21 @@ export function ScrollStory() {
     return () => window.clearTimeout(timeout);
   }, [transition]);
 
-  useEffect(() => {
-    function updatePlayback() {
-      videos.current.forEach((video, index) => {
-        if (!video) return;
-        if (index === displayed && !transition && !reducedMotion && !document.hidden) {
-          void video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      });
-      const clip = transitionVideo.current;
-      if (clip) {
-        if (document.hidden) clip.pause();
-        else if (!reducedMotion) void clip.play().catch(() => {});
-      }
-    }
-    updatePlayback();
-    document.addEventListener("visibilitychange", updatePlayback);
-    return () => document.removeEventListener("visibilitychange", updatePlayback);
-  }, [displayed, transition, reducedMotion, videoReady]);
+  useStoryPlayback({ videos, transitionVideo, displayed, transition, reducedMotion, videoReady });
 
   useEffect(() => {
     const container = root.current;
     if (!container) return;
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const portrait = window.matchMedia("(max-aspect-ratio: 1/1)");
     const short = window.matchMedia("(max-height: 500px) and (min-aspect-ratio: 1/1)");
-    const updateMotion = () => {
-      setReducedMotion(media.matches);
-      setMotionKnown(true);
-    };
     const updateFormat = () => {
       setFormat(portrait.matches ? "tall" : short.matches ? "short" : "wide");
       setVideoReady([false, false, false]);
     };
-    updateMotion();
     updateFormat();
-    media.addEventListener("change", updateMotion);
     portrait.addEventListener("change", updateFormat);
     short.addEventListener("change", updateFormat);
     return () => {
-      media.removeEventListener("change", updateMotion);
       portrait.removeEventListener("change", updateFormat);
       short.removeEventListener("change", updateFormat);
     };

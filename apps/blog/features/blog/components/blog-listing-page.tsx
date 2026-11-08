@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import type { CategoryHierarchy, PublicPost } from "../server/content-source";
+import type { CategoryHierarchy, PublicPost } from "../model/public-content";
 import { AnalyticsLink } from "./analytics-link";
 import { BlogSearchForm } from "./blog-search-form";
 import { POSTS_PER_PAGE, PostPagination } from "./post-pagination";

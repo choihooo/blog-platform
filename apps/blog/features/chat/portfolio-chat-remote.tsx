@@ -14,29 +14,15 @@ import {
 } from "@hozui/react/chat";
 import { X as CloseIcon, Bot as RobotIcon, Square as StopIcon } from "lucide-react";
 import { PortfolioChatMessages } from "./portfolio-chat-messages";
-import type { Message } from "./portfolio-chat-types";
-import { isRagResult } from "@blog-platform/core/search";
-import type { SearchContext } from "../rag/follow-up";
+import { useRemoteChat } from "./hooks/use-remote-chat";
 
 export function PortfolioChatRemote() {
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
-  const operation = useRef<AbortController | null>(null);
-  const context = useRef<SearchContext | undefined>(undefined);
+  const { draft, setDraft, messages, pending, error, send, cancel } = useRemoteChat();
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLElement>(null);
   const body = useRef<HTMLDivElement>(null);
 
-  useEffect(
-    () => () => {
-      operation.current?.abort();
-      operation.current = null;
-    },
-    [],
-  );
   useEffect(() => {
     if (open) panel.current?.querySelector("textarea")?.focus();
   }, [open]);
@@ -44,65 +30,10 @@ export function PortfolioChatRemote() {
     if (body.current) body.current.scrollTop = body.current.scrollHeight;
   }, [open, messages, pending]);
 
-  function cancel() {
-    operation.current?.abort();
-    operation.current = null;
-    setPending(false);
-  }
   function close() {
     cancel();
     setOpen(false);
     trigger.current?.focus();
-  }
-  async function send(value: string) {
-    const query = value.trim();
-    if (!query || query.length > 600 || operation.current) return;
-    const controller = new AbortController();
-    operation.current = controller;
-    const history: Message[] = [...messages, { role: "user", text: query }];
-    setMessages(history);
-    setDraft("");
-    setError("");
-    setPending(true);
-    try {
-      const response = await fetch("/api/rag", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, context: context.current }),
-        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(40000)]),
-      });
-      if (!response.ok) throw new Error(response.status === 429 ? "rate_limited" : "unavailable");
-      const result: unknown = await response.json();
-      if (controller.signal.aborted || operation.current !== controller) return;
-      if (!isRagResult(result) || !result.answer) throw new Error("invalid_answer");
-      if (result.sources.length) {
-        const previous = context.current;
-        context.current = {
-          query: result.resolvedQuery ?? query,
-          titles: [...new Set(result.sources.map((source) => source.title))].slice(0, 3),
-          history: [
-            ...(previous?.history ?? []),
-            ...(previous ? [{ query: previous.query, titles: previous.titles }] : []),
-          ].slice(-5),
-        };
-      }
-      setMessages([
-        ...history,
-        { role: "assistant", text: result.answer, sources: result.sources },
-      ]);
-    } catch (cause) {
-      if (controller.signal.aborted || operation.current !== controller) return;
-      setError(
-        cause instanceof Error && cause.message === "rate_limited"
-          ? "요청이 많아요. 잠시 뒤 다시 질문해 주세요."
-          : "답변을 가져오지 못했어요. 잠시 뒤 다시 시도해 주세요.",
-      );
-    } finally {
-      if (operation.current === controller) {
-        operation.current = null;
-        setPending(false);
-      }
-    }
   }
 
   return (

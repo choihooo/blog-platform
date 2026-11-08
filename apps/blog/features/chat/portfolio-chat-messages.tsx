@@ -14,11 +14,11 @@ export function PortfolioChatMessages({ messages }: { messages: Message[] }) {
           contentType={message.role === "assistant" ? "rich" : "text"}
         >
           {message.role === "assistant" ? (
-            <ChatAnswer text={message.text} articles={message.articles} />
+            <ChatAnswer text={message.text} />
           ) : (
             <span className="chat-message-text">{message.text}</span>
           )}
-          {!message.articles?.length && message.sources && message.sources.length > 0 && (
+          {message.sources && message.sources.length > 0 && (
             <details className="chat-sources">
               <summary>참고 자료 · {new Set(message.sources.map((s) => s.url)).size}개</summary>
               {message.sources

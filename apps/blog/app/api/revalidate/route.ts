@@ -1,8 +1,5 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { refreshPublicPath } from "./refresh-service";
 import { NextResponse } from "next/server";
-
-import { blogContentCacheTags } from "@/features/blog/server/content-source";
-import { syncPost } from "@/features/rag/server";
 
 type RevalidateRequest = {
   path?: unknown;
@@ -36,25 +33,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "A public path is required." }, { status: 400 });
   }
 
-  revalidateTag(blogContentCacheTags.posts, "max");
-  revalidateTag(blogContentCacheTags.categories, "max");
-  revalidatePath(body.path);
-  const rewrittenPostPath = /^\/blog\/([^/]+)$/.exec(body.path);
-  if (rewrittenPostPath) revalidatePath(`/posts/${rewrittenPostPath[1]}`);
-  const postPath = /^\/(?:blog|posts)\/([^/]+)$/.exec(body.path);
-  if (postPath && process.env.RAG_API_URL) {
-    try {
-      await syncPost(decodeURIComponent(postPath[1]!));
-    } catch {
-      return NextResponse.json(
-        {
-          ok: false,
-          revalidated: true,
-          message: "Page refreshed, but RAG sync failed. Retry refresh.",
-        },
-        { status: 502 },
-      );
-    }
+  const result = await refreshPublicPath(body.path);
+  if (result.ragSyncFailed) {
+    return NextResponse.json(
+      {
+        ok: false,
+        revalidated: true,
+        message: "Page refreshed, but RAG sync failed. Retry refresh.",
+      },
+      { status: 502 },
+    );
   }
   return NextResponse.json({ ok: true, path: body.path, revalidatedAt: new Date().toISOString() });
 }

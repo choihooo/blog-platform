@@ -48,24 +48,6 @@ describe("readable chat answers", () => {
     expect(html).not.toContain("##");
     expect(html).toContain("2025.03 ~ 2025.04");
   });
-  it("renders authoritative article titles as links with separate summaries", () => {
-    const html = renderToStaticMarkup(
-      createElement(ChatAnswer, {
-        text: "legacy text",
-        articles: [
-          {
-            source: { title: "AI UI 설계", url: "/blog/ai-ui", text: "LONG EXCERPT", score: 1 },
-            summary: "AI 신뢰를 다룬 글이에요.",
-          },
-        ],
-      }),
-    );
-    expect(html).toContain('href="/blog/ai-ui"');
-    expect(html).toContain("<ol");
-    expect(html).toContain("<p>AI 신뢰를 다룬 글이에요.</p>");
-    expect(html).not.toContain("LONG EXCERPT");
-    expect(html).not.toContain("legacy text");
-  });
   it("escapes generated HTML and handles partial streaming", () => {
     expect(
       renderToStaticMarkup(createElement(ChatAnswer, { text: "<script>alert(1)</script>" })),

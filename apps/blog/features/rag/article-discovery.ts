@@ -1,5 +1,5 @@
 import type { RagResult } from "@blog-platform/core/search";
-import type { PublicPost } from "../blog/server/content-source";
+import type { PublicPost } from "../blog/model/public-content";
 
 export function articleDiscovery(
   query: string,

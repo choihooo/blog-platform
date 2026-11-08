@@ -4,10 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MainHeader } from "@/features/navigation/main-header";
-import { ArticleNavigationPanel } from "@/features/blog-rounded/article-navigation-panel";
-import { PostTags } from "@/features/blog-rounded/post-tags";
-import { preparePreviewArticle } from "@/features/blog-rounded/preview-article";
-import "@/features/blog-rounded/rounded-blog.css";
+import { ArticleNavigationPanel } from "@/features/blog/article/article-navigation-panel";
+import { PostTags } from "@/features/blog/article/post-tags";
+import { prepareArticle } from "@/features/blog/article/prepare-article";
+import "@/features/blog/blog.css";
 import { generateJsonLd, generatePageMetadata } from "@blog-platform/core/seo";
 
 import { BlogBreadcrumb } from "@/features/blog/components/blog-breadcrumb";
@@ -90,7 +90,7 @@ export default async function PostPage({ params }: PostPageProps) {
         name: site.defaultAuthorName || site.defaultAuthor,
       };
 
-  const article = preparePreviewArticle(post);
+  const article = prepareArticle(post);
   return (
     <div className="rounded-blog">
       <MainHeader active="blog" />

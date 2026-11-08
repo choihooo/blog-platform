@@ -28,10 +28,6 @@ describe("public header policy", () => {
     expect(html.includes("<header>메뉴</header>")).toBe(
       ![
         "/",
-        "/experiments/pixel-room",
-        "/experiments/interactive-portfolio",
-        "/experiments/blog-rounded",
-        "/experiments/blog-rounded/nest-di-ioc",
         "/blog",
         "/blog/nest-di-ioc",
         "/posts/nest-di-ioc",

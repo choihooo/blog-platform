@@ -39,3 +39,17 @@ export function windowTitle(id: string) {
       ? "모든 프로젝트"
       : projects.find((p) => p.slug === id)?.name || "프로젝트";
 }
+
+export const iconPlacements = [
+  { x: 0.08, y: 0.12, rotation: -4 },
+  { x: 0.235, y: 0.27, rotation: 3 },
+  { x: 0.72, y: 0.11, rotation: -2 },
+  { x: 0.87, y: 0.28, rotation: 5 },
+  { x: 0.055, y: 0.49, rotation: -3 },
+  { x: 0.24, y: 0.6, rotation: -5 },
+  { x: 0.76, y: 0.45, rotation: 3 },
+  { x: 0.865, y: 0.7, rotation: -3 },
+  { x: 0.095, y: 0.79, rotation: 4 },
+  { x: 0.28, y: 0.85, rotation: -2 },
+  { x: 0.7, y: 0.79, rotation: 3 },
+];

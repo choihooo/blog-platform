@@ -38,12 +38,6 @@ storybook-static/
 .claude/
 .gstack/
 
-# Large local AI assets
-apps/blog/public/wasm/wllama.wasm
-apps/blog/public/models/kanana-q8-*/
-apps/blog/public/models/hyperclova-q4-*/
-apps/blog/public/models/.kanana-staging-*/
-
 # Local generated work products
 /_workspace/
 /artifacts/

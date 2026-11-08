@@ -3,6 +3,7 @@ import Script from "next/script";
 import type { ReactNode } from "react";
 
 import { SiteShell } from "@/features/navigation/site-shell";
+import { BlogHeaderSearchForm } from "@/features/blog/components/blog-search-form";
 import { getSiteConfig, listCategories } from "@/features/blog/server/content-source";
 import { analyticsInit } from "@/shared/analytics/analytics";
 import { AnalyticsProvider } from "@/shared/analytics/analytics-provider";
@@ -106,6 +107,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         ) : null}
         <AnalyticsProvider>
           <SiteShell
+            headerSearch={<BlogHeaderSearchForm />}
             categories={[...parentCategories, ...childCategories]}
             siteName={site.siteName}
           >

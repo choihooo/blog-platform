@@ -2,7 +2,7 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { PortfolioChatRemote } from "./portfolio-chat-remote";
+import { PortfolioChat } from "./portfolio-chat";
 
 let container: HTMLDivElement;
 let root: Root;
@@ -25,7 +25,7 @@ async function click(label: string) {
   });
 }
 async function open() {
-  await act(async () => root.render(createElement(PortfolioChatRemote)));
+  await act(async () => root.render(createElement(PortfolioChat)));
   await click("채팅 열기");
 }
 async function suggest() {

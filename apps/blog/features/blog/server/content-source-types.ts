@@ -1,40 +1,8 @@
-import type { EditorNode } from "@blog-platform/core/content";
+import type { PublicPost, CategoryHierarchy } from "../model/public-content";
+export type { PublicPost, Category, Tag, CategoryHierarchy } from "../model/public-content";
 import type { PostRecord } from "@blog-platform/core/content";
 
 export type ContentSourceMode = "d1r2" | "remote";
-
-export type Category = {
-  slug: string;
-  label: string;
-  description?: string;
-};
-
-export type Tag = {
-  slug: string;
-  label: string;
-  description?: string;
-};
-
-export type PublicPost = {
-  path: string;
-  status: "published" | "draft" | "archived";
-  title: string;
-  slug: string;
-  author: string;
-  publishedAt: string;
-  updatedAt?: string;
-  excerpt?: string;
-  coverImage?: string;
-  body: string;
-  bodyNodes: EditorNode[];
-  authorProfile?: { id: string; name: string; avatar?: string };
-  category?: string;
-  categoryEntry?: Category;
-  tagEntries: Tag[];
-  tags?: string[];
-  toc: Array<{ depth: number; text: string; slug: string }>;
-  readingTimeLabel: string;
-};
 
 export type ContentFailureCode =
   | "validation-failure"
@@ -66,11 +34,6 @@ export type ContentListInput = {
   includeTags?: boolean;
   includeMedia?: boolean;
   analyzeBody?: boolean;
-};
-
-export type CategoryHierarchy = Category & {
-  depth: 1 | 2;
-  parentSlug?: string | null;
 };
 
 export type CategoryListInput = {

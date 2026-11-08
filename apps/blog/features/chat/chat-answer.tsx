@@ -1,8 +1,4 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import type { RagSource } from "@blog-platform/core/search";
-
-export type ChatArticle = { source: RagSource; summary: string };
 
 function inlineLinks(text: string) {
   return text.split(/(\[[^\]\n]+\]\([^\s)]+\))/g).map((part, i) => {
@@ -28,28 +24,7 @@ function inlineLinks(text: string) {
 }
 
 /** Only headings and bullet lines from our factual formatter; never interpret HTML. */
-export function ChatAnswer({ text, articles }: { text: string; articles?: ChatArticle[] }) {
-  if (articles?.length)
-    return (
-      <ol className="chat-articles">
-        {articles.map(({ source, summary }) => (
-          <li key={source.url}>
-            {source.url.startsWith("/") ? (
-              <Link href={source.url}>
-                {source.title}
-                <ArrowUpRight aria-hidden="true" size={14} />
-              </Link>
-            ) : (
-              <a href={source.url} target="_blank" rel="noopener noreferrer">
-                {source.title}
-                <ArrowUpRight aria-hidden="true" size={14} />
-              </a>
-            )}
-            <p>{summary || "글 내용을 정리하고 있어요…"}</p>
-          </li>
-        ))}
-      </ol>
-    );
+export function ChatAnswer({ text }: { text: string }) {
   const blocks = text
     .replace(/\n(?=#{2,3} )/g, "\n\n")
     .split(/\n\s*\n/)

@@ -2,7 +2,7 @@ import { EmptyState } from "@hozui/react";
 
 import type { PostAnalyticsContext } from "./post-analytics-events";
 import { PostListItem, PostTile } from "./post-list-items";
-import type { PublicPost } from "../server/content-source";
+import type { PublicPost } from "../model/public-content";
 
 type PostListProps = {
   posts: PublicPost[];

@@ -14,8 +14,7 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
-  .chat-answer,
-  .chat-articles {
+  .chat-answer {
     min-width: 0;
     font-size: inherit;
     line-height: inherit;
@@ -63,29 +62,6 @@
   .chat-answer ul + p {
     margin-top: 12px;
   }
-  .chat-articles {
-    margin: 0;
-    padding-left: 22px;
-    list-style: decimal;
-  }
-  .chat-articles li + li {
-    margin-top: 20px;
-  }
-  .chat-articles li::marker {
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-  }
-  .chat-articles a {
-    font-weight: 650;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .chat-articles a:hover {
-    text-decoration-thickness: 2px;
-  }
-  .chat-articles p {
-    margin: 6px 0 0;
-  }
   .chat-sources {
     margin-top: 12px;
     font-size: 12px;
@@ -132,10 +108,7 @@
       .hods-chat-composer__textarea,
       .hods-button,
       .chat-sources,
-      .chat-model-status,
-      .chat-model-error,
-      .chat-diagnostics,
-      .chat-diagnostics pre
+      .chat-model-error
     ) {
     font-size: var(--hods-sys-typography-text-body-md-font-size);
     line-height: var(--hods-sys-typography-text-body-md-line-height);
@@ -155,17 +128,11 @@
   .portfolio-chat-panel .hods-chat-composer__send:not(:disabled):active {
     background-image: var(--hods-sys-gradient-ai-highlight-magic-pressed);
   }
-  .chat-model-status[role="status"],
   .portfolio-chat-panel .hods-chat-composer[data-state="loading"] .hods-chat-composer__control {
     position: relative;
     overflow: hidden;
     background-image: var(--hods-sys-gradient-ai-glow-magic);
   }
-  .chat-model-status[role="status"] {
-    padding: var(--hods-sys-dimension-spacing-12);
-    border-radius: var(--hods-sys-dimension-radius-md);
-  }
-  .chat-model-status[role="status"]::after,
   .portfolio-chat-panel
     .hods-chat-composer[data-state="loading"]
     .hods-chat-composer__control::after {
@@ -207,29 +174,9 @@
     flex-wrap: wrap;
     gap: var(--hods-sys-dimension-spacing-8);
   }
-  .chat-model-status {
-    display: grid;
-    gap: var(--hods-sys-dimension-spacing-8);
-    font-size: 13px;
-    line-height: 1.6;
-  }
-  .chat-model-status progress {
-    width: 100%;
-    accent-color: var(--hods-sys-color-fg-accent);
-  }
   .chat-model-error {
     overflow-wrap: anywhere;
     font-size: 12px;
-  }
-  .chat-diagnostics {
-    font-size: 11px;
-    max-height: 180px;
-    overflow: auto;
-  }
-  .chat-diagnostics pre {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    font-size: 10px;
   }
   @keyframes chat-enter {
     from {
