@@ -7,3 +7,5 @@
 - 사용한 패키지는 각 패키지의 라이선스를 따릅니다.
 
 원본: https://github.com/78-artilleryman/yun-blog
+
+푸터 아이콘은 Lucide(lucide-react, ISC 라이선스)를 사용합니다. 패키지에 동봉된 라이선스와 https://lucide.dev/license 를 따릅니다.

@@ -19,4 +19,4 @@ https://blog-a1s6ksl51-hochois-projects.vercel.app — Ready, b25ce2c. 보호 �
 
 운영 URL https://hozorica.com. Production c61bb16 / dpl_2z4v1w93Tc4zb6X2mgu9fEWmRs1C Ready. 실제 HTTPS 응답에서 홈·canonical·noindex·robots·sitemap·OG·favicon과 비공개 경로 15개 404 확인. HTTP 및 www 호스트는 308로 https://hozorica.com/ 에 연결됨. 운영 화면에서도 본문 15px/700·폭 672px·모바일 검색 전체 화면을 확인했다.
 
-후속 사용자 요청으로 제목의 주황 강조를 제거하고 메일 hochoi8621@gmail.com 및 LinkedIn https://www.linkedin.com/in/howuchoi/ 를 푸터에 추가했다. 이 명시적 변경에 한해 승인 렌더링 해시를 갱신하며, 나머지 스타일은 그대로 유지한다. 공유 이미지의 이름도 기본색으로 맞췄다. 최종 연락 링크 검증은 후속 배포에서 진행한다.
+후속 사용자 요청으로 제목의 주황 강조를 제거하고 메일 hochoi8621@gmail.com 및 LinkedIn https://www.linkedin.com/in/howuchoi/ 를 푸터에 추가했다. 이 명시적 변경에 한해 승인 렌더링 해시를 갱신하며, 나머지 스타일은 그대로 유지한다. 공유 이미지의 이름도 기본색으로 맞췄다. 연락 링크는 제공된 주소로 연결하고, 후속 요청에 따라 lucide-react의 Github·Mail·Linkedin을 사용해 16px / strokeWidth 1.5로 통일했다. 나머지 CSS는 바꾸지 않았다.

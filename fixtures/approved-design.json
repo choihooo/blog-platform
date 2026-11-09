@@ -9,8 +9,8 @@
     "components/PostHeader.tsx": "ff2461d9293c64b55b554fa2862b90dabafda52a7a2f5ed7766bfe40a2784f1d",
     "app/blog/layout.tsx": "492b8def205efb9d08243465194a123fb0f2dba7906a3ed7891ee6ad1c4e8e1e",
     "app/fonts/suit/SUIT-Variable.woff2": "aa894a204d5a6fbae259dac6868d350cbd373a390caee0313f92946af741df23",
-    "components/FooterLinks.tsx": "2efef70d37d661fbb88fcff2ba518b9ad63c3dfaf820ac7fffc534581b135e74"
+    "components/FooterLinks.tsx": "11676e779005032855f9e0121d606f92805e7a098b21ce2df2755414adb4a198"
   },
   "layout_body_sha256": "f6cb89bc25e029d06d8b41cafb3268d8583b725bbfb11153aa5a3fb1f3665a9b",
-  "user_approved_update": "2026-11-10: title primary removed, footer contact links added; all other approved styles unchanged"
+  "user_approved_update": "2026-11-10: title primary removed, footer contacts added and unified with Lucide icons; all other styles unchanged"
 }

@@ -236,3 +236,5 @@ typography:
 사용자 요청에 따라 프로필 제목 최호의 주황 강조를 제거했습니다. 소개의 호감·호흡·호기심은 기존 주황을 유지합니다. 푸터는 기존 16px 무채색 아이콘·gap 16px을 유지하면서 메일과 LinkedIn 연락 링크를 추가합니다. 메일은 기존 공개 프로필의 hochoi8621@gmail.com을 사용합니다.
 
 LinkedIn 주소는 사용자가 제공한 https://www.linkedin.com/in/howuchoi/ 로 연결합니다. GitHub·메일·LinkedIn 순서이며, 외부 페이지는 새 탭, 메일은 mailto 링크를 사용합니다.
+
+푸터 아이콘은 lucide-react의 Github·Mail·Linkedin으로 통일합니다. 크기 16px·strokeWidth 1.5·기존 무채색·간격 16px을 유지합니다. 브랜드 아이콘이 포함된 v0 계열을 사용하며 수동 SVG 아이콘을 섞지 않습니다.

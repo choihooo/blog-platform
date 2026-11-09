@@ -22,7 +22,7 @@
     "components/DemoCaption.tsx": "3ef90667181d9bd8ff5174a589f69e5a514147febde360774faacb5bd4e86d05",
     "components/DemoContainer.tsx": "e19d5c56fd9e753adc7a351e02872f62a7d7067281f062c6642104fbeaa3cce9",
     "components/DemoVideo.tsx": "6eac969161e2c4baacfdd766591394a29017d874056a37893c9c316c0fa4df23",
-    "components/FooterLinks.tsx": "2efef70d37d661fbb88fcff2ba518b9ad63c3dfaf820ac7fffc534581b135e74",
+    "components/FooterLinks.tsx": "11676e779005032855f9e0121d606f92805e7a098b21ce2df2755414adb4a198",
     "components/PostHeader.tsx": "ff2461d9293c64b55b554fa2862b90dabafda52a7a2f5ed7766bfe40a2784f1d",
     "components/ProfileIntro.tsx": "b312d23f64aeca0c56564fb9633f09dffe15c59b6dadda603ee66e8553cb424e",
     "components/SiteHeader.tsx": "f6d9b573cf44d9ab52d402bbb76ad3f45dd1a5211ea621dc44ca2e1df306c73a",
@@ -58,8 +58,8 @@
     "lib/site.ts": "c144f92309655a5a46acff2ad462fefaac121c175da3dff1fc0c2d6c191a1484",
     "mdx-components.tsx": "db310117d073ea17486fa14efa3d998e672ebb778c9b4db690cf65eea0d13011",
     "next.config.ts": "db2ee6405ca6949f2a51de6e7e8c8c01e1d0b5c21389ea6365dc7fc3b0a678f9",
-    "package.json": "e00bd6bad04d1e51290b616221ad3aa546420a8ac6c3411902be80681472fd1b",
-    "pnpm-lock.yaml": "ba0dcdd0346872d1a5eced51d907375bb720ba3cc5927d82e18678de7dd57c21",
+    "package.json": "83d25a4cfa2d3bb77ef9eee9ebf565d4e087a5c7f04f9277cbb2f671d6a1956e",
+    "pnpm-lock.yaml": "c47aed0363b2574701d3c18a293418919ae10cdf56edbf63017ec112cfde59e8",
     "postcss.config.mjs": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
   }
 }
