@@ -6,6 +6,8 @@
   "compatibility_date": "2026-09-05",
   "compatibility_flags": ["nodejs_compat"],
   "keep_vars": true,
+  // Keep Gemini egress out of edge locations intermittently rejected by its region check.
+  "placement": { "region": "aws:us-east-1" },
   "observability": { "enabled": true, "head_sampling_rate": 0.1 },
   "d1_databases": [
     {

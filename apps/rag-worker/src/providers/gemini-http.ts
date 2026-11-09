@@ -1,5 +1,16 @@
 const API = "https://generativelanguage.googleapis.com/v1beta/models/";
 
+export class GeminiHttpError extends Error {
+  constructor(
+    readonly providerStatus: number,
+    readonly operation: "embedContent" | "generateContent" | undefined,
+    readonly providerReason?: "location_unsupported",
+  ) {
+    super(providerStatus === 429 ? "rate_limited" : "gemini_unavailable");
+    this.name = "GeminiHttpError";
+  }
+}
+
 export async function requestGemini(
   model: string,
   method: string,
@@ -20,9 +31,30 @@ export async function requestGemini(
     signal: combined,
   });
   if (!response.ok) {
-    await response.body?.cancel();
-    throw new Error(response.status === 429 ? "rate_limited" : "gemini_unavailable");
+    let providerReason: "location_unsupported" | undefined;
+    if (response.status === 400) {
+      try {
+        const payload = (await readGeminiJson(response)) as {
+          error?: { message?: unknown };
+        } | null;
+        if (payload?.error?.message === "User location is not supported for the API use.")
+          providerReason = "location_unsupported";
+      } catch {
+        combined.throwIfAborted();
+      }
+    } else {
+      await response.body?.cancel();
+    }
+    throw new GeminiHttpError(
+      response.status,
+      method === "embedContent" || method === "generateContent" ? method : undefined,
+      providerReason,
+    );
   }
+  return readGeminiJson(response);
+}
+
+async function readGeminiJson(response: Response): Promise<unknown> {
   const reader = response.body?.getReader();
   if (!reader) throw new Error("gemini_invalid_response");
   const chunks: Uint8Array[] = [];

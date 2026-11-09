@@ -29,3 +29,18 @@ sync/dev 실행으로 테스트를 대신하지 않는다.
 
 세부 payload는 [RAG API 계약](../../specs/016-gemini-rag/contracts/rag-api.md), 운영은
 [runbook](../../docs/runbooks/2026-11-06-gemini-rag.md)을 따른다.
+
+## Gemini 실행 위치와 오류 진단
+
+Worker는 `placement.region = aws:us-east-1`로 미국 동부에 가까운 Cloudflare 실행 위치를 지정한다.
+기본 edge 배치에서 Gemini 임베딩이 간헐적으로 HTTP 400의 위치 미지원 오류를 반환한 사례를 재현하여
+명시적으로 배치했다. 배치 hint는 고정 egress IP를 보장하지 않으므로 변경 후 `cf-placement` 헤더와
+실제 검색·생성 요청을 확인한다. 모델·인덱스·quota 정책은 바꾸지 않는다.
+
+Gemini HTTP 실패는 공급자 상태 코드·작업 이름과 허용한 `location_unsupported` 사유만 내부 로그에
+남긴다. 오류 응답 본문은 256 KiB 이내에서만 읽고 저장하거나 로그에 출력하지 않는다. 공개 API의
+429/503 계약은 유지하고 지역 오류를 무작정 재시도하거나 다른 모델로 전환하지 않는다.
+
+배치 설정은
+[Cloudflare Placement](https://developers.cloudflare.com/workers/configuration/placement/), 지원
+지역은 [Gemini 지원 지역](https://ai.google.dev/gemini-api/docs/available-regions)을 따른다.

@@ -1,3 +1,5 @@
+import { GeminiHttpError } from "../providers/gemini-http";
+
 export function json(body: unknown, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 }
@@ -10,10 +12,19 @@ export function failureResponse(error: unknown, path: string, stage: string): Re
       stage,
       code:
         error instanceof Error &&
-        /^(corpus_unavailable|document_too_large|embedding_shape)$/.test(error.message)
+        /^(corpus_unavailable|document_too_large|embedding_shape|gemini_unavailable)$/.test(
+          error.message,
+        )
           ? error.message
           : undefined,
       errorType: error instanceof Error ? error.name : "Unknown",
+      ...(error instanceof GeminiHttpError
+        ? {
+            providerStatus: error.providerStatus,
+            providerOperation: error.operation,
+            providerReason: error.providerReason,
+          }
+        : {}),
     }),
   );
   return json(
