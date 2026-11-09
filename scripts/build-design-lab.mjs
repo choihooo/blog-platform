@@ -2,7 +2,7 @@ import { readFile, readdir, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
-const output = path.join(root, "public/design-lab");
+const output = path.join(root, "docs/reference/design-lab");
 const themes = [
   { id: "thoughtstream", name: "ThoughtStream", description: "좁은 읽기 폭, 부드러운 회색, 조용한 세리프.", mood: "가장 차분한 읽기 공간", source: "https://designmd.ai/chef/thoughtstream" },
   { id: "warm-editorial", name: "Warm Editorial", description: "따뜻한 종이색, 큰 제목, 테라코타 포인트.", mood: "작은 독립 잡지처럼", source: "https://github.com/nexu-io/open-design/blob/main/design-systems/warm-editorial/DESIGN.md" },
@@ -11,9 +11,9 @@ const themes = [
 const escape = (s) => String(s).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 const inline = (s) => escape(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 const posts = [];
-for (const dir of await readdir(path.join(root, "app/blog"), { withFileTypes: true })) {
+for (const dir of await readdir(path.join(root, "fixtures/demo-posts"), { withFileTypes: true })) {
   if (!dir.isDirectory() || dir.name.startsWith("_")) continue;
-  const source = await readFile(path.join(root, "app/blog", dir.name, "page.mdx"), "utf8");
+  const source = await readFile(path.join(root, "fixtures/demo-posts", dir.name, "page.mdx"), "utf8");
   const meta = JSON.parse(source.match(/export const post = (\{[\s\S]*?\});/)[1]);
   posts.push({ ...meta, slug: dir.name, body: source.split("<PostHeader {...post} />")[1].trim(), category: dir.name === "motion-you-can-feel" ? "인터랙션" : ["following-a-request", "keyboard-friendly-links"].includes(dir.name) ? "개발노트" : "에세이" });
 }

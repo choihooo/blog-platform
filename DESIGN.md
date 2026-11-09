@@ -225,4 +225,8 @@ typography:
 - `app/globals.css`: 기본 크기·굵기·자간, 프로필·메뉴·코드의 크기.
 - `components/PostHeader.tsx`: 글 상세 제목·날짜·안내.
 - `components/SiteHeader.tsx`: 상단 메뉴.
-- `public/design-lab/*/DESIGN.md`는 가져온 비교 레퍼런스 원문입니다. 현재 블로그의 확정값과 충돌하면 이 루트 문서를 따릅니다. 원문 자체를 수정하거나 비교 시안·이전 HTML·아카이브에 현재 기준을 일괄 적용하지 않습니다.
+- `docs/reference/design-lab/*/DESIGN.md`는 가져온 비교 레퍼런스 원문입니다. 현재 블로그의 확정값과 충돌하면 이 루트 문서를 따릅니다. 원문 자체를 수정하거나 비교 시안·이전 HTML·아카이브에 현재 기준을 일괄 적용하지 않습니다.
+
+## 운영 전환 기록
+
+현재 스타일·글꼴·레이아웃·상호작용은 그대로 유지합니다. 예시 글 9편은 fixtures/demo-posts, 비교 화면은 app/_lab 및 docs/reference/design-lab로 옮겨 운영 경로에서 제외했습니다. 실제 글이 없을 때는 기존 빈 목록 안내를 사용합니다. 공유 이미지·파비콘은 동일한 SUIT 700과 당근 주황을 사용한 별도 메타데이터 에셋입니다. fixtures/approved-design.json의 해시로 기존 CSS·글꼴·화면 컴포넌트 및 RootLayout 본문이 바뀌지 않았는지 검증합니다.

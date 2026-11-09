@@ -8,7 +8,7 @@
 
 **Tech Stack:** 현재 Next.js 16.3.4 / React 19.2.8 / TypeScript / MDX / Tailwind 4 / Shiki 유지. 운영 런타임은 Node.js 24.x, 패키지 관리자는 pnpm 10.28.1로 고정한다. Vercel은 Node 24.x를 지원한다. [공식 런타임 문서](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)
 
-**Spec:** 루트 [DESIGN.md](../../../DESIGN.md), [AGENTS.md](../../../AGENTS.md), 이 대화의 실제 운영·배포 계획 요청. 이번 작업은 계획 수립이며 커밋·push·외부 배포를 수행하지 않는다.
+**Spec:** 루트 [DESIGN.md](../../../DESIGN.md), [AGENTS.md](../../../AGENTS.md), 이 대화의 실제 운영·배포 계획 요청. 계획 작성 후 사용자가 이 계획의 실행과 디자인 유지를 요청했으므로, 현재는 해당 범위의 구현·검증·배포를 진행한다.
 
 ## 현재 상태와 첫 버전 범위
 
@@ -61,11 +61,11 @@
 
 **Interfaces:** 이후 작업에서 `app/blog/<slug>/page.mdx`는 공개 글만 의미한다. 보존 자료는 공개 라우트·정적 파일 경로를 갖지 않는다.
 
-- [ ] `.gitignore`에 `archive/2026-11-10-legacy/`, `preview/`, 재생성된 이전 `apps/` 등 현재 앱이 쓰지 않는 로컬 자료를 명시한다. `archive/manifest.json`은 유지한다. `.vercelignore`에도 로컬 아카이브·시안을 제외한다. Git 배포에서는 `.vercelignore`만 믿지 않고 실제 추적 파일 목록을 확인한다.
-- [ ] 예시 9편은 `fixtures/demo-posts/`로, 비교 React 페이지는 `app/_lab/color-lab/`로, `public/design-lab/`는 `docs/reference/design-lab/`로 옮겨 보존한다. 재생성 스크립트·관련 문서 경로도 함께 맞춘다.
-- [ ] 기존 원본·데모의 출처와 재사용 조건을 확인하고 필요한 고지 및 SUIT 폰트 라이선스를 보존한다. 확인 결과는 `docs/upstream.md`에 기록한다.
-- [ ] `git diff --name-status`, `git diff --cached --stat`, `git ls-files`로 이전 파일 삭제와 새 운영 앱을 따로 검토한다. `git add .`로 아카이브를 통째로 올리지 않는다.
-- [ ] `pnpm build` 후 라우트 표에 예시 글·`/color-lab`가 없고, `public/`에 비교 HTML이 없으며, 로컬 Production 서버에서 이전 예시 URL·비교 URL이 404인지 확인한다. 아카이브 파일 해시는 원래 manifest와 대조해 원본 보존을 확인한다.
+- [x] `.gitignore`에 `archive/2026-11-10-legacy/`, `preview/`, 재생성된 이전 `apps/` 등 현재 앱이 쓰지 않는 로컬 자료를 명시한다. `archive/manifest.json`은 유지한다. `.vercelignore`에도 로컬 아카이브·시안을 제외한다. Git 배포에서는 `.vercelignore`만 믿지 않고 실제 추적 파일 목록을 확인한다.
+- [x] 예시 9편은 `fixtures/demo-posts/`로, 비교 React 페이지는 `app/_lab/color-lab/`로, `public/design-lab/`는 `docs/reference/design-lab/`로 옮겨 보존한다. 재생성 스크립트·관련 문서 경로도 함께 맞춘다.
+- [x] 기존 원본·데모의 출처와 재사용 조건을 확인하고 필요한 고지 및 SUIT 폰트 라이선스를 보존한다. 확인 결과는 `docs/upstream.md`에 기록한다.
+- [x] `git diff --name-status`, `git diff --cached --stat`, `git ls-files`로 이전 파일 삭제와 새 운영 앱을 따로 검토한다. `git add .`로 아카이브를 통째로 올리지 않는다.
+- [x] `pnpm build` 후 라우트 표에 예시 글·`/color-lab`가 없고, `public/`에 비교 HTML이 없으며, 로컬 Production 서버에서 이전 예시 URL·비교 URL이 404인지 확인한다. 아카이브 파일 해시는 원래 manifest와 대조해 원본 보존을 확인한다.
 
 ## Task 2: 실제 글 발행 경로 완성
 
@@ -73,11 +73,11 @@
 
 **Interfaces:** 기존 `Post`와 `getPosts(): Promise<Post[]>`를 유지한다. 메타데이터 검증은 `validatePostMeta(value: unknown, slug: string): PostMeta`로 분리한다. 초안은 `_drafts` 아래, 발행 글은 `app/blog/<slug>/page.mdx`다.
 
-- [ ] `validatePostMeta` 테스트를 먼저 작성한다. 유효한 제목·요약·실제 달력 날짜는 통과하고, 제목 누락·공백 제목·잘못된 날짜는 slug를 포함한 오류로 실패하도록 검증한다.
-- [ ] 검증 함수를 구현하고 `getPosts`에서 적용한다. 잘못된 글을 조용히 누락시키지 않는다. 날짜는 `YYYY-MM-DD`, 공개 slug는 폴더명과 URL이 일치하도록 한다.
-- [ ] 글이 0개인 상태에서 빌드·빈 목록이 정상이고, `_template`·`_drafts`가 목록과 빌드 라우트 모두에서 빠지는지 확인한다. 날짜 연도 경계·한글 검색은 기존 `pnpm test:posts`도 실행한다.
-- [ ] 템플릿과 `docs/publishing.md`에 작성 → 로컬 확인 → Git 변경 → 미리보기 확인 → Production 반영 절차를 기록한다. MDX는 신뢰하는 운영자만 편집한다.
-- [ ] 사용자가 제공한 실제 첫 글을 `_drafts`에서 검토하고 발행 경로로 옮긴다. 내용이 준비되지 않았으면 빈 목록을 허용하고, 예시 글을 대신 실제 글로 발행하지 않는다.
+- [x] `validatePostMeta` 테스트를 먼저 작성한다. 유효한 제목·요약·실제 달력 날짜는 통과하고, 제목 누락·공백 제목·잘못된 날짜는 slug를 포함한 오류로 실패하도록 검증한다.
+- [x] 검증 함수를 구현하고 `getPosts`에서 적용한다. 잘못된 글을 조용히 누락시키지 않는다. 날짜는 `YYYY-MM-DD`, 공개 slug는 폴더명과 URL이 일치하도록 한다.
+- [x] 글이 0개인 상태에서 빌드·빈 목록이 정상이고, `_template`·`_drafts`가 목록과 빌드 라우트 모두에서 빠지는지 확인한다. 날짜 연도 경계·한글 검색은 기존 `pnpm test:posts`도 실행한다.
+- [x] 템플릿과 `docs/publishing.md`에 작성 → 로컬 확인 → Git 변경 → 미리보기 확인 → Production 반영 절차를 기록한다. MDX는 신뢰하는 운영자만 편집한다.
+- [x] 사용자가 제공한 실제 첫 글을 `_drafts`에서 검토하고 발행 경로로 옮긴다. 내용이 준비되지 않았으면 빈 목록을 허용하고, 예시 글을 대신 실제 글로 발행하지 않는다.
 
 ## Task 3: 검색·공유·도메인 기준 설정
 
@@ -85,11 +85,11 @@
 
 **Interfaces:** `getSiteConfig(env: { SITE_URL?: string; SITE_INDEXABLE?: string; VERCEL_ENV?: string }): { url: URL; indexable: boolean }`와 `getPostMetadata(post: PostMeta, slug: string): Metadata`. 운영 URL은 `SITE_URL`, 색인 허용은 Production 환경의 `SITE_INDEXABLE=true`일 때만 활성화한다. `PostMeta`는 기존 `lib/posts.ts`, `Metadata`는 Next.js 타입을 사용한다.
 
-- [ ] 환경 테스트를 먼저 작성한다. Preview는 색인 금지, Production도 명시적으로 허용하기 전에는 색인 금지, 허용된 Production만 색인 가능해야 한다. 운영 URL 누락·잘못된 URL은 명확히 실패해야 한다.
-- [ ] 공통 설정을 구현하고 `metadataBase`, 글별 canonical, Open Graph URL, sitemap URL을 같은 기준으로 생성한다. 글별 canonical은 `/blog/<slug>`를 사용한다. 템플릿과 실제 글의 `export const metadata`는 `getPostMetadata(post, slug)`로 생성하고, 헤더 컴포넌트 안에서 메타데이터를 처리하지 않는다. 미리보기 URL이 운영 sitemap에 섞이지 않게 한다.
-- [ ] `app/robots.ts`와 `app/sitemap.ts`를 추가한다. 사이트맵에는 공개 홈과 실제 발행 글만 포함한다. noindex는 접근 통제가 아니므로 비공개 초안은 계속 private folder에 둔다.
-- [ ] 기존 이름·SUIT·확정 색상으로 파비콘과 대표 공유 이미지를 만든다. 새 랜딩 디자인은 하지 않는다. 글 제목·설명·공유 미리보기와 이미지 로딩을 확인한다.
-- [ ] 로컬 서버의 HTML·robots·sitemap에서 Preview/색인 비허용 Production/색인 허용 Production의 세 상태를 검증한다. 첫 실제 글이 공개 준비되기 전까지 색인을 켜지 않는다. [Next.js 메타데이터 문서](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)
+- [x] 환경 테스트를 먼저 작성한다. Preview는 색인 금지, Production도 명시적으로 허용하기 전에는 색인 금지, 허용된 Production만 색인 가능해야 한다. 운영 URL 누락·잘못된 URL은 명확히 실패해야 한다.
+- [x] 공통 설정을 구현하고 `metadataBase`, 글별 canonical, Open Graph URL, sitemap URL을 같은 기준으로 생성한다. 글별 canonical은 `/blog/<slug>`를 사용한다. 템플릿과 실제 글의 `export const metadata`는 `getPostMetadata(post, slug)`로 생성하고, 헤더 컴포넌트 안에서 메타데이터를 처리하지 않는다. 미리보기 URL이 운영 sitemap에 섞이지 않게 한다.
+- [x] `app/robots.ts`와 `app/sitemap.ts`를 추가한다. 사이트맵에는 공개 홈과 실제 발행 글만 포함한다. noindex는 접근 통제가 아니므로 비공개 초안은 계속 private folder에 둔다.
+- [x] 기존 이름·SUIT·확정 색상으로 파비콘과 대표 공유 이미지를 만든다. 새 랜딩 디자인은 하지 않는다. 글 제목·설명·공유 미리보기와 이미지 로딩을 확인한다.
+- [x] 로컬 서버의 HTML·robots·sitemap에서 Preview/색인 비허용 Production/색인 허용 Production의 세 상태를 검증한다. 첫 실제 글이 공개 준비되기 전까지 색인을 켜지 않는다. [Next.js 메타데이터 문서](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)
 
 ## Task 4: 클린 환경과 출시 전 검증
 
@@ -97,11 +97,11 @@
 
 **Interfaces:** Node `24.x`, pnpm `10.28.1`, 설치 `pnpm install --frozen-lockfile`, 빌드 `pnpm build`. Next.js 기본 출력 디렉터리를 사용한다.
 
-- [ ] `.nvmrc`를 24로, `engines.node`를 `24.x`로, `packageManager`를 `pnpm@10.28.1`로 고정한다. 아카이브를 제외한 운영 소스만으로 별도 임시 디렉터리에 클린 설치하여 누락 파일을 찾는다.
-- [ ] Node 24에서 `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm test:article`, `pnpm test:posts`, 신규 메타데이터/글 검증 테스트, `pnpm build`를 실행한다. TypeScript 테스트의 Node 실행 방식도 이 런타임에서 확인한다.
-- [ ] CI에 같은 설치·검증을 등록한다. 검사 실패 시 Production 반영을 진행하지 않는다. 아직 합의되지 않은 라이브러리 버전 업그레이드는 섞지 않는다.
-- [ ] 데스크톱·390px 모바일·실제 모바일 키보드·다크 모드에서 메인/상세, 긴 제목·긴 코드·빈 검색 결과, 검색 중 닫기/재열기·IME, 목차 이동, 복사 성공/실패 안내를 확인한다. 모바일 검색은 전체 화면이어야 한다.
-- [ ] 브라우저 에러·404 에셋·가로 넘침을 확인하고, 현재 `DESIGN.md`와 비교한다. 실제 단말 검증 여부는 에뮬레이션과 구분하여 기록한다.
+- [x] `.nvmrc`를 24로, `engines.node`를 `24.x`로, `packageManager`를 `pnpm@10.28.1`로 고정한다. 아카이브를 제외한 운영 소스만으로 별도 임시 디렉터리에 클린 설치하여 누락 파일을 찾는다.
+- [x] Node 24에서 `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm test:article`, `pnpm test:posts`, 신규 메타데이터/글 검증 테스트, `pnpm build`를 실행한다. TypeScript 테스트의 Node 실행 방식도 이 런타임에서 확인한다.
+- [x] CI에 같은 설치·검증을 등록한다. 검사 실패 시 Production 반영을 진행하지 않는다. 아직 합의되지 않은 라이브러리 버전 업그레이드는 섞지 않는다.
+- [x] 데스크톱·390px 모바일·실제 모바일 키보드·다크 모드에서 메인/상세, 긴 제목·긴 코드·빈 검색 결과, 검색 중 닫기/재열기·IME, 목차 이동, 복사 성공/실패 안내를 확인한다. 모바일 검색은 전체 화면이어야 한다.
+- [x] 브라우저 에러·404 에셋·가로 넘침을 확인하고, 현재 `DESIGN.md`와 비교한다. 실제 단말 검증 여부는 에뮬레이션과 구분하여 기록한다.
 
 ## Task 5: Vercel 미리보기와 정식 배포
 

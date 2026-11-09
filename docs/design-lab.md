@@ -8,7 +8,7 @@
 - Warm Editorial: https://github.com/nexu-io/open-design/blob/main/design-systems/warm-editorial/DESIGN.md
 - Editorial Logbook: https://github.com/Yeachan-Heo/gaebal-gajae-blog/blob/main/DESIGN.md
 
-원문은 `public/design-lab/<안>/DESIGN.md`이며 바꾸지 않았습니다. 다운로드한 파일의 SHA-256과 URL은 `public/design-lab/sources.json`에 있습니다. 원문의 브랜드·프로젝트 정보는 최호의 사실로 재사용하지 않았습니다.
+원문은 `docs/reference/design-lab/<안>/DESIGN.md`이며 바꾸지 않았습니다. 다운로드한 파일의 SHA-256과 URL은 `docs/reference/design-lab/sources.json`에 있습니다. 원문의 브랜드·프로젝트 정보는 최호의 사실로 재사용하지 않았습니다.
 
 ## 각 안에서 적용한 것
 
@@ -31,3 +31,5 @@
 ## 재생성
 
 `pnpm design:lab` 실행 후 앱을 실행하면 `/design-lab/index.html`로 접근할 수 있습니다. 새 public 파일을 추가했다면 프로덕션 서버를 재시작합니다.
+
+운영 사이트에서는 제공하지 않습니다. 로컬 비교는 `pnpm design:lab` 후 `python3 -m http.server 4184 --directory docs/reference`로 열어 `/design-lab/index.html`을 확인합니다.

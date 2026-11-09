@@ -1,0 +1,15 @@
+.git/
+.superpowers/
+.env
+.env.*
+!.env.example
+archive/
+preview/
+apps/
+docs/
+scripts/
+node_modules/
+.next/
+coverage/
+*.log
+*.tsbuildinfo

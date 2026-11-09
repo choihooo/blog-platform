@@ -9,7 +9,10 @@
     "lint": "eslint",
     "test:article": "node --test lib/article-tools.test.mjs",
     "test:posts": "node --test lib/post-list.test.mjs lib/debounce.test.mjs",
-    "design:lab": "node scripts/build-design-lab.mjs"
+    "design:lab": "node scripts/build-design-lab.mjs",
+    "test:release": "node --test lib/release-boundary.test.mjs",
+    "test": "node --test lib/*.test.mjs",
+    "build:release": "pnpm test && pnpm lint && pnpm build"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -38,5 +41,10 @@
     "onlyBuiltDependencies": [
       "unrs-resolver"
     ]
-  }
+  },
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "packageManager": "pnpm@10.28.1"
 }

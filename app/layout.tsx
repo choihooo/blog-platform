@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
+import { getSiteConfig } from "@/lib/site";
+
+const site = getSiteConfig();
 
 const suit = localFont({
   src: "./fonts/suit/SUIT-Variable.woff2",
@@ -11,12 +14,21 @@ const suit = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: site.url,
   title: {
     default: "최호 | 프론트엔드 개발자",
     template: "%s — 최호",
   },
   description: "프론트엔드 개발자 최호의 블로그. 개발하며 마주친 문제와 배운 것들을 기록합니다.",
-  robots: { index: false, follow: false },
+  alternates: { canonical: "/" },
+  robots: { index: site.indexable, follow: site.indexable },
+  openGraph: {
+    type: "website", locale: "ko_KR", siteName: "최호", url: site.url,
+    title: "최호 | 프론트엔드 개발자",
+    description: "사용자에게는 호감 가는 경험을, 동료에게는 호흡이 잘 맞는 사람이 되고 싶습니다. AI에 호기심이 많습니다.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "최호 | 프론트엔드 개발자" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/opengraph-image.png"] },
 };
 
 function GitHubIcon() {
