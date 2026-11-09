@@ -63,5 +63,6 @@ Save/Publish는 중첩 콘텐츠 validation 후 저장한다.
 필수 검사는 `pnpm --filter @blog-platform/cms` 뒤에 `format:check`, `lint`, `typecheck`, `test`,
 `build`를 각각 실행한다.
 
-저장 응답 전에 새 제목을 입력하면 이전 제목으로 덮이는 기존 경쟁 상태는
-`editor-save-flow.test.tsx`의 expected-failure 사례로 기록했다. 구조 변경과 분리하여 수정해야 한다.
+저장·발행·미리보기 응답은 제출 이후의 편집 내용을 유지하고 저장 경로·버전만 반영한다. 추가 편집은
+미저장 상태와 로컬 백업으로 남으며, 응답 대기 중에는 다른 저장 작업을 중복 실행하지 않는다.
+`editor-save-flow.test.tsx`와 `use-editor-operations.test.tsx`에서 지연 응답·실패·재시도를 검증한다.

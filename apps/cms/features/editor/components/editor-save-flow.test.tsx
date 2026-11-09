@@ -25,8 +25,7 @@ describe("editor save flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(screen.getByText("Saved")).toBeTruthy());
   });
-  // Known pre-existing race: preserve as expected failure until a separate behavior fix.
-  it.fails("keeps newer title edits when an earlier save finishes", async () => {
+  it("keeps newer title edits when an earlier save finishes", async () => {
     let complete!: (value: Awaited<ReturnType<typeof saveEditorDraftAction>>) => void;
     vi.mocked(saveEditorDraftAction).mockImplementationOnce(
       () =>

@@ -115,7 +115,7 @@ export function EditorScreen({
 
   function currentDocument(): EditorDocument {
     return {
-      ...document,
+      ...session.documentRef.current,
       body: editor ? tiptapToNodes(editor.getJSON()) : body,
     };
   }
