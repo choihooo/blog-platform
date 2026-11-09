@@ -18,12 +18,8 @@ pnpm dev
 
 ## 보존 자료
 
-- 예시 글: `fixtures/demo-posts/` — 공개 라우트가 아닙니다.
-- 색상 비교: `app/_lab/color-lab/` — Next.js 비공개 폴더입니다.
-- 디자인 비교 원문·시안: `docs/reference/design-lab/` — public 폴더에서 제외했습니다.
-- 과거 레포 전체: 원래 작업 폴더 `/Users/choiho/coding/blog/archive/2026-11-10-legacy/`에 보존하며 Git 이력은 그대로 유지합니다. `archive/manifest.json`으로 기존 추적 파일을 확인할 수 있습니다.
-
-디자인 비교만 로컬에서 볼 때는 `pnpm design:lab` 후 `python3 -m http.server 4184 --directory docs/reference`를 실행해 `/design-lab/index.html`을 엽니다.
+- 과거 레포 전체는 원래 작업 폴더 `/Users/choiho/coding/blog/archive/2026-11-10-legacy/`에 보존합니다. Git 이력과 `archive/manifest.json`도 유지합니다.
+- 운영에 쓰이지 않는 예시 글·데모·디자인 비교 자료·이전 폰트는 제거했습니다. `fixtures/approved-design.json`은 현재 디자인의 회귀 검증 자료입니다.
 
 첫 공개 전까지 `SITE_INDEXABLE=false`를 유지합니다. `SITE_URL`은 canonical·공유 URL·사이트맵이 사용할 실제 운영 주소입니다. 기존 RAG·CMS·OAuth·DB 환경 변수는 현재 앱에 필요하지 않습니다.
 

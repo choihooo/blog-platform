@@ -9,7 +9,6 @@
     "lint": "eslint",
     "test:article": "node --test lib/article-tools.test.mjs",
     "test:posts": "node --test lib/post-list.test.mjs lib/debounce.test.mjs",
-    "design:lab": "node scripts/build-design-lab.mjs",
     "test:release": "node --test lib/release-boundary.test.mjs",
     "test": "node --test lib/*.test.mjs",
     "build:release": "pnpm test && pnpm lint && pnpm build"
