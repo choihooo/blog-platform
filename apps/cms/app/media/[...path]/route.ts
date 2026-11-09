@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { repositoryRoot } from "../../../lib/editor/root";
+import { repositoryRoot } from "../../../shared/server/repository-root";
 
 type RouteContext = {
   params: Promise<{ path: string[] }>;

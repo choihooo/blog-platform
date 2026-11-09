@@ -9,10 +9,10 @@ import {
 } from "@hozui/react";
 import { ArrowUpRight, Plus } from "lucide-react";
 
-import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 import { AccessState, CmsShell } from "../../components/shell/index";
-import { PostsSearchForm } from "../../components/posts/posts-search-form";
-import { listPostSummaries, type PostSummary } from "../../lib/editor/editor-loader";
+import { listPostSummaries, type PostSummary } from "../../features/posts/server/index";
+import { PostsSearchForm } from "../../features/posts/components/posts-search-form";
+import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 
 type PostsPageSearchParams = {
   q?: string | string[];

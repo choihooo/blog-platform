@@ -7,8 +7,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 3001",
-    "format:check": "prettier \"app/**/*.{ts,tsx}\" \"components/**/*.tsx\" \"lib/**/*.ts\" package.json next.config.mjs --check",
-    "lint": "eslint app lib next.config.mjs",
+    "format:check": "prettier \"{app,components,lib,features,shared}/**/*.{ts,tsx}\" package.json next.config.mjs vitest.config.ts --check",
+    "lint": "eslint app components lib features shared next.config.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

@@ -4,8 +4,14 @@ import { describe, expect, it, vi } from "vitest";
 
 import { NewPostPageView } from "./page";
 
-vi.mock("../../../app/actions/editor-actions", () => ({
+vi.mock("../../actions/editor-actions", () => ({
   saveEditorDraftAction: vi.fn(),
+  publishPostAction: vi.fn(),
+  unpublishPostAction: vi.fn(),
+  archivePostAction: vi.fn(),
+  retryPublicRefreshAction: vi.fn(),
+  uploadEditorMediaAction: vi.fn(),
+  createPreviewTokenAction: vi.fn(),
 }));
 
 const decision = {

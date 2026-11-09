@@ -1,11 +1,12 @@
-import { EditorScreen } from "../../../components/editor/index";
 import { AccessState, CmsShell } from "../../../components/shell/index";
-import { requireCmsAccess, type AccessDecision } from "../../../lib/auth/index";
+import { EditorScreen } from "../../../features/editor/components/index";
 import {
   createNewEditorDocument,
   loadEditorCategories,
   loadEditorSiteAnalyticsConfig,
-} from "../../../lib/editor/index";
+} from "../../../features/editor/server/index";
+import { requireCmsAccess, type AccessDecision } from "../../../lib/auth/index";
+import { editorCommands } from "../../actions/editor-commands";
 
 export function NewPostPageView({
   categories = [],
@@ -21,6 +22,7 @@ export function NewPostPageView({
   return (
     <CmsShell activePath="/posts" session={decision.session} title="New draft">
       <EditorScreen
+        commands={editorCommands}
         categories={categories}
         initialDocument={createNewEditorDocument()}
         siteAnalytics={siteAnalytics}

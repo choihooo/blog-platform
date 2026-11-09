@@ -1,7 +1,7 @@
+import type { AnalyticsDashboardView } from "@blog-platform/core/analytics";
 import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import type { AnalyticsDashboardView } from "@blog-platform/core/analytics";
 
 import { PostAnalyticsPageView } from "./page";
 

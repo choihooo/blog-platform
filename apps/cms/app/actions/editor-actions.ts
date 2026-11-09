@@ -1,32 +1,32 @@
 "use server";
+import { previewSlugCandidate } from "../../features/editor/server/preview-slug";
 
 import { createHash } from "node:crypto";
 
 import type { EditorDocument } from "@blog-platform/core/content";
 import { revalidatePath } from "next/cache";
 
-import { createContentAdapter } from "@blog-platform/core/storage";
-import { createMediaStore } from "@blog-platform/core/storage";
-import { guardMutation, evaluateAccess, getCmsSession } from "../../lib/auth/index";
+import { createContentAdapter, createMediaStore } from "@blog-platform/core/storage";
 import {
   authToUploadCode,
+  contentToUploadCode,
+  createConfiguredPublicRefresh,
   imageNode,
+  mapAuthFailure,
   mapPublishAuthFailure,
   mediaPath,
   prepareMediaFile,
-  createConfiguredPublicRefresh,
-  mapAuthFailure,
   refreshPublicTargets,
   runPublicationOperation,
-  contentToUploadCode,
   saveEditorDraft,
   slugForMedia,
   targetFromForm,
   type PublicRefreshRetryToken,
   type UploadEditorMediaResult,
-} from "../../lib/editor/index";
-import { repositoryRoot } from "../../lib/editor/root";
+} from "../../features/editor/server/index";
+import { evaluateAccess, getCmsSession, guardMutation } from "../../lib/auth/index";
 import { issuePreviewToken, secretFreeMessage } from "../../lib/security";
+import { repositoryRoot } from "../../shared/server/repository-root";
 
 function responseSecrets() {
   return [
@@ -45,17 +45,6 @@ function redact(message: string | undefined) {
 function editorPathFromContentPath(path?: string) {
   if (!path || !path.startsWith("db/posts/")) return;
   return `/posts/${path.replace(/^db\/posts\//, "")}`;
-}
-
-function slugCandidate(document: EditorDocument): string {
-  const pathSlug = document.path?.replace(/^db\/posts\//, "");
-  return (
-    document.frontmatter.slug ||
-    slugForMedia(pathSlug ?? "") ||
-    slugForMedia(document.frontmatter.title) ||
-    slugForMedia(document.id) ||
-    document.id
-  );
 }
 
 function refreshCmsEditorPaths(path?: string) {
@@ -287,7 +276,7 @@ export async function createPreviewTokenAction(input: { document: EditorDocument
   }
 
   refreshCmsEditorPaths(saved.path);
-  const slug = saved.slug || slugCandidate(input.document);
+  const slug = saved.slug || previewSlugCandidate(input.document);
   const contentSha =
     saved.sha || createHash("sha256").update(JSON.stringify(input.document)).digest("hex");
   const token = issuePreviewToken({ slug, contentSha, secret });

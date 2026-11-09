@@ -1,12 +1,13 @@
-import { EditorScreen } from "../../../components/editor/index";
 import { AccessState, CmsShell } from "../../../components/shell/index";
-import { requireCmsAccess, type AccessDecision } from "../../../lib/auth/index";
+import { EditorScreen } from "../../../features/editor/components/index";
 import {
   loadEditorCategories,
   loadEditorDocument,
   loadEditorSiteAnalyticsConfig,
   pathForSlug,
-} from "../../../lib/editor/index";
+} from "../../../features/editor/server/index";
+import { requireCmsAccess, type AccessDecision } from "../../../lib/auth/index";
+import { editorCommands } from "../../actions/editor-commands";
 
 export async function ExistingPostPageView({
   decision,
@@ -26,6 +27,7 @@ export async function ExistingPostPageView({
     <CmsShell activePath="/posts" session={decision.session} title="Edit post">
       {loaded.ok ? (
         <EditorScreen
+          commands={editorCommands}
           categories={categories}
           initialDocument={loaded.document}
           siteAnalytics={siteAnalytics}

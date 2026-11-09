@@ -1,3 +1,4 @@
+import { createContentAdapter } from "@blog-platform/core/storage";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
@@ -21,13 +22,17 @@ vi.mock("../../lib/auth/admin-identity", async (original) => ({
 }));
 vi.mock("@blog-platform/core/storage", async (original) => ({
   ...(await original<object>()),
-  createContentAdapter: () => ({
+  createContentAdapter: vi.fn(() => ({
     getPostBySlug: async () => ({ ok: true, data: null }),
     createPost: async ({ post }: { post: unknown }) => ({ ok: true, data: post }),
-  }),
+  })),
 }));
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
 
+import { createEmptyEditorDocument } from "@blog-platform/core/content";
 import {
   archivePostAction,
   createPreviewTokenAction,
@@ -37,9 +42,33 @@ import {
   unpublishPostAction,
   uploadEditorMediaAction,
 } from "./editor-actions";
-import { createEmptyEditorDocument } from "@blog-platform/core/content";
 
 describe("editor actions", () => {
+  it("retries exactly the refresh targets without opening a content adapter", async () => {
+    vi.stubEnv("BLOG_DEPLOY_HOOK_URL", "");
+    vi.stubEnv("VERCEL_DEPLOY_HOOK_URL", "");
+    vi.stubEnv("BLOG_REVALIDATE_URL", "https://blog.test/api/revalidate");
+    vi.stubEnv("BLOG_REVALIDATE_SECRET", "refresh-fixture");
+    vi.mocked(createContentAdapter).mockClear();
+    const fetcher = vi.fn(async () => new Response(null, { status: 200 }));
+    vi.stubGlobal("fetch", fetcher);
+    const retryToken = {
+      operation: "publish" as const,
+      targets: ["/blog/a", "/sitemap.xml"],
+      postPath: "db/posts/a",
+      postSha: "saved-sha",
+      issuedAt: "2026-11-09",
+    };
+    const result = await retryPublicRefreshAction({ retryToken });
+    expect(result.ok).toBe(true);
+    expect(createContentAdapter).not.toHaveBeenCalled();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(
+      fetcher.mock.calls.map(
+        (call) => JSON.parse((call as unknown as [string, RequestInit])[1].body as string).path,
+      ),
+    ).toEqual(["/blog/a", "/sitemap.xml"]);
+  });
   it("exports the save action", () => {
     expect(typeof saveEditorDraftAction).toBe("function");
     expect(typeof uploadEditorMediaAction).toBe("function");

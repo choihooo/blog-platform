@@ -6,8 +6,8 @@
 1~600자이며 context는 기존 제목·질문 히스토리만 허용한다. 확정된 경력·성과·소개와 명확화 응답은
 모델을 호출하지 않는다. 공개 응답은 `Cache-Control: no-store`다.
 
-- `RAG_ANSWER_PROVIDER=local` (기본): Worker `/search`를 호출하고 브라우저 Kanana가 생성한다.
-- `RAG_ANSWER_PROVIDER=gemini`: Worker `/answer`를 호출한다. 근거가 있는데 answer가 없으면 503.
+- Blog BFF는 Worker `/answer`를 호출한다. 근거가 있는데 answer가 없으면 503이다.
+- 브라우저 로컬 생성과 Kanana 모드는 제거했다. Worker `/search`는 검색 전용 내부 API로 유지한다.
 - 응답: `sources` 최대 3개, 제목 200자·발췌 550자, 내부 공개 URL만 허용. answer 최대 4000자.
 - 400: 잘못된 입력, 403: 다른 origin, 429: Worker 또는 Gemini 할당량 제한, 503: 검색·생성 실패.
 - 근거 없음은 정상 200 안내다. 공급자 실패를 근거 없음으로 바꾸지 않는다.
@@ -68,10 +68,12 @@ primary 공개 원문을 재조회하여 stale·삭제·미발행 청크를 배�
 ## 설정과 전환
 
 Worker: `RAG_EMBEDDING_PROVIDER`, `GEMINI_MIN_SCORE`, `GEMINI_EMBED_DELAY_MS`,
-`GEMINI_GENERATION_MODEL` 및 secret `GEMINI_API_KEY`. Next server: 기존 RAG URL·토큰과
-`RAG_ANSWER_PROVIDER`. Next build: `NEXT_PUBLIC_RAG_CHAT_MODE=local|remote` (기본 local). remote
-UI는 answer가 없는 응답을 실패로 표시하고 로컬 모델을 자동 다운로드하지 않는다. remote UI와 local
-server 조합은 지원하지 않으므로 생성 전환 시 두 설정을 함께 배포한다. local UI와 Gemini server
-조합은 기존 answer 단락을 통해 동작하지만 기존 모델 로딩은 남는다.
+`GEMINI_GENERATION_MODEL` 및 secret `GEMINI_API_KEY`. Next server는 `RAG_API_URL`과
+`RAG_SEARCH_TOKEN`, 동기화용 `RAG_ADMIN_TOKEN`을 사용한다. `RAG_ANSWER_PROVIDER`와
+`NEXT_PUBLIC_RAG_CHAT_MODE`에 따른 Blog 로컬 생성 분기는 제거했다. 이 변경은 Worker의 두 임베딩
+프로필과 별개이며 Workers AI의 기존 인덱스를 제거하거나 Gemini 인덱스와 혼합하지 않는다.
+
+2026-11-09 구조 변경은 HTTP handler·서비스·Gemini transport의 책임 분리다. Worker의 endpoint,
+인증·입출력·상태 코드·revision·profile 계약은 유지한다.
 
 실행·전환·롤백은 [운영 runbook](../../../docs/runbooks/2026-11-06-gemini-rag.md)을 따른다.

@@ -1,14 +1,13 @@
+import type { RagChunk, RagResult } from "@blog-platform/core/search";
 import {
   chunkDocuments,
   currentMatches,
   EMBEDDING_MODEL,
+  embeddingProfile,
   postDocument,
   staticDocuments,
   type PublicPostRow,
 } from "@blog-platform/core/search";
-import { embeddingProfile } from "@blog-platform/core/search";
-import type { RagResult } from "@blog-platform/core/search";
-import type { RagChunk } from "@blog-platform/core/search";
 import { embedGemini } from "./gemini";
 
 export function profileFor(env: Env) {

@@ -1,8 +1,8 @@
-import { AccessState, CmsShell } from "../../components/shell/index";
-import { AnalyticsDashboard } from "../../components/analytics/index";
-import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
-import { loadAnalyticsDashboard } from "../../lib/analytics/index";
 import type { AnalyticsDashboardView } from "@blog-platform/core/analytics";
+import { AccessState, CmsShell } from "../../components/shell/index";
+import { AnalyticsDashboard } from "../../features/analytics/components/index";
+import { loadAnalyticsDashboard } from "../../features/analytics/server/index";
+import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
 
 type AnalyticsPageSearchParams = {
   range?: string | string[];

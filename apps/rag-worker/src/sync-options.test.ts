@@ -22,17 +22,15 @@ describe("paced sync", () => {
     expect(() => parseSyncOptions(["--offset", "16"])).toThrow("revision");
   });
   it("sends dryRun and never loops on a planning response", async () => {
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue(
-        Response.json({
-          total: 32,
-          requests: 32,
-          profile: "gemini",
-          revision: "abc",
-          nextOffset: null,
-        }),
-      );
+    const fetcher = vi.fn().mockResolvedValue(
+      Response.json({
+        total: 32,
+        requests: 32,
+        profile: "gemini",
+        revision: "abc",
+        nextOffset: null,
+      }),
+    );
     const result = await runSync(parseSyncOptions([]), "key", { fetcher, sleep: vi.fn() });
     expect(JSON.parse(fetcher.mock.calls[0]![1].body).dryRun).toBe(true);
     expect(fetcher).toHaveBeenCalledTimes(1);

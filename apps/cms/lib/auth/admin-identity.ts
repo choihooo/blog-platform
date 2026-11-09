@@ -1,4 +1,4 @@
-import { loadSiteConfig, siteConfigPath } from "../site-config";
+import { loadSiteConfig, siteConfigPath } from "../../shared/server/site-config";
 import type { AdminIdentity } from "./types";
 
 type SiteConfigLike = {

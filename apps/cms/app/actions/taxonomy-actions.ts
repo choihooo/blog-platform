@@ -1,122 +1,45 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { normalizeSlug } from "../../features/taxonomy/model/slug";
 
-import { createContentAdapter } from "@blog-platform/core/storage";
+import {
+  createCategory,
+  createTag,
+  deleteCategory,
+  updateCategory,
+} from "../../features/taxonomy/server/mutations";
 import { evaluateAccess, getCmsSession } from "../../lib/auth/index";
 import { guardMutation } from "../../lib/auth/mutation-guard";
-import { repositoryRoot } from "../../lib/editor/root";
-
-function normalizeSlug(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9/]+/g, "-")
-    .replace(/\/+/g, "/")
-    .replace(/^-+|-+$/g, "")
-    .replace(/\/-+|-+\//g, "/");
-}
-
-function idFromSlug(prefix: string, slug: string) {
-  return `${prefix}_${slug.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}`;
-}
+import { repositoryRoot } from "../../shared/server/repository-root";
 
 async function withTaxonomyAccess<T>(operation: () => Promise<T>) {
   return guardMutation(await evaluateAccess(await getCmsSession(), repositoryRoot()), operation);
 }
 
 export async function createCategoryAction(formData: FormData) {
-  const parentSlug = normalizeSlug(String(formData.get("parentSlug") ?? ""));
-  const childSlug = normalizeSlug(String(formData.get("childSlug") ?? ""));
-  const rawSlug = normalizeSlug(String(formData.get("slug") ?? ""));
-  const slug = parentSlug && childSlug ? `${parentSlug}/${childSlug}` : rawSlug;
-  const name = String(formData.get("name") ?? "").trim();
-  if (!slug || !name) {
-    return;
-  }
-
-  const result = await withTaxonomyAccess(() =>
-    createContentAdapter().createCategory({
-      category: {
-        id: idFromSlug("cat", slug),
-        name,
-        slug,
-        parentId: null,
-        parentSlug: slug.includes("/") ? slug.split("/")[0] : null,
-        depth: slug.includes("/") ? 2 : 1,
-      },
-      authorIdentity: "cms-editor",
-    }),
-  );
-  if (!result.ok || !result.value.ok) return;
+  const result = await createCategory(formData, withTaxonomyAccess);
+  if (!result?.ok || !result.value.ok) return;
   revalidatePath("/settings");
 }
-
 export async function updateCategoryAction(formData: FormData) {
-  const categoryId = String(formData.get("categoryId") ?? "").trim();
-  const depth = String(formData.get("depth") ?? "");
-  const parentSlug = normalizeSlug(String(formData.get("parentSlug") ?? ""));
-  const childSlug = normalizeSlug(String(formData.get("childSlug") ?? ""));
-  const rawSlug = normalizeSlug(String(formData.get("slug") ?? ""));
-  const slug = depth === "2" && parentSlug && childSlug ? `${parentSlug}/${childSlug}` : rawSlug;
-  const name = String(formData.get("name") ?? "").trim();
-  if (!categoryId || !slug || !name) {
-    return;
-  }
-
-  const result = await withTaxonomyAccess(() =>
-    createContentAdapter().updateCategory({
-      categoryId,
-      category: {
-        name,
-        slug,
-        parentSlug: depth === "2" ? parentSlug : null,
-      },
-      authorIdentity: "cms-editor",
-    }),
-  );
-  if (!result.ok || !result.value.ok) return;
+  const result = await updateCategory(formData, withTaxonomyAccess);
+  if (!result?.ok || !result.value.ok) return;
   revalidatePath("/settings");
   revalidatePath("/");
   revalidatePath(`/categories/${result.value.data.slug}`);
 }
-
 export async function deleteCategoryAction(formData: FormData) {
-  const categoryId = String(formData.get("categoryId") ?? "").trim();
-  const slug = normalizeSlug(String(formData.get("slug") ?? ""));
-  if (!categoryId) {
-    return;
-  }
-
-  const result = await withTaxonomyAccess(() =>
-    createContentAdapter().deleteCategory({
-      categoryId,
-      authorIdentity: "cms-editor",
-    }),
-  );
-  if (!result.ok || !result.value.ok) return;
+  const result = await deleteCategory(formData, withTaxonomyAccess);
+  if (!result?.ok || !result.value.ok) return;
   revalidatePath("/settings");
   revalidatePath("/");
-  revalidatePath(`/categories/${result.value.data.slug || slug}`);
-}
-
-export async function createTagAction(formData: FormData) {
-  const slug = normalizeSlug(String(formData.get("slug") ?? "")).replace(/\//g, "-");
-  const name = String(formData.get("name") ?? "").trim();
-  if (!slug || !name) {
-    return;
-  }
-
-  const result = await withTaxonomyAccess(() =>
-    createContentAdapter().createTag({
-      tag: {
-        id: idFromSlug("tag", slug),
-        name,
-        slug,
-      },
-      authorIdentity: "cms-editor",
-    }),
+  revalidatePath(
+    `/categories/${result.value.data.slug || normalizeSlug(String(formData.get("slug") ?? ""))}`,
   );
-  if (!result.ok || !result.value.ok) return;
+}
+export async function createTagAction(formData: FormData) {
+  const result = await createTag(formData, withTaxonomyAccess);
+  if (!result?.ok || !result.value.ok) return;
   revalidatePath("/settings");
 }

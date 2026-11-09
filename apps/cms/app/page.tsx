@@ -2,8 +2,8 @@ import { Badge, EmptyState } from "@hozui/react";
 import { ArrowUpRight, FilePenLine, Files, Settings2 } from "lucide-react";
 
 import { AccessState, CmsShell } from "../components/shell/index";
+import { listPostSummaries, type PostSummary } from "../features/posts/server/index";
 import { requireCmsAccess, type AccessDecision } from "../lib/auth/index";
-import { listPostSummaries, type PostSummary } from "../lib/editor/editor-loader";
 
 function postStatusTone(status: PostSummary["status"]) {
   if (status === "published") return "positive";

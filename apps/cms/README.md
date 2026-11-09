@@ -47,3 +47,21 @@ Save/Publish는 중첩 콘텐츠 validation 후 저장한다.
   요청을 사용한다.
 - `GITHUB_TOKEN`, `GITHUB_APP_PRIVATE_KEY`, `PREVIEW_TOKEN_SECRET`, `NEXTAUTH_SECRET`, `AUTH_SECRET`
   값은 CMS action/repository failure message에서 redaction 대상이다.
+
+## 코드 책임과 검증
+
+- `app`은 URL·인증·Server Action·Next cache 경계이며 page에서 typed command capability를 조립한다.
+- `features/editor`는 components/hooks/model/server로 편집·저장·발행·미디어를 나눈다. 브라우저는
+  서버 모듈을 값 import하지 않는다.
+- `features/posts`, `taxonomy`, `analytics`, `public-content`는 각 기능의 조회·변경·표현을 소유한다.
+  analytics는 posts의 서버 공개 API를 사용한다.
+- `shared/ui`는 공통 필드, `shared/server`는 사이트 설정과 root 경로를 소유한다.
+  auth/security/migration의 기존 정책은 유지한다.
+- `lib/architecture.test.ts`는 feature에서 app으로의 역방향 의존성과 client의 transitive 서버 값
+  import를 검사한다.
+
+필수 검사는 `pnpm --filter @blog-platform/cms` 뒤에 `format:check`, `lint`, `typecheck`, `test`,
+`build`를 각각 실행한다.
+
+저장 응답 전에 새 제목을 입력하면 이전 제목으로 덮이는 기존 경쟁 상태는
+`editor-save-flow.test.tsx`의 expected-failure 사례로 기록했다. 구조 변경과 분리하여 수정해야 한다.

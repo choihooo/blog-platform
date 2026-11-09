@@ -1,70 +1,16 @@
 import { Badge, Button, Chip, ChipGroup, EmptyState } from "@hozui/react";
 import { ExternalLink, GitBranch, Globe2, ShieldCheck, Tags } from "lucide-react";
+import { categoryTree } from "../../features/taxonomy/model/category-tree";
+import type { TaxonomyData } from "../../features/taxonomy/model/contracts";
+import { loadSettingsTaxonomy } from "../../features/taxonomy/server/queries";
+import { taxonomyCommands } from "../actions/taxonomy-commands";
 
-import { createTagAction } from "../actions/taxonomy-actions";
 import { AccessState, CmsShell } from "../../components/shell/index";
-import { CategoryManager } from "../../components/settings/category-manager";
-import { CmsTextField } from "../../components/ui/text-field";
+import { CategoryManager } from "../../features/taxonomy/components/category-manager";
 import { requireCmsAccess, type AccessDecision } from "../../lib/auth/index";
-import { createContentAdapter } from "@blog-platform/core/storage";
-import type { CategoryRecord, TagRecord } from "@blog-platform/core/content";
-import { loadSiteConfig, type SiteConfig } from "../../lib/site-config";
-
-type TaxonomyData = {
-  categories: CategoryWithCount[];
-  tags: TagRecord[];
-};
-
-type CategoryWithCount = CategoryRecord & { postCount?: number };
-
-function categoryTree(categories: CategoryWithCount[]) {
-  const parents = categories
-    .filter((category) => category.depth === 1)
-    .sort((a, b) => a.slug.localeCompare(b.slug));
-  const children = categories
-    .filter((category) => category.depth === 2)
-    .sort((a, b) => a.slug.localeCompare(b.slug));
-  return parents.map((parent) => ({
-    parent,
-    children: children.filter((child) => child.parentSlug === parent.slug),
-  }));
-}
-
-async function loadSettingsTaxonomy(): Promise<TaxonomyData> {
-  const adapter = createContentAdapter();
-  const [depth1Result, depth2Result, tagsResult, postsResult] = await Promise.allSettled([
-    adapter.listCategories({ depth: 1 }),
-    adapter.listCategories({ depth: 2 }),
-    adapter.listTags(),
-    adapter.listPosts({ publishedOnly: true, page: 1, limit: 100 }),
-  ]);
-
-  const depth1 = depth1Result.status === "fulfilled" ? depth1Result.value : undefined;
-  const depth2 = depth2Result.status === "fulfilled" ? depth2Result.value : undefined;
-  const tags = tagsResult.status === "fulfilled" ? tagsResult.value : undefined;
-  const posts = postsResult.status === "fulfilled" ? postsResult.value : undefined;
-
-  const categoryCounts = new Map<string, number>();
-  if (posts?.ok) {
-    for (const post of posts.data.items) {
-      if (!post.categoryPath) continue;
-      categoryCounts.set(post.categoryPath, (categoryCounts.get(post.categoryPath) ?? 0) + 1);
-    }
-  }
-
-  const categories = [
-    ...(depth1?.ok ? depth1.data.items : []),
-    ...(depth2?.ok ? depth2.data.items : []),
-  ].map((category) => ({
-    ...category,
-    postCount: categoryCounts.get(category.slug) ?? 0,
-  }));
-
-  return {
-    categories,
-    tags: tags?.ok ? tags.data.items : [],
-  };
-}
+import { loadSiteConfig, type SiteConfig } from "../../shared/server/site-config";
+import { CmsTextField } from "../../shared/ui/text-field";
+import { createTagAction } from "../actions/taxonomy-actions";
 
 export function SettingsPageView({
   decision,
@@ -143,7 +89,7 @@ export function SettingsPageView({
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
-          <CategoryManager groups={tree} />
+          <CategoryManager commands={taxonomyCommands} groups={tree} />
           <div className="rounded-lg border border-border bg-card p-5">
             <div className="flex items-center gap-2 text-sm font-semibold">
               <Tags aria-hidden="true" size={17} />
