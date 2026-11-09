@@ -6,7 +6,7 @@ export function ProfileIntro({ accent, preview = false }: { accent?: string; pre
   return (
     <>
       <section className="blog-profile mb-14">
-        <h1 className="blog-profile-name">최<span style={style}>호</span></h1>
+        <h1 className="blog-profile-name">최호</h1>
         <p>프론트엔드 개발자</p>
       </section>
       <section id={preview ? undefined : "about"} className="mb-14 scroll-mt-8">

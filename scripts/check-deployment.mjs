@@ -8,6 +8,9 @@ const [home, robots, sitemap, og, icon] = await Promise.all([get("/"), get("/rob
 for (const response of [home, robots, sitemap, og, icon]) assert.equal(response.status, 200, response.url);
 const html = await home.text();
 assert.ok(html.includes("최호") && html.includes("AI에"));
+assert.ok(html.includes('class="blog-profile-name">최호</h1>'), "Profile title must not highlight 호");
+assert.ok(html.includes('href="mailto:hochoi8621@gmail.com"'), "Footer email is required");
+assert.ok(html.includes('href="https://www.linkedin.com/in/howuchoi/"'), "Footer LinkedIn is required");
 assert.ok(html.includes("아직 작성된 글이 없습니다."), "Production content should be empty until a real article is supplied");
 const canonical = html.match(/<link[^>]*rel="canonical"[^>]*href="([^"]+)"/);
 assert.equal(new URL(canonical?.[1] ?? "invalid").href, "https://hozorica.com/");

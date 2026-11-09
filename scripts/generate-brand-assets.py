@@ -17,14 +17,14 @@ with TemporaryDirectory() as temporary:
     font_path = Path(temporary) / "suit-bold.ttf"
     font.save(font_path)
 
-    def line(text, x, y, size, color):
+    def line(text, x, y, size, color, highlight=True):
         face = ImageFont.truetype(str(font_path), size)
         baseline = y + face.getmetrics()[0]
         for char in text:
-            draw.text((x, baseline), char, font=face, fill="#FF6F0F" if char == "호" else color, anchor="ls")
+            draw.text((x, baseline), char, font=face, fill="#FF6F0F" if highlight and char == "호" else color, anchor="ls")
             x += face.getlength(char)
 
-    line("최호", 96, 116, 104, "#171717")
+    line("최호", 96, 116, 104, "#171717", highlight=False)
     line("프론트엔드 개발자", 96, 260, 32, "#737373")
     line("사용자에게는 호감 가는 경험을,", 96, 375, 26, "#525252")
     line("동료에게는 호흡이 잘 맞는 사람이 되고 싶습니다.", 96, 423, 26, "#525252")

@@ -1,14 +1,16 @@
 {
   "sha256": {
     "app/globals.css": "646c954f39c28a17e4cee388aeaa1f59b4624575789ed01be3952c180ec92cb5",
-    "components/ProfileIntro.tsx": "a63b8d61a152ad4abc621a1de88a1e87ffcdbf79ca8bb5c572f337a2b5029f78",
+    "components/ProfileIntro.tsx": "b312d23f64aeca0c56564fb9633f09dffe15c59b6dadda603ee66e8553cb424e",
     "components/SiteHeader.tsx": "f6d9b573cf44d9ab52d402bbb76ad3f45dd1a5211ea621dc44ca2e1df306c73a",
     "components/BlogSearch.tsx": "042b1afaf8413a00735ccc97c9da8bd71918502583d55768e3b94df9cbde8a50",
     "components/WritingList.tsx": "1719b3c5b5ff32e631d5c18b1780ff453b2ecc870c885034f39a78f7fbaea487",
     "components/CodeBlock.tsx": "8f7de089a77e6ef9f8aa555e0dc25fa5391fe858e271ef1130961ef3e2e1d799",
     "components/PostHeader.tsx": "ff2461d9293c64b55b554fa2862b90dabafda52a7a2f5ed7766bfe40a2784f1d",
     "app/blog/layout.tsx": "492b8def205efb9d08243465194a123fb0f2dba7906a3ed7891ee6ad1c4e8e1e",
-    "app/fonts/suit/SUIT-Variable.woff2": "aa894a204d5a6fbae259dac6868d350cbd373a390caee0313f92946af741df23"
+    "app/fonts/suit/SUIT-Variable.woff2": "aa894a204d5a6fbae259dac6868d350cbd373a390caee0313f92946af741df23",
+    "components/FooterLinks.tsx": "2efef70d37d661fbb88fcff2ba518b9ad63c3dfaf820ac7fffc534581b135e74"
   },
-  "layout_body_sha256": "6e609b1f4eae435ebc589073bb3c792236d0e4eb4b611cd86fc472bfc194a135"
+  "layout_body_sha256": "f6cb89bc25e029d06d8b41cafb3268d8583b725bbfb11153aa5a3fb1f3665a9b",
+  "user_approved_update": "2026-11-10: title primary removed, footer contact links added; all other approved styles unchanged"
 }
