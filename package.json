@@ -1,35 +1,42 @@
 {
-  "name": "blog-platform",
+  "name": "ho-blog",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@10.0.0",
-  "type": "module",
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "dev:blog": "pnpm --filter @blog-platform/blog dev",
-    "dev:cms": "node scripts/dev-cms.mjs",
-    "format": "prettier . --write",
-    "format:check": "prettier . --check",
-    "lint": "turbo lint",
-    "test": "turbo test",
-    "typecheck": "turbo typecheck",
-    "migrate:extract": "tsx scripts/migration/run-migration.ts extract",
-    "migrate:upload": "tsx scripts/migration/upload-media-to-r2.ts",
-    "migrate:dry-run": "tsx scripts/migration/dry-run.ts",
-    "migrate:verify": "tsx scripts/migration/verify-migration.ts",
-    "migrate:run": "tsx scripts/migration/run-migration.ts"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test:article": "node --test lib/article-tools.test.mjs",
+    "test:posts": "node --test lib/post-list.test.mjs lib/debounce.test.mjs",
+    "design:lab": "node scripts/build-design-lab.mjs"
+  },
+  "dependencies": {
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "@next/mdx": "^16.3.4",
+    "@tailwindcss/typography": "^0.5.20",
+    "@types/mdx": "^2.0.14",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "rehype-pretty-code": "^0.14.5",
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
-    "@types/node": "^26.1.2",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.5",
-    "prettier": "^3.9.6",
-    "turbo": "^2.10.7",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.65.0",
-    "@blog-platform/core": "workspace:^"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
   }
 }
