@@ -36,3 +36,7 @@ Vercel 대시보드의 Deployments에서 직전 정상 Production 배포를 선�
 이번 전환 전 정상 배포는 `https://blog-i6mdetp02-hochois-projects.vercel.app` (`dpl_GJKrKy7n4BEu97w3Wcn9XTppsz3K`)입니다. 이후 릴리스에서는 직전 정상 배포 URL을 배포 기록에 갱신합니다.
 
 이전 모노레포 코드를 다시 **빌드**하려면 프로젝트 설정도 그 코드에 맞춰야 합니다. 당시 Root Directory는 `apps/blog`, Node 22.x, Build Command는 `cd ../.. && pnpm turbo build --filter=@blog-platform/blog...`, Install Command는 `cd ../.. && pnpm install`이었습니다. 기존 빌드로 rollback하는 것과 이전 소스로 재빌드하는 것은 다릅니다.
+
+## GitHub Actions 상태 (2026-11-10)
+
+실행 42688896938은 코드 오류가 아니라 GitHub의 계정 결제 잠금으로 runner가 시작되지 못했습니다. 결제 설정은 변경하지 않았습니다. Vercel의 `pnpm build:release`는 동일한 테스트·lint·빌드를 직접 실행하므로 이 게이트를 통과한 배포만 반영합니다. GitHub CI 파일은 그대로 유지하며 계정 문제를 해결하면 다시 사용할 수 있습니다.
