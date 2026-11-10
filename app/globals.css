@@ -1,0 +1,660 @@
+/* ============================================================
+   globals.css 구성
+
+   1. Tailwind 로드
+   2. 테마 토큰 — 색상·폰트 변수와 다크 모드 값
+   3. 기본 스타일 — body
+   4. 커스텀 애니메이션 — animate-* 유틸리티 생성
+   5. 코드 블록 — 마크다운 하이라이팅(shiki) 전용 스타일
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Tailwind 로드
+   ------------------------------------------------------------ */
+
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ------------------------------------------------------------
+   2. 테마 토큰
+   - :root에 라이트 모드 값을 선언하고, 다크 모드에서 덮어쓴다
+   - @theme inline은 이 변수들을 Tailwind 클래스(bg-background 등)로 노출
+   ------------------------------------------------------------ */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-suit);
+  --font-serif: var(--font-suit);
+  --font-mono: var(--font-suit);
+}
+
+/* ------------------------------------------------------------
+   3. 기본 스타일
+   ------------------------------------------------------------ */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-suit), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body * {
+  font-weight: 700 !important;
+}
+
+.prose {
+  font-size: 15px;
+}
+
+.writing-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.writing-search-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: -4px -8px -4px 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #737373;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.writing-search-toggle:hover {
+  background: #f5f5f5;
+  color: var(--foreground);
+}
+
+.writing-search-input {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.writing-search-input::placeholder {
+  color: #737373;
+}
+
+.writing-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.writing-search-toggle:focus-visible,
+.blog-search-close:focus-visible,
+.blog-search-results a:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+}
+
+.writing-search-input:focus-visible {
+  outline: none;
+  border-color: var(--foreground);
+}
+
+.blog-search-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(624px, calc(100% - 48px));
+  max-height: min(640px, calc(100dvh - 48px));
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.blog-search-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-search-dialog::backdrop {
+  background: rgb(0 0 0 / 24%);
+}
+
+.blog-search-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.blog-search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.blog-search-loading {
+  display: grid;
+  min-height: 120px;
+  place-items: center;
+}
+
+.blog-search-spinner {
+  color: #737373;
+  pointer-events: none;
+  animation: search-spinner 0.8s linear infinite;
+}
+
+@keyframes search-spinner {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-search-spinner {
+    animation: none;
+  }
+}
+
+.blog-search-close {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  margin: -6px;
+  padding: 6px;
+  border-radius: 6px;
+  color: #737373;
+  cursor: pointer;
+}
+
+.blog-search-close:hover {
+  background: #f5f5f5;
+  color: var(--foreground);
+}
+
+.blog-search-results {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 12px 12px;
+}
+
+.blog-search-results a {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+
+.blog-search-results a:hover {
+  background: #f5f5f5;
+}
+
+.blog-search-result-title {
+  font-size: 15px;
+  line-height: 22.5px;
+}
+
+.blog-search-result-description {
+  color: #525252;
+  font-size: 14px;
+  line-height: 22.75px;
+}
+
+.blog-search-results time,
+.blog-search-empty {
+  color: #737373;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.blog-search-empty {
+  padding: 24px 12px 32px;
+}
+
+@media (max-width: 639px) {
+  .blog-search-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .blog-search-header {
+    padding-top: max(20px, env(safe-area-inset-top, 0px));
+  }
+
+  .blog-search-results {
+    flex: 1;
+  }
+
+  .blog-search-loading {
+    height: 100%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .blog-search-dialog {
+    border-color: #262626;
+  }
+
+  .blog-search-close,
+  .blog-search-spinner,
+  .blog-search-result-description,
+  .blog-search-results time,
+  .blog-search-empty {
+    color: #a3a3a3;
+  }
+
+  .blog-search-close:hover,
+  .blog-search-results a:hover {
+    background: #171717;
+    color: var(--foreground);
+  }
+
+  .writing-search-toggle,
+  .writing-search-input::placeholder {
+    color: #a3a3a3;
+  }
+
+  .writing-search-toggle:hover {
+    background: #262626;
+    color: var(--foreground);
+  }
+
+  .writing-search-input {
+    border-color: #262626;
+  }
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-suit), sans-serif;
+}
+
+.blog-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  padding-top: 16px;
+}
+
+.blog-profile-name {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.blog-profile p {
+  margin-top: 6px;
+  color: #737373;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.blog-header nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: #737373;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.blog-header nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-block: 10px;
+  text-underline-offset: 5px;
+}
+
+.blog-header a:hover {
+  color: #FF6F0F;
+  text-decoration: underline;
+}
+
+.blog-header a:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .blog-profile p,
+  .blog-header nav {
+    color: #a3a3a3;
+  }
+}
+
+@media (max-width: 480px) {
+  .blog-header {
+    padding-top: 12px;
+    gap: 16px;
+  }
+
+  .blog-profile-name {
+    font-size: 24px;
+  }
+
+  .blog-header nav {
+    gap: 16px;
+    font-size: 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   4. 커스텀 애니메이션
+   - --animate-<이름> 을 선언하면 animate-<이름> 클래스가 생긴다
+   - keyframes는 실제로 쓰일 때만 번들에 포함된다
+   ------------------------------------------------------------ */
+
+@theme {
+  /* 등장: 아래에서 떠오르며 페이드인 (등장 순서 데모) */
+  --animate-fade-up: fade-up 0.8s ease-in-out both;
+
+  /* 등장: 단순 페이드인 (모달 배경, 툴팁) */
+  --animate-fade-in: fade-in 0.3s ease-out both;
+
+  /* 등장: 기울어진 채 튀어올라 바운스로 안착 (모달 데모) */
+  --animate-pop-in: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  /* 회전: iOS 스피너처럼 8스텝으로 끊어 돌기 (스피너 데모) */
+  --animate-spinner-slow: spinner-rotate 2s steps(8) infinite;
+  --animate-spinner-fast: spinner-rotate 0.7s steps(8) infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(48px) scale(0.5) rotate(-6deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes spinner-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* ------------------------------------------------------------
+   5. 코드 블록 (rehype-pretty-code / shiki)
+   - 마크다운 빌드 결과물이라 Tailwind 클래스를 붙일 수 없어
+     전역 CSS로 스타일링한다
+   ------------------------------------------------------------ */
+
+/* 코드 블록 프레임 */
+.prose pre {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e5e5;
+  background: #fafafa;
+  padding: 1rem 0;
+}
+
+/* 코드 한 줄 (좌우 여백) */
+.prose pre [data-line] {
+  padding: 0 1rem;
+}
+
+.prose code {
+  font-size: 14.125px;
+}
+
+.prose pre code {
+  font-size: 14px;
+}
+
+/* 인라인 코드 (`코드`) */
+.prose :not(pre) > code {
+  border-radius: 0.375rem;
+  background: #f5f5f5;
+  padding: 0.15rem 0.35rem;
+  font-weight: 500;
+}
+
+/* typography 플러그인이 붙이는 백틱 제거 */
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
+/* typography 플러그인이 인용문 앞뒤에 붙이는 따옴표 제거 */
+.prose blockquote p:first-of-type::before,
+.prose blockquote p:last-of-type::after {
+  content: none;
+}
+
+/* shiki 듀얼 테마: 라이트에서는 --shiki-light 색을 쓴다 */
+code[data-theme*=" "],
+code[data-theme*=" "] span {
+  color: var(--shiki-light);
+}
+
+/* 코드 블록 제목 (```tsx title="app.tsx") */
+[data-rehype-pretty-code-title] {
+  margin-bottom: -0.5rem;
+  border-radius: 0.75rem 0.75rem 0 0;
+  border: 1px solid #e5e5e5;
+  border-bottom: none;
+  background: #f5f5f5;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8rem;
+  color: #737373;
+}
+
+[data-rehype-pretty-code-title] + pre {
+  margin-top: 0;
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+/* 상세 글 도구: 기존 본문·코드의 크기와 프레임은 유지한다. */
+.article-toc {
+  margin-bottom: 48px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fafafa;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #737373;
+}
+
+.article-toc summary {
+  width: 100%;
+  cursor: pointer;
+  list-style: disclosure-closed inside;
+}
+
+.article-toc details[open] > summary {
+  list-style-type: disclosure-open;
+}
+
+.article-toc ol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 0;
+  border-top: 1px solid #e5e5e5;
+  padding: 16px 0 0;
+  list-style: none;
+}
+
+.article-toc-subitem {
+  padding-left: 16px;
+}
+
+.article-toc a {
+  display: inline-block;
+  overflow-wrap: anywhere;
+  text-underline-offset: 4px;
+}
+
+.article-toc a:hover,
+.article-toc summary:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
+
+.prose :where(h2[id], h3[id]) {
+  scroll-margin-top: 32px;
+}
+
+.code-block pre {
+  margin: 0;
+}
+
+.code-copy-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.code-copy-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: #737373;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.code-copy-button:hover {
+  background: #f5f5f5;
+  color: var(--foreground);
+}
+
+.code-copy-button:disabled {
+  cursor: wait;
+}
+
+.code-copy-error {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.article-toc :where(a, summary):focus-visible,
+.code-copy-button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+[data-rehype-pretty-code-title] + .code-block pre {
+  margin-top: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .article-toc {
+    border-color: #262626;
+    background: #111111;
+  }
+
+  .article-toc ol {
+    border-color: #262626;
+  }
+
+  .article-toc,
+  .code-copy-button {
+    color: #a3a3a3;
+  }
+
+  .code-copy-button:hover {
+    background: #262626;
+    color: var(--foreground);
+  }
+}
+
+/* 코드 블록 다크 모드 */
+@media (prefers-color-scheme: dark) {
+  .prose pre {
+    border-color: #262626;
+    background: #111111;
+  }
+
+  .prose :not(pre) > code {
+    background: #1f1f1f;
+  }
+
+  /* shiki 듀얼 테마: 다크에서는 --shiki-dark 색으로 전환 */
+  code[data-theme*=" "],
+  code[data-theme*=" "] span {
+    color: var(--shiki-dark);
+  }
+
+  [data-rehype-pretty-code-title] {
+    border-color: #262626;
+    background: #1a1a1a;
+    color: #a3a3a3;
+  }
+}

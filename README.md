@@ -1,60 +1,45 @@
-# 블로그 플랫폼
+# 최호의 블로그
 
-단일 운영자의 공개 포트폴리오·블로그와 비공개 콘텐츠 관리 도구다. 세 앱은 독립 실행·배포하고, 공유
-콘텐츠·저장소·SEO·분석·검색 로직은 core 패키지가 소유한다.
+[yun-blog](https://github.com/78-artilleryman/yun-blog)를 기반으로 시작한 단일 Next.js·MDX 블로그입니다. 원본의 글과 개인 미디어는 가져오지 않았고, 데모 컴포넌트는 보존했습니다.
 
-## 구성
-
-| 경로              | 책임                                           |
-| ----------------- | ---------------------------------------------- |
-| `apps/blog`       | 공개 화면·Next.js 라우트·캐시·챗봇 UI          |
-| `apps/cms`        | 관리자 인증·편집·미디어 업로드·발행·분석 화면  |
-| `apps/rag-worker` | Cloudflare D1·Workers AI·Vectorize 검색·동기화 |
-| `packages/core`   | 콘텐츠 모델·D1/R2 저장·SEO·analytics·검색 계약 |
-| `content`         | 사이트·taxonomy 설정과 legacy 원본             |
-| `scripts`         | 개발·마이그레이션·포트폴리오 출력 진입점       |
-| `specs`, `docs`   | 기능 계약·현재 작업 가이드·설계 및 운영 이력   |
-
-프로젝트·프로필·이력서의 TypeScript 원본은 `packages/core/src/content/catalog`에서 관리한다. 앱끼리
-내부 소스를 가져오지 않는다. 공통 코드는 core의 용도별 subpath로 가져온다.
-
-## 개발과 검사
+## 실행
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm --filter @blog-platform/core build
-pnpm dev:blog
-pnpm dev:cms
+pnpm dev --port 4174
 ```
 
-Blog는 기본 3000, CMS는 3001, 로컬 Worker는 8787 포트를 사용한다. `pnpm dev:cms`는 기존 Worker 개발
-설정을 사용하므로 원격 binding 여부를 먼저 확인한다. 운영 자격 증명과 `.env`는 커밋하지 않는다. 공개
-콘텐츠 조회에는 D1 설정 또는 `BLOG_CONTENT_PROXY_URL`이 필요하다.
+검증: `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm build`.
 
-```sh
-pnpm format:check
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-```
+## 글 작성
 
-Turbo는 core를 먼저 빌드한 뒤 앱을 검사한다. Worker build는 `wrangler deploy --dry-run`이며 실제
-배포가 아니다. 상세 규칙은 [개발 작업 가이드](docs/development-guide.md)와 각 앱의 AGENTS를 따른다.
+`app/blog/_template/`를 새 slug로 복사하고 메타데이터와 본문을 작성하면 홈 목록에 표시됩니다. `_`로 시작하는 폴더는 비공개이며 목록에서도 제외합니다. 목록의 권위는 `lib/posts.ts`입니다.
 
-## 콘텐츠와 공개 경로
+현재는 화면 확인용 예시 글 5편을 넣었습니다. 각 글의 `post.demo: true`로 메인과 상세에 예시 안내를 표시합니다. 날짜·제목·본문은 시안용이며 실제 발행 기록이 아닙니다. 실제 글로 바꿀 때 예시 폴더를 제거하고 글을 작성합니다. `motion-you-can-feel`에는 버튼·등장 순서·이징 데모, `following-a-request`에는 흐름도·부분 렌더링 데모가 있습니다.
 
-CMS 글 CRUD는 D1, 운영 이미지 저장은 R2를 사용한다. 개발 환경에서 R2 업로드 설정이 없을 때만
-미디어를 로컬 `public/media`에 저장한다. 본문은 core의 version-1 structured JSON을 사용하며 Markdown
-fallback·편집·공개 렌더링은 같은 모델을 공유한다.
+`components/demos/animation`에는 버튼·등장 순서·이징 예제가 있고, `components/demos/cache-components`에는 흐름도 예제가 있습니다. 데모는 공개 페이지나 발행 글이 아닙니다.
 
-Blog는 `BLOG_CONTENT_PROXY_URL`이 있으면 CMS `/api/public-content`를, 없으면 D1/R2를 직접 조회한다.
-공개 목록·본문·RSS·sitemap·검색에는 발행 글만 포함한다. 저장소 장애를 빈 목록이나 404로 바꾸지
-않는다.
+## 디자인
 
-기존 `/blog`·소개·프로젝트·이력서와 티스토리/이전 host redirect, 보관 실험 페이지를 유지한다. Save는
-저장만 수행한다. Publish/Unpublish/Archive는 저장 후 공개 갱신을 요청하며 저장 성공과 갱신 실패를
-구분한다. 기존 deploy hook 우선순위·revalidate·재시도 계약을 유지한다.
+좁은 단일 열, 넉넉한 여백, 작은 제목과 절제된 색상을 유지합니다. [레퍼런스 검토](docs/design-reference-notes.md)에 추가 후보를 기록했습니다. 이번에는 새 장식·탐색 기능을 추가하지 않았습니다.
 
-인증과 서버 action은 CMS가 소유하고 Next.js 캐시는 Blog가 소유한다. Worker의 검색 토큰과 관리자
-동기화 토큰은 구분한다. 원격 발행·데이터 변경·배포·Vectorize 동기화는 별도 명시 요청이 필요하다.
+### 세 가지 디자인 비교
+
+`/design-lab/index.html`에서 ThoughtStream, Warm Editorial, Editorial Logbook의 메인·상세를 비교할 수 있습니다. 각 안은 동일한 예시 글 5편을 사용합니다. 원본 DESIGN.md는 각 시안 디렉터리에 보존했으며 `public/design-lab/sources.json`에 출처와 해시가 있습니다.
+
+예시 글을 수정한 뒤 `pnpm design:lab`으로 비교용 HTML을 다시 생성합니다. 수정할 소스는 `scripts/build-design-lab.mjs`와 `public/design-lab/assets/`입니다. 생성된 HTML을 직접 수정하지 않습니다. `docs/design-lab.md`에서 해석·대체 사항을 확인할 수 있습니다.
+
+현재는 초기 준비 상태로 `noindex, nofollow`를 설정했습니다. 실제 글과 공개 도메인이 정해지면 robots·canonical·공유 메타데이터를 검토하고 발행합니다.
+
+## 보존한 자료
+
+- `archive/2026-11-10-legacy/`: 이전 레포 전체. 커밋 전 수정·로컬 설정·의존성 포함.
+- `archive/manifest.json`: 원래 HEAD와 추적 파일 909개의 SHA-256.
+- `preview/`: 이전 HTML 시안. 현재 앱이 아니며 Next.js 라우트로 공개되지 않습니다.
+- 루트 `.git/`: 기존 저장소 이력. 원본 레포의 Git 이력·remote로 교체하지 않았습니다.
+
+아카이브는 빌드·타입 검사·lint 대상에서 제외했습니다. 출처와 변경 범위는 [upstream 기록](docs/upstream.md)에 있습니다.
+
+## 댓글과 좋아요
+
+글 하단에 로그인 없는 랜덤 닉네임 댓글과 취소 가능한 좋아요를 제공합니다. 운영 저장소는 Cloudflare D1이며 서버 전용 연결 설정이 필요합니다. [D1 연결·로컬 실행·댓글 관리](docs/anonymous-engagement.md)를 참고하세요.

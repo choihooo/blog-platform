@@ -1,0 +1,35 @@
+{
+  "name": "blog-platform",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:blog": "pnpm --filter @blog-platform/blog dev",
+    "dev:cms": "node scripts/dev-cms.mjs",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
+    "migrate:extract": "tsx scripts/migration/run-migration.ts extract",
+    "migrate:upload": "tsx scripts/migration/upload-media-to-r2.ts",
+    "migrate:dry-run": "tsx scripts/migration/dry-run.ts",
+    "migrate:verify": "tsx scripts/migration/verify-migration.ts",
+    "migrate:run": "tsx scripts/migration/run-migration.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.7",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
+    "@blog-platform/core": "workspace:^"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  // D1 management only. The Next.js app can continue to run on Vercel.
+  "name": "blog-engagement",
+  "account_id": "4cf494c21da0e5276ddd5eabeb310aaa",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "blog-engagement",
+      "database_id": "1a801df7-75e9-46d2-998b-4b4d6f5811e2",
+      "migrations_dir": "db/migrations"
+    }
+  ]
+}

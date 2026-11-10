@@ -1,0 +1,47 @@
+# OS and editor files
+.DS_Store
+*.swp
+*.swo
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+.env*.local
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Dependencies
+node_modules/
+
+# Build, cache, test, and deployment output
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+.vercel/
+.open-next/
+.wrangler/
+.cache/
+playwright-report/
+test-results/
+storybook-static/
+*.tsbuildinfo
+*.log
+
+# Local Codex and agent state
+.agents/
+.claude/
+.gstack/
+
+# Local generated work products
+/_workspace/
+/artifacts/
+/output/
+/tmp/
+/android-screen.png
+/tsts.js

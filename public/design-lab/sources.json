@@ -1,0 +1,20 @@
+[
+  {
+    "name": "thoughtstream",
+    "source": "https://designmd.ai/api/v1/kits/chef/thoughtstream/download",
+    "sha256": "f688bd8c05e7112d3d24b9b1e0e7eac3594669de2a0dd2a98ad531373a40ea86",
+    "bytes": 9875
+  },
+  {
+    "name": "warm-editorial",
+    "source": "https://raw.githubusercontent.com/nexu-io/open-design/main/design-systems/warm-editorial/DESIGN.md",
+    "sha256": "d478c0b23c15f0ef6b8863048d7ac809d0627216aa1efd6c303c242c6c470a5d",
+    "bytes": 4008
+  },
+  {
+    "name": "editorial-logbook",
+    "source": "https://raw.githubusercontent.com/Yeachan-Heo/gaebal-gajae-blog/main/DESIGN.md",
+    "sha256": "5b087ab0ef4acd5ba4c44cc401ec94561ed1f9b56427bc797fe00714d5b49576",
+    "bytes": 13825
+  }
+]
