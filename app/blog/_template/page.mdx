@@ -6,10 +6,10 @@ export const post = {
   date: "2026-11-10",
 };
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-};
+import { getPostMetadata } from "@/lib/site";
+
+{/* 발행할 폴더 이름과 같은 slug로 바꿉니다. */}
+export const metadata = getPostMetadata(post, "new-post");
 
 <PostHeader {...post} />
 

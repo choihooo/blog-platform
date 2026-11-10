@@ -29,5 +29,11 @@ archive/**/output/
 archive/**/.git*/
 artifacts/
 
-# Local anonymous-comment preview database
+.superpowers/
+archive/2026-11-10-legacy/
+preview/
+apps/
+.vercel
+
+# Local engagement preview database
 .local/

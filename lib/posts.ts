@@ -1,12 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-
-export type PostMeta = {
-  title: string;
-  description: string;
-  date: string; // YYYY-MM-DD
-  demo?: boolean;
-};
+import { validatePostMeta, validatePostCanonical, type PostMeta } from "./post-metadata";
+import { getSiteConfig } from "./site";
+export { validatePostMeta } from "./post-metadata";
+export type { PostMeta } from "./post-metadata";
 
 export type Post = PostMeta & { slug: string };
 
@@ -22,11 +19,14 @@ export async function getPosts(): Promise<Post[]> {
     if (!entry.isDirectory() || entry.name.startsWith("_")) continue;
     try {
       await fs.access(path.join(BLOG_DIR, entry.name, "page.mdx"));
-    } catch {
-      continue;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
+      throw error;
     }
     const mod = await import(`@/app/blog/${entry.name}/page.mdx`);
-    posts.push({ slug: entry.name, ...(mod.post as PostMeta) });
+    const post = validatePostMeta(mod.post, entry.name);
+    validatePostCanonical(mod.metadata?.alternates?.canonical, entry.name, getSiteConfig().url);
+    posts.push({ slug: entry.name, ...post });
   }
 
   return posts.sort((a, b) => (a.date < b.date ? 1 : -1));

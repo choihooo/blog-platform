@@ -15,7 +15,7 @@
 2. `.env.example`의 `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID`, `CLOUDFLARE_D1_API_TOKEN`, `ENGAGEMENT_SECRET`을 로컬 또는 호스팅 환경 변수에 등록합니다. `ENGAGEMENT_SECRET`은 `openssl rand -hex 32` 등으로 생성하고 배포마다 바꾸지 않습니다. 모든 값을 서버 전용으로 유지합니다.
 3. Vercel에서는 플랫폼이 덮어쓰는 `x-vercel-forwarded-for` 헤더를 자동으로 사용합니다. 다른 호스팅에서는 신뢰하는 프록시가 반드시 덮어쓰는 헤더만 `ENGAGEMENT_IP_HEADER`로 지정합니다. Vercel 외 환경에서 빈 값은 헤더 기반 제한을 사용하지 않습니다. 이때도 브라우저별 제한은 유지됩니다.
 4. 새 데이터베이스로 바꾸는 경우 `wrangler.jsonc`의 계정·DB 식별자와 서버 환경 변수를 함께 바꾸고, `pnpm dlx wrangler@4.159.0 d1 execute blog-engagement --remote --file=db/migrations/0001_engagement.sql --yes`로 스키마를 적용합니다. 이 SQL은 재적용해도 기존 데이터가 삭제되지 않습니다.
-5. 배포 후 실제 글에서 댓글 등록·새로고침·좋아요·취소를 확인합니다. 이 작업에서는 앱을 배포하지 않았습니다.
+5. 배포 후 실제 글에서 댓글 등록·새로고침·좋아요·취소를 확인합니다. 메인 반영 및 운영 환경 설정은 `docs/deployment.md`에 기록합니다.
 
 DB 식별자는 비밀이 아니지만 토큰·서명 비밀키·쿠키·로컬 DB는 Git에 넣지 않습니다. DB 권한·스키마·토큰이 잘못됐을 때 성공한 것처럼 표시하거나 다른 저장소로 대체하지 않고 503과 재시도를 제공합니다.
 

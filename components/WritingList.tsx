@@ -19,10 +19,6 @@ export function WritingList({ posts }: { posts: Post[] }) {
         <BlogSearch posts={posts} />
       </div>
 
-      {posts.some(post => post.demo) && (
-        <p className="mb-4 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">화면 확인을 위한 예시 글입니다.</p>
-      )}
-
       {posts.length === 0 ? (
         <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">아직 작성된 글이 없습니다.</p>
       ) : (

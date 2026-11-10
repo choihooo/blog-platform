@@ -380,64 +380,6 @@ samp {
 }
 
 /* ------------------------------------------------------------
-   4. 커스텀 애니메이션
-   - --animate-<이름> 을 선언하면 animate-<이름> 클래스가 생긴다
-   - keyframes는 실제로 쓰일 때만 번들에 포함된다
-   ------------------------------------------------------------ */
-
-@theme {
-  /* 등장: 아래에서 떠오르며 페이드인 (등장 순서 데모) */
-  --animate-fade-up: fade-up 0.8s ease-in-out both;
-
-  /* 등장: 단순 페이드인 (모달 배경, 툴팁) */
-  --animate-fade-in: fade-in 0.3s ease-out both;
-
-  /* 등장: 기울어진 채 튀어올라 바운스로 안착 (모달 데모) */
-  --animate-pop-in: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-
-  /* 회전: iOS 스피너처럼 8스텝으로 끊어 돌기 (스피너 데모) */
-  --animate-spinner-slow: spinner-rotate 2s steps(8) infinite;
-  --animate-spinner-fast: spinner-rotate 0.7s steps(8) infinite;
-
-  @keyframes fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes pop-in {
-    from {
-      opacity: 0;
-      transform: translateY(48px) scale(0.5) rotate(-6deg);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1) rotate(0deg);
-    }
-  }
-
-  @keyframes spinner-rotate {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-}
-
-/* ------------------------------------------------------------
    5. 코드 블록 (rehype-pretty-code / shiki)
    - 마크다운 빌드 결과물이라 Tailwind 클래스를 붙일 수 없어
      전역 CSS로 스타일링한다
@@ -449,6 +391,7 @@ samp {
   border-radius: 0.75rem;
   border: 1px solid #e5e5e5;
   background: #fafafa;
+  color: var(--foreground);
   padding: 1rem 0;
 }
 

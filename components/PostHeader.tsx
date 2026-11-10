@@ -6,7 +6,7 @@ function formatDate(date: string) {
   });
 }
 
-export function PostHeader({ title, date, demo = false }: { title: string; date: string; demo?: boolean }) {
+export function PostHeader({ title, date }: { title: string; date: string }) {
   return (
     <header className="not-prose mb-12">
       <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
@@ -16,11 +16,6 @@ export function PostHeader({ title, date, demo = false }: { title: string; date:
       >
         {formatDate(date)}
       </time>
-      {demo && (
-        <p className="mt-3 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-          화면 확인을 위한 예시 글입니다.
-        </p>
-      )}
     </header>
   );
 }
