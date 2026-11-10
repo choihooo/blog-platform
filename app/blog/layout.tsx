@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArticleEngagement } from "@/components/ArticleEngagement";
 import type { ReactNode } from "react";
 
 export default function BlogLayout({ children }: { children: ReactNode }) {
@@ -13,6 +14,7 @@ export default function BlogLayout({ children }: { children: ReactNode }) {
       <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:tracking-tight prose-a:underline-offset-4">
         {children}
       </article>
+      <ArticleEngagement />
     </div>
   );
 }

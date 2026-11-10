@@ -24,3 +24,7 @@ pnpm dev
 첫 공개 전까지 `SITE_INDEXABLE=false`를 유지합니다. `SITE_URL`은 canonical·공유 URL·사이트맵이 사용할 실제 운영 주소입니다. 기존 RAG·CMS·OAuth·DB 환경 변수는 현재 앱에 필요하지 않습니다.
 
 공유 이미지는 SUIT Bold 폰트에서 생성한 정적 파일입니다. 다시 만들 때는 로컬의 Pillow/fontTools 환경에서 `python3 scripts/generate-brand-assets.py`를 실행합니다. 운영 빌드에는 Python이 필요하지 않습니다.
+
+## 댓글과 좋아요
+
+글 하단에 로그인 없는 동물 닉네임 댓글과 취소 가능한 좋아요를 제공합니다. 서버 전용 D1 설정이 필요합니다. [D1 연결·로컬 실행·댓글 관리](docs/anonymous-engagement.md)를 참고하세요.

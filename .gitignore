@@ -34,3 +34,6 @@ archive/2026-11-10-legacy/
 preview/
 apps/
 .vercel
+
+# Local engagement preview database
+.local/

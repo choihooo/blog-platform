@@ -40,3 +40,14 @@ Vercel 대시보드의 Deployments에서 직전 정상 Production 배포를 선�
 ## GitHub Actions 상태 (2026-11-10)
 
 실행 42688896938은 코드 오류가 아니라 GitHub의 계정 결제 잠금으로 runner가 시작되지 못했습니다. 결제 설정은 변경하지 않았습니다. Vercel의 `pnpm build:release`는 동일한 테스트·lint·빌드를 직접 실행하므로 이 게이트를 통과한 배포만 반영합니다. GitHub CI 파일은 그대로 유지하며 계정 문제를 해결하면 다시 사용할 수 있습니다.
+
+## 댓글·좋아요 D1 연결
+
+2026-11-10 댓글·좋아요 기능을 메인에 반영하면서 이 프로젝트의 Production에 다음 서버 전용 환경 변수를 등록했습니다. 기존 사이트 주소·색인·그 밖의 환경 변수는 유지했습니다.
+
+- `CLOUDFLARE_ACCOUNT_ID`: 댓글용 D1이 속한 계정
+- `CLOUDFLARE_D1_DATABASE_ID`: 새 `blog-engagement` 데이터베이스
+- `CLOUDFLARE_D1_API_TOKEN`: 해당 계정의 D1 Edit 권한만 가진 운영 토큰 (Sensitive)
+- `ENGAGEMENT_SECRET`: 익명 브라우저 쿠키 서명과 식별자 HMAC에 사용하는 고정 비밀키 (Sensitive)
+
+Preview에서 이 기능을 사용하려면 해당 환경에도 별도로 등록합니다. 토큰·비밀키를 Git이나 빌드 명령 인자로 넣지 않습니다. 운영 스키마·댓글 관리·익명성 제한은 [댓글과 좋아요 운영 문서](anonymous-engagement.md)를 따릅니다.

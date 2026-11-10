@@ -10,8 +10,9 @@
     "test:article": "node --test lib/article-tools.test.mjs",
     "test:posts": "node --test lib/post-list.test.mjs lib/debounce.test.mjs",
     "test:release": "node --test lib/release-boundary.test.mjs",
-    "test": "node --test lib/*.test.mjs app/blog/typescript-compiler-performance/visuals/*.test.mjs",
-    "build:release": "pnpm test && pnpm lint && pnpm build"
+    "test": "node --test lib/*.test.mjs app/blog/typescript-compiler-performance/visuals/*.test.mjs lib/engagement/*.test.mjs",
+    "build:release": "pnpm test && pnpm lint && pnpm build",
+    "test:engagement": "node --test lib/engagement/*.test.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
