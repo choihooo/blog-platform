@@ -8,7 +8,7 @@
     "app/fonts/suit/SUIT-Variable.woff2": "aa894a204d5a6fbae259dac6868d350cbd373a390caee0313f92946af741df23",
     "app/globals.css": "7c44bca0f373975d7114b0954896e059a34751ea6768acaed3a09dd8e6d02198",
     "app/icon.svg": "f1ac15d2a45c66b77c700768c29e4f713cbd193da13d2cafbcdaf233de5b79d1",
-    "app/layout.tsx": "026ee6894e9751d2410191e9400adea0445e532952bdfc12f07b67256d345a6d",
+    "app/layout.tsx": "668bd42f8e6563718bfc1680b13fc59ddc9b9d2f5685f3b97ece1dd7b4c40405",
     "app/opengraph-image.png": "3b0c0dfa99df32a36516d3741102187640a971cd0b3cb088c8dabf97254c06e4",
     "app/page.tsx": "203c68777cf6a01921f508828fd4399f81768ed5046d68d6c629bd2c0b7349fe",
     "app/robots.ts": "6883ee193e17df31dea3bb4bfbf77b6620845fcfc6cfeffe54cd6f7e73cd2992",
@@ -44,6 +44,8 @@
     "lib/engagement/store.mjs": "186bb295cf70d6c6ee3ae4683cd4481425964f19e86b0d4dad72831d6b5331f8",
     "lib/engagement/database.mjs": "7e2ee6752c3e30cb39d6c100c9d1c41c6b40d53e452171a8ee98c105221bdd72",
     "lib/engagement/nickname.mjs": "63d96a8f362920b37acc2feb3186def692c20e04f4bf53fb40fcfb631262e102",
-    "lib/engagement/profile.test.mjs": "c3f7fb8d8f93ab2d18f1796ff7bec75da088d1a79ee568eb3049a2596df09135"
+    "lib/engagement/profile.test.mjs": "c3f7fb8d8f93ab2d18f1796ff7bec75da088d1a79ee568eb3049a2596df09135",
+    "components/ScrollToTop.tsx": "00b740aa0f745d5c1cff9bd250475c0607071646cec76b3f45dfd82ed1ab3a68",
+    "components/ScrollToTop.module.css": "fa9d83bd359d8dd0dec475a1cff48c4c22eac6ea17db02b54e57addefa247e4f"
   }
 }

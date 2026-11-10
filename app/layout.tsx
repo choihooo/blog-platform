@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 import { getSiteConfig } from "@/lib/site";
 import { FooterLinks } from "@/components/FooterLinks";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 const site = getSiteConfig();
 
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <FooterLinks linkedinUrl="https://www.linkedin.com/in/howuchoi/" />
           </footer>
         </div>
+        <ScrollToTop />
       </body>
     </html>
   );
