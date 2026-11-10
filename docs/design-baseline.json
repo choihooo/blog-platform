@@ -6,7 +6,7 @@
     "app/blog/_template/page.mdx": "22e4cff2294f5f28fe949ef903ef13a02ca064e9e7ba287d95c6fc92f60dddf8",
     "app/blog/layout.tsx": "492b8def205efb9d08243465194a123fb0f2dba7906a3ed7891ee6ad1c4e8e1e",
     "app/fonts/suit/SUIT-Variable.woff2": "aa894a204d5a6fbae259dac6868d350cbd373a390caee0313f92946af741df23",
-    "app/globals.css": "0cd94e31571112fb24edb83f6957f315d25c7d661ef376a9bcad664d7061d4c3",
+    "app/globals.css": "e5de928d92ea3e2231b2b349ba8f7d51ec821e7642a8c1dd61c9fd7058529b06",
     "app/icon.svg": "f1ac15d2a45c66b77c700768c29e4f713cbd193da13d2cafbcdaf233de5b79d1",
     "app/layout.tsx": "026ee6894e9751d2410191e9400adea0445e532952bdfc12f07b67256d345a6d",
     "app/opengraph-image.png": "3b0c0dfa99df32a36516d3741102187640a971cd0b3cb088c8dabf97254c06e4",
@@ -28,7 +28,7 @@
     "lib/site.ts": "c144f92309655a5a46acff2ad462fefaac121c175da3dff1fc0c2d6c191a1484",
     "mdx-components.tsx": "b3f4a72cb2e1189c717a60ee094d76a47bad18ddb6aeffdb6e1871bf8cc4ae45",
     "next.config.ts": "db2ee6405ca6949f2a51de6e7e8c8c01e1d0b5c21389ea6365dc7fc3b0a678f9",
-    "package.json": "3216974b9790040f6dbc001cc52bb01d1276eadac55ad698d597ef63aed9b805",
+    "package.json": "6de164dfb31eb6dbd189d468cc219e4b4821b86f98f7ef9d6925495ad5e0f9ae",
     "pnpm-lock.yaml": "c47aed0363b2574701d3c18a293418919ae10cdf56edbf63017ec112cfde59e8",
     "postcss.config.mjs": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
   }

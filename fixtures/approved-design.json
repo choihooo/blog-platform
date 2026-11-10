@@ -1,6 +1,6 @@
 {
   "sha256": {
-    "app/globals.css": "0cd94e31571112fb24edb83f6957f315d25c7d661ef376a9bcad664d7061d4c3",
+    "app/globals.css": "e5de928d92ea3e2231b2b349ba8f7d51ec821e7642a8c1dd61c9fd7058529b06",
     "components/ProfileIntro.tsx": "b312d23f64aeca0c56564fb9633f09dffe15c59b6dadda603ee66e8553cb424e",
     "components/SiteHeader.tsx": "f6d9b573cf44d9ab52d402bbb76ad3f45dd1a5211ea621dc44ca2e1df306c73a",
     "components/BlogSearch.tsx": "042b1afaf8413a00735ccc97c9da8bd71918502583d55768e3b94df9cbde8a50",
@@ -12,5 +12,5 @@
     "components/FooterLinks.tsx": "11676e779005032855f9e0121d606f92805e7a098b21ce2df2755414adb4a198"
   },
   "layout_body_sha256": "f6cb89bc25e029d06d8b41cafb3268d8583b725bbfb11153aa5a3fb1f3665a9b",
-  "user_approved_update": "2026-11-10: unused demo CSS and unreachable demo notices removed; all production style values and features preserved"
+  "user_approved_update": "2026-11-10: unused demo CSS and unreachable demo notices removed; all production style values and features preserved; txt/default code foreground follows page theme (#171717 light, #ededed dark), token colors and code sizes preserved"
 }

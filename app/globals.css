@@ -391,6 +391,7 @@ samp {
   border-radius: 0.75rem;
   border: 1px solid #e5e5e5;
   background: #fafafa;
+  color: var(--foreground);
   padding: 1rem 0;
 }
 
