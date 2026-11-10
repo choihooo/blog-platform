@@ -1,0 +1,45 @@
+.scroller { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; border-radius: 8px; }
+.scroller:focus-visible { outline: 2px solid #ff6f0f; outline-offset: 4px; }
+.canvas { position: relative; min-width: 560px; width: 560px; margin-inline: auto; }
+.connections { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--muted); }
+.line { fill: none; stroke: currentColor; stroke-width: 1.25; }
+.edgeLabel { fill: currentColor; font-size: 11px; font-family: inherit; paint-order: stroke; stroke: var(--diagram-bg, #fff); stroke-width: 5px; stroke-linejoin: round; }
+.added { color: #ff6f0f; }
+.added .edgeLabel { fill: #ac4200; }
+.error { color: #c23b3b; }
+.node { position: absolute; width: 27.857143%; height: 112px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); display: flex; flex-direction: column; gap: 6px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.icon { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; background: var(--line); color: var(--muted); }
+.title { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.detail { white-space: pre-line; overflow-wrap: anywhere; font-size: 11px; line-height: 1.6; color: var(--muted); }
+.addedNode { border-color: #ff6f0f; }
+.addedNode .icon { background: #fff6ed; color: #ff6f0f; }
+.badge { font-size: 10px; color: #ac4200; }
+.errorNode { border-style: dashed; border-color: #c23b3b; }
+.errorNode .icon { color: #c23b3b; background: #fff5f5; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: -4px 0 16px; color: var(--muted); font-size: 11px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ff6f0f; }
+/* Deployment boundaries are distinct from the services inside them. */
+.nodeContents { display: flex; flex-direction: column; gap: 6px; }
+.deployment { height: 220px; padding: 10px; gap: 12px; background: transparent; border-radius: 12px; }
+.host { font-size: 10px; color: var(--muted); line-height: 1.5; }
+.service { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: var(--surface); border-radius: 8px; min-width: 0; }
+.gateway { display: flex; align-items: flex-start; gap: 5px; font-size: 10px; line-height: 1.5; color: var(--muted); }
+.gateway svg { flex-shrink: 0; margin-top: 2px; }
+.vmLabel { font-size: 10px; color: var(--muted); }
+.support { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 16px; }
+.supportServices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.supportServices > span { display: flex; align-items: flex-start; gap: 6px; min-width: 0; font-size: 11px; }
+.supportServices svg { flex-shrink: 0; margin-top: 2px; color: var(--muted); }
+.supportServices small { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
+@media (max-width: 480px) { .supportServices { grid-template-columns: 1fr; } }
+@media (prefers-color-scheme: dark) {
+  .canvas { --diagram-bg: #0a0a0a; }
+  .addedNode .icon { background: #2a1b10; }
+  .badge { color: #ffb47f; }
+  .added .edgeLabel { fill: #ffb47f; }
+  .error { color: #ef9292; }
+  .errorNode { border-color: #ef9292; }
+  .errorNode .icon { color: #ef9292; background: #2c1717; }
+}

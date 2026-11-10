@@ -1,6 +1,6 @@
 {
   "sha256": {
-    "app/globals.css": "c69b03e0658cc92abb95e71f395018e50180f9e54c0b8d823c3017ad27f04ab8",
+    "app/globals.css": "7c44bca0f373975d7114b0954896e059a34751ea6768acaed3a09dd8e6d02198",
     "components/ProfileIntro.tsx": "b312d23f64aeca0c56564fb9633f09dffe15c59b6dadda603ee66e8553cb424e",
     "components/SiteHeader.tsx": "f6d9b573cf44d9ab52d402bbb76ad3f45dd1a5211ea621dc44ca2e1df306c73a",
     "components/BlogSearch.tsx": "042b1afaf8413a00735ccc97c9da8bd71918502583d55768e3b94df9cbde8a50",
@@ -15,5 +15,5 @@
     "components/AnimalAvatar.tsx": "5dc414d296c1b9294b8a034eb6068c6d5bc7ceb6e911adf902a796b7e83866ad"
   },
   "layout_body_sha256": "f6cb89bc25e029d06d8b41cafb3268d8583b725bbfb11153aa5a3fb1f3665a9b",
-  "user_approved_update": "2026-11-10: unused demo CSS and unreachable demo notices removed; all production style values and features preserved; txt/default code foreground follows page theme (#171717 light, #ededed dark), token colors and code sizes preserved; 2026-11-10: user-approved anonymous comments, nickname-linked animal avatars and optimistic primary-colored likes added to article footer; existing site and article styles preserved; 2026-11-10: user-requested primary #FF6F0F hover for header and footer links, main article and deployment settings preserved"
+  "user_approved_update": "2026-11-10: unused demo CSS and unreachable demo notices removed; all production style values and features preserved; txt/default code foreground follows page theme (#171717 light, #ededed dark), token colors and code sizes preserved; 2026-11-10: user-approved anonymous comments, nickname-linked animal avatars and optimistic primary-colored likes added to article footer; existing site and article styles preserved; 2026-11-10: user-requested primary #FF6F0F hover for header and footer links, main article and deployment settings preserved; 2026-11-11: user-approved current table-of-contents design synchronized with DESIGN.md and docs/design-baseline.json: transparent background, top/bottom separators, 12px text, compact spacing, #/## prefixes and primary-colored hover"
 }

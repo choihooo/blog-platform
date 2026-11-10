@@ -454,13 +454,11 @@ code[data-theme*=" "] span {
 
 /* 상세 글 도구: 기존 본문·코드의 크기와 프레임은 유지한다. */
 .article-toc {
-  margin-bottom: 48px;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  background: #fafafa;
-  padding: 16px;
-  font-size: 14px;
-  line-height: 20px;
+  margin-bottom: 32px;
+  border-block: 1px solid #e5e5e5;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 18px;
   color: #737373;
 }
 
@@ -477,10 +475,10 @@ code[data-theme*=" "] span {
 .article-toc ol {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 16px 0 0;
+  gap: 4px;
+  margin: 12px 0 0;
   border-top: 1px solid #e5e5e5;
-  padding: 16px 0 0;
+  padding: 12px 0 0;
   list-style: none;
 }
 
@@ -494,9 +492,18 @@ code[data-theme*=" "] span {
   text-underline-offset: 4px;
 }
 
+.article-toc a::before {
+  content: "#";
+  margin-right: 8px;
+}
+
+.article-toc-subitem a::before {
+  content: "##";
+}
+
 .article-toc a:hover,
 .article-toc summary:hover {
-  color: var(--foreground);
+  color: #FF6F0F;
   text-decoration: underline;
 }
 
@@ -560,7 +567,6 @@ code[data-theme*=" "] span {
 @media (prefers-color-scheme: dark) {
   .article-toc {
     border-color: #262626;
-    background: #111111;
   }
 
   .article-toc ol {
