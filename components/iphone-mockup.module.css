@@ -1,0 +1,12 @@
+.phone { box-sizing: border-box; position: relative; width: min(100%, 350px); padding: 7px; border: 2px solid #575757; border-radius: 48px; background: #181818; font: inherit; }
+.phone *, .phone *::before, .phone *::after { box-sizing: border-box; }
+.phone::before, .phone::after { content: ''; position: absolute; width: 3px; background: #575757; border-radius: 2px; }
+.phone::before { left: -4px; top: 104px; height: 50px; }
+.phone::after { right: -4px; top: 155px; height: 66px; }
+.screen { isolation: isolate; position: relative; aspect-ratio: 390 / 800; overflow: hidden; border-radius: 39px; background: #f5f3ef; color: #202020; container-type: inline-size; }
+.statusBar { position: absolute; inset: 0 0 auto; z-index: 6; display: flex; justify-content: space-between; align-items: center; height: 43px; padding: 0 22px; pointer-events: none; font-size: 12px; }
+.statusBar[data-tone='light'] { color: #fff; }
+.statusIcons { display: flex; align-items: center; gap: 3px; }
+.island { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 88px; height: 24px; background: #111; border-radius: 20px; }
+.homeIndicator { position: absolute; bottom: 8px; left: 50%; width: 30%; height: 4px; border-radius: 4px; background: #fff; transform: translateX(-50%); z-index: 7; pointer-events: none; }
+@media (max-width: 480px) { .phone { border-radius: 40px; padding: 6px; } .screen { border-radius: 32px; } }
