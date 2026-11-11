@@ -37,3 +37,6 @@ apps/
 
 # Local engagement preview database
 .local/
+
+# Local verification screenshots and generated comparison artifacts
+output/

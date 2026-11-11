@@ -7,9 +7,12 @@ archive/
 preview/
 apps/
 docs/
-scripts/
+scripts/*
+!scripts/check-deployment.mjs
 node_modules/
 .next/
 coverage/
+output/
+.local/
 *.log
 *.tsbuildinfo

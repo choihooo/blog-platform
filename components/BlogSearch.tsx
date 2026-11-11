@@ -5,27 +5,47 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Post } from "@/lib/posts";
 import { filterPosts } from "@/lib/post-list";
 import { createDebouncedTask } from "@/lib/debounce";
+import { highlightSearchMatches } from "@/lib/search-highlight";
+import { trackEvent } from "@/lib/analytics";
+
+function SearchText({ text, query }: { text: string; query: string }) {
+  return highlightSearchMatches(text, query).map((part, index) => part.matched
+    ? <mark key={index} className="blog-search-highlight">{part.text}</mark>
+    : part.text);
+}
 
 export function BlogSearch({ posts }: { posts: Post[] }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const composing = useRef(false);
+  const trackedQuery = useRef("");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const search = useMemo(() => createDebouncedTask<string>(setSearchQuery, 300), []);
+  const [searchCompletion, setSearchCompletion] = useState(0);
+  const search = useMemo(() => createDebouncedTask<string>(value => {
+    setSearchQuery(value);
+    setSearchCompletion(current => current + 1);
+  }, 300), []);
   const searching = searchQuery.trim().length > 0;
   const pending = open && query.trim().length > 0 && query !== searchQuery;
   const matches = useMemo(() => searching ? filterPosts(posts, searchQuery) : [], [posts, searchQuery, searching]);
+
+  useEffect(() => {
+    const trimmed = searchQuery.trim();
+    if (!open || pending || composing.current || !trimmed || trackedQuery.current === trimmed) return;
+    trackedQuery.current = trimmed;
+    trackEvent("blog_search", { query_length: Array.from(trimmed).length, result_count: matches.length });
+  }, [searchCompletion, open, pending, searchQuery, matches.length]);
 
   useEffect(() => () => search.cancel(), [search]);
 
   function updateQuery(value: string) {
     setQuery(value);
     search.cancel();
-    if (!value.trim()) setSearchQuery("");
-    else if (!composing.current) search.schedule(value);
+    if (!value.trim()) { setSearchQuery(""); trackedQuery.current = ""; }
+    else search.schedule(value);
   }
 
   useEffect(() => {
@@ -39,6 +59,7 @@ export function BlogSearch({ posts }: { posts: Post[] }) {
     dialog.current?.showModal();
     setOpen(true);
     input.current?.focus();
+    trackEvent("search_open", {});
   }
 
   function closeSearch() {
@@ -64,6 +85,7 @@ export function BlogSearch({ posts }: { posts: Post[] }) {
           search.cancel();
           setQuery("");
           setSearchQuery("");
+          trackedQuery.current = "";
           composing.current = false;
           trigger.current?.focus();
         }}
@@ -87,7 +109,6 @@ export function BlogSearch({ posts }: { posts: Post[] }) {
             }}
             onCompositionStart={() => {
               composing.current = true;
-              search.cancel();
             }}
             onCompositionEnd={event => {
               composing.current = false;
@@ -113,11 +134,14 @@ export function BlogSearch({ posts }: { posts: Post[] }) {
             <p className="blog-search-empty">일치하는 글이 없습니다. 다른 단어로 검색해 보세요.</p>
           ) : (
             <ul>
-              {matches.map(post => (
+              {matches.map((post, index) => (
                 <li key={post.slug}>
-                  <Link href={`/blog/${post.slug}`} onClick={closeSearch}>
-                    <span className="blog-search-result-title">{post.title}</span>
-                    <span className="blog-search-result-description">{post.description}</span>
+                  <Link href={`/blog/${post.slug}`} onClick={() => {
+                    trackEvent("search_result_click", { article_slug: post.slug, result_position: index + 1 });
+                    closeSearch();
+                  }}>
+                    <span className="blog-search-result-title"><SearchText text={post.title} query={searchQuery} /></span>
+                    <span className="blog-search-result-description"><SearchText text={post.description} query={searchQuery} /></span>
                     <time dateTime={post.date}>{post.date.replaceAll("-", ".")}</time>
                   </Link>
                 </li>

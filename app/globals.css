@@ -229,6 +229,11 @@ body * {
   line-height: 22.75px;
 }
 
+.blog-search-highlight {
+  color: #ff6f0f;
+  background: transparent;
+}
+
 .blog-search-results time,
 .blog-search-empty {
   color: #737373;

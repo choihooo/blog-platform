@@ -7,6 +7,7 @@ import { loadProfileNickname, changeProfileNickname } from "@/lib/engagement/pro
 import { AnimalAvatar } from "@/components/AnimalAvatar";
 import { startLike, restoreLike, startComment, confirmComment, removePendingComment, type ArticleComment as Comment, type EngagementState as State } from "@/lib/engagement/optimistic";
 import styles from "./ArticleEngagement.module.css";
+import { trackEvent } from "@/lib/analytics";
 
 const EMPTY: State = { comments: [], commentCount: 0, likeCount: 0, liked: false, nextCursor: null };
 
@@ -88,6 +89,7 @@ function Engagement({ slug }: { slug: string }) {
       setState(current => confirmComment(current, data.comment));
       draft.current = null;
       setNotice("댓글을 남겼어요.");
+      trackEvent("comment_submit", { article_slug: slug }, `/blog/${slug}`);
     } catch (error) {
       setState(current => removePendingComment(current, submitted.id));
       setBody(originalBody);
@@ -108,6 +110,7 @@ function Engagement({ slug }: { slug: string }) {
     try {
       const data = await request<{ liked: boolean; likeCount: number }>(endpoint, { action: "like", liked });
       setState(current => ({ ...current, ...data }));
+      trackEvent("article_like", { article_slug: slug, like_action: data.liked ? "like" : "unlike" }, `/blog/${slug}`);
     } catch (error) {
       setState(current => restoreLike(current, before));
       setLikeError(message(error));

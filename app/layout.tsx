@@ -5,6 +5,7 @@ import "./globals.css";
 import { getSiteConfig } from "@/lib/site";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { Analytics } from "@/components/Analytics";
 
 const site = getSiteConfig();
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </footer>
         </div>
         <ScrollToTop />
+        <Analytics />
       </body>
     </html>
   );

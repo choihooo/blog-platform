@@ -12,3 +12,13 @@
 - 이전 HTML 시안·데모·디자인 비교 자료는 현재 앱에서 제거했습니다. 이전 레포 원본 아카이브는 보존합니다.
 - 메인↔상세 이동, 모바일 가로 넘침, 키보드 초점을 검증합니다.
 - 로컬 설정·비밀키·의존성·생성물을 커밋하지 않습니다.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

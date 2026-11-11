@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export function CodeBlock({ children, ...props }: ComponentProps<"pre">) {
   const pre = useRef<HTMLPreElement>(null);
@@ -14,14 +15,21 @@ export function CodeBlock({ children, ...props }: ComponentProps<"pre">) {
   async function copy() {
     if (reset.current) clearTimeout(reset.current);
     const code = pre.current?.querySelector("code");
+    const pagePath = window.location.pathname;
+    const context = {
+      code_language: code?.getAttribute("data-language") || pre.current?.getAttribute("data-language") || "text",
+      code_index: Array.from(document.querySelectorAll("article pre")).indexOf(pre.current!) + 1,
+    };
     setState("copying");
     try {
       if (!code || !navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(code.textContent ?? "");
       setState("copied");
       reset.current = setTimeout(() => setState("idle"), 2000);
+      trackEvent("code_copy", { ...context, copy_status: "success" }, pagePath);
     } catch {
       setState("error");
+      trackEvent("code_copy", { ...context, copy_status: "error" }, pagePath);
     }
   }
 
