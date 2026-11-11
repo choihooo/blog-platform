@@ -1,0 +1,28 @@
+.structure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr) 40px minmax(0, 1fr);
+  align-items: start;
+}
+.card {
+  min-width: 0;
+  min-height: 148px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.scope { display: block; color: var(--muted); font-size: 10px; margin-bottom: 10px; }
+.title { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 1.5; }
+.icon { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 6px; background: var(--surface); color: var(--muted); }
+.card p { margin: 10px 0 0; font-size: 11px; line-height: 1.65; overflow-wrap: anywhere; }
+.detail { display: block; margin-top: 6px; font-size: 10px; color: var(--muted); }
+.message { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 148px; color: var(--chart-primary); font-size: 10px; }
+.message span { color: var(--muted); }
+.pageSide { min-width: 0; }
+.domLink { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px 0; color: var(--muted); font-size: 10px; }
+.page { display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 10px; font-size: 11px; }
+@media (max-width: 560px) {
+  .structure { grid-template-columns: minmax(0, 1fr); }
+  .card { min-height: 0; }
+  .message { height: 46px; flex-direction: row; gap: 12px; }
+  .message svg { transform: rotate(90deg); }
+}
