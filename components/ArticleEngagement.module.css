@@ -31,6 +31,11 @@
 .randomize:not(:disabled):hover { color: var(--foreground); }
 .form textarea { display: block; width: 100%; min-height: 120px; padding: 12px; resize: vertical; border: 1px solid var(--engagement-border); border-radius: 10px; background: transparent; color: var(--foreground); font: inherit; line-height: 1.7; caret-color: var(--foreground); }
 .form textarea::placeholder { color: var(--engagement-muted); opacity: 1; }
+
+/* Include touch devices in landscape to prevent iOS focus zoom. */
+@media (max-width: 639px), (pointer: coarse) {
+  .form textarea { font-size: 16px; }
+}
 .policy { margin-top: 10px; line-height: 1.7; }
 .submitRow { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 16px; }
 .counter { font-variant-numeric: tabular-nums; }

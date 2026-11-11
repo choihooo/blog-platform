@@ -104,6 +104,13 @@ body * {
   color: #737373;
 }
 
+/* iOS zooms focused form fields when their text is smaller than 16px. */
+@media (max-width: 639px), (pointer: coarse) {
+  .writing-search-input {
+    font-size: 16px;
+  }
+}
+
 .writing-search-input::-webkit-search-cancel-button {
   display: none;
 }
