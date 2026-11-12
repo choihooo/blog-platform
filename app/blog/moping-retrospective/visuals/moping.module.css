@@ -67,11 +67,26 @@
 @container (max-width: 280px) { .members { gap: 7px; } .frame .meetingTitle h3 { font-size: 15px; } .rowAction { font-size: 9px; } .placeRow { gap: 7px; } .placeRow strong { font-size: 12px; } }
 @media (prefers-reduced-motion: reduce) { .sheet, .pin img { transition: none; } }
 
-.sheetStates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 32px 0; }
-.snapshot { min-width: 0; margin: 0; padding: 0; border: 0; border-radius: 0; }
-.snapshot .toolbar { justify-content: center; margin-bottom: 12px; font-size: 12px; }
-.snapshot .stage { display: block; position: relative; height: calc(var(--snapshot-scale) * 700px); padding: 0; }
-.snapshot .snapshotPhone { position: absolute; top: 0; left: 0; width: 350px; padding: 7px; border-radius: 48px; transform: scale(var(--snapshot-scale)); transform-origin: top left; pointer-events: none; user-select: none; }
-.snapshot .snapshotScreen { border-radius: 39px; }
-.snapshot *, .snapshot *::before, .snapshot *::after { animation: none !important; transition: none !important; }
-@media (max-width: 480px) { .sheetStates { gap: 8px; } .snapshot { padding: 0; } .snapshot .toolbar { font-size: 11px; } }
+.embedded { margin: 20px 0 0; padding: 0; border: 0; }
+.switches { display: flex; flex-wrap: wrap; gap: 8px; }
+.switches button { border: 1px solid #d4d4d4; border-radius: 6px; padding: 8px 12px; background: transparent; color: inherit; font-size: 12px; }
+.switches button[aria-pressed='true'] { border-color: #ff6f0f; color: #ff6f0f; }
+.legacyTooltip { position: absolute; z-index: 4; top: 100px; left: 16px; right: 16px; padding: 14px; border-radius: 8px; color: #fff; background: #1d1d1d; }
+.legacyTooltip .placeHeading { margin-bottom: 0; }
+.legacyTooltip .detailButton { font-size: 12px !important; margin-top: 12px; }
+.heightLabel { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+.heightRange { display: block; width: 100%; margin: 12px 0 24px; accent-color: #ff6f0f; cursor: ew-resize; }
+.heightRange:focus-visible { outline: 2px solid #ff6f0f; outline-offset: 4px; }
+.heightComparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.travelColumn { min-width: 0; }
+.travelTitle { font-size: 12px; margin-bottom: 6px; }
+.travelValue { font-size: 11px; color: #737373; margin-bottom: 12px; }
+.travelColumn[data-sizing='responsive'] .travelValue { color: #ff6f0f; }
+.travelPhone { width: 100%; }
+.travelScreen { aspect-ratio: 390 / var(--demo-height); }
+.travelSheet { position: absolute; bottom: 0; left: 0; right: 0; background: #3f3f3f; border-radius: 18px 18px 0 0; border-top: 2px solid #737373; }
+.travelColumn[data-sizing='responsive'] .travelSheet { border-top-color: #ff6f0f; }
+.travelRows { display: grid; gap: 12px; padding: 8px 12px; }
+.travelRows span { display: block; height: 32px; border-radius: 4px; background: #525252; }
+@media (prefers-color-scheme: dark) { .switches button { border-color: #525252; } .switches button[aria-pressed='true'] { border-color: #ff6f0f; } .travelValue { color: #a3a3a3; } }
+@media (max-width: 480px) { .embedded { padding: 0; } .heightComparison { gap: 12px; } .travelTitle { min-height: 36px; } }

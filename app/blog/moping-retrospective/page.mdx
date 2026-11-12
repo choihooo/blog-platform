@@ -1,11 +1,12 @@
 {/* 원문: https://app.notion.com/p/41525d3f8c8b8089bf20dc8c0eeaec24
 2026-11-12 대화에서 확정한 1~7번 초안을 로컬 본문에 반영했습니다. 노션 원문은 이번에 수정하지 않았습니다.
-기존 데모는 유지했습니다.
+기존 지도 데모를 유지하고 목록 도입 전후 비교와 화면 높이별 이동 거리 비교를 추가했습니다.
 축약한 구현 세부사항과 사후 AI 검토 내용은 docs/articles/moping-retrospective.md에 보존했습니다.
 발행 월은 사용자 요청의 2024년 12월이며, 일자는 별도 지정이 없어 1일로 표기했습니다.
 데모의 지도·좌표·참여자·상세 설명은 예시이며 원본 앱의 실측 결과가 아닙니다. */}
 
 import { getPostMetadata } from "@/lib/site";
+import { MopingListComparison } from "./visuals/MopingListComparison";
 import { MopingDemo } from "./visuals/MopingDemo";
 import { MopingSheetStates } from "./visuals/MopingSheetStates";
 
@@ -51,6 +52,8 @@ export const metadata = getPostMetadata(post, "moping-retrospective");
 
 이렇게 바꾸면서 바텀시트는 등록된 장소를 훑어보는 목록이면서, 지도에서 선택한 장소의 정보를 확인하는 공간이 됐습니다. 핀을 선택할 때마다 지도 위 표시와 시트의 내용이 함께 바뀌어야 했고, 다음으로는 이 두 동작을 맞추는 작업이 필요했습니다.
 
+<MopingListComparison />
+
 ## 핀을 선택하고 해제하는 동작을 연결했습니다
 
 커스텀 핀을 구현하면서 어려웠던 부분은 선택과 해제 동작을 연결하는 일이었습니다. 선택한 핀은 다른 핀과 구분되도록 크게 표시했습니다. 그런데 누른 핀을 키우는 것만으로는 끝나지 않았습니다. 다른 핀을 누르면 이전 핀을 원래 크기로 돌려야 했고, 지도 빈 곳을 누르면 선택을 해제해야 했습니다.
@@ -80,6 +83,8 @@ export const metadata = getPostMetadata(post, "moping-retrospective");
 화면 크기가 달라도 비슷한 비율로 펼쳐지게 하고 싶었습니다. 그래서 화면 높이를 구간별로 나누고, 각 구간에 맞는 비율과 실제 화면 높이를 이용해 정지 위치를 계산하도록 바꿨습니다. 창 크기가 바뀌었을 때도 기준 위치를 다시 계산하도록 했습니다.
 
 시트의 위치를 조정하면서 안에 담긴 내용도 함께 살펴봤습니다. 접힌 상태에서는 모임과 참여자 정보를 보여주고, 펼치면 장소 목록을 살펴볼 수 있도록 했습니다. 지도를 보면서 장소 정보를 확인하는 화면인 만큼, 시트가 얼마나 올라오는지와 그 안에서 어떤 정보가 보이는지를 함께 맞춰가는 작업이었습니다.
+
+아래 데모는 당시 위쪽 정지점 계산을 사용해, 고정 500px과 화면 높이에 따라 계산한 이동 거리를 비교합니다. 원래 화면의 시트 배치는 단순화했고, 화면 아래를 기준선으로 두어 위로 이동하는 거리만 표시했습니다.
 
 <MopingSheetStates />
 
