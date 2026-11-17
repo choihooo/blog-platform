@@ -5,6 +5,8 @@ import "./globals.css";
 import { getSiteConfig } from "@/lib/site";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { themeScript } from "@/lib/theme.mjs";
 import { Analytics } from "@/components/Analytics";
 
 const site = getSiteConfig();
@@ -38,8 +40,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
+      suppressHydrationWarning
       className={`${suit.variable} h-full antialiased`}
     >
+      <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-6">
           <SiteHeader />
@@ -50,6 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </footer>
         </div>
         <ScrollToTop />
+        <ThemeToggle />
         <Analytics />
       </body>
     </html>

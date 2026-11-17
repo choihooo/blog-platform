@@ -1,0 +1,45 @@
+.figure {
+  --diagram-line: #e5e5e5;
+  --diagram-ink: #262626;
+  --diagram-muted: #737373;
+  --diagram-group: #fafafa;
+  --diagram-paper: #ffffff;
+  margin: 32px 0;
+  font-family: inherit;
+  font-weight: 700;
+}
+.scroller { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--diagram-line) transparent; }
+.scroller:focus-visible { outline: 2px solid #ff6f0f; outline-offset: 3px; }
+.canvas { display: block; width: 620px; max-width: none; height: 444px; color: var(--diagram-ink); font-family: inherit; font-weight: 700; }
+.canvas text { fill: currentColor; font-family: inherit; font-weight: 700; }
+.containers rect { fill: var(--diagram-group); stroke: var(--diagram-line); stroke-width: 1; rx: 6px; }
+.containers path { fill: none; stroke: var(--diagram-line); stroke-width: 1; }
+.containers text { font-size: 12px; }
+.connections path { fill: none; stroke: var(--diagram-muted); stroke-width: 1.1; stroke-linejoin: miter; }
+.edgeLabels rect { fill: var(--diagram-paper); }
+.edgeLabels text { fill: var(--diagram-muted); font-size: 10px; }
+.serviceTitle { font-size: 12px; }
+.detail { font-size: 11px; fill: var(--diagram-muted) !important; }
+.small { font-size: 10px; fill: var(--diagram-muted) !important; }
+.localDatabase { fill: #f5f5f5; stroke: #d4d4d4; stroke-width: 1; }
+.localDatabase .databaseLine { fill: none; }
+.serverDatabase { fill: #f5f5f5; stroke: #d4d4d4; stroke-width: 1; }
+.cacheIcon { color: var(--diagram-muted); }
+.canvas [data-service="nextjs"] { color: #000000; }
+.canvas [data-service="d1"] { color: #f38020; }
+.canvas [data-service="caddy"] { color: #1f88c0; }
+.darkLogo { display: none; }
+.diagramTitle { margin: 0 0 16px; color: var(--diagram-ink); font-size: 14px; line-height: 1.65; }
+.canvas.comparisonCanvas { height: 350px; }
+.canvas.phaseCanvas { height: 304px; }
+.laneBackground { fill: none; stroke: var(--diagram-line); stroke-width: 1; rx: 6px; }
+.flowNode > rect { fill: var(--diagram-group); stroke: var(--diagram-line); stroke-width: 1; rx: 6px; }
+.flowDatabase > path, .flowDatabase > ellipse { fill: #f5f5f5; stroke: #d4d4d4; stroke-width: 1; }
+.flowDatabase > text { fill: var(--diagram-ink); }
+.phaseDivider { fill: none; stroke: var(--diagram-line); stroke-width: 1; stroke-dasharray: 4 4; }
+:global(html[data-theme="dark"]) .figure { --diagram-line: #262626; --diagram-ink: #ededed; --diagram-muted: #a3a3a3; --diagram-group: #111111; --diagram-paper: #0a0a0a; }
+:global(html[data-theme="dark"]) .canvas [data-service="nextjs"] { color: #ffffff; }
+:global(html[data-theme="dark"]) .localDatabase, :global(html[data-theme="dark"]) .serverDatabase { fill: #171717; stroke: #404040; }
+:global(html[data-theme="dark"]) .flowDatabase > path, :global(html[data-theme="dark"]) .flowDatabase > ellipse { fill: #171717; stroke: #404040; }
+:global(html[data-theme="dark"]) .lightLogo { display: none; }
+:global(html[data-theme="dark"]) .darkLogo { display: block; }

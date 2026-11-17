@@ -40,5 +40,6 @@
 .legend i[data-state='error'] { background: var(--error); }
 .scrollHint { display: none; font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 @media (max-width: 480px) { .scrollHint { display: block; } .toolbar { align-items: flex-start; } .actions { margin-left: auto; } }
-@media (prefers-color-scheme: dark) { .root { --primary-ink: #ffb47f; --primary-wash: #2a1b10; --success: #63bf91; --success-wash: #11241c; --error: #ef9292; --error-wash: #2c1717; } .scroller { scrollbar-color: #525252 transparent; } }
+:global(html[data-theme="dark"]) .root { --primary-ink: #ffb47f; --primary-wash: #2a1b10; --success: #63bf91; --success-wash: #11241c; --error: #ef9292; --error-wash: #2c1717; }
+:global(html[data-theme="dark"]) .scroller { scrollbar-color: #525252 transparent; }
 @media (prefers-reduced-motion: reduce) { .root *, .root *::before, .root *::after { animation: none !important; transition: none !important; } }

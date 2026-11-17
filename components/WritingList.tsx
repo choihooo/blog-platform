@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Post } from "@/lib/posts";
 import { groupPostsByYear } from "@/lib/post-list";
 import { BlogSearch } from "@/components/BlogSearch";
+import { PostCounts, PostCountsProvider } from "@/components/PostCounts";
 
 function formatDate(date: string) {
   return new Date(`${date}T00:00:00+09:00`).toLocaleDateString("ko-KR", {
@@ -22,7 +23,7 @@ export function WritingList({ posts }: { posts: Post[] }) {
       {posts.length === 0 ? (
         <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">아직 작성된 글이 없습니다.</p>
       ) : (
-        <div className="flex flex-col gap-8">
+        <PostCountsProvider><div className="flex flex-col gap-8">
           {groups.map(({ year, posts: yearPosts }) => (
             <section key={year} aria-labelledby={`writing-year-${year}`}>
               <h3 id={`writing-year-${year}`} className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">{year}</h3>
@@ -34,14 +35,17 @@ export function WritingList({ posts }: { posts: Post[] }) {
                         <span className="font-medium">{post.title}</span>
                         <time dateTime={post.date} className="shrink-0 text-sm text-neutral-500 dark:text-neutral-400">{formatDate(post.date)}</time>
                       </span>
-                      <span className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{post.description}</span>
+                      <span className="post-description-row">
+                        <span className="min-w-0 flex-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{post.description}</span>
+                        <PostCounts slug={post.slug} />
+                      </span>
                     </Link>
                   </li>
                 ))}
               </ul>
             </section>
           ))}
-        </div>
+        </div></PostCountsProvider>
       )}
     </section>
   );

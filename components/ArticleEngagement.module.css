@@ -56,8 +56,6 @@
 .commentMeta time { color: var(--engagement-muted); font-size: 12px; }
 .commentContent p { margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .more { width: 100%; margin-top: 16px; }
-@media (prefers-color-scheme: dark) {
-  .avatar { --avatar-face: #a3a3a3; --avatar-ink: #404040; --avatar-light: #e5e5e5; }
-  .root { --engagement-border: #262626; --engagement-muted: #a3a3a3; --engagement-soft: #1f1f1f; }
-}
+:global(html[data-theme="dark"]) .avatar { --avatar-face: #a3a3a3; --avatar-ink: #404040; --avatar-light: #e5e5e5; }
+:global(html[data-theme="dark"]) .root { --engagement-border: #262626; --engagement-muted: #a3a3a3; --engagement-soft: #1f1f1f; }
 @media (prefers-reduced-motion: reduce) { .root button { transition: none; } }

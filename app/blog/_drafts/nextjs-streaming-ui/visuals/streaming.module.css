@@ -81,5 +81,5 @@
   .iconButton { width: 40px; height: 40px; }
   .selectLabel select { min-height: 44px; }
 }
-@media (prefers-color-scheme: dark) { .browser { background: #0a0a0a; } }
+:global(html[data-theme="dark"]) .browser { background: #0a0a0a; }
 @media (prefers-reduced-motion: reduce) { .root *, .root *::before, .root *::after { animation: none !important; transition: none !important; } }
