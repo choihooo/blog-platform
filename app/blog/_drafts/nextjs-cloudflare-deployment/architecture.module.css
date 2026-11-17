@@ -37,9 +37,9 @@
 .flowDatabase > path, .flowDatabase > ellipse { fill: #f5f5f5; stroke: #d4d4d4; stroke-width: 1; }
 .flowDatabase > text { fill: var(--diagram-ink); }
 .phaseDivider { fill: none; stroke: var(--diagram-line); stroke-width: 1; stroke-dasharray: 4 4; }
-:global(html[data-theme="dark"]) .figure { --diagram-line: #262626; --diagram-ink: #ededed; --diagram-muted: #a3a3a3; --diagram-group: #111111; --diagram-paper: #0a0a0a; }
+:global(html[data-theme="dark"]) .figure { --diagram-line: #737373; --diagram-ink: #d4d4d4; --diagram-muted: #b5b5b5; --diagram-group: #262626; --diagram-paper: var(--background); }
 :global(html[data-theme="dark"]) .canvas [data-service="nextjs"] { color: #ffffff; }
-:global(html[data-theme="dark"]) .localDatabase, :global(html[data-theme="dark"]) .serverDatabase { fill: #171717; stroke: #404040; }
-:global(html[data-theme="dark"]) .flowDatabase > path, :global(html[data-theme="dark"]) .flowDatabase > ellipse { fill: #171717; stroke: #404040; }
+:global(html[data-theme="dark"]) .localDatabase, :global(html[data-theme="dark"]) .serverDatabase { fill: var(--diagram-group); stroke: var(--diagram-line); }
+:global(html[data-theme="dark"]) .flowDatabase > path, :global(html[data-theme="dark"]) .flowDatabase > ellipse { fill: var(--diagram-group); stroke: var(--diagram-line); }
 :global(html[data-theme="dark"]) .lightLogo { display: none; }
 :global(html[data-theme="dark"]) .darkLogo { display: block; }

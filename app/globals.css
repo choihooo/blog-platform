@@ -21,6 +21,15 @@
 .post-counts > span { display: inline-flex; align-items: center; gap: 4px; }
 html[data-theme="dark"] .post-counts { color: #a3a3a3; }
 
+@media (max-width: 639px) {
+  .post-list-link { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; }
+  .post-heading, .post-description-row { display: contents; }
+  .post-title { grid-column: 1 / -1; grid-row: 1; }
+  .post-date { grid-column: 1; grid-row: 2; }
+  .post-counts { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; }
+  .post-description { grid-column: 1 / -1; grid-row: 3; margin-top: 4px; }
+}
+
 /* ------------------------------------------------------------
    2. 테마 토큰
    - :root에 라이트 모드 값을 선언하고, 다크 모드에서 덮어쓴다
@@ -35,8 +44,8 @@ html[data-theme="dark"] .post-counts { color: #a3a3a3; }
 
 :root[data-theme="dark"] {
     color-scheme: dark;
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #181818;
+    --foreground: #d4d4d4;
   }
 
 @theme inline {

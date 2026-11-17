@@ -30,13 +30,13 @@ export function WritingList({ posts }: { posts: Post[] }) {
               <ul className="flex flex-col">
                 {yearPosts.map(post => (
                   <li key={post.slug}>
-                    <Link href={`/blog/${post.slug}`} className="group -mx-3 flex flex-col gap-2 rounded-lg px-3 py-3 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-900">
-                      <span className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-                        <span className="font-medium">{post.title}</span>
-                        <time dateTime={post.date} className="shrink-0 text-sm text-neutral-500 dark:text-neutral-400">{formatDate(post.date)}</time>
+                    <Link href={`/blog/${post.slug}`} className="post-list-link group -mx-3 flex flex-col gap-2 rounded-lg px-3 py-3 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-900">
+                      <span className="post-heading flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                        <span className="post-title font-medium">{post.title}</span>
+                        <time dateTime={post.date} className="post-date shrink-0 text-sm text-neutral-500 dark:text-neutral-400">{formatDate(post.date)}</time>
                       </span>
                       <span className="post-description-row">
-                        <span className="min-w-0 flex-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{post.description}</span>
+                        <span className="post-description min-w-0 flex-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{post.description}</span>
                         <PostCounts slug={post.slug} />
                       </span>
                     </Link>
