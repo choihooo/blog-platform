@@ -131,7 +131,7 @@ typography:
 
 여백은 CSS 선언 또는 계산된 스타일 값입니다. 인접한 블록 마진은 브라우저의 마진 겹침 규칙을 따르므로 두 값을 단순 합산해 간격을 다시 만들지 않습니다. 첫·마지막 요소 및 제목 바로 다음 요소의 예외도 현재 Typography 플러그인 규칙을 유지합니다.
 
-인용문·목록·이미지·수평선·나머지 제목 등 MDX 기본 요소는 현재 `prose prose-neutral dark:prose-invert`와 `@tailwindcss/typography` 0.5.20의 규칙을 유지합니다. `not-prose` 요소에는 본문 규칙을 일괄 적용하지 않습니다. 세부 구현과 의존성의 확정 시점 해시는 [디자인 기준 기록](docs/design-baseline.json)에 보관합니다.
+인용문·목록·이미지·수평선·나머지 제목 등 MDX 기본 요소는 현재 `prose prose-neutral dark:prose-invert`와 `@tailwindcss/typography` 0.5.20의 규칙을 유지합니다. `not-prose` 요소에는 본문 규칙을 일괄 적용하지 않습니다. 주요 UI 파일의 확정 시점 해시는 [승인 디자인 기록](fixtures/approved-design.json)에 보관합니다.
 
 ## 코드 영역
 
@@ -200,7 +200,7 @@ typography:
 
 메인·상세의 실제 브라우저 계산값과 CSS/클래스를 대조해 기록했습니다. 모바일·다크 모드 값은 소스의 미디어 쿼리와 Tailwind 클래스를 기준으로 기록했습니다. 이 문서 등록 과정에서 앱 소스·스타일·화면은 변경하지 않았습니다.
 
-[docs/design-baseline.json](docs/design-baseline.json)은 확정 시점의 앱·컴포넌트·설정·잠금 파일에 대한 SHA-256 목록입니다. 표에 적지 않은 세부 스타일까지 향후 변경 여부를 비교할 수 있는 기준이며, 실행 코드가 아닙니다. 사용자가 디자인 변경을 요청하면 관련 문서와 기준 기록도 갱신합니다.
+[fixtures/approved-design.json](fixtures/approved-design.json)은 주요 UI 파일의 SHA-256 목록입니다. 표에 적지 않은 세부 스타일의 변경 여부도 비교하는 기준이며, 실행 코드가 아닙니다. 사용자가 디자인 변경을 요청하면 이 문서와 기준 기록도 갱신합니다.
 
 ## 적용 범위와 구현 위치
 
@@ -247,7 +247,7 @@ LinkedIn 주소는 사용자가 제공한 https://www.linkedin.com/in/howuchoi/ 
 - 목록은 행마다 위 구분선·상하 패딩 24px, 닉네임·날짜 다음 본문 간격 8px입니다. 본문의 줄바꿈은 유지하고 긴 단어는 영역 안에서 줄바꿈합니다. 이전 댓글은 20개씩 더 불러옵니다.
 - 색상은 기존 전경·배경·neutral 테두리와 보조 글자만 사용합니다. 라이트 테두리 #e5e5e5·보조 글자 #737373·옅은 배경 #f5f5f5, 다크 #262626·#a3a3a3·#1f1f1f입니다. 사용자 요청으로 선택된 좋아요 버튼에 주황 적용을 추가합니다.
 - 모든 동작 버튼·입력창은 키보드 포커스를 제공하고 상태·실패는 스크린 리더에 알립니다. 포커스 outline 2px·offset 4px, 버튼 색상 전환 150ms이며 reduced-motion에서는 전환을 끕니다. 저장 실패 시 입력을 보존하고 재시도하며 초기 조회도 15초 제한 뒤 재시도를 제공합니다.
-- 구현: `components/ArticleEngagement.tsx`, `components/ArticleEngagement.module.css`, `lib/engagement/`, `app/api/engagement/[slug]/route.ts`. 운영 설정은 `docs/anonymous-engagement.md`에 기록합니다.
+- 구현: `components/ArticleEngagement.tsx`, `components/ArticleEngagement.module.css`, `lib/engagement/`, `app/api/engagement/[slug]/route.ts`.
 
 ### 좋아요·댓글의 즉시 반영
 
