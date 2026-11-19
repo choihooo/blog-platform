@@ -40,3 +40,6 @@ apps/
 
 # Local verification screenshots and generated comparison artifacts
 output/
+
+# Rebuilt from demos/personal-ledger before dev/build
+/public/demos/personal-ledger/

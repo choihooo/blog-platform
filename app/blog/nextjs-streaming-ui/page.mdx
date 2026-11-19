@@ -1,0 +1,476 @@
+{/* Source: https://app.notion.com/p/41725d3f8c8b81f18983fba7202c8a68
+Private draft. Date 2026-11-14 is provisional and must be confirmed before publication.
+The author requested formal Korean prose (입니다/합니다). Code examples are preserved.
+Sources and conversion notes: ./SOURCES.md
+*/}
+
+export const post = {
+  title: "Next.js는 준비된 화면부터 어떻게 보여줄까요?",
+  description: "HTML과 RSC 페이로드의 스트리밍 원리부터 Suspense 경계, loading.tsx와 use()를 활용한 구현까지 본문·댓글 예제로 살펴봅니다.",
+  date: "2026-11-14",
+};
+
+import { getPostMetadata } from "@/lib/site";
+import { StreamingComparison, SuspenseBoundaries } from "@/app/blog/_drafts/nextjs-streaming-ui/visuals/StreamingDemo";
+import { HtmlStreamFlow } from "@/app/blog/_drafts/nextjs-streaming-ui/visuals/HtmlStreamFlow";
+
+export const metadata = getPostMetadata(post, "nextjs-streaming-ui");
+
+<PostHeader {...post} slug="nextjs-streaming-ui" />
+
+Next.js에서 로딩 UI를 만들 때는 `loading.tsx`나 Suspense를 사용합니다. 그런데 경계를 어디에 두고, 데이터는 어디서 기다려야 할까요?
+
+본문은 빨리 준비되지만 댓글은 느린 블로그 화면을 예로 들어보겠습니다. HTML을 나눠 보내는 과정에서 시작해 RSC 페이로드와 Suspense를 거쳐, Next.js에서 대기 범위를 나누는 방법까지 살펴봅니다.
+
+## 1. 느린 요청 하나가 화면 전체를 기다리게 한다면
+
+블로그 글을 하나 연다고 가정해보겠습니다. 서버는 글의 본문과 댓글을 가져와 화면을 만듭니다. 두 요청을 동시에 시작했지만, 본문은 금방 준비되고 댓글은 데이터베이스 조회 때문에 시간이 걸립니다.
+
+이때 본문과 댓글이 모두 준비된 뒤에야 응답을 보낸다면 어떻게 될까요? 사용자는 댓글을 기다리는 동안 본문도 읽을 수 없습니다. 본문을 만드는 작업은 이미 끝났는데, 느린 댓글 요청 하나가 화면 전체를 기다리게 하는 셈입니다.
+
+그렇다면 준비된 본문부터 먼저 보여줄 수는 없을까요? 본문을 먼저 보내고, 아직 준비되지 않은 댓글 자리에는 로딩 상태를 표시합니다. 댓글이 준비되면 그 부분만 실제 내용으로 채웁니다. 이렇게 페이지를 작은 청크(chunk)로 나누고 준비되는 대로 점진적으로 전달하는 것이 스트리밍입니다. 화면의 각 부분이 준비되는 속도가 다르다면, 보여주는 시점도 나눌 수 있습니다.
+
+차이를 보기 위해 본문은 0.2초, 댓글은 3초에 준비된다고 가정해보겠습니다. 아래는 네트워크 전송과 렌더링 시간을 생략한 설명용 예시입니다.
+
+| 시점 | 본문과 댓글을 모두 기다리는 경우 | 본문을 먼저 보여주는 경우 |
+| --- | --- | --- |
+| 요청 시작 | 본문과 댓글 요청을 함께 시작합니다. | 본문과 댓글 요청을 함께 시작합니다. |
+| 0.2초: 본문 준비 완료 | 댓글이 준비될 때까지 본문도 표시하지 않습니다. | 본문과 댓글 로딩 UI를 표시합니다. |
+| 3초: 댓글 준비 완료 | 본문과 댓글을 함께 표시합니다. | 댓글 로딩 UI를 실제 댓글로 교체합니다. |
+
+<StreamingComparison />
+
+두 경우 모두 댓글이 준비되는 시점은 같습니다. 스트리밍을 적용한다고 3초가 걸리던 데이터베이스 조회가 저절로 빨라지지는 않습니다. 대신 사용자는 댓글을 기다리는 동안 먼저 도착한 본문을 읽을 수 있습니다.
+
+전체 화면이 완성되기 전에도 사용자가 필요한 콘텐츠를 읽기 시작할 수 있습니다. 그렇다면 서버가 나눠 보낸 내용을 브라우저는 어떻게 화면에 반영할까요?
+
+## 2. HTML을 나눠 보내면 화면도 나눠서 나타날까요?
+
+브라우저는 HTML 응답을 끝까지 받아야만 화면을 그릴 수 있는 것은 아닙니다. 응답이 도착하는 동안에도 HTML을 파싱해 DOM을 만들고, 준비된 내용을 화면에 표시할 수 있습니다. 서버가 본문을 먼저 보내면 댓글을 만드는 작업이 끝나기 전에도 본문을 읽을 수 있는 이유입니다.
+
+하지만 HTML을 조금씩 보내는 것만으로 앞에서 이야기한 문제가 모두 해결되지는 않습니다. 본문 아래에 댓글이 있고, 그 아래에 푸터가 있다고 해보겠습니다. 서버가 문서에 적힌 순서대로 HTML을 만들다가 댓글이 준비될 때까지 기다리면, 이미 준비할 수 있는 푸터도 뒤에서 기다리게 됩니다. 응답을 나눠 보내더라도 느린 부분에서 멈추는 구조는 남아 있습니다.
+
+댓글 자리는 일단 비워두고, 나머지를 먼저 보내면 어떨까요? 아래는 서버가 먼저 보내는 HTML 조각입니다. 전체 문서에서 head 같은 부분은 생략했습니다.
+
+```html
+<article>
+  <h1>Next.js의 스트리밍 UI</h1>
+  <p>먼저 준비된 글의 본문이다.</p>
+</article>
+
+<section id="comments">
+  <p>댓글을 불러오는 중...</p>
+</section>
+
+<footer>글 목록으로 돌아가기</footer>
+```
+
+사용자는 본문과 푸터를 먼저 보고, 댓글 자리에서는 로딩 상태를 보게 됩니다. 서버는 응답을 열린 상태로 유지하면서 댓글을 준비합니다.
+
+이제 댓글이 준비됐다고 해보겠습니다. 서버가 응답 뒤에 댓글 HTML을 덧붙이면 앞에 있는 로딩 문구가 알아서 바뀔까요? HTML을 더 보냈다는 사실만으로는 어느 위치를 교체해야 하는지 알 수 없습니다. **콘텐츠를 전달하는 일과 이미 만들어진 DOM을 갱신하는 일은 별도로 필요합니다.**
+
+한 가지 방법은 댓글 HTML을 담은 `template`과, 그 내용을 기존 댓글 영역으로 옮기는 스크립트를 함께 보내는 것입니다. 앞서 보낸 HTML에 이어 다음 조각이 도착한다고 생각하면 됩니다.
+
+```html
+<template id="comments-content">
+  <ul>
+    <li>스트리밍 동작이 궁금했는데 도움이 됐어요.</li>
+  </ul>
+</template>
+
+<script>
+  const target = document.getElementById('comments');
+  const template = document.getElementById('comments-content');
+
+  target.replaceChildren(template.content);
+  template.remove();
+</script>
+```
+
+`template` 안의 내용은 그 자체로 화면에 표시되지 않습니다. 이어서 도착한 스크립트가 실행되면, 템플릿 안의 노드가 기존 댓글 영역으로 이동하면서 로딩 문구를 대체합니다. 본문과 푸터를 다시 만들 필요 없이 댓글 부분만 바뀝니다.
+
+브라우저는 HTML을 받는 도중에도 이런 일반 인라인 스크립트를 실행할 수 있습니다. React가 페이지를 하이드레이션할 때까지 기다려야만 로딩 UI를 교체할 수 있는 것은 아닙니다. 위 코드는 이 교체 과정을 보여주기 위한 설명용 예제이며, React가 실제로 전송하는 코드를 그대로 옮긴 것은 아닙니다.
+
+<HtmlStreamFlow />
+
+여기서 순서를 구분할 필요가 있습니다. 한 응답 안의 바이트는 순서대로 도착합니다. 달라지는 것은 서버가 응답에 콘텐츠를 넣는 순서입니다. 댓글보다 뒤에 놓일 영역이라도 먼저 준비되면 보내고, 늦게 준비되는 댓글은 나중에 보내 원래 자리로 옮길 수 있습니다. 문서에서 보이는 위치와 서버가 콘텐츠를 전송하는 순서를 분리하는 셈입니다.
+
+React의 스트리밍 SSR도 Suspense 경계를 이용해 이런 점진적인 표시를 처리합니다. 먼저 보낼 화면에는 로딩 UI를 포함하고, 경계 안의 콘텐츠가 준비되면 교체에 필요한 HTML과 스크립트를 이어 보냅니다. 여러 영역을 독립된 경계로 나누면 각 영역이 준비되는 대로 표시할 수 있습니다.
+
+HTML을 보내는 방법은 알아봤습니다. 하지만 React가 이후에도 화면을 갱신하려면 화면을 구성하는 트리 정보가 필요합니다. 이 정보에도 아직 준비되지 않은 부분이 있다면 어떻게 전달할까요?
+
+## 3. 리액트 컴포넌트의 결과는 어떻게 전달할까요?
+
+먼저 본문과 댓글 데이터를 하나의 JSON 응답에 담는 경우부터 생각해보겠습니다. 클라이언트가 응답 전체를 받은 뒤 `JSON.parse`로 처리한다면, 댓글까지 도착해야 완성된 객체를 얻을 수 있습니다. 본문 데이터만 먼저 도착해도 바로 사용하지 못합니다.
+
+그렇다면 도착한 부분까지만 읽는 스트리밍 JSON 파서를 사용하면 해결될까요?
+
+일부는 먼저 읽을 수 있지만, 다른 문제가 생깁니다. 댓글 필드가 아직 도착하지 않았다면 댓글이 없는 것인지, 나중에 올 것인지 구분해야 합니다. 댓글 배열이 중간까지만 도착했다면 지금 보이는 것이 전부인지도 알기 어렵습니다. 데이터를 사용하는 쪽에서 미완성 상태를 계속 신경 써야 하는 것입니다.
+
+아직 준비되지 않은 값을 Promise로 표현하면 대기 중이라는 사실을 드러낼 수 있습니다. 조회 결과가 빈 배열인 것과 결과를 아직 받지 못한 것을 구분할 수 있는 셈입니다. 아래는 클라이언트에서 사용하고 싶은 데이터 모양을 단순화한 예시입니다.
+
+```javascript
+const post = {
+  title: 'Next.js의 스트리밍 UI',
+  content: '먼저 준비된 글의 본문이다.',
+  comments: commentsPromise,
+};
+```
+
+제목과 본문은 바로 사용할 수 있습니다. 댓글이 필요한 부분에서는 Promise가 해결될 때까지 기다립니다. 모든 값이 한 번에 완성돼야만 객체를 사용할 수 있던 방식에서, 일부 값은 나중에 준비될 수 있는 구조로 바뀝니다.
+
+물론 Promise 객체를 그대로 JSON에 담아 보내는 것은 아닙니다. 서버는 아직 준비되지 않은 값의 참조와, 나중에 준비된 결과를 구분해 전송해야 합니다. 클라이언트에서는 이 정보를 읽어 Promise를 만들고, 해당 결과가 도착하면 해결합니다. 이를 위해서는 일반 JSON 문서와 다른 전송 규칙이 필요합니다.
+
+React 서버 컴포넌트도 렌더링 결과를 점진적으로 전달할 수 있습니다. 서버에서 실행한 결과를 직렬화해 보내고, 클라이언트의 React가 이를 읽어 트리를 구성합니다. 이때 전달되는 데이터가 <strong>RSC 페이로드(RSC Payload)</strong>입니다.
+
+페이로드에는 서버 컴포넌트의 렌더링 결과, 클라이언트 컴포넌트가 들어갈 위치와 JavaScript 모듈 참조, 전달할 props 등이 포함됩니다. 서버 컴포넌트의 함수 자체를 보내 브라우저에서 다시 실행하는 것은 아닙니다.
+
+이 정보를 표현하려면 컴포넌트와 모듈, 아직 준비되지 않은 값 등을 구분하는 직렬화 규칙이 필요합니다. 따라서 RSC 페이로드는 일반 JSON 문서를 한 번에 파싱하는 방식과 다릅니다. 앞의 객체는 이 아이디어를 설명하기 위한 모양이며, 실제 네트워크 응답 형식은 아닙니다.
+
+그렇다면 앞에서 보낸 HTML과 RSC 페이로드는 각각 어디에 쓰일까요? HTML은 브라우저가 화면을 먼저 표시하는 데 쓰입니다. RSC 페이로드는 React가 서버와 클라이언트의 컴포넌트 트리를 연결하고 갱신하는 데 쓰입니다. 둘은 같은 화면을 서로 다른 목적으로 표현합니다.
+
+Next.js App Router에서는 페이지에 들어오는 방식에 따라 이 둘의 쓰임도 달라집니다.
+
+| 구분 | 처음 페이지를 열 때 | 클라이언트 내비게이션으로 이동할 때 |
+| --- | --- | --- |
+| HTML | 서버에서 만든 HTML로 화면을 먼저 표시합니다. | 새 페이지 전체의 HTML 문서를 다시 받지 않습니다. |
+| RSC 페이로드 | React가 컴포넌트 트리를 구성하고 기존 HTML과 연결하는 데 사용합니다. | 새로 가져오거나 미리 가져온 페이로드로 필요한 화면을 갱신합니다. |
+| 클라이언트 컴포넌트 | JavaScript를 이용해 하이드레이션하고 상호작용을 연결합니다. | 필요한 컴포넌트를 클라이언트에서 렌더링합니다. |
+
+최초 로드에서는 화면을 먼저 그리는 HTML과 React가 트리를 구성하는 데 쓰는 RSC 페이로드가 함께 전달될 수 있습니다. 준비되지 않은 부분을 기다리는 동안 무엇을 보여줄지는 Suspense로 정합니다.
+
+## 4. Suspense로 화면의 대기 범위 정하기
+
+Suspense는 함께 기다리고 함께 표시할 범위를 정합니다. 같은 본문과 댓글이라도 경계를 어디에 두느냐에 따라 사용자가 보게 되는 순서가 달라집니다.
+
+처음 화면을 렌더링할 때 경계 안의 컴포넌트가 준비되지 않아 렌더링을 일시 중단하면, React는 가장 가까운 상위 Suspense의 `fallback`을 보여줍니다. 필요한 데이터가 준비되면 실제 콘텐츠를 렌더링해 그 자리를 채웁니다. 앞에서 직접 작성했던 로딩 UI의 교체 과정을 React에 맡기는 셈입니다.
+
+본문을 가져오는 `PostBody`와 댓글을 가져오는 `Comments`가 각각 비동기 서버 컴포넌트라고 해보겠습니다. 아래 예제에서는 React의 `Suspense`를 사용합니다.
+
+### 하나로 묶으면 함께 나타납니다
+
+```tsx
+import { Suspense } from 'react';
+
+export default function Page() {
+  return (
+    <Suspense fallback={<p>글을 불러오는 중...</p>}>
+      <PostBody />
+      <Comments />
+    </Suspense>
+  );
+}
+```
+
+두 컴포넌트가 하나의 경계를 공유합니다. 본문이 먼저 준비돼도 댓글을 기다리는 동안에는 이 경계의 로딩 UI가 표시됩니다. 둘 다 준비되면 함께 나타납니다.
+
+### 나누면 준비된 쪽부터 나타납니다
+
+```tsx
+export default function Page() {
+  return (
+    <>
+      <Suspense fallback={<p>본문을 불러오는 중...</p>}>
+        <PostBody />
+      </Suspense>
+      <Suspense fallback={<p>댓글을 불러오는 중...</p>}>
+        <Comments />
+      </Suspense>
+    </>
+  );
+}
+```
+
+이제 본문과 댓글은 각각의 경계에서 기다립니다. 댓글이 느려도 본문은 먼저 나타날 수 있습니다. 경계를 나누는 것은 요청을 자동으로 병렬화하는 것과는 다릅니다. 실제 요청이 언제 시작되는지와 데이터 사이의 의존성도 따로 살펴봐야 합니다.
+
+### 중첩하면 기다림에도 단계를 둘 수 있습니다
+
+```tsx
+export default function Page() {
+  return (
+    <Suspense fallback={<p>글을 불러오는 중...</p>}>
+      <PostBody />
+      <Suspense fallback={<p>댓글을 불러오는 중...</p>}>
+        <Comments />
+      </Suspense>
+    </Suspense>
+  );
+}
+```
+
+본문이 준비되기 전에는 바깥 경계의 로딩 UI를 보여줍니다. 본문이 준비됐지만 댓글은 아직이라면, 본문과 안쪽 경계의 댓글 로딩 UI가 함께 나타납니다. 댓글까지 준비되면 나머지를 채웁니다. 이미 댓글도 준비된 상태라면 중간 로딩 단계는 보이지 않을 수 있습니다.
+
+앞의 설명용 시간인 0.2초와 3초로 경계를 비교해보겠습니다. 느린 영역을 본문으로 바꾸면 댓글이 먼저 준비돼도 바깥 경계 때문에 표시되지 않는 경우를 볼 수 있습니다.
+
+<SuspenseBoundaries />
+
+### 기다리는 코드도 경계 안에 있어야 합니다
+
+경계를 두었는데도 로딩 UI가 나오지 않는다면 `await`의 위치를 확인해야 합니다. 다음 코드에서는 페이지가 댓글을 먼저 기다립니다. `getComments`는 댓글 조회 함수, `CommentList`는 조회한 댓글을 표시하는 컴포넌트라고 하겠습니다.
+
+```tsx
+export default async function Page() {
+  const comments = await getComments();
+
+  return (
+    <Suspense fallback={<p>댓글을 불러오는 중...</p>}>
+      <CommentList comments={comments} />
+    </Suspense>
+  );
+}
+```
+
+페이지가 아래의 Suspense를 반환하기 전에 댓글을 기다립니다. 이 대기는 페이지 바깥에 이미 있는 경계가 처리해야 하며, 아직 반환하지 않은 경계로는 처리할 수 없습니다.
+
+댓글을 기다리는 일을 경계 안쪽으로 옮기면 대기 범위가 맞아집니다.
+
+```tsx
+export default function Page() {
+  return (
+    <Suspense fallback={<p>댓글을 불러오는 중...</p>}>
+      <Comments />
+    </Suspense>
+  );
+}
+
+async function Comments() {
+  const comments = await getComments();
+  return <CommentList comments={comments} />;
+}
+```
+
+페이지는 먼저 경계를 반환하고, 그 안의 `Comments`가 데이터를 기다립니다. React는 이 대기를 감싸는 경계를 찾을 수 있으므로 댓글 로딩 UI를 먼저 보낼 수 있습니다.
+
+경계와 `await`의 위치가 맞아야 원하는 범위에 로딩 UI를 보여줄 수 있습니다. 이 관계를 Next.js의 파일 구조에 적용해보겠습니다.
+
+## 5. Next.js에서 스트리밍 UI 구현하기
+
+이제 본문과 댓글이 있는 페이지를 Next.js App Router에서 만들어보겠습니다. 먼저 페이지 전체의 로딩 상태를 처리하고, 댓글을 별도 영역으로 나눈 뒤, 댓글을 펼치는 상호작용을 추가해보겠습니다.
+
+예제 경로는 `app/blog/streaming-demo/`로 두겠습니다. 데이터 조회 함수인 `getPost`와 `getComments`는 `@/lib/blog-data`에 있다고 가정합니다. 본문은 `{ title: string, content: string }`, 댓글은 `{ id: string, content: string }[]` 형태로 반환합니다. 아래 코드는 이 조회 함수를 이용해 로딩 범위를 구성하는 예제입니다.
+
+### loading.tsx로 페이지 단위 로딩 처리
+
+우선 본문과 댓글을 모두 가져온 뒤 페이지를 반환해보겠습니다.
+
+```tsx
+// app/blog/streaming-demo/page.tsx
+import { getPost, getComments } from '@/lib/blog-data';
+
+export default async function Page() {
+  const [post, comments] = await Promise.all([
+    getPost(),
+    getComments(),
+  ]);
+
+  return (
+    <main>
+      <article>
+        <h1>{post.title}</h1>
+        <p>{post.content}</p>
+      </article>
+      <section>
+        <h2>댓글</h2>
+        <ul>
+          {comments.map(comment => (
+            <li key={comment.id}>{comment.content}</li>
+          ))}
+        </ul>
+      </section>
+    </main>
+  );
+}
+```
+
+두 요청은 함께 시작하지만 페이지는 둘 다 끝나야 반환됩니다. 이 기다림을 처리하려면 같은 폴더에 `loading.tsx`를 둡니다.
+
+```tsx
+// app/blog/streaming-demo/loading.tsx
+export default function Loading() {
+  return <p>글을 불러오는 중...</p>;
+}
+```
+
+Next.js는 이 컴포넌트를 fallback으로 사용하는 Suspense 경계를 자동으로 구성합니다. 페이지가 준비되는 동안 로딩 UI를 보여주고, 준비되면 실제 콘텐츠로 바꿉니다.
+
+이 경계는 같은 세그먼트의 `layout.tsx` 안쪽에서 페이지와 그 아래를 감쌉니다. 따라서 이 페이지를 감싸는 레이아웃의 내비게이션은 유지하면서 본문 영역에 로딩 UI를 표시할 수 있습니다. 반대로 같은 `layout.tsx` 자체에서 기다리는 데이터는 이 `loading.tsx`가 처리하지 못합니다. 그 대기는 레이아웃 안에서 별도의 Suspense로 감싸는 식으로 다뤄야 합니다.
+
+여기까지는 페이지의 로딩 상태를 만들었습니다. 본문을 먼저 보여주려면 댓글을 기다리는 위치를 더 안쪽으로 옮겨야 합니다.
+
+### async Server Component와 Suspense로 영역별 처리
+
+댓글 조회 결과를 페이지에서 기다리지 않고, 댓글 컴포넌트에서 기다리도록 바꿔보겠습니다. 기존 `page.tsx`를 다음 코드로 교체합니다.
+
+```tsx
+// app/blog/streaming-demo/page.tsx
+import { Suspense } from 'react';
+import { getPost, getComments } from '@/lib/blog-data';
+
+type CommentsPromise = ReturnType<typeof getComments>;
+
+export default async function Page() {
+  const postPromise = getPost();
+  const commentsPromise = getComments();
+  const post = await postPromise;
+
+  return (
+    <main>
+      <article>
+        <h1>{post.title}</h1>
+        <p>{post.content}</p>
+      </article>
+      <section>
+        <h2>댓글</h2>
+        <Suspense fallback={<p>댓글을 불러오는 중...</p>}>
+          <Comments commentsPromise={commentsPromise} />
+        </Suspense>
+      </section>
+    </main>
+  );
+}
+
+async function Comments({
+  commentsPromise,
+}: {
+  commentsPromise: CommentsPromise;
+}) {
+  const comments = await commentsPromise;
+
+  return (
+    <ul>
+      {comments.map(comment => (
+        <li key={comment.id}>{comment.content}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+본문과 댓글 요청을 먼저 시작하고, 페이지에서는 본문만 기다립니다. 본문이 준비되면 페이지를 반환할 수 있습니다. 댓글이 아직 준비되지 않았다면 안쪽 경계가 댓글 로딩 UI를 표시합니다.
+
+댓글 요청을 페이지에서 시작한 이유는 본문을 기다리는 동안에도 댓글을 조회하기 위해서입니다. Promise를 전달하는 것과 그 결과를 기다리는 것은 별개입니다. 요청은 먼저 시작해두고, 결과가 필요한 컴포넌트에서 기다릴 수 있습니다.
+
+앞에서 만든 `loading.tsx`도 함께 쓸 수 있습니다. 본문을 기다릴 때는 페이지 단위 로딩 UI가, 본문이 준비된 뒤 댓글을 기다릴 때는 댓글 영역의 로딩 UI가 대기를 처리합니다. 두 데이터가 모두 준비됐다면 해당 로딩 UI가 눈에 보이지 않을 수도 있습니다.
+
+### 서버에서 시작한 Promise를 Client Component의 use()로 읽기
+
+지금까지 댓글은 서버 컴포넌트가 표시했습니다. 여기에 “댓글 더 보기” 버튼을 넣는다면 어떨까요? 버튼 클릭에 따라 보이는 댓글 수를 바꾸는 부분에는 클라이언트 상태가 필요합니다.
+
+이때도 데이터 요청을 브라우저에서 새로 시작할 필요는 없습니다. 서버에서 시작한 Promise를 Client Component에 전달하고, 그 안에서 `use()`로 읽을 수 있습니다.
+
+먼저 댓글 컴포넌트를 별도 파일로 만듭니다.
+
+```tsx
+// app/blog/streaming-demo/expandable-comments.tsx
+'use client';
+
+import { use, useState } from 'react';
+
+type Comment = {
+  id: string;
+  content: string;
+};
+
+export default function ExpandableComments({
+  commentsPromise,
+}: {
+  commentsPromise: Promise<Comment[]>;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const comments = use(commentsPromise);
+  const visibleComments = expanded
+    ? comments
+    : comments.slice(0, 3);
+
+  return (
+    <div>
+      <ul>
+        {visibleComments.map(comment => (
+          <li key={comment.id}>{comment.content}</li>
+        ))}
+      </ul>
+      {comments.length > 3 && (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded(value => !value)}
+        >
+          {expanded ? '댓글 접기' : '댓글 더 보기'}
+        </button>
+      )}
+    </div>
+  );
+}
+```
+
+서버 페이지에서는 `ExpandableComments`를 가져오고, 기존 Suspense 안의 `Comments`를 다음 컴포넌트로 바꿉니다. 본문과 댓글 요청을 시작하는 코드는 그대로 두며, 기존 서버 전용 `Comments` 함수는 제거합니다.
+
+```tsx
+<ExpandableComments commentsPromise={commentsPromise} />
+```
+
+추가할 import는 `import ExpandableComments from './expandable-comments';`입니다. 요청을 시작하는 위치와 Suspense 경계는 같고, 결과를 읽는 컴포넌트만 바뀝니다.
+
+`use(commentsPromise)`는 Promise가 대기 중이면 렌더링을 일시 중단합니다. 이 기다림은 상위 Suspense가 처리합니다. 결과가 준비되면 댓글을 표시하고, 하이드레이션 이후에는 버튼으로 댓글을 펼치거나 접을 수 있습니다.
+
+서버에서 전달한 Promise는 클라이언트의 상태 변경으로 다시 렌더링할 때도 재사용할 수 있습니다. 클라이언트 렌더링 안에서 매번 새로운 요청을 만들고 `use()`에 넘기는 방식은 피해야 합니다. 또한 Promise가 해결한 값은 React가 직렬화할 수 있어야 합니다. 이 예제의 문자열 기반 댓글 배열은 그 조건에 맞습니다.
+
+Suspense가 모든 비동기 요청을 감지하는 것은 아닙니다. `useEffect`에서 요청하고 로딩 상태를 직접 관리하는 코드를 감싼다고 이 fallback이 나타나지는 않습니다. 이 예제는 서버에서 전달한 Promise를 렌더링 중에 `use()`로 읽기 때문에 Suspense와 연동됩니다.
+
+### 로딩 범위와 데이터를 읽는 위치 비교
+
+| 구성 | 결과를 기다리는 위치 | 로딩 UI의 범위 |
+| --- | --- | --- |
+| loading.tsx | 페이지에서 본문과 댓글을 함께 기다립니다. | 페이지 영역 전체 |
+| async Server Component + Suspense | 페이지는 본문을, 댓글 컴포넌트는 댓글을 기다립니다. | 본문 준비 후에는 댓글 영역 |
+| Client Component의 use() + Suspense | 클라이언트 컴포넌트가 서버에서 전달한 Promise를 읽습니다. | 댓글 영역, 준비 후에는 펼치기·접기 가능 |
+
+`loading.tsx`는 경계를 자동으로 만들어주는 규칙입니다. async Server Component의 `await`와 Client Component의 `use()`는 준비되지 않은 값을 읽는 방법입니다. 함께 사용할 수 있으므로 로딩 범위와 상호작용이 필요한 위치에 맞춰 조합하면 됩니다.
+
+실제로 로딩 UI가 보이는지는 데이터의 준비 상태와 캐시, 사전 가져오기에도 영향을 받습니다. 위 예제는 요청이 대기 중인 상황에서 화면을 어떻게 나눌지 보여줍니다. 다음으로는 이 경계를 사용자가 읽고 조작하는 순서에 맞춰 어디에 두면 좋을지 살펴보겠습니다.
+
+## 6. 스트리밍 경계는 어디에 두면 좋을까요?
+
+댓글을 별도 경계로 나누니 본문을 먼저 읽을 수 있게 됐습니다. 그렇다면 나머지 컴포넌트도 전부 나누면 더 좋아질까요? 제목, 작성자, 작성일, 본문까지 각각 도착하는 대로 표시하면 화면은 빨리 채워질 수 있습니다. 하지만 사용자는 정보가 하나씩 나타날 때마다 화면을 다시 살펴봐야 합니다.
+
+컴포넌트가 나뉘어 있다는 이유만으로 로딩 경계까지 나눌 필요는 없습니다. 사용자가 어떤 정보를 함께 읽는지부터 생각해보겠습니다.
+
+### 함께 읽는 정보는 함께 보여줍니다
+
+글의 제목과 작성자, 작성일은 보통 하나의 묶음으로 읽습니다. 각각 다른 컴포넌트여도 함께 나타나는 편이 자연스럽습니다. 반면 댓글을 읽지 않아도 본문은 이해할 수 있습니다. 본문과 댓글은 서로 다른 시점에 보여줘도 의미가 있습니다.
+
+이 블로그 예제에서는 다음처럼 경계를 잡아볼 수 있습니다.
+
+| 영역 | 보여주는 방식 | 판단한 이유 |
+| --- | --- | --- |
+| 제목·작성자·작성일 | 하나의 묶음으로 표시합니다. | 어떤 글인지 파악하는 데 함께 필요한 정보입니다. |
+| 본문 | 느린 댓글을 기다리지 않고 표시합니다. | 사용자가 먼저 읽으려는 콘텐츠입니다. |
+| 댓글 | 별도 경계에서 준비되는 대로 표시합니다. | 본문을 읽는 동안 기다릴 수 있습니다. |
+
+이것이 모든 블로그에 맞는 정답은 아닙니다. 질문과 답변을 함께 읽는 페이지라면 답변의 우선순위는 달라집니다. 같은 댓글 컴포넌트라도 페이지에서 맡는 역할에 따라 경계가 달라질 수 있습니다.
+
+### 로딩 UI가 사라진 뒤의 화면도 생각합니다
+
+댓글 로딩 문구 한 줄이 긴 목록으로 바뀌면 그 아래의 콘텐츠가 밀릴 수 있습니다. 준비된 내용을 빨리 보여줬더라도, 읽거나 누르려던 위치가 계속 바뀐다면 사용하기 불편합니다.
+
+fallback을 만들 때는 실제 콘텐츠가 들어올 자리도 고려해야 합니다. 댓글 몇 개의 윤곽을 보여주는 스켈레톤이나 예상 높이를 확보한 영역을 두면 교체할 때의 변화를 줄일 수 있습니다. 정확히 같은 높이를 맞추기 어렵더라도, 로딩 전후의 배치가 얼마나 달라지는지는 확인할 수 있습니다.
+
+반대로 모든 영역에 큰 스켈레톤을 두면 읽을 내용보다 빈 공간이 더 많아질 수 있습니다. 경계를 정할 때는 무엇을 먼저 보여줄지와 함께, 그 내용이 들어오면서 주변 화면이 어떻게 움직일지도 봐야 합니다.
+
+### 처음 기다리는 것과 다시 기다리는 것은 다릅니다
+
+아직 아무 댓글도 보지 못한 상태에서는 로딩 UI가 자연스럽습니다. 하지만 이미 읽던 댓글을 정렬만 바꿨는데 목록 전체가 사라진다면 어떨까요? 사용자는 보던 내용을 놓치고 다시 기다려야 합니다.
+
+이 경우에는 새 결과가 준비될 때까지 기존 목록을 유지하고, 갱신 중이라는 표시를 따로 두는 방법을 생각해볼 수 있습니다. React에서는 Suspense와 연동되는 업데이트를 Transition으로 처리해 이미 표시한 콘텐츠가 fallback으로 숨겨지는 일을 피할 수 있습니다. 검색처럼 입력은 바로 반영하면서 결과 표시를 늦추려는 경우에는 `useDeferredValue`를 사용할 수도 있습니다.
+
+다만 모든 로딩 UI가 없어지는 것은 아닙니다. 새로 나타나는 경계에서는 fallback을 보여줄 수 있습니다. 또 다른 글로 이동했는데 이전 글의 댓글이 새 글의 댓글처럼 남아 있다면 혼란스럽습니다. 기존 내용을 유지할지 결정할 때는 같은 정보의 갱신인지, 다른 대상으로 이동하는 것인지도 구분해야 합니다.
+
+### 컴포넌트 수보다 읽는 순서에 맞춥니다
+
+경계를 잘게 나누면 각 부분을 독립적으로 보여줄 수 있지만, 그만큼 화면에 변화가 생기는 시점도 많아집니다. 반대로 크게 묶으면 함께 읽기에는 편해도 느린 부분 때문에 나머지 콘텐츠까지 기다릴 수 있습니다.
+
+본문은 먼저 읽을 수 있을까요? 함께 이해해야 할 정보가 따로 나타나지는 않을까요? 새 콘텐츠가 들어오면서 읽던 위치가 밀리지는 않을까요? 이런 질문으로 경계를 조정하는 편이 컴포넌트마다 Suspense를 붙이는 것보다 판단하기 쉽습니다.
+
+처음에는 페이지 단위 로딩에서 시작해도 됩니다. 이후 느린 영역을 살펴보고, 따로 표시해도 의미가 있는 부분을 분리합니다. 본문의 조회가 끝났다면 먼저 읽게 하고, 댓글이 준비되면 나머지를 채웁니다. 한 번 표시한 내용을 갱신할 때는 읽던 흐름을 유지할지도 판단합니다.
+
+**무엇을 먼저 보여주고, 무엇을 함께 기다릴까요?** 경계의 위치는 이 질문에 대한 답입니다.

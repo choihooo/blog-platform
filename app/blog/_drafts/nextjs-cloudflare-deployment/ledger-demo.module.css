@@ -1,0 +1,21 @@
+.frame { margin:32px 0; }
+.heading { display:flex; align-items:center; justify-content:space-between; gap:12px; width:390px; max-width:100%; margin:0 auto 16px; font-size:14px; line-height:20px; }
+.heading a { color:#737373; font-size:12px; text-decoration:none; }
+.heading a:hover { color:var(--foreground); }
+.heading a:focus-visible { outline:2px solid #FF6F0F; outline-offset:4px; border-radius:2px; }
+.phone { position:relative; width:390px; max-width:100%; margin:0 auto; padding:9px; border:2px solid #777a80; border-radius:54px; background:#191a1e; box-shadow:inset 0 0 0 1px #35373d, 0 12px 28px #00000014; }
+.phone::before, .phone::after { content:''; position:absolute; width:3px; background:#777a80; border-radius:2px; }
+.phone::before { left:-4px; top:110px; height:46px; box-shadow:0 57px 0 #777a80; }
+.phone::after { right:-4px; top:150px; height:72px; }
+.screen { overflow:hidden; border-radius:42px; background:#fff; color:#191f28; isolation:isolate; }
+.status { position:relative; display:flex; align-items:center; justify-content:space-between; height:44px; padding:0 22px; font-size:13px; line-height:1; }
+.island { position:absolute; top:8px; left:50%; transform:translateX(-50%); width:96px; height:27px; border-radius:18px; background:#08090b; }
+.island i { position:absolute; right:10px; top:9px; width:9px; height:9px; border:2px solid #1b202a; border-radius:50%; background:#111522; }
+.indicators { display:flex; align-items:center; gap:4px; }
+.indicators svg { width:15px; height:15px; stroke-width:2; }
+.indicators svg:last-child { width:21px; }
+.preview { display:block; width:100%; height:auto; aspect-ratio:370 / 760; border:0; background:#fff; }
+.home { display:flex; align-items:center; justify-content:center; height:20px; background:#fff; }
+.home span { width:110px; height:4px; border-radius:4px; background:#191f28; }
+@media (max-width:639px) { .phone { border-radius:46px; padding:8px; } .screen { border-radius:36px; } .status { padding:0 18px; } .island { width:88px; } }
+:global(html[data-theme="dark"]) .heading a { color:#a3a3a3; }

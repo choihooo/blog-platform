@@ -14,6 +14,21 @@
 
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+.post-description-row { display: flex; align-items: flex-end; gap: 16px; }
+.post-counts { display: inline-flex; flex-shrink: 0; align-items: center; gap: 12px; color: #737373; font-size: 12px; line-height: 20px; font-variant-numeric: tabular-nums; }
+.post-counts > span { display: inline-flex; align-items: center; gap: 4px; }
+html[data-theme="dark"] .post-counts { color: #a3a3a3; }
+
+@media (max-width: 639px) {
+  .post-list-link { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; }
+  .post-heading, .post-description-row { display: contents; }
+  .post-title { grid-column: 1 / -1; grid-row: 1; }
+  .post-date { grid-column: 1; grid-row: 2; }
+  .post-counts { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; }
+  .post-description { grid-column: 1 / -1; grid-row: 3; margin-top: 4px; }
+}
 
 /* ------------------------------------------------------------
    2. 테마 토큰
@@ -22,16 +37,16 @@
    ------------------------------------------------------------ */
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --background: #181818;
+    --foreground: #d4d4d4;
   }
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -277,39 +292,37 @@ body * {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .blog-search-dialog {
+html[data-theme="dark"] .blog-search-dialog {
     border-color: #262626;
   }
 
-  .blog-search-close,
-  .blog-search-spinner,
-  .blog-search-result-description,
-  .blog-search-results time,
-  .blog-search-empty {
+html[data-theme="dark"] .blog-search-close,
+  html[data-theme="dark"] .blog-search-spinner,
+  html[data-theme="dark"] .blog-search-result-description,
+  html[data-theme="dark"] .blog-search-results time,
+  html[data-theme="dark"] .blog-search-empty {
     color: #a3a3a3;
   }
 
-  .blog-search-close:hover,
-  .blog-search-results a:hover {
+html[data-theme="dark"] .blog-search-close:hover,
+  html[data-theme="dark"] .blog-search-results a:hover {
     background: #171717;
     color: var(--foreground);
   }
 
-  .writing-search-toggle,
-  .writing-search-input::placeholder {
+html[data-theme="dark"] .writing-search-toggle,
+  html[data-theme="dark"] .writing-search-input::placeholder {
     color: #a3a3a3;
   }
 
-  .writing-search-toggle:hover {
+html[data-theme="dark"] .writing-search-toggle:hover {
     background: #262626;
     color: var(--foreground);
   }
 
-  .writing-search-input {
+html[data-theme="dark"] .writing-search-input {
     border-color: #262626;
   }
-}
 
 code,
 pre,
@@ -368,12 +381,10 @@ samp {
   border-radius: 2px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .blog-profile p,
-  .blog-header nav {
+html[data-theme="dark"] .blog-profile p,
+  html[data-theme="dark"] .blog-header nav {
     color: #a3a3a3;
   }
-}
 
 @media (max-width: 480px) {
   .blog-header {
@@ -576,46 +587,39 @@ code[data-theme*=" "] span {
   border-radius: 0 0 12px 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .article-toc {
+html[data-theme="dark"] .article-toc {
     border-color: #262626;
   }
 
-  .article-toc ol {
+html[data-theme="dark"] .article-toc ol {
     border-color: #262626;
   }
 
-  .article-toc,
-  .code-copy-button {
+html[data-theme="dark"] .article-toc,
+  html[data-theme="dark"] .code-copy-button {
     color: #a3a3a3;
   }
 
-  .code-copy-button:hover {
+html[data-theme="dark"] .code-copy-button:hover {
     background: #262626;
     color: var(--foreground);
   }
-}
 
 /* 코드 블록 다크 모드 */
-@media (prefers-color-scheme: dark) {
-  .prose pre {
+html[data-theme="dark"] .prose pre {
     border-color: #262626;
     background: #111111;
   }
-
-  .prose :not(pre) > code {
+html[data-theme="dark"] .prose :not(pre) > code {
     background: #1f1f1f;
   }
-
-  /* shiki 듀얼 테마: 다크에서는 --shiki-dark 색으로 전환 */
-  code[data-theme*=" "],
-  code[data-theme*=" "] span {
+/* shiki 듀얼 테마: 다크에서는 --shiki-dark 색으로 전환 */
+html[data-theme="dark"] code[data-theme*=" "],
+  html[data-theme="dark"] code[data-theme*=" "] span {
     color: var(--shiki-dark);
   }
-
-  [data-rehype-pretty-code-title] {
+html[data-theme="dark"] [data-rehype-pretty-code-title] {
     border-color: #262626;
     background: #1a1a1a;
     color: #a3a3a3;
   }
-}

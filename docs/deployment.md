@@ -1,5 +1,67 @@
 # 운영 배포
 
+## 2026-11-18 PWA 배포
+
+Production `https://blog-ggf4av9j2-hochois-projects.vercel.app` (`dpl_5YnyGt2zLpew7KRa1AVA9NYt3Atb`)를 `https://hozorica.com`에 반영했습니다. 매니페스트·192/512px 및 maskable 아이콘·iOS 아이콘·서비스 워커·자체 폰트를 포함한 오프라인 안내를 추가했습니다. 기존 공개 글 10개와 현재 화면을 유지합니다.
+
+분리된 배포본에서 테스트 99개·lint·빌드를 통과했고 Vercel의 같은 릴리스 검사도 통과했습니다. 기존 공개 글이 `_drafts`의 공용 컴포넌트·이미지를 참조하므로 해당 의존 파일을 포함했습니다. 초안 본문·로컬 환경 파일·실험 자료는 업로드하지 않았습니다. 운영 주소에서 공개 글 10개의 robots·canonical·JSON-LD·사이트맵·OG·비공개 경로를 검증했습니다. 실제 운영 브라우저에서 서비스 워커 활성화·루트 scope·문서 제어·오프라인 안내 캐시와 standalone 매니페스트·iOS 아이콘을 확인했습니다. 390px 메인 화면에 가로 넘침이 없습니다. 오프라인 연결 실패와 재시도 동작은 로컬 프로덕션 서버를 중단·복구해 검증했습니다.
+
+직전 정상 Production은 `https://blog-icr69u1a8-hochois-projects.vercel.app` (`dpl_CZbPUCMuchPRHipmgCkbjVvG9vXb`)입니다. Git 커밋·push는 하지 않았습니다.
+
+## 2026-11-17 가계부 배포 구조 글과 체험 데모 발행
+
+「Next.js 가계부의 배포 구조를 정하기까지」를 `/blog/nextjs-cloudflare-deployment`에 발행했습니다. 기존 공개 글 9개의 본문을 유지하며 새 글과 목 데이터를 사용하는 가계부 데모를 추가했습니다. 휴대폰 목업 안의 iframe에서 실제 앱 UI·계산·입력 검증을 재사용하고, 요청받은 파란 안내·초기화 바는 제거했습니다. 데모는 메모리 저장만 사용하고 새로고침 시 복원하며 운영 가계부 API를 호출하지 않습니다.
+
+별도 소스에서 테스트 93개·lint·타입 검사·빌드를 통과했고, Vercel의 릴리스 빌드에서도 같은 검사를 통과했습니다. Production `https://blog-29z6tt6bq-hochois-projects.vercel.app` (`dpl_6m3STCYRVX7DnNRDcUPKqZ3t4tvN`)의 글·데모 HTML·JS·CSS·폰트 HTTP 200을 확인한 뒤 운영 도메인으로 promote했습니다.
+
+운영 배포 검사에서 공개 글 10개·canonical·robots·JSON-LD·사이트맵·OG·비공개 경로를 확인했습니다. 실제 운영 브라우저의 375px 화면에서 상단 바 제거·가로 넘침 없음·키보드로 거래 입력창 열기와 9,000원 저장 후 총 지출 700,100원 반영을 확인했습니다. iframe의 API 요청은 0건이었습니다. 메인 이동과 새 글 링크의 키보드 진입도 확인했습니다. 커밋·push는 하지 않았습니다.
+
+직전 정상 Production은 `https://blog-gnew11x3z-hochois-projects.vercel.app` (`dpl_91G5r8EMDr6soBF2sM3VGgScer8o`)입니다.
+
+## 2026-11-14 방어적인 표현 네 곳 정리
+
+작성자 요청으로 정답 선택자 제공 여부의 중복 문장, 구체화한 지침의 설명, 추가 질문 결과의 해석, 개념 코드의 소개를 관찰과 범위가 직접 드러나는 문장으로 정리했습니다. 수치·코드·표·필요한 실험 한계는 유지했습니다. Production `https://blog-8gmt8cf4i-hochois-projects.vercel.app` (`dpl_6MQaEJGpCphbDNB6PTm9Avvyxgjt`)를 배포했습니다. 로컬 및 운영 빌드·릴리스 검사와 운영 HTML의 네 문장 교체·기존 표·날짜 유지·전체 배포 검사를 확인했습니다. 직전 정상 Production은 `https://blog-6omrcah1b-hochois-projects.vercel.app` (`dpl_6WvnrWGsGq2bEWRfD4jxrp4AGDLT`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 예제 식별자 설명 추가
+
+두 번째 화면 소개에 이름만으로 대상을 짐작하기 어렵게 클래스와 ID를 구성한 의도, 공유 클래스와 버튼 ID의 차이, DOM 관계와 주변 내용을 읽도록 하되 식별 속성은 남긴 점을 추가했습니다. Production `https://blog-6omrcah1b-hochois-projects.vercel.app` (`dpl_6WvnrWGsGq2bEWRfD4jxrp4AGDLT`)를 배포하고 빌드·릴리스 검사 및 운영 글의 설명·ID 예시·날짜와 전체 배포 검사를 확인했습니다. 직전 정상 Production은 `https://blog-e7cqqp8wd-hochois-projects.vercel.app` (`dpl_55UC6gLa381zhaQBzCBGWGh6oGzb`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 첫 실험 결과 표 추가
+
+작성자 요청으로 프로필 화면 실험의 요청+사진 0/5, DOM 추가 5/5, 작업 지침 추가 5/5 결과를 2열 표로 추가했습니다. 바로 위에 성공 기준을 적고 중복된 결과 문장을 정리했습니다. Production `https://blog-e7cqqp8wd-hochois-projects.vercel.app` (`dpl_55UC6gLa381zhaQBzCBGWGh6oGzb`)를 배포했습니다. 로컬 및 운영 빌드, 전체 배포 검사와 운영 브라우저의 표 3행·390px 가로 넘침 없음을 확인했습니다. 직전 정상 Production은 `https://blog-kjlisx30h-hochois-projects.vercel.app` (`dpl_8ojiMzkHhhDYx68XaDty5gXzD71a`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 후속 실험 표 제거
+
+AI UI 수정 글에서 후속 실험 비교 표를 제거했습니다. 성공 기준과 실행 횟수·타임아웃·관찰 결과는 주변 본문에 유지하고, 표를 가리키던 표현을 정리했습니다. Production `https://blog-kjlisx30h-hochois-projects.vercel.app` (`dpl_8ojiMzkHhhDYx68XaDty5gXzD71a`)를 배포했습니다. 로컬 및 운영 빌드와 릴리스 검사를 통과했고, 운영 글의 HTTP 200·표 제거·본문 절과 날짜 유지 및 전체 배포 검사를 확인했습니다. 직전 정상 Production은 `https://blog-4jx7et4xr-hochois-projects.vercel.app` (`dpl_7kWQLhkvD8Qjvod3J1GDQicqXAhb`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 단계별 집중 영역과 설명
+
+AI UI 수정 데모를 단계별 집중 안내로 변경했습니다. 각 단계에서 개발 도구·선택한 버튼·요청 내용·저장된 요청·변경 전후·승인 결과 중 하나만 주황 테두리로 강조하고 나머지 화면은 흐리게 표시합니다. 설명은 데스크톱 오른쪽, 모바일 아래에 배치했습니다. 다음·이전·초기화와 설명용 내부 모달을 유지하며 실제 AI 호출은 없습니다.
+
+Production `https://blog-4jx7et4xr-hochois-projects.vercel.app` (`dpl_7kWQLhkvD8Qjvod3J1GDQicqXAhb`)를 분리된 소스에서 배포했습니다. 테스트 84개·lint·타입 검사·빌드를 통과했고, 운영 배포 검사 및 실제 브라우저에서 데스크톱·390px의 여섯 단계 각각 강조 대상 하나·대상의 선명함·주변 흐림·영역 내 배치·설명 위치·키보드·초기화·가로 넘침 없음을 확인했습니다. 직전 정상 Production은 `https://blog-kpyjrn500-hochois-projects.vercel.app` (`dpl_DMbET1fCUX4xxiyb5XRtc62N2rB5`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 데모 영역 안의 모달 표현
+
+단계별 진행을 유지하면서 요청 작성·저장·검수·완료 화면을 가상 프로필 화면 위에 겹쳐 표시하도록 변경했습니다. 오버레이는 데모 캔버스 안에만 위치하며 페이지 스크롤이나 다음/이전 버튼을 막지 않습니다. 실제 전역 dialog가 아닌 설명용 화면입니다.
+
+Production `https://blog-kpyjrn500-hochois-projects.vercel.app` (`dpl_DMbET1fCUX4xxiyb5XRtc62N2rB5`)를 분리된 소스에서 배포했습니다. 테스트 83개·lint·타입 검사·빌드를 통과했습니다. 운영 배포 검사 및 브라우저에서 여섯 단계·키보드·초기화·390px 가로 넘침 없음과 오버레이의 캔버스 내부 배치·페이지 스크롤 유지까지 확인했습니다. 직전 정상 Production은 `https://blog-kk5car1i7-hochois-projects.vercel.app` (`dpl_DhtgceCoCGheifF2Vymz2bAujHi6`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 데모를 단계별 안내로 변경
+
+AI UI 수정 글의 데모를 모달·직접 조작 방식에서 ‘다음/이전’으로 진행하는 인라인 안내로 변경했습니다. 여섯 단계에서 화면 확인·대상 선택·요청 작성·저장·구현 검수·승인을 보여줍니다. 본문의 연결 문장도 안내 방식에 맞췄고, 글 날짜 `2026-05-31`과 실험 결과는 유지했습니다.
+
+분리된 소스에서 Production `https://blog-kk5car1i7-hochois-projects.vercel.app` (`dpl_DhtgceCoCGheifF2Vymz2bAujHi6`)를 배포했습니다. 로컬 테스트 83개·lint·타입 검사·빌드 및 운영 빌드 검사를 통과했습니다. 운영 배포 검사에서 공개 글 7개와 SEO·공유 이미지·비공개 경로를 확인했고, 실제 운영 브라우저에서 여섯 단계·데모 내 dialog 없음·저장 전후 색상 유지·구현 단계 색상 변경·이전·초기화·키보드·390px 가로 넘침 없음을 확인했습니다. 직전 정상 Production은 `https://blog-h0viair9w-hochois-projects.vercel.app` (`dpl_ataWQZnLrCTtVJfTNSQjbTYLKB2s`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+## 2026-11-14 AI UI 수정 글 발행
+
+`/blog/ai-ui-editing-dom-guidelines`를 발행했습니다. 글의 표시 날짜는 작성자 요청에 따라 `2026-05-31`로 설정했습니다. 요소 선택 → 요청 저장 → 구현 예시 → 승인·반려 흐름의 데모를 포함하며 실제 AI 호출이나 서버 저장은 하지 않습니다.
+
+Preview `https://blog-2itommlmj-hochois-projects.vercel.app`의 날짜·noindex·데모 마크업을 확인한 뒤 Production `https://blog-h0viair9w-hochois-projects.vercel.app` (`dpl_ataWQZnLrCTtVJfTNSQjbTYLKB2s`)를 운영 도메인에 반영했습니다. Git 추적 파일과 이 글의 추가 파일만 복사한 별도 배포본을 사용했고, 로컬 실험 자료·환경 파일·아카이브는 포함하지 않았습니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+로컬 테스트 86개·lint·타입 검사·빌드와 Vercel의 테스트 86개·lint·빌드를 통과했습니다. 운영 도메인 배포 검사에서 공개 글 7개·canonical·robots·JSON-LD·사이트맵·OG·비공개 경로를 확인했습니다. 실제 운영 브라우저에서 날짜, 요청 저장 시 화면 유지, 구현 예시의 대상 버튼만 변경, 반려·재실행 이력·승인, 초기화, 키보드 선택·Escape, 390px 모바일 가로 넘침 없음을 확인했습니다.
+
+직전 정상 Production은 `https://blog-m15zsd5s6-hochois-projects.vercel.app` (`dpl_CAeBeReDLFxLDAUHXQSfymPXa1Vw`)입니다.
+
 ## 현재 구성
 
 - GitHub: `choihooo/blog-platform`, Production 브랜치 `main`.
@@ -100,3 +162,12 @@ Production `https://blog-gaenxono7-hochois-projects.vercel.app` (`dpl_njXNynswVS
 운영 배포 검사에서 기존 공개 글 3개·canonical·robots·JSON-LD·사이트맵·OG·비공개 경로를 확인했습니다. 운영 브라우저의 검색→상세→복사→끝까지 스크롤→중간→홈 동작 후 GA4 실시간에서 `search_open`, `blog_search`, `search_result_click`, `code_copy`, `article_read_progress`, `article_read_summary` 수신을 확인했습니다. 맞춤 측정기준 9개와 측정항목 5개도 등록했습니다.
 
 직전 정상 Production은 `https://blog-k1nirvbp8-hochois-projects.vercel.app` (`dpl_8n9ifddNP6CXsL8gAPEj8Nnz5wk9`)입니다. Git 커밋·푸시는 수행하지 않았습니다.
+
+
+## 2026-11-14 SPARCS 해커톤 후기 발행
+
+「보이스 팔레트를 만들며 보낸 이틀」을 `/blog/sparcs-science-hackathon-2024-retrospective`에 추가했습니다. 발행일 2024-11-03, 이미지 5장·GIF 3장과 시연 영상·발표자료 링크를 반영했습니다.
+
+기존 운영 글 7개를 유지한 별도 소스 `/tmp/sparcs-release-4l8mcY`에서 테스트 84개·lint·빌드·타입 검사를 통과했습니다. Production `https://blog-m0u6y670j-hochois-projects.vercel.app` (`dpl_D44dWZuWvjHhga1bf77rnXgYvwhr`)에서 날짜·이미지·영상 링크를 확인한 뒤 운영 도메인으로 promote했습니다. 운영 검사로 공개 글 8개·canonical·robots·JSON-LD·사이트맵·OG·비공개 경로를 확인했습니다. 운영 브라우저에서 이미지 8개 로딩과 390px 가로 넘침 없음을 확인했습니다. 커밋·푸시는 수행하지 않았습니다.
+
+직전 정상 Production은 `https://blog-8gmt8cf4i-hochois-projects.vercel.app` (`dpl_6MQaEJGpCphbDNB6PTm9Avvyxgjt`)입니다.

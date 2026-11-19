@@ -9,6 +9,7 @@ apps/
 docs/
 scripts/*
 !scripts/check-deployment.mjs
+!scripts/build-ledger-demo.mjs
 node_modules/
 .next/
 coverage/

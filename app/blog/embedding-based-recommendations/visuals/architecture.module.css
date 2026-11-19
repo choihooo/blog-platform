@@ -34,12 +34,10 @@
 .supportServices svg { flex-shrink: 0; margin-top: 2px; color: var(--muted); }
 .supportServices small { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
 @media (max-width: 480px) { .supportServices { grid-template-columns: 1fr; } }
-@media (prefers-color-scheme: dark) {
-  .canvas { --diagram-bg: #0a0a0a; }
-  .addedNode .icon { background: #2a1b10; }
-  .badge { color: #ffb47f; }
-  .added .edgeLabel { fill: #ffb47f; }
-  .error { color: #ef9292; }
-  .errorNode { border-color: #ef9292; }
-  .errorNode .icon { color: #ef9292; background: #2c1717; }
-}
+:global(html[data-theme="dark"]) .canvas { --diagram-bg: #0a0a0a; }
+:global(html[data-theme="dark"]) .addedNode .icon { background: #2a1b10; }
+:global(html[data-theme="dark"]) .badge { color: #ffb47f; }
+:global(html[data-theme="dark"]) .added .edgeLabel { fill: #ffb47f; }
+:global(html[data-theme="dark"]) .error { color: #ef9292; }
+:global(html[data-theme="dark"]) .errorNode { border-color: #ef9292; }
+:global(html[data-theme="dark"]) .errorNode .icon { color: #ef9292; background: #2c1717; }

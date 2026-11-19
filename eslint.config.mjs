@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     "archive/**",
     "preview/**",
     "apps/**",
+    "public/demos/personal-ledger/**",
   ]),
 ]);
 

@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 import { getSiteConfig } from "@/lib/site";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { themeScript } from "@/lib/theme.mjs";
 import { Analytics } from "@/components/Analytics";
+import { ServiceWorker } from "@/components/ServiceWorker";
 
 const site = getSiteConfig();
 
@@ -18,6 +21,8 @@ const suit = localFont({
 
 export const metadata: Metadata = {
   metadataBase: site.url,
+  applicationName: "최호",
+  appleWebApp: { capable: true, title: "최호", statusBarStyle: "default" },
   title: {
     default: "최호 | 프론트엔드 개발자",
     template: "%s — 최호",
@@ -34,12 +39,21 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/opengraph-image.png"] },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#181818" },
+  ],
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
+      suppressHydrationWarning
       className={`${suit.variable} h-full antialiased`}
     >
+      <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-6">
           <SiteHeader />
@@ -50,7 +64,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </footer>
         </div>
         <ScrollToTop />
+        <ThemeToggle />
         <Analytics />
+        <ServiceWorker />
       </body>
     </html>
   );
